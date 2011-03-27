@@ -2,7 +2,7 @@
 <ti:app xmlns:ti="http://ti.appcelerator.org">
 <id>net.yourbrainondrugs.ybob</id>
 <name>Boozerlyzer</name>
-<version>0.2</version>
+<version>0.11</version>
 <publisher>caspar</publisher>
 <url>http://yourbrainondrugs.net</url>
 <description>No description provided</description>

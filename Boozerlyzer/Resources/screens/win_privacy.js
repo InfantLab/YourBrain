@@ -1,11 +1,9 @@
 var win = Titanium.UI.currentWindow;
+var winHome = win.home;
 
-Ti.API.info("Include accesspersonaldata js");
-Ti.include("../data/accesspersonaldata.js");
 
 var netprivacy = ['Never send my data', 'Send totally anonymous data', 'Send data with anonymous key', 'Send data with nickname'];
 var phoneprivacy = ['Never store data', 'Store games scores but not drinking data', 'Store all data'];
-//var weight_lb = ['80-90 lb', '90-100 lb', '100-110 lb', '110-120 lb','120-130 lb', '130-140 lb','140-150 lb', '150-160 lb','160-170 lb', '170-180 lb','180-190 lb', '190-200 lb','210-210 lb', '220-230 lb','230-240 lb', '240-250 lb','250-260 lb', '260-270 lb','270-280 lb', '280-290 lb', '300+ kg']
 //
 var rows1 = [];
 for (var i = 0; i < netprivacy.length; i++) {
@@ -16,12 +14,12 @@ var column1 = Ti.UI.createPickerColumn({rows: rows1});
 var netpicker = Ti.UI.createPicker({
 	useSpinner: true, visibleItems: 4,
 	type : Ti.UI.PICKER_TYPE_PLAIN,
-	top: 50, height: 100,
+	top: 10, height: 90,
 	columns:column1, 
 	font: {fontSize: "12"}
 });
 netpicker.addEventListener('change', function(e) {
-	Ti.API.info("you chose " + e.selectedValue[0]);
+	Ti.API.debug("you chose " + e.selectedValue[0]);
 });
 win.add(netpicker);
 
@@ -34,11 +32,65 @@ var column2 = Ti.UI.createPickerColumn({rows:rows2});
 var phonepicker = Ti.UI.createPicker({
 	useSpinner: true, visibleItems: 4,
 	type : Ti.UI.PICKER_TYPE_PLAIN,
-	top: 200, height: 100,
+	top: 120, height: 90,
 	columns:column2, 
 	font: {fontSize: "12"}
 });
 phonepicker.addEventListener('change', function(e) {
-	Ti.API.info("you chose " + e.selectedValue[0]);
+	Ti.API.debug("you chose " + e.selectedValue[0]);
 });
 win.add(phonepicker);
+
+
+var debug = Titanium.UI.createImageView({
+	image:'../icons/Misc.png',
+	height:48,
+	width:48,
+	top:60,
+	right:10
+});
+debug.addEventListener('click',function(){
+	var db0 = Titanium.Database.install('../ybob.db','ybob');
+	db0.remove();
+	Titanium.API.debug('Removed old YBOB database')
+	db0.close();
+	
+	var db = Titanium.Database.install('../ybob.db','ybob');
+	Titanium.API.debug('Installed new YBOB database')
+	db.close();
+});
+win.add(debug);
+
+var charttest = Titanium.UI.createImageView({
+	image:'../icons/line_chart.png',
+	height:48,
+	width:48,
+	top:120,
+	right:10
+});
+charttest.addEventListener('click',function(){
+	var newchart = Titanium.UI.createWindow({ modal:true,
+		url:'../screens/win_results2.js',
+		title:'How are you feeling?',
+		backgroundImage:'../images/smallcornercup.png',
+		modal:true		
+	});
+	win.close();
+	newchart.open();
+});
+win.add(charttest);
+
+//
+// Cleanup and return home
+win.addEventListener('android:back', function(e) {
+	if (winHome === undefined || winHome === null) {
+		winHome = Titanium.UI.createWindow({ modal:true,
+			url: '../app.js',
+			title: 'Boozerlyzer',
+			backgroundImage: '../images/smallcornercup.png',
+			orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
+		})
+	}
+	win.close();
+	winHome.open();
+});

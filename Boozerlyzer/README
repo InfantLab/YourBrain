@@ -1,12 +1,21 @@
-Welcome to your Appcelerator Titanium Mobile Project
+Welcome to the YourBrainonDrugs.net Boozerlyzer project.
 
-This is a blank project.  Start by editing your application's app.js to 
-make your first mobile project using Titanium.
+This directory contains all the files to build the Boozerlyzer Android application using Titanium Appcelerator.
+
+For more information on how to build and run the application see our github page
+
+https://github.com/YourBrain
+
+
+Enjoy,
+Caspar@yourbrainondrugs.net
+2nd March 2011
+
 
 
 
 ----------------------------------
-Stuff our legal folk make us say:
+Appcelerator legal stuff:
 
 Appcelerator, Appcelerator Titanium and associated marks and logos are 
 trademarks of Appcelerator, Inc. 

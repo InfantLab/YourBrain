@@ -1,72 +1,211 @@
 var win = Titanium.UI.currentWindow;
+var winHome = win.home;
 
-var minDate = new Date();
-minDate.setFullYear(1900);
-minDate.setMonth(1);
-minDate.setDate(1);
+//layout variables
+var topHW = 100;
 
-var maxDate = new Date();
-maxDate.setFullYear(1990);
-maxDate.setMonth(12);
-maxDate.setDate(31);
+Ti.include('../data/personalInfo.js','../js/datetimehelpers.js');
 
-var value = new Date();
-value.setFullYear(1980);
-value.setMonth(6);
-value.setDate(15);
+var persInfo = personalInfo.getData();
 
-var picker = Ti.UI.createPicker({
-	useSpinner: true,
-	type:Ti.UI.PICKER_TYPE_DATE,
-	minDate:minDate,
-	maxDate:maxDate,
-	value:value
-});
+if (!persInfo){
+	Titanium.API.debug('win_pers settingdata');
+	persInfo = personalInfo.setDefaults();
+}
 
-// turn on the selection indicator (off by default)
-picker.selectionIndicator = true;
-
-win.add(picker);
-
-var label = Ti.UI.createLabel({
-	text:'Enter birthdate',
-	top:6,
-	width:'150',
-	height:'20',
-	textAlign:'center',
-	color:'white'
+var label = Titanium.UI.createLabel({
+	text:'About you..',
+	left:10,
+	top:5,
+	font:{fontSize:24,fontWeight:'bold'}
 });
 win.add(label);
 
-picker.addEventListener('change',function(e)
-{
-	label.text = e.value;
+var birthDate = Ti.UI.createLabel({
+	text:'Birth Date..',
+	bottom:5,
+	left:80,
+	width:'120',
+	height:'36',
+	textAlign:'center',
+	color:'white',
+	backgroundColor:'black',
+	borderColor:'grey',
+	borderRadius:4
+});
+win.add(birthDate);
+
+if (persInfo.BirthMonth > 0 && persInfo.BirthYear > 0){
+	birthDate.text = monthname[persInfo.BirthMonth -1] + '-' + persInfo.BirthYear;
+}
+birthDate.addEventListener('click', function(){
+	Ti.API.debug('Change birthday goes here..');
 });
 
+var nickName = Titanium.UI.createTextField({
+	value:persInfo.Nickname,
+	color:'#336699',
+	hintText:'nickname',
+	textAlign:'left',
+	height:42,
+	top:10,
+	left:150,
+	borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
+	font:{fontSize:20,fontWeight:'bold'}
+});
+win.add(nickName);
+nickName.addEventListener('change', function(){
+	persInfo.Changed = true;
+	persInfo.Nickname = nickName.value;
+	Titanium.API.debug('nickName Changed');
+});
 
-//var gender = ['Female', 'Male', 'Private'];
-//var weight_kg = ['30-5 kg', '35-40 kg', '40-5 kg', '45-50 kg','50-5 kg', '55-60 kg','60-5 kg', '65-70 kg','70-5 kg', '75-80 kg','80-5 kg', '85-90 kg','90-5 kg', '95-100 kg','100-5 kg', '105-110 kg','110-5 kg', '115-120 kg','120-5 kg', '125-130 kg', '130+ kg'];
-//var weight_lb = ['80-90 lb', '90-100 lb', '100-110 lb', '110-120 lb','120-130 lb', '130-140 lb','140-150 lb', '150-160 lb','160-170 lb', '170-180 lb','180-190 lb', '190-200 lb','210-210 lb', '220-230 lb','230-240 lb', '240-250 lb','250-260 lb', '260-270 lb','270-280 lb', '280-290 lb', '300+ kg']
-//
-//var rows1 = [];
-//for (var i = 0; i < gender.length; i++) {
-//	rows1.push(Ti.UI.createPickerRow({title: gender[i]}));
-//}
-//
-//var column1 = Ti.UI.createPickerColumn( {
-//	rows: rows1
-//});
-//
-//var sexpicker = Ti.UI.createPicker({
-//	useSpinner: true, visibleItems: 3,
-//	type : Ti.UI.PICKER_TYPE_PLAIN,
-//	top: 150, height: 200,
-//	columns:column1, 
-//	font: {fontSize: "12"}
-//});
-//
-//sexpicker.addEventListener('change', function(e) {
-//	showStatus("you chose " + e.selectedValue[0]);
-//});
-//
-//win.add(sexpicker);
+// set a picker for gender.
+var rows1 = [];
+for (var i = 0; i < gender.length; i++) {
+	rows1.push(Ti.UI.createPickerRow({title: gender[i]}));
+}
+var column1 = Ti.UI.createPickerColumn( {
+	rows: rows1
+});
+var sexpicker = Ti.UI.createPicker({
+	useSpinner: true, visibleItems: 3,
+	type : Ti.UI.PICKER_TYPE_PLAIN,
+	top: 40, height: 90,
+	columns:column1, 
+	font: {fontSize: "12"}
+});
+sexpicker.addEventListener('change', function(e) {
+	persInfo.Changed = true;
+	persInfo.Gender = e.rowIndex;
+});
+sexpicker.setSelectedRow(0,persInfo.Gender,true);
+win.add(sexpicker);
+
+// set a picker for height.
+var heightUnit = Ti.UI.createLabel({
+	text:'m',
+	left:200,
+	top:topHW+30,
+	font:{fontSize:18,fontWeight:'bold'}	
+});
+win.add(heightUnit);
+var rows2 = [];
+var height = null;
+if (persInfo.HeightUnits == 1){
+	height = height_m;
+	heightUnit.text = 'm'; 
+}else{
+	height = height_ft;	
+	heightUnit.text = 'ft'; 
+}
+for (var i = 0; i < height.length; i++) {
+	rows2.push(Ti.UI.createPickerRow({title: height[i]}));
+}
+var column2 = Ti.UI.createPickerColumn( {
+	rows: rows2
+});
+var heightpicker = Ti.UI.createPicker({
+	useSpinner: true, visibleItems: 3,
+	type : Ti.UI.PICKER_TYPE_PLAIN,
+	top: topHW,	left: 10,
+	height: 90,
+	columns:column2, 
+	font: {fontSize: "12"}
+});
+heightpicker.setSelectedRow(0,persInfo.Height,false);
+heightpicker.addEventListener('change', function(e) {
+	persInfo.Changed = true;
+	persInfo.Height = e.rowIndex;
+	Titanium.API.debug('Height Changed');
+});
+win.add(heightpicker);
+
+
+
+// set a picker for weight.
+var weightUnit = Ti.UI.createLabel({
+	text:'kg',
+	left:400,
+	top:topHW + 30,
+	font:{fontSize:18,fontWeight:'bold'}	
+});
+win.add(weightUnit);
+var rows3 = [];
+var weight = null;
+if (persInfo.WeightUnits == 1){
+	weight = weight_kg;
+	weightUnit.text = 'kg'; 
+}else{
+	weight = weight_lb;	
+	weightUnit.text = 'lb'; 
+}
+for (var i = 0; i < weight.length; i++) {
+	rows3.push(Ti.UI.createPickerRow({title: weight[i]}));
+}
+var column3 = Ti.UI.createPickerColumn( {
+	rows: rows3
+});
+var weightpicker = Ti.UI.createPicker({
+	useSpinner: true, visibleItems: 3,
+	type : Ti.UI.PICKER_TYPE_PLAIN,
+	top: topHW,	left:200,
+	height: 90,
+	columns:column3, 
+	font: {fontSize: "12"}
+});
+weightpicker.setSelectedRow(0,persInfo.Weight,false);
+weightpicker.addEventListener('change', function(e) {
+	Titanium.API.debug('weight Changed');
+	persInfo.Changed = true;
+	persInfo.Weight = e.rowIndex;
+});
+win.add(weightpicker);
+
+
+
+// SAVE BUTTON	
+var save = Ti.UI.createButton({
+	title:'Save',
+	width:70,
+	height:28,
+	bottom:4,
+	right:4,
+	backgroundColor:'green'
+});
+win.add(save);
+
+save.addEventListener('click',function()
+{
+	personalInfo.setData(persInfo);
+	win.close();
+});	
+// CANCEL BUTTON	
+var cancel = Ti.UI.createButton({
+	title:'Cancel',
+	width:70,
+	height:28,
+	bottom:4,
+	right:80,
+	backgroundColor:'red'
+});
+win.add(cancel);
+
+cancel.addEventListener('click',function()
+{
+	win.close();
+});	
+
+// Cleanup and return home
+win.addEventListener('android:back', function(e) {
+	if (winHome === undefined || winHome === null) {
+		winHome = Titanium.UI.createWindow({ modal:true,
+			url: '../app.js',
+			title: 'Boozerlyzer',
+			backgroundImage: '../images/smallcornercup.png',
+			orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
+		})
+	}
+	win.close();
+	winHome.open();
+});
