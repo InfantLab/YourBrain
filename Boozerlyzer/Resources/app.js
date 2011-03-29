@@ -329,3 +329,22 @@ homeWin.addEventListener('focus', function(){
 	    rewriteUpdateLabel();		
 	}
 });
+
+var charttest = Titanium.UI.createImageView({
+	image:'../icons/line_chart.png',
+	height:48,
+	width:48,
+	top:120,
+	right:10
+});
+charttest.addEventListener('click',function(){
+	var newchart = Titanium.UI.createWindow({ modal:true,
+		url:'../screens/win_results2.js',
+		title:'How are you feeling?',
+		backgroundImage:'../images/smallcornercup.png',
+		modal:true		
+	});
+	newchart.home = homeWin; //reference to home
+	newchart.open();
+});
+homeWin.add(charttest);

@@ -25,8 +25,8 @@ var birthDate = Ti.UI.createLabel({
 	text:'Birth Date..',
 	bottom:5,
 	left:80,
-	width:'120',
-	height:'36',
+	width:120,
+	height:36,
 	textAlign:'center',
 	color:'white',
 	backgroundColor:'black',
@@ -72,6 +72,7 @@ var sexpicker = Ti.UI.createPicker({
 	useSpinner: true, visibleItems: 3,
 	type : Ti.UI.PICKER_TYPE_PLAIN,
 	top: 40, height: 90,
+	left: 20,
 	columns:column1, 
 	font: {fontSize: "12"}
 });
@@ -85,42 +86,73 @@ win.add(sexpicker);
 // set a picker for height.
 var heightUnit = Ti.UI.createLabel({
 	text:'m',
-	left:200,
+	left:180,
 	top:topHW+30,
 	font:{fontSize:18,fontWeight:'bold'}	
 });
 win.add(heightUnit);
-var rows2 = [];
-var height = null;
-if (persInfo.HeightUnits == 1){
-	height = height_m;
-	heightUnit.text = 'm'; 
-}else{
-	height = height_ft;	
-	heightUnit.text = 'ft'; 
+heightUnit.addEventListener('click',function (e){
+	//change height units
+	persInfo.Changed = true;
+	persInfo.HeightUnits = (persInfo.HeightUnits===1? 0: 1);
+	fillHeightWeight(); 
+})
+
+function fillHeight(){
+	var rows2 = [];
+	var height = null;
+	if (persInfo.HeightUnits == 1){
+		height = height_m;
+		heightUnit.text = 'm'; 
+	}else{
+		height = height_ft;	
+		heightUnit.text = 'ft'; 
+	}
+	rows2 = [];
+	for (var i = 0; i < height.length; i++) {
+		rows2.push(Ti.UI.createPickerRow({title: height[i]}));
+	}	
+	columnheight = Ti.UI.createPickerColumn( {
+		rows: rows2
+	});
+	heightpicker.columns = columnheight;
+	heightpicker.setSelectedRow(0,persInfo.Weight,false);
+
 }
-for (var i = 0; i < height.length; i++) {
-	rows2.push(Ti.UI.createPickerRow({title: height[i]}));
+function fillWeight(){
+	var rows2 = [];
+	var Weight = null;
+	if (persInfo.WeightUnits == 1){
+		weight = weight_kg;
+		weightUnit.text = 'kg'; 
+	}else{
+		weight = weight_lb;	
+		weightUnit.text = 'lb'; 
+	}
+	rows2 = [];
+	for (var i = 0; i < weight.length; i++) {
+		rows2.push(Ti.UI.createPickerRow({title: weight[i]}));
+	}	
+	columnweight = Ti.UI.createPickerColumn( {
+		rows: rows2
+	});
+	weightpicker.columns = columnweight;
+	weightpicker.setSelectedRow(0,persInfo.Weight,false);
 }
-var column2 = Ti.UI.createPickerColumn( {
-	rows: rows2
-});
+
 var heightpicker = Ti.UI.createPicker({
 	useSpinner: true, visibleItems: 3,
 	type : Ti.UI.PICKER_TYPE_PLAIN,
 	top: topHW,	left: 10,
-	height: 90,
-	columns:column2, 
+	height: 90, width:165,
 	font: {fontSize: "12"}
 });
-heightpicker.setSelectedRow(0,persInfo.Height,false);
 heightpicker.addEventListener('change', function(e) {
 	persInfo.Changed = true;
 	persInfo.Height = e.rowIndex;
 	Titanium.API.debug('Height Changed');
 });
 win.add(heightpicker);
-
 
 
 // set a picker for weight.
@@ -131,30 +163,20 @@ var weightUnit = Ti.UI.createLabel({
 	font:{fontSize:18,fontWeight:'bold'}	
 });
 win.add(weightUnit);
-var rows3 = [];
-var weight = null;
-if (persInfo.WeightUnits == 1){
-	weight = weight_kg;
-	weightUnit.text = 'kg'; 
-}else{
-	weight = weight_lb;	
-	weightUnit.text = 'lb'; 
-}
-for (var i = 0; i < weight.length; i++) {
-	rows3.push(Ti.UI.createPickerRow({title: weight[i]}));
-}
-var column3 = Ti.UI.createPickerColumn( {
-	rows: rows3
-});
+weightUnit.addEventListener('click',function (e){
+	//change height units
+	persInfo.Changed = true;
+	persInfo.WeightUnits = (persInfo.WeightUnits===1? 0: 1);
+	fillWeight(); 
+})
+
 var weightpicker = Ti.UI.createPicker({
 	useSpinner: true, visibleItems: 3,
 	type : Ti.UI.PICKER_TYPE_PLAIN,
 	top: topHW,	left:200,
-	height: 90,
-	columns:column3, 
+	height: 90,width:170,
 	font: {fontSize: "12"}
 });
-weightpicker.setSelectedRow(0,persInfo.Weight,false);
 weightpicker.addEventListener('change', function(e) {
 	Titanium.API.debug('weight Changed');
 	persInfo.Changed = true;
@@ -162,7 +184,8 @@ weightpicker.addEventListener('change', function(e) {
 });
 win.add(weightpicker);
 
-
+fillHeight();
+fillWeight();
 
 // SAVE BUTTON	
 var save = Ti.UI.createButton({

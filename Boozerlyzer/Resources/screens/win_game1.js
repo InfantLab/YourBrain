@@ -7,6 +7,7 @@ var win = Titanium.UI.currentWindow;
 var winHome = win.home;
 win.idx = -1;
 
+var startTime = 0;
 var gameStarted = false;
 var currentObj = 0;
 var points = 0;
@@ -39,6 +40,13 @@ var whatClicked = function (e) {
 	//	Titanium.API.debug(e.globalPoint.x+","+e.globalPoint.y+")");
 		accbonus += calcAccuracyBonus(cen,e);
 		speedbonus += calcSpeedBonus(null, null);
+//		//shrink this one fast so we can move on.
+//		var shrink = Ti.UI.create2DMatrix();
+//		shrink = shrink.scale(0.001);
+		var endanimation = Titanium.UI.createAnimation();
+		endanimation.opacity = 100;
+		endanimation.duration = 10;
+		loc[idx].animate(endanimation);
 		loc[idx].visible = false;
 		count++;
 		gameStep(count);			
@@ -55,6 +63,8 @@ var whatClicked = function (e) {
 		accbonus += calcAccuracyBonus(cen,e);
 		speedbonus += calcSpeedBonus(null, null);
 		count++;
+		var emptyanimation = Titanium.UI.createAnimation();
+		loc[currentObj].animate(emptyanimation);
 		loc[currentObj].visible = false;
 		gameStep(count);			
 	}
@@ -156,6 +166,7 @@ function newGame(){
 	//ultimately this should log stuff
 	//at moment it doesn't do much
 	gameStarted = true;
+	startTime = new Date().getTime();
 	labelGameMessage.visible = false;
 	gameStep(0);
 }
@@ -183,14 +194,25 @@ function gameStep(stepcount){
 	currentObj = Math.floor(6*Math.random());
 	inverted = (Math.random()<0.1);
 	if (inverted){		
-		var flip = Ti.UI.create2DMatrix();
-		flip = flip.rotate(180);
-		loc[currentObj].animate({transform:flip,duration:10});
+//		var flip = Ti.UI.create2DMatrix();
+//		flip = flip.rotate(180);
+//		var a1 = Titanium.UI.createAnimation();
+//		a1.transform = flip;
+//		a1.duration = 10;
+//		loc[currentObj].animate(a1);
+		//loc[currentObj].animate({transform:flip,duration:10});
+		loc[currentObj].transform = Ti.UI.create2DMatrix().rotate(180);
+
 	}
 	loc[currentObj].visible = true;
-	var transform = Ti.UI.create2DMatrix();
-	transform = transform.scale(0.0001);
-	loc[currentObj].animate({transform:transform,duration:shrinkTime});
+//	var shrink = Ti.UI.create2DMatrix();
+//	shrink = shrink.scale(0.001);
+	var a2 = Titanium.UI.createAnimation();
+	//a2.transform = shrink;
+	a2.opacity = 0;
+	a2.duration = shrinkTime;
+	//loc[currentObj].animate({transform:transform,duration:shrinkTime});
+	loc[currentObj].animate(a2);
 	updateScore();	
 }
 
@@ -219,14 +241,15 @@ function clear(o){
 	},1000);
 }
 
-//add a whatClicked event to window 
-win.addEventListener('click',whatClicked);
-win.addEventListener('dblclick',function(ev)
+win.addEventListener('click',function(ev)
 {
 	if (!gameStarted){
 	 	Ti.API.debug('Game Start');
 		gameStarted = true;
 		newGame();
+	}else{
+		//add a whatClicked event to window 
+		whatClicked(ev);
 	}
 });
 
