@@ -54,6 +54,9 @@ function prettyDate(time){
 	}
 	if(day_diff >= 31){
 		var date_year = date.getFullYear();
+		if (date_year < 2011){
+			return 'Never';
+		}
 		var month_name = monthname[date.getMonth()];
 		var date_month = date.getMonth() + 1;
 		if(date_month < 10){

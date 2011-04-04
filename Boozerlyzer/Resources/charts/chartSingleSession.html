@@ -1,0 +1,99 @@
+<html> 
+<head>
+ 
+ <title>RGraph Scatter Plote</title> 
+ <meta name="viewport" content="width=device-width, initial-scale=1.0"/>  
+   <style type="text/css">
+      #myScatter {
+        height: 100%; width: 100%;
+      }
+    </style>
+  <script src='../libraries/RGraph.common.core.lib'></script>
+  <script src="../libraries/RGraph.common.adjusting.js" ></script>
+  <script src='../libraries/RGraph.bar.js'></script>
+
+  <script src="../libraries/RGraph.line.js" ></script>
+  <script src="../libraries/RGraph.scatter.js" ></script>
+  <script src="../libraries/RGraph.bar.js" ></script>
+
+</head> 
+<body> 
+	<canvas id='myScatter'>[No canvas support]</canvas>
+	<script>
+    window.onload = function(){
+		var message = {onload:"complete"};
+		Ti.App.fireEvent('webViewLoaded', message);
+	}
+	
+	function paintScatterChart(e) {
+
+		Ti.API.info("webivew chart e -" + JSON.stringify(e));
+	
+		//get the passed in data	
+		var asobj = JSON.parse(e);
+		var options = asobj.options;
+		var session = asobj.sessData;
+		var selfData = asobj.selfData;
+		var drinkArray = asobj.drinkData;
+//		Ti.API.info("webview chart session - " + JSON.stringify(session));
+//		Ti.API.info("webview chart alldrinks - " + JSON.stringify(drinkArray));
+		Ti.API.info("webview chart selfData - " + JSON.stringify(selfData));
+		
+		var startTime = session[0].StartTime;
+		Ti.API.info("webview chart starttime - " + startTime);
+		var adjDrinkArray = [];
+		var maxUnits = 0;
+		var maxTime = 0;
+		for (var i = 0; i < drinkArray.length; i++) {
+			//Scatter graph doesn't accept a value for xmin. so we have to subtract the
+			//start time for each data point.
+			adjDrinkArray.push([drinkArray[i][0] - startTime, drinkArray[i][1]]);
+			//also find max number of drinks in this session
+			maxUnits = Math.max(maxUnits,drinkArray[i][1]);
+			//hopefully the drinks are in chronological order but do same for time
+			maxTime = Math.max(maxTime,adjDrinkArray[i][0]);
+		}
+		// maxTime = 1.02 * adjDrinkArray[adjDrinkArray.length-1][0];
+		if (options.plotDrinks){
+	
+			Ti.API.info("webview chart adjDrinkArray - " + JSON.stringify(adjDrinkArray));
+			Ti.API.info("webview chart maxunits - " + maxUnits);
+		
+	        var sgdrink = new RGraph.Scatter('myScatter', adjDrinkArray);
+	        sgdrink.Set('chart.background.barcolor1','rgba(255,255,255,1)');
+	        sgdrink.Set('chart.background.barcolor2', 'rgba(255,255,255,1)');
+	        sgdrink.Set('chart.grid.color', 'rgba(238,238,238,1)');
+			sgdrink.Set('chart.linewidth', 3);
+	        sgdrink.Set('chart.gutter', 30);
+	      //  sgdrink.Set('chart.labels', ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']);
+	        sgdrink.Set('chart.xmax', maxTime); // Important!
+	        sgdrink.Set('chart.ymax', maxUnits + 2); 
+	        sgdrink.Set('chart.line', true);
+			sgdrink.Set('chart.labels',['Time']);
+			sgdrink.Draw();
+	
+		}
+		if (options.plotHappiness){
+			var adjHappyArray = [];
+			for (var i = 0; i < selfData.length; i++) {
+				adjHappyArray.push([selfData[i].SelfAssessmentChanged - startTime, selfData[i].Happiness]);
+			}
+			Ti.API.info("webview chart adjhappyarray - " + JSON.stringify(adjHappyArray));
+			var sghappy = new RGraph.Scatter('myScatter', adjHappyArray);
+//	        sghappy.Set('chart.background.barcolor1','rgba(255,255,255,1)');
+//	        sghappy.Set('chart.background.barcolor2', 'rgba(255,255,255,1)');
+//	        sghappy.Set('chart.grid.color', 'rgba(238,238,238,1)');
+	        sghappy.Set('chart.linewidth', 3);
+	        sghappy.Set('chart.gutter', 30);
+	        sghappy.Set('chart.xmax', maxTime); // Important!
+	        sghappy.Set('chart.ymax', 100); 
+	        sghappy.Set('chart.line', true);
+			sghappy.Set('chart.yaxispos', 'right'); //emotions etc labled on right
+			sghappy.Draw();
+		}	
+
+    }
+    </script>
+                         
+ </body>
+</html>

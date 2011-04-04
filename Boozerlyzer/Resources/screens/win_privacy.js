@@ -50,14 +50,18 @@ var debug = Titanium.UI.createImageView({
 	right:10
 });
 debug.addEventListener('click',function(){
-	var db0 = Titanium.Database.install('../ybob.db','ybob');
-	db0.remove();
-	Titanium.API.debug('Removed old YBOB database')
-	db0.close();
+//	var db0 = Titanium.Database.install('../ybob.db','ybob');
+//	db0.remove();
+//	Titanium.API.debug('Removed old YBOB database')
+//	db0.close();
+//	
+//	var db = Titanium.Database.install('../ybob.db','ybob');
+//	Titanium.API.debug('Installed new YBOB database')
+//	db.close();
 	
 	var db = Titanium.Database.install('../ybob.db','ybob');
-	Titanium.API.debug('Installed new YBOB database')
-	db.close();
+	db.execute('CREATE TABLE "main"."NumberStroopSummary" (Errors_GO NUMERIC, Errors_NOGO NUMERIC, GameDuration NUMERIC, GameFinish NUMERIC, GameStart NUMERIC, Hits_GO NUMERIC, Hits_NOGO NUMERIC, ID INTEGER PRIMARY KEY, Level NUMERIC, ReactionTimeGO NUMERIC, ReactionTimeNOGO NUMERIC, TotalScore NUMERIC)');
+	db.execute('INSERT INTO "main"."NumberStroopSummary" SELECT * FROM "main"."StatLearnSummary"');
 });
 win.add(debug);
 

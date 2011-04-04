@@ -180,7 +180,7 @@ function gameStep(stepcount){
 	if (missCount > 4){
 		
 		labelGameMessage.visible = true;
-		labelGameMessage.text = 'Final Score: ' + (points+inhibitbonus+accbonus+speedbonus) + '\nGame Over';
+		labelGameMessage.text = 'Final Score: ' + Math.floor(points+inhibitbonus+accbonus+speedbonus) + '\nGame Over';
 		count = 0;
 		missCount = 0;
 		setTimeout(function()
@@ -238,7 +238,7 @@ function clear(o){
 		{
 			o.text = "";
 		}
-	},1000);
+	},2000);
 }
 
 win.addEventListener('click',function(ev)

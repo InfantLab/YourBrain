@@ -12,62 +12,76 @@ Ti.include('../data/doseageLog.js');
 var topAxis = 10;
 var leftAxis = 30;
 var sizeDataPoint = 24;
-var sizeAxisIcon = 32;
+var sizeAxisIcon = 48;
 var widthAxis = 360;	
 var heightAxis = 216;
 var axisInset = 18;  //how far inset is the origin?
 
 
-var axisView = Ti.UI.createView({
-	width:widthAxis,
-	height:heightAxis,
-	top:topAxis,
-	left:leftAxis,
-});
-win.add(axisView);
-var blackAxisView = Ti.UI.createImageView({
-	image:'../images/blackaxis800x480.png',
-	left:0,
-	top:0,
-	height:heightAxis,
-	width:widthAxis
-})
-axisView.add(blackAxisView);	
-
-value = 100;
-value2 = 100;
-value3 = 150;
-var percent = 50;
+//var axisView = Ti.UI.createView({
+//	width:widthAxis,
+//	height:heightAxis,
+//	top:topAxis,
+//	left:leftAxis,
+//});
+//win.add(axisView);
+//var blackAxisView = Ti.UI.createImageView({
+//	image:'../images/blackaxis800x480.png',
+//	left:0,
+//	top:0,
+//	height:heightAxis,
+//	width:widthAxis
+//})
+//axisView.add(blackAxisView);	
 
 var SessionID = Titanium.App.Properties.getInt('SessionID');
 
+var sessionData = sessions.getSession(SessionID);
 //All dose data for this session
-var AllDrinks = doseageLog.getAllSessionData(SessionID);
+var AllDrinks = doseageLog.getDataArray_TimeUnits(SessionID);
+var selfAssess = selfAssessment.getAllSessionData(SessionID);
 
+Ti.API.debug('win results selfAssess' + JSON.stringify(selfAssess));
 
 // Attach an APP wide event listener
-Ti.App.addEventListener('webToTi', function(e) {
-	Ti.API.info('webToTi Sent:'+e.test);
-
+Ti.App.addEventListener('webViewLoaded', function(e) {
+	//Ti.API.info('webToTi Sent:'+e.onload);
+//	Ti.App.fireEvent("TestFiring", {
+//		drinkData: AllDrinks
+//	});
+//	Ti.App.fireEvent("paintScatterChart", {
+//		test:'Caspar'
+//	});
+	redrawGraph();
 });
 
-
-// Create a timeout - we want time for the window to be ready before we fire the event
-setTimeout(function(e){
-	Ti.App.fireEvent("webPageReady", {
-		"alldrinks": AllDrinks
-	});
-},10000);  // 10s should be enough :)
+function redrawGraph(){
+		//webview has loaded so we can draw our chart
+	var options = {
+		plotDrinks:switchDrinks.value,
+		plotHappiness:switchHappiness.value,
+		plotEnergy:switchEnergy.value,
+		plotDrunk:switchDrunk.value,
+		plotStroop:switchStroop
+	};	
+	var myData =  JSON.stringify({
+		options: options,
+		sessData: sessionData,
+		selfData: selfAssess, 			
+		drinkData:AllDrinks	});
+	
+	webview.evalJS("paintScatterChart('" + myData + "')");
+}
 
 
 var webview = Ti.UI.createWebView({
-	top:0,
+	bottom:60,
 	left:0,
 	height:'auto',
 	width:'auto',
-	url:'../charts/chart3.html'
+	url:'../charts/chartSingleSession.html'
 });
-axisView.add(webview);
+win.add(webview);
 
 
 var fast = Ti.UI.createImageView({
@@ -93,67 +107,91 @@ var time = Ti.UI.createImageView({
 	height:sizeAxisIcon,
 	width:sizeAxisIcon,
 	top:topAxis+heightAxis,
-	left:widthAxis	
+	right:4	
 })
 win.add(time);
 
-var labelCurrentSession = Titanium.UI.createLabel({
-	text:'Session started\n Sat 3th, 12:00pm',
-	font:{fontSize:12,fontFamily:'Helvetica Neue'},
-	textAlign:'center',
-	left:56,
-	height:32,
-	width:120,
-	bottom:1,
-	color:'white',
-	backgroundColor:'black',
-	borderColor:'gray',
-	borderRadius:4
+// 
+// SOME TOGGLES FOR WHAT WE WILL DISPLAY
+//
+var switchDrinks = Ti.UI.createSwitch({
+	style : Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
+	title: 'Drinks',
+	font:{fontSize:12},
+	bottom :10,
+	left: 60,
+	value:true
 });
-labelCurrentSession.addEventListener('click', function(){
-		newSessionDialog.show();
+switchDrinks.addEventListener('change', function(){
+	redrawGraph();
 });
+win.add(switchDrinks);
 
-//
-///////////////////////////////////////
-//// Plot some data
-//
-//sessionData = sessions.getLatestData(0);
-//drinkData = doseageLog.getAllSessionData(sessionData.ID);
-//emotionData = selfAssesment.getAllSessionData(sessionData.ID);
-//
-//var sessionLength = sessionData.LastUpdate - sessionData.StartTime; 
-//var totalDrunk = numUnits(drinkData);
-//if (drinkData.length > 0 ){
-//	var maxUnits = totalDrunk[drinkData.length-1];
-//	
-//	for (var step = 0;step<drinkData.length;step++){
-//
-//		var x =	axisInset+(widthAxis-axisInset)*(drinkData[step].DoseageChanged- sessionData.StartTime)/sessionLength;
-//		var y = axisInset+(heightAxis-axisInset)*(totalDrunk[step])/maxUnits;
-//		
-//		var booze = Titanium.UI.createImageView({
-//			image:'../icons/Misc.png',
-//			height:sizeDataPoint,
-//			width:sizeDataPoint,
-//			bottom:y,
-//			left:x
-//		});
-//		axisView.add(booze);
-//	}
-//}
+var switchHappiness = Ti.UI.createSwitch({
+	style : Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
+	title: 'Happiness',
+	font:{fontSize:12},
+	bottom : 20,
+	left: 126,
+	value:true
+});
+switchHappiness.addEventListener('change', function(){
+	redrawGraph();
+});
+win.add(switchHappiness);
+
+var switchEnergy = Ti.UI.createSwitch({
+	style : Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
+	title: 'Energy',
+	font:{fontSize:12},
+	bottom : 0,
+	left: 126,
+	value:true
+});
+switchEnergy.addEventListener('change', function(){
+	redrawGraph();
+});
+win.add(switchEnergy);
+
+var switchDrunk = Ti.UI.createSwitch({
+	style : Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
+	title: 'Drunkeness',
+	font:{fontSize:12},
+	bottom :10,
+	left: 220,
+	value:true
+});
+switchDrunk.addEventListener('change', function(){
+	redrawGraph();
+});
+win.add(switchDrunk);
+
+var switchStroop = Ti.UI.createSwitch({
+	style : Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
+	title: 'Stroop score',
+	font:{fontSize:12},
+	bottom : 10,
+	left: 320,
+	value:true
+});
+switchStroop.addEventListener('change', function(){
+	redrawGraph();
+});
+win.add(switchStroop);
+
+
 
 //
 // Cleanup and return home
 win.addEventListener('android:back', function(e) {
 	if (winHome === undefined || winHome === null) {
-		winHome = Titanium.UI.createWindow({ modal:true,
-			url: '../app.js',
-			title: 'Boozerlyzer',
+		winHome = Titanium.UI.createWindow({ 
+			url:'../app.js',
+			title:'Boozerlyzer',
 			backgroundImage: '../images/smallcornercup.png',
 			orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 		})
 	}
-	win.close();
 	winHome.open();
+	win.close();
 });

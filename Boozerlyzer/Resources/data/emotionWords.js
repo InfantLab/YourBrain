@@ -89,6 +89,15 @@ var emotionWords = (function(){
 		}	
 	};
 
+	api.PlayCount = function (){
+		var selectStr = 'SELECT COUNT(*) from WORDCHOICES  where WordType = ?';
+		var rows = conn.execute(selectStr, 'EmotionalWords');
+		if (rows !== null) {
+			return rows.field(0);
+		}else{
+			return 0;
+		}
+	};
 	/** 
 	 * Participant has suggested new pissonym. Let's add it to the list
 	 */

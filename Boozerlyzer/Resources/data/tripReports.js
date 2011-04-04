@@ -102,5 +102,15 @@ var tripReports = (function(){
 		return false;
 	};
 	
+	api.PlayCount = function (){
+		var selectStr = 'SELECT COUNT(*) from TripReports';
+		var rows = conn.execute(selectStr);
+		if (rows !== null) {
+			return rows.field(0);
+		}else{
+			return 0;
+		}
+	};
+	
 	return api;
 }());

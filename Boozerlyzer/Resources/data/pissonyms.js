@@ -76,6 +76,16 @@ var pissonyms = (function(){
 			Titanium.API.debug('Emotional Word choices, lastInsertRowId = ' + conn.lastInsertRowId);	
 		}
 	};
+	
+	api.PlayCount = function (){
+		var selectStr = 'SELECT COUNT(*) from WORDCHOICES  where WordType = ?';
+		var rows = conn.execute(selectStr, 'Pissonym');
+		if (rows !== null) {
+			return rows.field(0);
+		}else{
+			return 0;
+		}
+	};
 
 	/** 
 	 * Participant has suggested new pissonym. Let's add it to the list

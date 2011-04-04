@@ -23,7 +23,7 @@ if (AllDrinks === null || AllDrinks === false){
 }
 Titanium.API.debug(JSON.stringify(AllDrinks));
 var sessionData = sessions.getSession(SessionID);
-Titanium.API.debug(JSON.stringify(sessionData));
+Titanium.API.debug('sessionData -' + JSON.stringify(sessionData));
 //find the last row 
 var lastIndex = AllDrinks.length - 1;
 //we will use these to keep count of drinks..
@@ -382,7 +382,7 @@ var tv = Ti.UI.createTableView({
 sessionView.add(tv);
 
 function setSessionLabel(){
-	headerLabel.text = 'Session began\n' + formatDayPlusTime(Titanium.App.Properties.getInt('SessionStart'),true);
+	headerLabel.text = 'Session began: ' + formatDayPlusTime(sessionData[0].StartTime,true);
 }
 
 setSessionLabel();
@@ -445,8 +445,8 @@ var newgame = Titanium.UI.createImageView({
 });
 newgame.addEventListener('click',function(){
 	var winplay = Titanium.UI.createWindow({ modal:true,
-		url:'screens/win_game1.js',
-		title:'YBOB Game 1 - Level 1',
+		url:'screens/win_gameMenu.js',
+		title:'YBOB Game ',
 		backgroundImage:'../images/smallcornercup.png',
 		orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 	});

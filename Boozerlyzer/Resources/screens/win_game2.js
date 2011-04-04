@@ -20,7 +20,7 @@ Ti.include('../data/emotionWords.js');
 var win = Titanium.UI.currentWindow;
 var winHome = win.Home;
 var suggest;
-var labelGameMessage
+var labelGameMessage;
 var winopened = parseInt((new Date()).getTime()/1000);
 var gameStarted = false;
 var	initialised = false;
@@ -219,7 +219,7 @@ function setUpThisRound(){
 		for (var i = 0; i < 6; i++) {
 			wordChoices[i] = pissonymList[i].Pissonym;
 		}
-		suggest.visible = true;
+		suggest.visible = false;
 	}
 	wordList = '';
 	for (var i = 0; i < 6; i++) {

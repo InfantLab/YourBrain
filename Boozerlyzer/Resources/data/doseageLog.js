@@ -94,7 +94,7 @@ var doseageLog = (function(){
 	//get all data for this Session ID 
 	api.getAllSessionData = function (sessionID){
 		var mostRecentData = [];
-		var rows = conn.execute('SELECT * FROM DoseageLog WHERE SESSIONID = ? ORDER BY DoseageStart ASC', sessionID);
+		var rows = conn.execute('SELECT * FROM DoseageLog WHERE SESSIONID = ? ORDER BY DoseageChanged ASC', sessionID);
 		if ((rows !== null) && (rows.isValidRow())) {
 			while(rows.isValidRow()){
 				mostRecentData.push({
@@ -116,5 +116,17 @@ var doseageLog = (function(){
 		return false;
 	};
 	
+	//get simplified 2d array of time & units
+	api.getDataArray_TimeUnits = function(sessionID){
+		
+		var rawData  = api.getAllSessionData(sessionID);
+		var dataArray = [];
+		
+		for (var i = 0; i < rawData.length; i++) {
+			var units = rawData[i].HalfPints + rawData[i].SmallWine + rawData[i].SingleSpirits;
+			dataArray.push([rawData[i].DoseageChanged, units]);
+		}
+		return dataArray;
+	}	
 	return api;
 }());

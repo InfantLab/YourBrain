@@ -175,5 +175,27 @@ var sessions = (function(){
 		}];
 	};
 
+	api.SessionCount = function (mateInclude){
+		var selectStr;
+		if (mateInclude === 1){
+			//include friends sessions
+			selectStr = 'SELECT COUNT(*) from sessions'
+		} else if (mateInclude === 2){
+			//just friends sessions 
+			selectStr = 'SELECT COUNT(*) from sessions where UserID > 0'
+		}else {
+			//just main user sessions
+			selectStr = 'SELECT COUNT(*) from sessions where UserID = 0'
+		}
+		
+		var rows = conn.execute(selectStr);
+		if (rows !== null) {
+			return rows.field(0);
+		}else{
+			return 0;
+		}
+	};
+
+
 	return api;
 }());

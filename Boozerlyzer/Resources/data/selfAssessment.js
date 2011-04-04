@@ -87,12 +87,13 @@ var selfAssessment = (function(){
 	api.setData = function (newData){
 		Titanium.API.debug('selfAssessment setData');		
 		if (newData[0].Changed){
+			var now = parseInt((new Date()).getTime()/1000);
 			var insertstr = 'INSERT INTO SelfAssessment (SessionID, DrunkBlur,Drunkeness,Energy,EnergyBlur,Happiness,HappyBlur,SelfAssessmentStart,SelfAssessmentChanged)';
 			insertstr += 'VALUES(?,?,?,?,?,?,?,?,?)';
-			conn.execute(insertstr,newData[0].SessionID,newData[0].DrunkBlur,newData[0].Drunkeness,newData[0].Energy,newData[0].EnergyBlur,newData[0].Happiness,newData[0].HappyBlur,newData[0].SelfAssessmentStart,newData[0].SelfAssessmentChanged);
+			conn.execute(insertstr,newData[0].SessionID,newData[0].DrunkBlur,newData[0].Drunkeness,newData[0].Energy,newData[0].EnergyBlur,newData[0].Happiness,newData[0].HappyBlur,newData[0].SelfAssessmentStart,now);
 			Titanium.API.debug('selfAssessment updated, rowsAffected = ' + conn.rowsAffected);
 			Titanium.API.debug('selfAssessment, lastInsertRowId = ' + conn.lastInsertRowId);
-			Titanium.API.debug('selfAssessment, lastInsertRowId = ' + newData.SessionID);
+			Titanium.API.debug('selfAssessment, lastInsertRowId = ' + newData[0].SessionID);
 		}
 	};
 	
@@ -101,29 +102,24 @@ var selfAssessment = (function(){
 		var mostRecentData = [];
 		//cast cos sessionID sometimes treated as string
 		var sessID = parseInt(sessionID);
-		var rows = conn.execute('SELECT * FROM SelfAssessment WHERE SESSION ID = ? ORDER BY SelfAssessmentStart ASC', sessID);
+		var rows = conn.execute('SELECT * FROM SelfAssessment WHERE SESSIONID = ? ORDER BY SelfAssessmentChanged ASC', sessID);
 		if ((rows !== null) && (rows.isValidRow())) {
-			var maxid = parseInt(rows.field(0));
-			rows.close();
-			rows = conn.execute('SELECT * FROM PERSONALINFO WHERE ID = ' + maxid);
-			if ((rows !== null) && (rows.isValidRow())) {
-				while(row.isValidRow()){
-					mostRecentData.push({
-						SesssionID:sessionID,
-						DrunkBlur: parseFloat(rows.fieldByName('DrunkBlur')),
-						Drunkeness: parseInt(rows.fieldByName('Drunkeness')),
-						Energy: parseInt(rows.fieldByName('Energy')),
-						EnergyBlur: parseFloat(rows.fieldByName('EnergyBlur')),
-						Happiness: parseInt(rows.fieldByName('Happiness')),
-						HappyBlur: parseInt(rows.fieldByName('HappyBlur')),
-						SelfAssessmentStart: parseInt(rows.fieldByName('SelfAssessmentStart')),
-						SelfAssessmentChanged: parseInt(rows.fieldByName('SelfAssessmentChanged'))
-					});
-					row.next();				
-				}
-				rows.close();
-				return mostRecentData;
+			while(rows.isValidRow()){
+				mostRecentData.push({
+					SessionID:sessionID,
+					DrunkBlur: parseFloat(rows.fieldByName('DrunkBlur')),
+					Drunkeness: parseInt(rows.fieldByName('Drunkeness')),
+					Energy: parseInt(rows.fieldByName('Energy')),
+					EnergyBlur: parseFloat(rows.fieldByName('EnergyBlur')),
+					Happiness: parseInt(rows.fieldByName('Happiness')),
+					HappyBlur: parseInt(rows.fieldByName('HappyBlur')),
+					SelfAssessmentStart: parseInt(rows.fieldByName('SelfAssessmentStart')),
+					SelfAssessmentChanged: parseInt(rows.fieldByName('SelfAssessmentChanged'))
+				});
+				rows.next();				
 			}
+			rows.close();
+			return mostRecentData;
 		}
 		//something didn't work
 		return false;

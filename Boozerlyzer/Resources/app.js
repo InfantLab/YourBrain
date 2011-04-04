@@ -1,9 +1,16 @@
 //the start screen for the YBOB boozerlyzer
 var homeWin = Titanium.UI.createWindow({
 	exitOnClose: true,
-	orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT],  //Landscape mode
 	title:'YBOB Boozerlyzer',
 	backgroundImage:'../images/smallcornercup.png'});
+	
+homeWin.orientationModes = [
+    Titanium.UI.LANDSCAPE_LEFT,
+    Titanium.UI.LANDSCAPE_RIGHT
+];
+Titanium.UI.orientation = Titanium.UI.LANDSCAPE_LEFT;
+
+homeWin.orien
 Titanium.UI.title = "Boozerlyzer";
 
 Ti.include('../js/datetimehelpers.js');
@@ -99,44 +106,33 @@ var matemode = Titanium.UI.createImageView({
 	top:20,
 	left:optionsLeft + 52
 });
-matemode.addEventListener('click',function(){
-	var winreport = Titanium.UI.createWindow({ modal:true,
-		url:'../screens/win_results1.js',
-		title:'Personal Information',
-		backgroundImage:'../images/smallcornercup.png',
-		orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
-	});
-	winreport.home = homeWin; //reference to home
-	winreport.open();
-});
 homeWin.add(matemode);
 
 
-var debug = Titanium.UI.createImageView({
-	image:'../icons/Misc.png',
-	height:48,
-	width:48,
-	top:60,
-	right:10
-});
-
-
-debug.addEventListener('click',function(){
-	var gametypes = ['Pissonyms', 'Emotion', 'WeFeelFine'];
-	var pick = Math.round(3*Math.random());
-	var winpissonym = Titanium.UI.createWindow({ modal:true,
-		url:'../screens/win_game2.js',
-		title:'Pissonyms',
-		backgroundImage:'../images/smallcornercup.png',
-		orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
-		});
-	winpissonym.home = homeWin; //reference to home
-	winpissonym.gameType = gametypes[pick];
-	winpissonym.numRounds = 3;
-	winpissonym.open();
-});
-
-homeWin.add(debug);
+//var debug = Titanium.UI.createImageView({
+//	image:'../icons/Misc.png',
+//	height:48,
+//	width:48,
+//	top:60,
+//	right:10
+//});
+//
+//
+//debug.addEventListener('click',function(){
+//	var pick = Math.round(3*Math.random());
+//	var winpissonym = Titanium.UI.createWindow({ modal:true,
+//		url:'../screens/win_game2.js',
+//		title:'Pissonyms',
+//		backgroundImage:'../images/smallcornercup.png',
+//		orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
+//		});
+//	winpissonym.home = homeWin; //reference to home
+//	winpissonym.gameType = gametypes[pick];
+//	winpissonym.numRounds = 3;
+//	winpissonym.open();
+//});
+//
+//homeWin.add(debug);
 
 var report = Titanium.UI.createImageView({
 	image:'../icons/ybob-logo2-sml.png',
@@ -148,7 +144,7 @@ var report = Titanium.UI.createImageView({
 
 report.addEventListener('click',function(){
 	var winreport = Titanium.UI.createWindow({ modal:true,
-		url:'../screens/win_results1.js',
+		url:'../screens/win_results2.js',
 		title:'Personal Information',
 		backgroundImage:'../images/smallcornercup.png',
 		orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
@@ -226,8 +222,8 @@ var newgame = Titanium.UI.createImageView({
 });
 newgame.addEventListener('click',function(){
 	var winplay = Titanium.UI.createWindow({ modal:true,
-		url:'../screens/win_game1.js',
-		title:'YBOB Game 1 - Level 1',
+		url:'../screens/win_gameMenu.js',
+		title:'YBOB Game Menu',
 		backgroundImage:'../images/smallcornercup.png',
 		orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 		});
@@ -290,8 +286,9 @@ var session = sessions.getLatestData(0);
 if (session === null || session === false){
 	session = sessions.createNewSession(false);
 }
+var timeSinceUpdate = prettyDate(session[0].LastUpdate);
 function rewriteUpdateLabel(){
-	var timeSinceUpdate = prettyDate(session[0].LastUpdate);
+	timeSinceUpdate = prettyDate(session[0].LastUpdate);
 	labelLastUpdate.text = 'Last activity\n' + timeSinceUpdate;
 
 }
@@ -301,6 +298,7 @@ Titanium.API.debug("session lastupdate: " + session[0].LastUpdate);
 var now = parseInt((new Date()).getTime()/1000);
 if (now - session[0].LastUpdate  <43200){ //12hours
 }else if (now - session[0].LastUpdate < 129600){ //36 hours
+	newSessionDialog.title = 'Last update ' + timeSinceUpdate + '\nStart a new session?';
 	newSessionDialog.show();
 }else{
 	//>36 hours since last update, don't ask just start new
@@ -316,8 +314,8 @@ Titanium.App.Properties.setInt('SessionChanged',session[0].LastUpdate/1000);
 var mateModeSwitch = Ti.UI.createSwitch({
 	style : Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
 	title: 'Mate Mode',
-	top : 4,
-	right: 4
+	top : 60,
+	right: 2
 });
 homeWin.add(mateModeSwitch);
 homeWin.open();
@@ -329,22 +327,3 @@ homeWin.addEventListener('focus', function(){
 	    rewriteUpdateLabel();		
 	}
 });
-
-var charttest = Titanium.UI.createImageView({
-	image:'../icons/line_chart.png',
-	height:48,
-	width:48,
-	top:120,
-	right:10
-});
-charttest.addEventListener('click',function(){
-	var newchart = Titanium.UI.createWindow({ modal:true,
-		url:'../screens/win_results2.js',
-		title:'How are you feeling?',
-		backgroundImage:'../images/smallcornercup.png',
-		modal:true		
-	});
-	newchart.home = homeWin; //reference to home
-	newchart.open();
-});
-homeWin.add(charttest);

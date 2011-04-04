@@ -73,5 +73,15 @@ var weFeelFineWords = (function(){
 		}	
 	};	
 	
+	api.PlayCount = function (){
+		var selectStr = 'SELECT COUNT(*) from WORDCHOICES  where WordType = ?';
+		var rows = conn.execute(selectStr, 'WeFeelFine');
+		if (rows !== null) {
+			return rows.field(0);
+		}else{
+			return 0;
+		}
+	};
+	
 	return api;
 }());

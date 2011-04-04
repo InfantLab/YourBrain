@@ -323,11 +323,12 @@ var newgame = Titanium.UI.createImageView({
 newgame.addEventListener('click',function(){
 	var winplay = Titanium.UI.createWindow({ modal:true,
 		modal:true,
-		url:'../screens/win_game1.js',
-		title:'YBOB Game 1 - Level 1',
+		url:'../screens/win_gameMenu.js',
+		title:'YBOBGame',
 		backgroundImage:'../images/smallcornercup.png'
 	});
 	winplay.open();
+	winplay.home = winHome;
 	win.close();
 });
 win.add(newgame);
