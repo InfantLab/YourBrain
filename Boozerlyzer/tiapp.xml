@@ -1,11 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <ti:app xmlns:ti="http://ti.appcelerator.org">
+    <deployment-targets>
+        <target device="iphone">false</target>
+        <target device="ipad">false</target>
+        <target device="android">true</target>
+    </deployment-targets>
 <id>net.yourbrainondrugs.ybob</id>
 <name>Boozerlyzer</name>
-<version>0.14</version>
-<publisher>caspar</publisher>
+<version>0.17</version>
+<publisher>YourBrainonDrugs</publisher>
 <url>http://yourbrainondrugs.net</url>
-<description>No description provided</description>
+<description>Smartphone games to assess the cognitive and emotional effects of drugs and alcohol.</description>
 <copyright>2011 by Caspar Addyman</copyright>
 <icon>ybob-logo2-sml.png</icon>
     <persistent-wifi>false</persistent-wifi>

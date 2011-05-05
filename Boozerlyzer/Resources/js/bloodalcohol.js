@@ -21,7 +21,8 @@ var heightStepLb = 10;
  
 /**
  * Blood Alcohol calculation, returns an array of values for each row of doseageData.
- * If personalInfo is unavailable we use an average default value
+ * If personalInfo is unavailable we use an average default value. 
+ * THIS VERSION ISN@T VERY GOOD. NOT FOLLOWING A SAWTOOTH PATTERN.
  * 
  * @param {Object} sessionData
  * @param {Object} doseageData
@@ -102,7 +103,7 @@ function BACalculate(sessionData,doseageData,personalInfo,nowFlag) {
  * @param {Object} mMetabolicRate
  * @param {Object} mTimeInHours
  */
-function CalcBAC(mBodyWeightKG, mPercentWater, mUnitsEtOH, mMetabolicRateAdjust, mTimeInHours) {
+function CalcBAC(mBodyWeightKG, mPercentWater, mUnitsEtOH, mMetabolicRateAdjust, mTimeInHours, mStartingBAC) {
 		//Based on calculations done by http://www.nhtsa.dot.gov/people/injury/alcohol/bacreport.html
 		// NHTSA (1994): BAC = (A x 0.806)/(W x TBW x 1000) x 100 - ([[beta].sub.60] x t)
 		//	 TBW = 0.58 for men, 0.49 for females

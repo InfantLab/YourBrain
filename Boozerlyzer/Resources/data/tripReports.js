@@ -9,21 +9,22 @@
 // Using the JavaScript module pattern, create a persistence module for CRUD operations
 // Based on Kevin Whinnery's example: http://developer.appcelerator.com/blog/2010/07/how-to-perform-crud-operations-on-a-local-database.html
 // One tutorial on the Module Pattern: http://www.adequatelygood.com/2010/3/JavaScript-Module-Pattern-In-Depth
-var tripReports = (function(){
+(function(){
 	
 	//create an object which will be our public API
-	var api = {};
+	Titanium.App.boozerlyzer.data.tripReports = {};
 	
 	//maintain a database connection we can use
-	var conn = Titanium.Database.open('ybob');
-  
+  	var conn = Titanium.Database.install('../ybob.db','ybob');
+
 	//get data for the maximum row id 
-	api.getLatestData = function (){
+	Titanium.App.boozerlyzer.data.tripReports.getLatestData = function (){
 		var mostRecentData = [];
 		var sessionID = Titanium.App.Properties.getInt('SessionID',1);
 		//have to do count first because max on empty set seems to behave badly
 		var rows = conn.execute('SELECT count(*) FROM TripReports WHERE SESSIONID = ?', sessionID);
 		if (rows !== null && rows.isValidRow() && rows.field(0) > 0 ){		
+			rows.close();
 			var rows = conn.execute('SELECT max(ID) FROM TripReports WHERE SESSIONID = ?', sessionID);
 			if (rows !== null && (rows.isValidRow())) {
 				var maxid = rows.field(0);
@@ -45,7 +46,7 @@ var tripReports = (function(){
 		return false;
 	};
 	
-	api.setData = function (newData){
+	Titanium.App.boozerlyzer.data.tripReports.setData = function (newData){
 		Titanium.API.debug('TripReports setData');
 		
 		for (var i = 0; i< newData.length; i++){
@@ -60,7 +61,7 @@ var tripReports = (function(){
 		}
 	};
 	
-	api.newReport = function (){
+	Titanium.App.boozerlyzer.data.tripReports.newReport = function (){
 		var result = [];
 		var sessionID = Titanium.App.Properties.getInt('SessionID');
 		var insertstr = 'INSERT INTO TripReports (ReportStarted,ReportChanged,SessionID,Content)';
@@ -80,7 +81,7 @@ var tripReports = (function(){
 	};
 		
 	//get all data for this Session ID 
-	api.getAllSessionData = function (sessionID){
+	Titanium.App.boozerlyzer.data.tripReports.getAllSessionData = function (sessionID){
 		var mostRecentData = [];
 		var sessID = parseInt(sessionID);
 		var rows = conn.execute('SELECT * FROM TripReports WHERE SESSIONID = ? ORDER BY DoseageStart ASC', sessionID);
@@ -102,7 +103,7 @@ var tripReports = (function(){
 		return false;
 	};
 	
-	api.PlayCount = function (){
+	Titanium.App.boozerlyzer.data.tripReports.PlayCount = function (){
 		var selectStr = 'SELECT COUNT(*) from TripReports';
 		var rows = conn.execute(selectStr);
 		if (rows !== null) {
@@ -112,5 +113,4 @@ var tripReports = (function(){
 		}
 	};
 	
-	return api;
 }());

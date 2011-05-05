@@ -11,17 +11,17 @@
 // Using the JavaScript module pattern, create a persistence module for CRUD operations
 // Based on Kevin Whinnery's example: http://developer.appcelerator.com/blog/2010/07/how-to-perform-crud-operations-on-a-local-database.html
 // One tutorial on the Module Pattern: http://www.adequatelygood.com/2010/3/JavaScript-Module-Pattern-In-Depth
-var sessions = (function(){
+(function(){
 	
 	//create an object which will be our public API
-	var api = {};
+	Ti.App.boozerlyzer.data.sessions = {};
 	
 	//maintain a database connection we can use
 	var conn = Titanium.Database.install('../ybob.db','ybob');
   
 	//get data for the maximum row id for this userID
 	// where 0 is default and >0 implies we are in 'matemode'
-	api.getLatestData = function (userID){
+	Ti.App.boozerlyzer.data.sessions.getLatestData = function (userID){
 		var mostRecentData = [];
 		var uid = parseInt(userID);
 		//this line probably unnecessary but i had some paranoia that max(id) didn't work properly
@@ -58,7 +58,7 @@ var sessions = (function(){
 	};
 
 	//user adjusting the start time for this session	
-	api.changeStartTime = function (sessionID, startTime){
+	Ti.App.boozerlyzer.data.sessions.changeStartTime = function (sessionID, startTime){
 		Titanium.API.debug('session changeStartTime');
 		var now  = parseInt((new Date()).getTime()/1000);		
 		var updatestr = 'Update Sessions set StartTime = ?, LastUpdate = ? where ID = ?';
@@ -69,7 +69,7 @@ var sessions = (function(){
 	};
 	
 	//Something has changed during this session update the timestamp
-	api.Updated = function (sessionID){
+	Ti.App.boozerlyzer.data.sessions.Updated = function (sessionID){
 		Titanium.API.debug('session update');
 		var now  = parseInt((new Date().getTime())/1000);		
 		var sessID = parseInt(sessionID);
@@ -80,7 +80,7 @@ var sessions = (function(){
 	};
 
 	//get a Session by ID (id is unique) 
-	api.getSession = function (ID){
+	Ti.App.boozerlyzer.data.sessions.getSession = function (ID){
 		var allSessionData = [];
 		var rows = null;
 		var id = parseInt(ID);
@@ -106,7 +106,7 @@ var sessions = (function(){
 	};
 		
 	//get all Sessions for this user ID 
-	api.getAllSessions = function (userID){
+	Ti.App.boozerlyzer.data.sessions.getAllSessions = function (userID){
 		var allSessionData = [];
 		var rows = null;
 		if (userID === null) {
@@ -140,7 +140,7 @@ var sessions = (function(){
 		return false;
 	};
 	
-	api.createNewSession = function (matemode){
+	Ti.App.boozerlyzer.data.sessions.createNewSession = function (matemode){
 		var sessionID = null;
 		var insertstr = 'insert into Sessions (Created, AppVersion, UserID,StartTime,LastUpdate) Values(?,?,?,?,?)'; 
 		var userID = -1;
@@ -175,7 +175,7 @@ var sessions = (function(){
 		}];
 	};
 
-	api.SessionCount = function (mateInclude){
+	Ti.App.boozerlyzer.data.sessions.SessionCount = function (mateInclude){
 		var selectStr;
 		if (mateInclude === 1){
 			//include friends sessions
@@ -196,6 +196,5 @@ var sessions = (function(){
 		}
 	};
 
-
-	return api;
+//	return api;
 }());

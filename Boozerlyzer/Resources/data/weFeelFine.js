@@ -1,23 +1,24 @@
 /**
  * @author Caspar Addyman
  * 
- * helper functions for reading and writing drunk settings
- * to and from the database tables Pissonyms and  DrunkenessReports
+ * helper functions for reading and writing weFeelFine choices.
+ * This ia a long list of feelings taken from the WefeelFine.org
+ * project website. 
  */
 
 // Using the JavaScript module pattern, create a persistence module for CRUD operations
 // Based on Kevin Whinnery's example: http://developer.appcelerator.com/blog/2010/07/how-to-perform-crud-operations-on-a-local-database.html
 // One tutorial on the Module Pattern: http://www.adequatelygood.com/2010/3/JavaScript-Module-Pattern-In-Depth
-var weFeelFineWords = (function(){
+(function(){
 	
 	//create an object which will be our public API
-	var api = {};
+	Titanium.App.boozerlyzer.data.weFeelFine = {};
 	
 	//maintain a database connection we can use
-	var conn = Titanium.Database.open('ybob');
-  
+  	var conn = Titanium.Database.install('../ybob.db','ybob');
+
 	//get data for the maximum row id 
-	api.selectNRandomRows = function (numRows, frequencyRange){
+	Titanium.App.boozerlyzer.data.weFeelFine.selectNRandomRows = function (numRows, frequencyRange){
 		var returnData = [];
 		var nRows = parseInt(numRows);
 		//TODO Filter by frequency range
@@ -38,7 +39,7 @@ var weFeelFineWords = (function(){
 		return false;
 	};
 	
-	api.getWordInfo = function (word){
+	Titanium.App.boozerlyzer.data.weFeelFine.getWordInfo = function (word){
 		var returnData = [];
 		//TODO Filter by frequency range
 		var rows = conn.execute('SELECT * FROM weFeelFineLists WHERE Feeling = ?', word);
@@ -62,7 +63,7 @@ var weFeelFineWords = (function(){
 	 * Participant has chosen a pissonym - record their choice
 	 * @param {Object} choiceData
 	 */
-	api.Chosen = function (choiceData){
+	Titanium.App.boozerlyzer.data.weFeelFine.Chosen = function (choiceData){
 		Titanium.API.debug('chosen weFeelFine word ' + JSON.stringify(choiceData));
 		var sessionID = Titanium.App.Properties.getInt('SessionID');
 		for (var i=0; i<choiceData.length; i++){
@@ -73,7 +74,7 @@ var weFeelFineWords = (function(){
 		}	
 	};	
 	
-	api.PlayCount = function (){
+	Titanium.App.boozerlyzer.data.weFeelFine.PlayCount = function (){
 		var selectStr = 'SELECT COUNT(*) from WORDCHOICES  where WordType = ?';
 		var rows = conn.execute(selectStr, 'WeFeelFine');
 		if (rows !== null) {
@@ -83,5 +84,4 @@ var weFeelFineWords = (function(){
 		}
 	};
 	
-	return api;
 }());

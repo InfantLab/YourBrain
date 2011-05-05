@@ -5,107 +5,160 @@
  * to and from the database table DoseageLog 
  */
 
-function numUnits(drinkData){
-	var unitsPerEvent = []
-	for(var event = 0; event<drinkData.length;event++){
-		unitsPerEvent.push(drinkData[event].HalfPints + drinkData[event].SingleSpirits + drinkData[event].SmallWine);
-	}
-	return unitsPerEvent;
-}
+
 
 // Using the JavaScript module pattern, create a persistence module for CRUD operations
 // Based on Kevin Whinnery's example: http://developer.appcelerator.com/blog/2010/07/how-to-perform-crud-operations-on-a-local-database.html
 // One tutorial on the Module Pattern: http://www.adequatelygood.com/2010/3/JavaScript-Module-Pattern-In-Depth
-var doseageLog = (function(){
+(function(){
 	
+
 	//create an object which will be our public API
-	var api = {};
+	Ti.App.boozerlyzer.data.doseageLog = {};
 	
 	//maintain a database connection we can use
-	var conn = Titanium.Database.open('ybob');
+	var conn = Titanium.Database.install('../ybob.db','ybob');
+
   
 	//get data for the maximum row id 
-	api.getLatestData = function (){
+	Ti.App.boozerlyzer.data.doseageLog.getLatestData = function (){
 		var mostRecentData = [];
 		var sessionID = Titanium.App.Properties.getInt('SessionID');
 		//have to do count first because max on empty set behaves badly
-		var rows = conn.execute('SELECT count(*) FROM DoseageLog WHERE SESSIONID = ?', sessionID);
-		if (rows !== null && rows.isValidRow() && rows.field(0) > 0 ){		
-		 	rows.close();
-			rows = conn.execute('SELECT max(ID) FROM DoseageLog WHERE SESSIONID = ?', sessionID);
-			if (rows !== null && (rows.isValidRow())) {
-				var maxid = pasrseInt(rows.field(0));
-				rows.close();
-				rows = conn.execute('SELECT * FROM DoseageLog WHERE ID = ?', maxid);
-				if ((rows !== null) && (rows.isValidRow())) {
-					mostRecentData.push({
-						Changed: false,
-						DoseageStart: parseInt(rows.fieldByName('DoseageStart')),
-						DoseageChanged: parseInt(rows.fieldByName('DoseageChanged')),
-						ExitCode: rows.fieldByName('ExitCode'),
-						SessionID: parseInt(rows.fieldByName('SessionID')),
-						HalfPints: parseInt(rows.fieldByName('HalfPints')),
-						SingleSpirits: parseInt(rows.fieldByName('SingleSpirits')),
-						SmallWine: parseInt(rows.fieldByName('SmallWine'))
-					});
-					rows.close();
-					return mostRecentData;
-				}
-			}
+		var	rows = conn.execute('SELECT max(ID) FROM DoseageLog WHERE SESSIONID = ?', sessionID);
+		if (rows !== null && (rows.isValidRow())) {
+			var maxid = parseInt(rows.field(0));
+			rows.close();
+			rows = conn.execute('SELECT * FROM DoseageLog WHERE ID = ?', maxid);
+			return fillDataObject(rows);
 		}
 		//something didn't work
 		return false;
 	};
 	
-	api.setData = function (newData){
+	Ti.App.boozerlyzer.data.doseageLog.setData = function (newData){
 		Titanium.API.debug('doseagelog setData');
-		
-		if (newData.Changed){
-			var insertstr = 'INSERT INTO DOSEAGELOG (DoseageStart,DoseageChanged,ExitCode,SessionID,HalfPints,SingleSpirits,SmallWine)';
-			insertstr += 'VALUES(?,?,?,?,?,?,?)';
-			conn.execute(insertstr,newData.DoseageStart,newData.DoseageChanged,newData.ExitCode,newData.SessionID,newData.HalfPints,newData.SingleSpirits,newData.SmallWine);
+		Titanium.API.debug('newData - ' + JSON.stringify(newData[0]));
+		if (newData[0].Changed){
+			if (newData[0].ID > 0){
+				//We update an existing row
+				var insertstr = 'UPDATE DOSEAGELOG SET DrugVariety= ?, DoseDescription= ?, DoseageStart = ?,DoseageChanged = ?,ExitCode = ?,SessionID = ?,Volume = ?,Strength = ?,StandardUnits = ?,DrugType = ?,TotalUnits = ?,Number = ? ';
+				insertstr += 'WHERE ID = ?';
+				Titanium.API.debug('update str ' + insertstr);
+				Titanium.API.debug('update str variety ' + newData[0].DrugVariety);
+				Titanium.API.debug('update str desc' + newData[0].DoseDescription);
+				Titanium.API.debug('update str start ' + newData[0].DoseageStart);
+				
+				conn.execute(insertstr,
+							 newData[0].DrugVariety,
+							 newData[0].DoseDescription,
+							 newData[0].DoseageStart,
+							 newData[0].DoseageChanged,
+							 newData[0].ExitCode,
+							 newData[0].SessionID,
+							 newData[0].Volume,
+							 newData[0].Strength,
+							 newData[0].StandardUnits,
+							 newData[0].DrugType,
+							 newData[0].TotalUnits,
+							 newData[0].NumDoses,
+							 newData[0].ID );
+			} else {
+				//new row
+				var insertstr = 'INSERT INTO DOSEAGELOG (DrugVariety, DoseDescription,DoseageStart,DoseageChanged,ExitCode,SessionID,Volume,Strength,StandardUnits,DrugType,TotalUnits,Number)';
+				insertstr += 'VALUES(?,?,?, ?,?,?, ?,?,?, ?,?,?)';
+				Titanium.API.debug('update str ' + insertstr);
+				Titanium.API.debug('update str variety ' + newData[0].DrugVariety);
+				Titanium.API.debug('update str desc' + newData[0].DoseDescription);
+				Titanium.API.debug('update str start ' + newData[0].DoseageStart);
+				conn.execute(insertstr,
+							 newData[0].DrugVariety,
+							 newData[0].DoseDescription,
+							 newData[0].DoseageStart,
+							 newData[0].DoseageChanged,
+							 newData[0].ExitCode,
+							 newData[0].SessionID,
+							 newData[0].Volume,
+							 newData[0].Strength,
+							 newData[0].StandardUnits,
+							 newData[0].DrugType,
+							 newData[0].TotalUnits,
+							 newData[0].NumDoses);
+			}
 			Titanium.API.debug('DoseageLog updated, rowsAffected = ' + conn.rowsAffected);
 			Titanium.API.debug('DoseageLog, lastInsertRowId = ' + conn.lastInsertRowId);
 		}
 	};
 	
-	api.newDoseage = function (){
+	Ti.App.boozerlyzer.data.doseageLog.newDrink = function (){
 		var result = [];
 		var sessionID = Titanium.App.Properties.getInt('SessionID');
-		var insertstr = 'INSERT INTO DOSEAGELOG (DoseageStart,DoseageChanged,ExitCode,SessionID,HalfPints,SingleSpirits,SmallWine)';
-		insertstr += 'VALUES(?,?,?,?,?,?,?)';
+		var insertstr = 'INSERT INTO DOSEAGELOG (DrugVariety, DoseDescription,DoseageStart,DoseageChanged,ExitCode,SessionID,Volume,Strength,StandardUnits,DrugType,TotalUnits,Number)';
+		insertstr += 'VALUES(?,?,?, ?,?,?, ?,?,?, ?,?,?)';
 		var now = parseInt((new Date()).getTime()/1000);
-		conn.execute(insertstr,now,now,'',sessionID,0,0,0);
+		conn.execute(insertstr,'NULL','Session Start',now,now,'',sessionID,0,0,0,0,0,0);
 		Titanium.API.debug('DoseageLog updated, rowsAffected = ' + conn.rowsAffected);
 		Titanium.API.debug('DoseageLog, lastInsertRowId = ' + conn.lastInsertRowId);
 		result.push({
 			Changed: false,
+			DrugVariety:'',
+			DoseDescription:'Session Start',
+			ID:conn.lastInsertRowId,
 			DoseageStart: now,
 			DoseageChanged: now,
 			ExitCode: '',
 			SessionID: sessionID,
-			HalfPints: 0,
-			SingleSpirits:0,
-			SmallWine: 0
+			Volume: 0,
+			Strength:0,
+			StandardUnits: 0,
+			DrugType:'Alcohol',
+			TotalUnits: 0,
+			NumDoses: 0
 		});
 		return result;
 	};
 		
 	//get all data for this Session ID 
-	api.getAllSessionData = function (sessionID){
-		var mostRecentData = [];
+	Ti.App.boozerlyzer.data.doseageLog.getAllSessionData = function (sessionID){
 		var rows = conn.execute('SELECT * FROM DoseageLog WHERE SESSIONID = ? ORDER BY DoseageChanged ASC', sessionID);
+		return fillDataObject(rows);
+	};
+
+	/***
+	 * return all the relevant rows from a given time range.
+	 */
+	Ti.App.boozerlyzer.data.doseageLog.getTimeRangeData = function (minTime, maxTime){
+		var rows
+		if (maxTime !== null){
+			rows = conn.execute('SELECT * FROM DoseageLog WHERE DoseageChanged > ? and DoseageChanged < ? ORDER BY DoseageChanged ASC', minTime, maxTime);
+		}else{
+			rows = conn.execute('SELECT * FROM DoseageLog WHERE DoseageChanged > ? ORDER BY DoseageChanged ASC', sessionID);
+		}
+		return fillDataObject(rows);
+	};
+
+	
+	/***
+	 * copy data from recordset into our own datastructure
+	 */
+	function fillDataObject(rows){
 		if ((rows !== null) && (rows.isValidRow())) {
+			var mostRecentData = [];
 			while(rows.isValidRow()){
 				mostRecentData.push({
-					DoseageStart: parseInt(rows.fieldByName('DoseageStart')),
+					ID:				parseInt(rows.fieldByName('ID')),
+					DrugVariety: 	rows.fieldByName('DrugVariety'),
+					DoseDescription:rows.fieldByName('DoseDescription'),
+					DoseageStart: 	parseInt(rows.fieldByName('DoseageStart')),
 					DoseageChanged: parseInt(rows.fieldByName('DoseageChanged')),
-					ExitCode: rows.fieldByName('ExitCode'),
-					SessionID: parseInt(rows.fieldByName('SessionID')),
-					SessionStart: parseInt(rows.fieldByName('SessionStart')),
-					HalfPints: parseInt(rows.fieldByName('HalfPints')),
-					SingleSpirits: parseInt(rows.fieldByName('SingleSpirits')),
-					SmallWine: parseInt(rows.fieldByName('SmallWine'))
+					ExitCode: 		rows.fieldByName('ExitCode'),
+					SessionID: 		parseInt(rows.fieldByName('SessionID')),
+					Volume: 		parseFloat(rows.fieldByName('Volume')),
+					Strength: 		parseFloat(rows.fieldByName('Strength')),
+					StandardUnits: 	parseFloat(rows.fieldByName('StandardUnits')),
+					DrugType: 		rows.fieldByName('DrugType'),
+					TotalUnits: 	parseFloat(rows.fieldByName('TotalUnits')),
+					NumDoses: 		parseFloat(rows.fieldByName('Number'))
 				});
 				rows.next();				
 			}
@@ -114,19 +167,6 @@ var doseageLog = (function(){
 		}
 		//something didn't work
 		return false;
-	};
-	
-	//get simplified 2d array of time & units
-	api.getDataArray_TimeUnits = function(sessionID){
-		
-		var rawData  = api.getAllSessionData(sessionID);
-		var dataArray = [];
-		
-		for (var i = 0; i < rawData.length; i++) {
-			var units = rawData[i].HalfPints + rawData[i].SmallWine + rawData[i].SingleSpirits;
-			dataArray.push([rawData[i].DoseageChanged, units]);
-		}
-		return dataArray;
-	}	
-	return api;
+ 	};
+
 }());

@@ -7,7 +7,5 @@
 	<buildSpec>
 	</buildSpec>
 	<natures>
-		<nature>com.appcelerator.titanium.mobile.nature</nature>
-		<nature>com.appcelerator.titanium.desktop.nature</nature>
 	</natures>
 </projectDescription>

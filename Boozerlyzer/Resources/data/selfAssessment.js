@@ -8,16 +8,17 @@
 // Using the JavaScript module pattern, create a persistence module for CRUD operations
 // Based on Kevin Whinnery's example: http://developer.appcelerator.com/blog/2010/07/how-to-perform-crud-operations-on-a-local-database.html
 // One tutorial on the Module Pattern: http://www.adequatelygood.com/2010/3/JavaScript-Module-Pattern-In-Depth
-var selfAssessment = (function(){
+(function(){
 	
 	//create an object which will be our public API
-	var api = {};
+	Titanium.App.boozerlyzer.data.selfAssessment = {};
 	
 	//maintain a database connection we can use
-	var conn = Titanium.Database.open('ybob');
+	var conn = Titanium.Database.install('../ybob.db','ybob');
+
   
 	//get data for the maximum row id 
-	api.getLatestData = function (sessionID){
+	Titanium.App.boozerlyzer.data.selfAssessment.getLatestData = function (sessionID){
 		var mostRecentData = [];
 		//have to do count first because max on empty set behaves badly
 		//and a cast cos sessionID sometimes treated as string
@@ -36,29 +37,14 @@ var selfAssessment = (function(){
 				Ti.API.trace('selfAssessment maxid - ' + maxid);
 				rows.close();
 				rows = conn.execute('SELECT * FROM SelfAssessment WHERE ID = ?', maxid);
-				if ((rows !== null) && (rows.isValidRow())) {
-					mostRecentData.push({
-						Changed: false,
-						SesssionID: sessionID,
-						DrunkBlur: parseFloat(rows.fieldByName('DrunkBlur')),
-						Drunkeness: parseInt(rows.fieldByName('Drunkeness')),
-						Energy: parseInt(rows.fieldByName('Energy')),
-						EnergyBlur: parseFloat(rows.fieldByName('EnergyBlur')),
-						Happiness: parseInt(rows.fieldByName('Happiness')),
-						HappyBlur: parseInt(rows.fieldByName('HappyBlur')),
-						SelfAssessmentStart: parseInt(rows.fieldByName('SelfAssessmentStart')),
-						SelfAssessmentChanged: parseInt(rows.fieldByName('SelfAssessmentChanged'))
-					});
-					rows.close();
-					return mostRecentData;
-				}
+				return fillDataObject(rows);
 			}
 		}
 		//something didn't work
 		return false;
 	};
 	
-	api.newEmotion = function (insertFlag){
+	Titanium.App.boozerlyzer.data.selfAssessment.newEmotion = function (insertFlag){
 		var result = [];
 		var sessionID = Titanium.App.Properties.getInt('SessionID', 0);
 		var now = parseInt((new Date()).getTime()/1000);
@@ -84,7 +70,7 @@ var selfAssessment = (function(){
 		return result;
 	};
 	
-	api.setData = function (newData){
+	Titanium.App.boozerlyzer.data.selfAssessment.setData = function (newData){
 		Titanium.API.debug('selfAssessment setData');		
 		if (newData[0].Changed){
 			var now = parseInt((new Date()).getTime()/1000);
@@ -98,32 +84,39 @@ var selfAssessment = (function(){
 	};
 	
 	//get all data for this Session ID 
-	api.getAllSessionData = function (sessionID){
+	Titanium.App.boozerlyzer.data.selfAssessment.getAllSessionData = function (sessionID){
 		var mostRecentData = [];
 		//cast cos sessionID sometimes treated as string
 		var sessID = parseInt(sessionID);
 		var rows = conn.execute('SELECT * FROM SelfAssessment WHERE SESSIONID = ? ORDER BY SelfAssessmentChanged ASC', sessID);
+		return fillDataObject(rows);
+	};	
+	
+	/***
+	 * copy data from recordset into our own datastructure
+	 */
+	function fillDataObject(rows){
 		if ((rows !== null) && (rows.isValidRow())) {
+			var returnData = [];
 			while(rows.isValidRow()){
-				mostRecentData.push({
-					SessionID:sessionID,
-					DrunkBlur: parseFloat(rows.fieldByName('DrunkBlur')),
-					Drunkeness: parseInt(rows.fieldByName('Drunkeness')),
-					Energy: parseInt(rows.fieldByName('Energy')),
-					EnergyBlur: parseFloat(rows.fieldByName('EnergyBlur')),
-					Happiness: parseInt(rows.fieldByName('Happiness')),
-					HappyBlur: parseInt(rows.fieldByName('HappyBlur')),
-					SelfAssessmentStart: parseInt(rows.fieldByName('SelfAssessmentStart')),
+				returnData.push({
+					SessionID:			parseInt(rows.fieldByName('SessionID')),
+					DrunkBlur: 			parseFloat(rows.fieldByName('DrunkBlur')),
+					Drunkeness: 		parseInt(rows.fieldByName('Drunkeness')),
+					Energy: 			parseInt(rows.fieldByName('Energy')),
+					EnergyBlur: 		parseFloat(rows.fieldByName('EnergyBlur')),
+					Happiness: 			parseInt(rows.fieldByName('Happiness')),
+					HappyBlur: 			parseInt(rows.fieldByName('HappyBlur')),
+					SelfAssessmentStart:parseInt(rows.fieldByName('SelfAssessmentStart')),
 					SelfAssessmentChanged: parseInt(rows.fieldByName('SelfAssessmentChanged'))
 				});
 				rows.next();				
 			}
 			rows.close();
-			return mostRecentData;
+			return returnData;	
 		}
 		//something didn't work
 		return false;
-	};	
+	};
 
-	return api;
 }());
