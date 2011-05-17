@@ -11,7 +11,7 @@
 	
 	// The main screen for plotting results
 	var win = Titanium.UI.currentWindow;
-	var winHome = win.home;
+	Ti.include('../analysis/dataOverTime.js');
 	
 	
 	//size of axis object
@@ -24,16 +24,20 @@
 	var axisInset = 18;  //how far inset is the origin?
 	
 	
+	//load up all the data
 	var SessionID = Titanium.App.Properties.getInt('SessionID');
-	
+	var personalInfo = Titanium.App.boozerlyzer.data.personalInfo.getData();
+//	var Countries = Titanium.App.boozerlyzer.data.alcoholStandardDrinks.get();
+
 	var sessionData = Titanium.App.boozerlyzer.data.sessions.getSession(SessionID);
 	//All dose data for this session
-	var AllDrinks = Titanium.App.boozerlyzer.data.doseageLog.getDataArray_TimeUnits(SessionID);
+	var allDrinks = Titanium.App.boozerlyzer.data.doseageLog.getAllSessionData(SessionID);
 	var selfAssess = Titanium.App.boozerlyzer.data.selfAssessment.getAllSessionData(SessionID);
+	var stdDrinks = Ti.App.boozerlyzer.data.alcoholStandardDrinks.get(personalInfo.Country);
+	var millsPerStandardUnits = stdDrinks[0].MillilitresPerUnit;
+
 	
-	Ti.API.debug('win results selfAssess' + JSON.stringify(selfAssess));
-	
-	// Attach an APP wide event listener
+	// Attach an APP wide event listener	
 	// it gets fired when the webView has finished loading
 	Ti.App.addEventListener('webViewLoaded', function(e) {
 		redrawGraph();
@@ -48,13 +52,28 @@
 			plotDrunk:switchDrunk.value,
 			plotStroop:switchStroop.value
 		};	
+		var now = parseInt((new Date()).getTime()/1000);
+		var timeSteps =	Titanium.App.boozerlyzer.dateTimeHelpers.timeIntervals(24,sessionData[0].StartTime, now);
+		var timeLabels = [];
+
+		var showMins = ((now - timeSteps[0]) < 12*3600); //show minutes if short session
+		for (var t = 0;t< timeSteps.length;t++){
+			timeLabels[t] = Titanium.App.boozerlyzer.dateTimeHelpers.formatTime(timeSteps[t],showMins,true);
+		}
+		//Ti.API.debug('redrawGraph -allDrinks ' + JSON.stringify(allDrinks));
+		var drinkSteps = drinksByTime(timeSteps,allDrinks,personalInfo, millsPerStandardUnits);
+		Ti.API.debug('redrawGraph -selfAssess ' + JSON.stringify(selfAssess));
+		var emotionSteps = emotionsByTime(timeSteps,selfAssess);
+		//var stroopSteps = gameByTime(timeSteps,gameData);
+		
 		var myData =  JSON.stringify({
 			options: options,
+			timeLabels:timeLabels,
 			sessData: sessionData,
-			selfData: selfAssess, 			
-			drinkData:AllDrinks	});
+			selfData: emotionSteps, 			
+			drinkData:drinkSteps	});
 		
-		webview.evalJS("paintScatterChart('" + myData + "')");
+		webview.evalJS("paintLineChart('" + myData + "')");
 	
 	}
 	
@@ -67,6 +86,11 @@
 	});
 	win.add(webview);
 	
+	//listen for errors from webview
+	webview.addEventListener("error", function(e){
+	    Ti.API.log("Error: " + e.message);
+	//do something
+	});
 	
 	var fast = Ti.UI.createImageView({
 		image:'../icons/rocket.png',

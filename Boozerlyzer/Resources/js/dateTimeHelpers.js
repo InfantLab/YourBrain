@@ -53,7 +53,19 @@
 			}
 		}	
 	}
-	
+
+	//create an N element array of equally spaced times 
+	Titanium.App.boozerlyzer.dateTimeHelpers.timeIntervals =function(N, startTime, endTime){
+		if (N < 2){return startTime;}
+		var fullInterval = endTime - startTime;
+		var stepInterval = fullInterval / (N-1);
+		var steps = [];
+		for (var s = 0; s< N; s++){
+			steps.push(startTime + stepInterval * s);
+		}
+		Ti.API.debug('TimeIntervals - ' + JSON.stringify(steps));
+		return steps;
+	}
 	
 	// creates a 'pretty date' from a unix time stamp
 	Titanium.App.boozerlyzer.dateTimeHelpers.prettyDate =function(time){

@@ -1,98 +1,103 @@
 <html> 
 <head>
  
- <title>RGraph Scatter Plote</title> 
+ <title>RGraph Line Plot</title> 
  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>  
    <style type="text/css">
-      #myScatter {
+      #myLineGraph {
         height: 100%; width: 100%;
       }
     </style>
-  <script src='../libraries/RGraph.common.core.lib'></script>
-  <script src="../libraries/RGraph.common.adjusting.js" ></script>
-  <script src='../libraries/RGraph.bar.js'></script>
-
+  <script src='../libraries/RGraph.common.core.js'></script>
+  <script src='../libraries/RGraph.common.context.js'></script>
+  <script src="../libraries/RGraph.common.annotate.js" ></script>
   <script src="../libraries/RGraph.line.js" ></script>
-  <script src="../libraries/RGraph.scatter.js" ></script>
-  <script src="../libraries/RGraph.bar.js" ></script>
 
 </head> 
 <body> 
-	<canvas id='myScatter'>[No canvas support]</canvas>
+	<canvas id='myLineGraph'>[No canvas support]</canvas>
 	<script>
     window.onload = function(){
 		var message = {onload:"complete"};
 		Ti.App.fireEvent('webViewLoaded', message);
 	}
 	
-	function paintScatterChart(e) {
-
-		Ti.API.info("webivew chart e -" + JSON.stringify(e));
+		function paintLineChart(e) {
+		//Ti.API.info("webview chart e -" + JSON.stringify(e));
 	
 		//get the passed in data	
 		var asobj = JSON.parse(e);
 		var options = asobj.options;
+		var timeLabels = asobj.timeLabels;
 		var session = asobj.sessData;
 		var selfData = asobj.selfData;
 		var drinkArray = asobj.drinkData;
-//		Ti.API.info("webview chart session - " + JSON.stringify(session));
-//		Ti.API.info("webview chart alldrinks - " + JSON.stringify(drinkArray));
+		Ti.API.info("options - " + JSON.stringify(session));
+		Ti.API.info("webview session - " + JSON.stringify(session));
+		Ti.API.info("webview timeLabels - " + JSON.stringify(timeLabels));
 		Ti.API.info("webview chart selfData - " + JSON.stringify(selfData));
+		Ti.API.info("webview chart alldrinks - " + JSON.stringify(drinkArray));
 		
 		var startTime = session[0].StartTime;
 		Ti.API.info("webview chart starttime - " + startTime);
-		var adjDrinkArray = [];
-		var maxUnits = 0;
-		var maxTime = 0;
+		var totalDrink = [];
+		var totalBAC = [];
+		var maxDrink = 0;
+		var maxBAC = 0;
 		for (var i = 0; i < drinkArray.length; i++) {
-			//Scatter graph doesn't accept a value for xmin. so we have to subtract the
-			//start time for each data point.
-			adjDrinkArray.push([drinkArray[i][0] - startTime, drinkArray[i][1]]);
+			totalDrink.push(drinkArray[i].standardDrinks);
+			totalBAC.push( drinkArray[i].bloodAlcohol/ 0.003); // 0.30% is enough to put you in a coma
 			//also find max number of drinks in this session
-			maxUnits = Math.max(maxUnits,drinkArray[i][1]);
+			maxDrink = Math.max(maxDrink,totalDrink[i]);
 			//hopefully the drinks are in chronological order but do same for time
-			maxTime = Math.max(maxTime,adjDrinkArray[i][0]);
+			maxBAC = Math.max(maxBAC,totalBAC[i]);
 		}
-		// maxTime = 1.02 * adjDrinkArray[adjDrinkArray.length-1][0];
-		if (options.plotDrinks){
-	
-			Ti.API.info("webview chart adjDrinkArray - " + JSON.stringify(adjDrinkArray));
-			Ti.API.info("webview chart maxunits - " + maxUnits);
+		//do same for emotion/selfassessment data
+		var lastDrunkeness = [];
+		var lastHappiness = [];
+		var lastEnergy = [];
+		for (var i = 0; i < selfData.length; i++) {		
+			lastDrunkeness.push(selfData[i].Drunkeness);
+			lastHappiness.push(selfData[i].Happiness);
+			lastEnergy.push(selfData[i].Energy);
+		}
 		
-	        var sgdrink = new RGraph.Scatter('myScatter', adjDrinkArray);
-	        sgdrink.Set('chart.background.barcolor1','rgba(255,255,255,1)');
-	        sgdrink.Set('chart.background.barcolor2', 'rgba(255,255,255,1)');
-	        sgdrink.Set('chart.grid.color', 'rgba(238,238,238,1)');
-			sgdrink.Set('chart.linewidth', 3);
-	        sgdrink.Set('chart.gutter', 30);
-	      //  sgdrink.Set('chart.labels', ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']);
-	        sgdrink.Set('chart.xmax', maxTime); // Important!
-	        sgdrink.Set('chart.ymax', maxUnits + 2); 
-	        sgdrink.Set('chart.line', true);
-			sgdrink.Set('chart.labels',['Time']);
-			sgdrink.Draw();
-	
-		}
-		if (options.plotHappiness){
-			var adjHappyArray = [];
-			for (var i = 0; i < selfData.length; i++) {
-				adjHappyArray.push([selfData[i].SelfAssessmentChanged - startTime, selfData[i].Happiness]);
-			}
-			Ti.API.info("webview chart adjhappyarray - " + JSON.stringify(adjHappyArray));
-			var sghappy = new RGraph.Scatter('myScatter', adjHappyArray);
-//	        sghappy.Set('chart.background.barcolor1','rgba(255,255,255,1)');
-//	        sghappy.Set('chart.background.barcolor2', 'rgba(255,255,255,1)');
-//	        sghappy.Set('chart.grid.color', 'rgba(238,238,238,1)');
-	        sghappy.Set('chart.linewidth', 3);
-	        sghappy.Set('chart.gutter', 30);
-	        sghappy.Set('chart.xmax', maxTime); // Important!
-	        sghappy.Set('chart.ymax', 100); 
-	        sghappy.Set('chart.line', true);
-			sghappy.Set('chart.yaxispos', 'right'); //emotions etc labled on right
-			sghappy.Draw();
+			
+	 	if (options.plotDrinks){
+			Ti.API.info("webview start drink plotting ");
+	        var lineDrinks = new RGraph.Line('myLineGraph', totalDrink, totalBAC);
+	        lineDrinks.Set('chart.line', true);
+		    lineDrinks.Set('chart.linewidth', 3);
+	        lineDrinks.Set('chart.labels', timeLabels);	   
+			lineDrinks.Set('chart.gutter', 20);
+			lineDrinks.Set('chart.colors', ['green', 'pink']);
+			lineDrinks.Set('chart.key', ['Drinks','Blood Alcohol']);
+	     //   lineDrinks.Set('chart.filled', true);
+         //   lineDrinks.Set('chart.fillstyle', 'rgba(128,255,128,0.5)');
+          //  lineDrinks.Set('chart.title', 'A range chart');
+       	//lineDrinks.Set('chart.labels',['Time']);
+		 	lineDrinks.Draw();
+        	Ti.API.info("webview end drink plotting ");
 		}	
-
-    }
+	 	if (false &&  options.plotHappiness){
+			Ti.API.info("webview start emotion plotting ");
+	        var lineHappy = new RGraph.Line('myLineGraph', lastDrunkeness, lastHappiness, lastEnergy);
+	        lineHappy.Set('chart.line', true);
+		    lineHappy.Set('chart.linewidth', 3);
+	        lineHappy.Set('chart.labels', timeLabels);	   
+			lineHappy.Set('chart.gutter', 20);
+			lineHappy.Set('chart.yaxispos', 'right');
+	     	lineHappy.Set('chart.ymax', 100);
+	     //   lineHappy.Set('chart.filled', true);
+         //   lineHappy.Set('chart.fillstyle', 'rgba(128,255,128,0.5)');
+          //  lineHappy.Set('chart.title', 'A range chart');
+       	//lineHappy.Set('chart.labels',['Time']);
+		 	lineHappy.Draw();
+        	Ti.API.info("webview end emotion plotting ");
+		}
+            
+	}
+    
     </script>
                          
  </body>

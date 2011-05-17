@@ -51,7 +51,15 @@
 	
 	Ti.App.boozerlyzer.data.gameScores.PlayCount = function (gameNames){
 		var returnData = [];
-		var queryStr = 'SELECT game, count(*) FROM gameScores where game in (' + ArrayToQuotedString(gameNames) + ') group by game ' ;
+		var queryStr;
+		Ti.API.debug('gameNames -' + JSON.stringify(gameNames)); 
+		if (gameNames.length === 1) {
+			//shouldn't have to do this but something seems to go wrong with a group of one.
+			queryStr = 'SELECT game, count(*) FROM gameScores where game = ' + gameNames[0]  ;
+		}else{
+			queryStr = 'SELECT game, count(*) FROM gameScores where game in (' + ArrayToQuotedString(gameNames) + ') group by game' ;
+		}
+
 		var rows = conn.execute(queryStr);
 		if (rows !== null  && rows.isValidRow() ) {
 			while(rows.isValidRow()){
@@ -87,6 +95,64 @@
 		return false;
 	};
 
+	/***
+	 * return the total points accumulated so far 
+	 * @param object [column] - if absent return LabRatPoints
+	 * @param object [gameNames] - if absent return grand total
+	 */
+	Ti.App.boozerlyzer.data.gameScores.TotalPoints = function (column, gameNames){
+		var returnData = [];
+		var col = 'LabPoints'
+		if (column !== null && column !== undefined){
+			col = column;
+		}
+		Ti.API.debug('TotalPoints - col -' + col);
+		if (gameNames === null || gameNames === undefined ){
+			Ti.API.debug('Total points');
+			//TODO - figure out why commented out code doesn't work
+			// var queryStr = 'SELECT Total (?) FROM gameScores';
+			// var rows = conn.execute(queryStr, col);
+			//note having to hard code this for now 
+			var queryStr = 'SELECT Total (LabPoints) FROM gameScores';
+			var rows = conn.execute(queryStr);
+			if (rows !== null && rows.isValidRow() ) {
+				while(rows.isValidRow()){
+					Ti.API.debug('Total points' + parseInt(rows.field(0)));
+					returnData.push({
+						Total: parseInt(rows.field(0)),
+						Column: col,
+						Game: 'All'
+					});
+					rows.next();
+				};
+				rows.close();
+				return returnData;
+			}
+		}else{
+			var queryStr;
+			if (gameNames.length === 1) {
+				//shouldn't have to do this but something seems to go wrong with a group of one.
+				queryStr = 'SELECT total (?), game FROM gameScores where game = ' + gameNames[0]; 
+			}else{
+				queryStr = 'SELECT total (?), game FROM gameScores where game in (' + ArrayToQuotedString(gameNames) + ') group by game' ;
+			}
+			var rows = conn.execute(queryStr, col);
+			if (rows !== null && rows.isValidRow() ) {
+				while(rows.isValidRow()){
+					returnData.push({
+						Total: parseInt(rows.field(0)),
+						Column: col,
+						Game: rows.field(1),
+					});
+					rows.next();
+				};
+				rows.close();
+				return returnData;
+			}
+		}		
+		//something didn't work
+		return false;
+	};
 
 	/**
 	 * Participant has completed a game, enter their data
@@ -117,13 +183,13 @@
 								   JSON.stringify(scoreData[i].Choices),
 								   scoreData[i].LabPoints,
 								   scoreData[i].UserID);
-			Titanium.API.debug('Emotional Word choices, rowsAffected = ' + conn.rowsAffected);
-			Titanium.API.debug('Emotional Word choices, lastInsertRowId = ' + conn.lastInsertRowId);	
+			Titanium.API.debug('gameScores result, rowsAffected = ' + conn.rowsAffected);
+			Titanium.API.debug('gameScores result, lastInsertRowId = ' + conn.lastInsertRowId);	
 		}
 	};
 	
 	
-	Ti.App.boozerlyzer.data.gameScores.HiScores = function (Game, HowMany){
+	Ti.App.boozerlyzer.data.gameScores.HighScores = function (Game, HowMany){
 		var returnData = [];
 		var selectStr = 'SELECT TotalScore, PlayEnd from GameScores where Game = ? order by totalscore desc Limit 0, ?' ;
 		var rows = conn.execute(selectStr, Game, HowMany);

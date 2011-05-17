@@ -24,7 +24,9 @@
 		
 		var persInfo = Ti.App.boozerlyzer.data.personalInfo.getData();
 		var stdDrinks = Ti.App.boozerlyzer.data.alcoholStandardDrinks.get(persInfo.Country);
+		var millsPerStandardUnits = stdDrinks[0].MillilitresPerUnit;
 		Ti.API.debug('stdDrinks ' + JSON.stringify(stdDrinks));
+		
 		
 		// the Dosesage database object
 		//current session ID
@@ -280,9 +282,13 @@
 		    Titanium.API.debug('DrinkData.DoseageStart '+ DrinkData.DoseageStart);
 		    var addedTime = Titanium.App.boozerlyzer.dateTimeHelpers.formatTime(DrinkData.DoseageStart,true);
 			var numUnits = DrinkData.TotalUnits / stdDrinks[0].MillilitresPerUnit;
+			//calorie calculation = 7kCals per gram of alcohol , 0.79 grams per millilitre
+			var numkCals = DrinkData.TotalUnits * 0.79 * 7;
 			var thisDrinkUnits = '';
+			var thisDrinkkCals = '';
 			if (!isNaN(numUnits) && numUnits > 0){
 				thisDrinkUnits = numUnits.toFixed(1) + ' u';
+				thisDrinkkCals = numkCals.toFixed(0) + 'kCal'
 			}
 			var whatDrink;
 			whatDrink = (DrinkData.DrugVariety !== null  ? DrinkData.DrugVariety : '');
@@ -328,27 +334,27 @@
 		    //label to display number of standard drinks/units for this entry
 		    var drinkUnitsLabel = Ti.UI.createLabel({
 												    	text: thisDrinkUnits,
-														top:2,
+														bottom:2,
 														right:4,
 														textAlign:'right',
 														color:'green',
 														font:{fontSize:18,fontWeight:'Bold'}
 													});
 			row.add(drinkUnitsLabel);
+		    var drinkkCalsLabel = Ti.UI.createLabel({
+												    	text: thisDrinkkCals,
+														top:2,
+														right:66,
+														textAlign:'right',
+														color:'orange',
+														font:{fontSize:12,fontWeight:'normal'}
+													});
+			row.add(drinkkCalsLabel);
 
 			
 			return row;
 		}
 		
-		function showDrinksCount(){
-			// var numPints = AllDrinks[lastIndex].HalfPints/2;
-			// var numUnits = AllDrinks[lastIndex].HalfPints+ AllDrinks[lastIndex].SmallWine + AllDrinks[lastIndex].SingleSpirits; 
-			// beercount.text = numPints + ' Pints';
-			// winecount.text = AllDrinks[lastIndex].SmallWine + ' Wine';
-			// spiritcount.text = AllDrinks[lastIndex].SingleSpirits + ' Spirits';
-			// UnitCount.text = 'Total ' + numUnits + ' units';
-			// calcDisplayBloodAlcohol();
-		}
 		function totalizeDrinks(){
 			var len = AllDrinks.length;
 			var totalvolAlcohol = 0;
@@ -357,17 +363,22 @@
 			}
 			if (stdDrinks[0].MillilitresPerUnit > 0){
 				footerUnits.text = (totalvolAlcohol / stdDrinks[0].MillilitresPerUnit).toFixed(1) +'u';
+				//calorie calculation = 7kCals per gram of alcohol , 0.79 grams per millilitre
+				footerkCals.text = (totalvolAlcohol * 0.79 * 7).toFixed(0) + 'kCal'; 
 			}
+			 calcDisplayBloodAlcohol();
 		}
 		
 		function calcDisplayBloodAlcohol(){
-			var BAC = BACalculate(sessionData, AllDrinks.slice(lastIndex),persInfo, true);
-			BloodAlcohol.text = 'Blood Alcohol ' + Math.round((BAC[BAC.length -1]-0)*10000)/10000 + '%';	
+			var now = parseInt((new Date()).getTime()/1000);
+			var BAC = BACalculate(now, AllDrinks.slice(lastIndex),persInfo);
+			BloodAlcohol.text = 'Blood Alcohol ' + BAC.toFixed(4) + '%';
+			var baLevel = BALevels(BAC);
+			BloodAlcohol.color = baLevel.color;
+			footerUnits.color = baLevel.color;	
 		}
 		
-		
-		
-		
+
 		var footer = Ti.UI.createView({
 			backgroundColor:'#111',
 			height:30
@@ -375,7 +386,7 @@
 		
 		var footerLabel = Ti.UI.createLabel({
 			font:{fontFamily:'Helvetica Neue',fontSize:14,fontWeight:'normal'},
-			text:'Total Standard Drinks: ',
+			text:'Totals: ',
 			color:'#282',
 			textAlign:'right',
 			left:4,
@@ -388,12 +399,23 @@
 			text:'',
 			color:'Green',
 			textAlign:'right',
-			right:4,
+			right:2,
+			bottom:2,
 			width:'auto',
 			height:'auto'
 		});		
 		footer.add(footerUnits);
-		
+		var footerkCals = Ti.UI.createLabel({
+			font:{fontFamily:'Helvetica Neue',fontSize:14,fontWeight:'normal'},
+			text:'',
+			color:'orange',
+			textAlign:'right',
+			right:80,
+			bottom:2,
+			width:'auto',
+			height:'auto'
+		});		
+		footer.add(footerkCals);
 		var header = Ti.UI.createView({
 			backgroundColor:'#999',
 			height:'auto'
@@ -430,7 +452,6 @@
 		}
 		
 		setSessionLabel();
-		showDrinksCount();
 		totalizeDrinks();
 		//buttons to navigate to other screens
 		
@@ -511,6 +532,7 @@
 		//
 		// Cleanup and return home
 		win.addEventListener('android:back', function(e) {
+			gameEndSaveScores();
 			if (Ti.App.boozerlyzer.winHome === undefined 
 			 || Ti.App.boozerlyzer.winHome === null) {
 				Ti.App.boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
@@ -524,15 +546,40 @@
 			Ti.App.boozerlyzer.winHome.open();
 		});
 		
-		
-		loadedonce = true;
-		
-		win.addEventListener('focus', function(){
+		//log data to the activity tracker
+		// record the total units at the moemnt
+		// and give user 2 lab points for using this screen
+		function gameEndSaveScores(){
+		var gameSaveData = [{Game: 'DoseageLog',
+							GameVersion:1,
+							PlayStart:winOpened ,
+							PlayEnd: parseInt((new Date()).getTime()/1000),
+							TotalScore:parseFloat(footerUnits.text),
+							Speed_GO:0,
+							Speed_NOGO:0,
+							Coord_GO:0,
+							Coord_NOGO:0,
+							Level:0,
+							Inhibition:0,
+							Feedback:'',
+							Choices:'',
+							SessionID:Titanium.App.Properties.getInt('SessionID'),
+							UserID:Titanium.App.Properties.getInt('UserID'),
+							LabPoints:2		
+						}];
+			Titanium.App.boozerlyzer.data.gameScores.Result(gameSaveData);
+		}
+
+				
+		win.addEventListener('close', function(){
 			if (loadedonce){
-				//this code only runs when we reload this page
-				calcDisplayBloodAlcohol();
+				//this code only runs when we close this page
+				gameEndSaveScores();
 			}
 		});
+		
+				
+		loadedonce = true;
 		
 		
 })();

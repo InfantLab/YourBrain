@@ -359,4 +359,37 @@
 			win.close();
 			Ti.App.boozerlyzer.winHome.open();
 	});
+		
+		// record activity data for right now
+		// and give user 2 lab points for using this screen
+		function gameEndSaveScores(){
+		var gameSaveData = [{Game: 'Emotion',
+							GameVersion:1,
+							PlayStart:winopened ,
+							PlayEnd: parseInt((new Date()).getTime()/1000),
+							TotalScore:happiness.value,
+							Speed_GO:energy.value,
+							Speed_NOGO:0,
+							Coord_GO:drunkeness.value,
+							Coord_NOGO:0,
+							Level:0,
+							Inhibition:0,
+							Feedback:'',
+							Choices:'',
+							SessionID:Titanium.App.Properties.getInt('SessionID'),
+							UserID:Titanium.App.Properties.getInt('UserID'),
+							LabPoints:2		
+						}];
+			Titanium.App.boozerlyzer.data.gameScores.Result(gameSaveData);
+		}
+
+				
+		win.addEventListener('close', function(){
+			if (loadedonce){
+				//this code only runs when we reload this page
+				gameEndSaveScores();			
+				}
+		});
+		
+		
 })();

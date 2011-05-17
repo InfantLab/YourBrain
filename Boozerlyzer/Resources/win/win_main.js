@@ -34,12 +34,18 @@
 		var leftAppName = 20;
 		var	leftNewDrinks = leftAppName;
 		var leftEmotion = 100;
-		var leftGame = 180;
+		var leftTripReport = 180;
+		var leftGame = 240;
 		var topNewDrinks = 80;
-		var topEmotion = 140;
-		var topGame = 200;
+		var topEmotion = 80;
+		var topTripReport = 80;
+		var topGame = 80;
+		var topHighScores = 160
+		var leftHighScores = 100;
+		var topLabPoints = 160
+		var leftLabPoints =20;
 		var topResults = 120;
-		var leftResults = 300;
+		var leftResults = 340;
 		var optionsLeft = 320;
 		
 		
@@ -125,13 +131,41 @@
 			winpers.open();
 		});
 		homeWin.add(personalinfo);
+		var labelMateMode = Titanium.UI.createLabel({
+			text:'Mate Mode',
+			top:120,
+			left:optionsLeft + 52,
+			visible:false
+		});
 		var matemode = Titanium.UI.createImageView({
 			image:'../icons/Chorus.png',
 			height:48,
 			width:48,
 			top:20,
+//			opacity:1,
 			left:optionsLeft + 52
 		});
+		//if we click this icon toggle between normal use
+		//and mate mode where scores don't count towards your own total.
+		matemode.addEventListener('click', function(){
+			if (Titanium.App.Properties.getBool('inMateMode',false)){
+				//set to false
+				Titanium.App.Properties.setBool('inMateMode', false);
+				matemode.height *= 0.5;
+				matemode.width *= 0.5;
+				//matemode.opacity = 0.5;
+				labelMateMode.visible = false;
+			}else{
+				//set to true
+				Titanium.App.Properties.setBool('inMateMode', true);
+				matemode.height *= 2;
+				matemode.width *= 2;
+				//matemode.opacity = 1;
+				labelMateMode.visible = true;
+			}
+			
+		});
+		
 		homeWin.add(matemode);
 		
 		
@@ -171,7 +205,7 @@
 		
 		report.addEventListener('click',function(){
 			var winreport = Titanium.UI.createWindow({ modal:true,
-				url:'../win/win_results2.js',
+				url:'../win/win_charts.js',
 				title:'Personal Information',
 				backgroundImage:'../images/smallcornercup.png',
 				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
@@ -226,7 +260,7 @@
 			height:bigIcons * .8,
 			width:bigIcons * .8,
 			top:topNewDrinks,
-			left:leftGame
+			left:leftTripReport
 		});
 		newtripreport.addEventListener('click',function(){
 			var newtripwin = Titanium.UI.createWindow({ modal:true,
@@ -258,6 +292,66 @@
 			winplay.open();
 		});
 		homeWin.add(newgame);
+
+		var labelHighScores = Titanium.UI.createLabel({
+			text:'High Scores',
+			font:{fontSize:24,fontFamily:'sans-serif',fontWeight:'bold'},
+			textAlign:'center',
+			height:bigIcons,
+			width:bigIcons * 2.9,
+			top:topHighScores,
+			left:leftHighScores,
+			color:'green',
+			zIndex:0,
+		});
+		homeWin.add(labelHighScores);
+		
+		
+		var highScores = Titanium.UI.createImageView({
+			image:'../icons/Evolution.png',
+			height:bigIcons,
+			width:bigIcons * 2.9,  //keep correct proportions
+			top:topHighScores,
+			left:leftHighScores,
+			opacity:0.3
+		});
+		highScores.addEventListener('click',function(){
+			var highscoreswin = Titanium.UI.createWindow({ modal:true,
+				url:'/win/win_highScores.js',
+				title:'What have you had to drink?',
+				backgroundImage:'../images/smallcornercup.png',
+				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
+			});
+			highscoreswin.home = homeWin; //reference to home
+			highscoreswin.open();
+		});
+		homeWin.add(highScores);
+
+		var labelLabPoints = Titanium.UI.createLabel({
+			text:'0000',
+			font:{fontSize:28,fontFamily:'Helvetica Neue'},
+			textAlign:'left',
+			height:32,
+			width:140,
+			top:topLabPoints + 20,
+			left:leftLabPoints,
+			color:'cyan',
+			shadowColor:'black',
+			shadowOffset:{X:6,y:6},
+			borderRadius:4
+		});
+		homeWin.add(labelLabPoints);
+		var captionLabPoints = Titanium.UI.createLabel({
+			text:'Lab Points',
+			font:{fontSize:14,fontFamily:'Helvetica Neue'},
+			textAlign:'center',
+			height:32,
+			top:topLabPoints + 54,
+			left:leftLabPoints,
+			color:'cyan'
+		});
+		homeWin.add(captionLabPoints);
+		
 		
 		var labelCurrentSession = Titanium.UI.createLabel({
 			text:'Session started\n Sat 3th, 12:00pm',
@@ -319,7 +413,19 @@
 			labelLastUpdate.text = 'Last activity\n' + timeSinceUpdate;
 		
 		}
+		function rewriteLabPoints(){
+			var labPoints = Ti.App.boozerlyzer.data.gameScores.TotalPoints(); 
+			// if (isNaN(labPoints[0].Total)){
+				// labelLabPoints.text = 'Err';
+			// }
+			// else{
+				labelLabPoints.text = labPoints[0].Total.toFixed(0); //+ ' Pts';	
+				
+			// }
+		}
+		
 		rewriteUpdateLabel();
+		rewriteLabPoints();
 		Titanium.API.debug("session info: " + JSON.stringify(session));
 		Titanium.API.debug("session lastupdate: " + session[0].LastUpdate);
 		var now = parseInt((new Date()).getTime()/1000);
@@ -338,19 +444,15 @@
 		Titanium.App.Properties.setInt('SessionStart',session[0].StartTime/1000);
 		Titanium.App.Properties.setInt('SessionChanged',session[0].LastUpdate/1000);
 		
-		var mateModeSwitch = Ti.UI.createSwitch({
-			style : Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
-			title: 'Mate Mode',
-			top : 60,
-			right: 2
-		});
-		homeWin.add(mateModeSwitch);
 		loadedonce = true;
 		
 		homeWin.addEventListener('focus', function(){
+			Ti.API.debug('homeWin got focus');
 			if (loadedonce){
 				//this code only runs when we reload this page
 			    rewriteUpdateLabel();		
+				rewriteLabPoints();
+				
 			}
 		});
 		return homeWin;

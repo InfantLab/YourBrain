@@ -204,6 +204,7 @@
 				labelGameMessage.text = 'Double click to start game';
 				gameStarted = false;
 			},6000);
+			gameEndSaveScores();
 			return;
 		}
 		shrinkTime *= .97; //shrink quicker each step
@@ -665,6 +666,26 @@
 	//	});
 	//};
 	
+	function gameEndSaveScores(){
+		var gameSaveData = [{Game: 'StatLearning',
+							GameVersion:1,
+							PlayStart:winopened ,
+							PlayEnd: parseInt((new Date()).getTime()/1000),
+							TotalScore:points,
+							Speed_GO:speedbonus,
+							Speed_NOGO:0,
+							Coord_GO:coordbonus,
+							Coord_NOGO:0,
+							Level:level,
+							Inhibition:inhibitbonus,
+							Feedback:'',
+							Choices:'',
+							SessionID:Titanium.App.Properties.getInt('SessionID'),
+							UserID:Titanium.App.Properties.getInt('UserID'),
+							LabPoints:5		
+						}];
+		Titanium.App.boozerlyzer.data.gameScores.Result(gameSaveData);
+	}
 	
 	//
 	// Cleanup and return home

@@ -23,7 +23,9 @@
 		var nRows = parseInt(numRows);
 		//TODO Filter by frequency range
 		var rows = conn.execute('SELECT * FROM EmotionalWordLists ORDER BY RANDOM() LIMIT ?', nRows);
-		return fillDataObject(rows);
+		var returnData = fillDataObject(rows);
+		rows.close();
+		return returnData;
 	};
 	
 		/***
@@ -60,7 +62,9 @@
 		var returnData = [];
 		//TODO Filter by frequency range
 		var rows = conn.execute('SELECT * FROM EmotionalWordLists WHERE Word = ?', word);
-		return fillDataObject(rows);
+		var returnData = fillDataObject(rows);
+		rows.close();
+		return returnData;
 	};
 
 	/**

@@ -30,7 +30,9 @@
 			var maxid = parseInt(rows.field(0));
 			rows.close();
 			rows = conn.execute('SELECT * FROM DoseageLog WHERE ID = ?', maxid);
-			return fillDataObject(rows);
+			var returnData = fillDataObject(rows);
+			rows.close();
+			return returnData;
 		}
 		//something didn't work
 		return false;
@@ -121,7 +123,9 @@
 	//get all data for this Session ID 
 	Ti.App.boozerlyzer.data.doseageLog.getAllSessionData = function (sessionID){
 		var rows = conn.execute('SELECT * FROM DoseageLog WHERE SESSIONID = ? ORDER BY DoseageChanged ASC', sessionID);
-		return fillDataObject(rows);
+		var returnData = fillDataObject(rows);
+		rows.close();
+		return returnData;
 	};
 
 	/***
@@ -134,7 +138,9 @@
 		}else{
 			rows = conn.execute('SELECT * FROM DoseageLog WHERE DoseageChanged > ? ORDER BY DoseageChanged ASC', sessionID);
 		}
-		return fillDataObject(rows);
+		var returnData = fillDataObject(rows);
+		rows.close();
+		return returnData;
 	};
 
 	

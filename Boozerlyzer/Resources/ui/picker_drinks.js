@@ -68,7 +68,7 @@ var optionPickerDialog = (function(){
 			title:'Cancel',
 			bottom:20,
 			left:60,
-			width:120,
+			width:120
 			
 			//,style:Ti.UI.iPhone.SystemButtonStyle.BORDERED
 		});
@@ -105,15 +105,13 @@ var optionPickerDialog = (function(){
 			height:280,
 			width:320,
 			backgroundColor:'#000',
-			opacity:0,
-			zIndex:1,
+			opacity:1,
 			borderRadius:4,
 			borderWidth:4 
 		});
 		Ti.UI.currentWindow.add(coverView);
 
 		containerView = Ti.UI.createView({height:251, bottom:-251, zIndex:9});
-		// containerView.add(toolbar);
 		containerView.add(picker);
 		containerView.add(doneButton);
 		containerView.add(cancelButton);

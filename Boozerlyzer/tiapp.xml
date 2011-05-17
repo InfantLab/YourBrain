@@ -7,7 +7,7 @@
     </deployment-targets>
 <id>net.yourbrainondrugs.ybob</id>
 <name>Boozerlyzer</name>
-<version>0.17</version>
+<version>0.18</version>
 <publisher>YourBrainonDrugs</publisher>
 <url>http://yourbrainondrugs.net</url>
 <description>Smartphone games to assess the cognitive and emotional effects of drugs and alcohol.</description>

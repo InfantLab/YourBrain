@@ -37,7 +37,9 @@
 				Ti.API.trace('selfAssessment maxid - ' + maxid);
 				rows.close();
 				rows = conn.execute('SELECT * FROM SelfAssessment WHERE ID = ?', maxid);
-				return fillDataObject(rows);
+				var returnData = fillDataObject(rows);
+				rows.close();
+				return returnData;
 			}
 		}
 		//something didn't work
@@ -89,7 +91,9 @@
 		//cast cos sessionID sometimes treated as string
 		var sessID = parseInt(sessionID);
 		var rows = conn.execute('SELECT * FROM SelfAssessment WHERE SESSIONID = ? ORDER BY SelfAssessmentChanged ASC', sessID);
-		return fillDataObject(rows);
+		var returnData = fillDataObject(rows);
+		rows.close();
+		return returnData;
 	};	
 	
 	/***
