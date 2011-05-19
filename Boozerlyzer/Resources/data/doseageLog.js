@@ -17,7 +17,7 @@
 	Ti.App.boozerlyzer.data.doseageLog = {};
 	
 	//maintain a database connection we can use
-	var conn = Titanium.Database.install('../ybob.db','ybob');
+	var conn = Titanium.Database.install('ybob.db','ybob');
 
   
 	//get data for the maximum row id 

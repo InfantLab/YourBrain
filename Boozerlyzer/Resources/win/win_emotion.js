@@ -64,14 +64,14 @@
 		});
 		
 		var happinessLow = Titanium.UI.createImageView({
-			image:'../icons/Sad.png',
+			image:'/icons/Sad.png',
 			height:sizeIcon,
 			width:sizeIcon,
 			top:topHappiness,
 			left:leftLowIcon
 		});
 		var happinessHigh = Titanium.UI.createImageView({
-			image:'../icons/Happy.png',
+			image:'/icons/Happy.png',
 			height:sizeIcon,
 			width:sizeIcon,
 			top:topHappiness,
@@ -116,14 +116,14 @@
 			textAlign:'center'
 		});
 		var energyLow = Titanium.UI.createImageView({
-			image:'../icons/OffLamp.png',
+			image:'/icons/OffLamp.png',
 			height:sizeIcon,
 			width:sizeIcon,
 			top:topEnergy,
 			left:leftLowIcon
 		});
 		var energyHigh = Titanium.UI.createImageView({
-			image:'../icons/OnLamp.png',
+			image:'/icons/OnLamp.png',
 			height:sizeIcon,
 			width:sizeIcon,
 			top:topEnergy,
@@ -169,7 +169,7 @@
 			textAlign:'center'
 		});
 		var drunkSober = Titanium.UI.createImageView({
-			image:'../icons/sober.png',
+			image:'/icons/sober.png',
 			height:sizeIcon,
 			width:sizeIcon,
 			top:topDrunk-10,
@@ -177,7 +177,7 @@
 		});
 		//apologies for the following variable name!
 		var drunkDrunk = Titanium.UI.createImageView({
-			image:'../icons/drunk.png',
+			image:'/icons/drunk.png',
 			height:sizeIcon,
 			width:sizeIcon,
 			top:topDrunk,
@@ -287,7 +287,7 @@
 		
 		// BACK TO NEW DRINKS
 		var newdrinks = Titanium.UI.createImageView({
-			image:'../icons/newdrinks.png',
+			image:'/icons/newdrinks.png',
 			height:bigIcons,
 			width:bigIcons,
 			bottom:bottomButtons,
@@ -296,16 +296,16 @@
 		newdrinks.addEventListener('click',function(){
 			var newdosewin = Titanium.UI.createWindow({ modal:true,
 				modal:true,
-				url:'../win/win_dosage.js',
+				url:'/win/win_dosage.js',
 				title:'What have you had to drink?',
-				backgroundImage:'../images/smallcornercup.png'
+				backgroundImage:'/images/smallcornercup.png'
 			});
 			newdosewin.open();
 		});
 		win.add(newdrinks);
 		
 		var newtripreport = Titanium.UI.createImageView({
-			image:'../icons/tripreport.png',
+			image:'/icons/tripreport.png',
 			height:bigIcons * .8,
 			width:bigIcons * .8,
 			bottom:bottomButtons,
@@ -314,16 +314,16 @@
 		newtripreport.addEventListener('click',function(){
 			var newtripwin = Titanium.UI.createWindow({ modal:true,
 				modal:true,
-				url:'../win/win_tripreport.js',
+				url:'/win/win_tripreport.js',
 				title:'How are you feeling?',
-				backgroundImage:'../images/smallcornercup.png'
+				backgroundImage:'/images/smallcornercup.png'
 			});
 			newtripwin.open();
 		});
 		win.add(newtripreport);
 		
 		var newgame = Titanium.UI.createImageView({
-			image:'../icons/hamsterwheel.png',
+			image:'/icons/hamsterwheel.png',
 			height:bigIcons,
 			width:bigIcons,
 			bottom:bottomButtons,
@@ -332,9 +332,9 @@
 		newgame.addEventListener('click',function(){
 			var winplay = Titanium.UI.createWindow({ modal:true,
 				modal:true,
-				url:'../win/win_gameMenu.js',
+				url:'/win/win_gameMenu.js',
 				title:'YBOBGame',
-				backgroundImage:'../images/smallcornercup.png'
+				backgroundImage:'/images/smallcornercup.png'
 			});
 			winplay.open();
 			winplay.home = winHome;
@@ -350,9 +350,9 @@
 			if (Ti.App.boozerlyzer.winHome === undefined 
 			 || Ti.App.boozerlyzer.winHome === null) {
 				Ti.App.boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
-					url: '../app.js',
+					url: '/app.js',
 					title: 'Boozerlyzer',
-					backgroundImage: '../images/smallcornercup.png',
+					backgroundImage: '/images/smallcornercup.png',
 					orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 				})
 			}

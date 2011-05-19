@@ -21,7 +21,7 @@
  *  Usage:
  *  <code>
  *  // Include component in page
- *  Ti.include('../optionPickerDialog.js');
+ *  Ti.include('/optionPickerDialog.js');
  *
  *  // Set data in picker and open as a modal
  *  optionPickerDialog.setData([
@@ -103,7 +103,7 @@ var optionPickerDialog = (function(){
 			top:40,
 			left:40,
 			height:280,
-			width:320,
+			width:360,
 			backgroundColor:'#000',
 			opacity:1,
 			borderRadius:4,

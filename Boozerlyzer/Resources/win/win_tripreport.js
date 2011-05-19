@@ -109,7 +109,7 @@
 	
 	// BACK TO NEW DRINKS
 	var newdrinks = Titanium.UI.createImageView({
-		image:'../icons/newdrinks.png',
+		image:'/icons/newdrinks.png',
 		height:bigIcons,
 		width:bigIcons,
 		bottom:bottomButtons,
@@ -117,9 +117,9 @@
 	});
 	newdrinks.addEventListener('click',function(){
 		var newdosewin = Titanium.UI.createWindow({ modal:true,
-			url:'../win/win_dosage.js',
+			url:'/win/win_dosage.js',
 			title:'What have you had to drink?',
-			backgroundImage:'../images/smallcornercup.png'
+			backgroundImage:'/images/smallcornercup.png'
 		});
 		newdosewin.home =  winHome;
 		win.close();
@@ -128,7 +128,7 @@
 	win.add(newdrinks);
 	
 	var newmood = Titanium.UI.createImageView({
-		image:'../icons/TheaterYellow2.png',
+		image:'/icons/TheaterYellow2.png',
 		height:bigIcons,
 		width:bigIcons,
 		bottom:bottomButtons,
@@ -137,9 +137,9 @@
 	newmood.addEventListener('click',function(){
 		var newmoodwin = Titanium.UI.createWindow({ modal:true,
 			modal:true,
-			url:'../win/win_emotion.js',
+			url:'/win/win_emotion.js',
 			title:'How are you feeling?',
-			backgroundImage:'../images/smallcornercup.png'
+			backgroundImage:'/images/smallcornercup.png'
 		});
 		win.close();
 		newmoodwin.open();
@@ -147,7 +147,7 @@
 	win.add(newmood);
 	
 	var newgame = Titanium.UI.createImageView({
-		image:'../icons/hamsterwheel.png',
+		image:'/icons/hamsterwheel.png',
 		height:bigIcons,
 		width:bigIcons,
 		bottom:bottomButtons,
@@ -156,9 +156,9 @@
 	newgame.addEventListener('click',function(){
 		var winplay = Titanium.UI.createWindow({ modal:true,
 			modal:true,
-			url:'../win/win_game1.js',
+			url:'/win/win_game1.js',
 			title:'YBOB Game 1 - Level 1',
-			backgroundImage:'../images/smallcornercup.png'
+			backgroundImage:'/images/smallcornercup.png'
 		});
 		winplay.open();
 		win.close();
@@ -171,9 +171,9 @@
 		if (Ti.App.boozerlyzer.winHome === undefined 
 			 || Ti.App.boozerlyzer.winHome === null) {
 			Ti.App.boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
-				url: '../app.js',
+				url: '/app.js',
 				title: 'Boozerlyzer',
-				backgroundImage: '../images/smallcornercup.png',
+				backgroundImage: '/images/smallcornercup.png',
 				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 			})
 		}

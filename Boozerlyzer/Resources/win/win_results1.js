@@ -31,7 +31,7 @@
 	});
 	win.add(axisView);
 	var blackAxisView = Ti.UI.createImageView({
-		image:'../images/blackaxis800x480.png',
+		image:'/images/blackaxis800x480.png',
 		left:0,
 		top:0,
 		height:heightAxis,
@@ -40,7 +40,7 @@
 	axisView.add(blackAxisView);	
 	
 	var fast = Ti.UI.createImageView({
-		image:'../icons/rocket.png',
+		image:'/icons/rocket.png',
 		height:sizeAxisIcon,
 		width:sizeAxisIcon,
 		top:topAxis,
@@ -49,7 +49,7 @@
 	win.add(fast);
 	
 	var slow = Ti.UI.createImageView({
-		image:'../icons/snail.png',
+		image:'/icons/snail.png',
 		height:sizeAxisIcon,
 		width:sizeAxisIcon,
 		top:topAxis+heightAxis-axisInset,
@@ -58,7 +58,7 @@
 	win.add(slow);
 	
 	var time = Ti.UI.createImageView({
-		image:'../icons/time.png',
+		image:'/icons/time.png',
 		height:sizeAxisIcon,
 		width:sizeAxisIcon,
 		top:topAxis+heightAxis,
@@ -86,7 +86,7 @@
 			var y = axisInset+(heightAxis-axisInset)*(totalDrunk[step])/maxUnits;
 			
 			var booze = Titanium.UI.createImageView({
-				image:'../icons/Misc.png',
+				image:'/icons/Misc.png',
 				height:sizeDataPoint,
 				width:sizeDataPoint,
 				bottom:y,
@@ -103,15 +103,15 @@
 			var ye = axisInset+(heightAxis-axisInset)*(emotionData[step].Energy)/100;
 			var yd = axisInset+(heightAxis-axisInset)*(emotionData[step].Drunkeness)/100;
 			
-			var imgh =- (emotionData[step].Happiness > 50 ? '../icons/Happy.png': '../icons/Sad.png');
-			var imgd =- (emotionData[step].Drunkeness > 50 ? '../icons/Drunk.png': '../icons/Sober.png');
+			var imgh =- (emotionData[step].Happiness > 50 ? '/icons/Happy.png': '/icons/Sad.png');
+			var imgd =- (emotionData[step].Drunkeness > 50 ? '/icons/Drunk.png': '/icons/Sober.png');
 			var imge = '';
 			if (emotionData[step].Energy > 66) {
-				imge = '../icons/OnLamp.png';
+				imge = '/icons/OnLamp.png';
 			}else if (emotionData[step].Energy > 33){
-				imge = '../icons/DullLamp.png';
+				imge = '/icons/DullLamp.png';
 			}else{
-				imge = '../icons/OffLamp.png';
+				imge = '/icons/OffLamp.png';
 			}
 			
 			var booze = Titanium.UI.createImageView({
@@ -134,9 +134,9 @@
 		if (Ti.App.boozerlyzer.winHome === undefined 
 			 || Ti.App.boozerlyzer.winHome === null) {
 			Ti.App.boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
-				url: '../app.js',
+				url: '/app.js',
 				title: 'Boozerlyzer',
-				backgroundImage: '../images/smallcornercup.png',
+				backgroundImage: '/images/smallcornercup.png',
 				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 			})
 		}

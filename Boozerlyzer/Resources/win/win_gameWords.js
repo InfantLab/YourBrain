@@ -155,9 +155,9 @@
 			if (Ti.App.boozerlyzer.winHome === undefined 
 				 || Ti.App.boozerlyzer.winHome === null) {
 				Ti.App.boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
-					url: '../app.js',
+					url: '/app.js',
 					title: 'Boozerlyzer',
-					backgroundImage: '../images/smallcornercup.png',
+					backgroundImage: '/images/smallcornercup.png',
 					orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 				})
 			}
@@ -170,38 +170,38 @@
 		//
 		imageXyAxes = Ti.UI.createImageView({
 								visible:false,
-								image:'../images/xy-axes.png',
+								image:'/images/xy-axes.png',
 								height:320,
 								width:320,
 								top:0,left:60});
 	   	win.add(imageXyAxes);
 		imageXAxisLeft = Ti.UI.createImageView({
 								visible:false,
-								image:'../icons/Sad.png',
+								image:'/icons/Sad.png',
 								width:40,height:40,
 								top:165,left:(60)});
 		win.add(imageXAxisLeft);
 		imageXAxisRight = Ti.UI.createImageView({
 								visible:false,
-								image:'../icons/Happy.png',
+								image:'/icons/Happy.png',
 								width:40,height:40,
 								top:165,left:(60+320-40)});
 		win.add(imageXAxisRight);
 		imageYAxisUp = Ti.UI.createImageView({
 								visible:false,
-								image:'../icons/OnLamp.png',
+								image:'/icons/OnLamp.png',
 								width:40,height:40,
 								top:0,left:(60+160-40)});
 		win.add(imageYAxisUp);
 		imageYAxisDown = Ti.UI.createImageView({
 								visible:false,
-								image:'../icons/OffLamp.png',
+								image:'/icons/OffLamp.png',
 								width:40,height:40,
 								top:280,left:(60+160-40)});
 		win.add(imageYAxisDown);
 		imageMisc = Ti.UI.createImageView({
 								visible:false,
-								image:'../icons/Misc.png',
+								image:'/icons/Misc.png',
 								width:30,height:30,
 								top:145,left:(60+145)});
 		win.add(imageMisc);						

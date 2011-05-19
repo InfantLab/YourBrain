@@ -36,8 +36,8 @@
 	var imgtop = [20,20,20,160,160,160];
 	var imgleft = [60,180,300,60,180,300];
 	var iconSize = 94;
-	var gameImgUrls = ['../icons/teddy_bears.png','../icons/Memory.png','../icons/numberStroop.png','../icons/Ice.png','../icons/emotionalwords.png','../icons/feelings.png'];
-	var gameWinUrls = ['../win/win_gameStatLearn.js','../win/win_game1.js','../win/win_gameStroop.js','../win/win_gameWords.js','../win/win_gameWords.js','../win/win_gameWords.js'];
+	var gameImgUrls = ['/icons/teddy_bears.png','/icons/Memory.png','/icons/numberStroop.png','/icons/Ice.png','/icons/emotionalwords.png','/icons/feelings.png'];
+	var gameWinUrls = ['/win/win_gameStatLearn.js','/win/win_game1.js','/win/win_gameStroop.js','/win/win_gameWords.js','/win/win_gameWords.js','/win/win_gameWords.js'];
 	
 	//this code just needs to be called once for this window
 	function setUpOnce(){
@@ -61,7 +61,7 @@
 				var winplay = Titanium.UI.createWindow({ modal:true,
 					url:gameWinUrls[which],
 					title:gameNames[which],
-					backgroundImage:'../images/smallcornercup.png',
+					backgroundImage:'/images/smallcornercup.png',
 					orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT],  //Landscape mode only
 					gameType:gameTypes[which],
 					numRounds:numRounds[which]
@@ -138,9 +138,9 @@
 			if (Ti.App.boozerlyzer.winHome === undefined 
 				 || Ti.App.boozerlyzer.winHome === null) {
 				Ti.App.boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
-					url: '../app.js',
+					url: '/app.js',
 					title: 'Boozerlyzer',
-					backgroundImage: '../images/smallcornercup.png',
+					backgroundImage: '/images/smallcornercup.png',
 					orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 				})
 			}

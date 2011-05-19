@@ -177,9 +177,9 @@
 			if (Ti.App.boozerlyzer.winHome === undefined 
 				 || Ti.App.boozerlyzer.winHome === null) {
 				Ti.App.boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
-					url: '../app.js',
+					url: '/app.js',
 					title: 'Boozerlyzer',
-					backgroundImage: '../images/smallcornercup.png',
+					backgroundImage: '/images/smallcornercup.png',
 					orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 				})
 			}

@@ -54,7 +54,7 @@
 	
 	
 	var debug = Titanium.UI.createImageView({
-		image:'../icons/Misc.png',
+		image:'/icons/Misc.png',
 		height:48,
 		width:48,
 		top:60,
@@ -63,16 +63,16 @@
 	debug.addEventListener('click',function(){
 	
 	//reinstall the database - gets new structure but wipes ALL data.
-	var db0 = Titanium.Database.install('../ybob.db','ybob');
+	var db0 = Titanium.Database.install('/ybob.db','ybob');
 	db0.remove();
 	Titanium.API.debug('Removed old YBOB database')
 	db0.close();
 	
-	var db = Titanium.Database.install('../ybob.db','ybob');
+	var db = Titanium.Database.install('/ybob.db','ybob');
 	Titanium.API.debug('Installed new YBOB database')
 	db.close();
 		
-		// var db = Titanium.Database.install('../ybob.db','ybob');
+		// var db = Titanium.Database.install('/ybob.db','ybob');
 		// // db.execute('CREATE TABLE "main"."NumberStroopSummary" (Errors_GO NUMERIC, Errors_NOGO NUMERIC, GameDuration NUMERIC, GameFinish NUMERIC, GameStart NUMERIC, Hits_GO NUMERIC, Hits_NOGO NUMERIC, ID INTEGER PRIMARY KEY, Level NUMERIC, ReactionTimeGO NUMERIC, ReactionTimeNOGO NUMERIC, TotalScore NUMERIC)');
 		// // db.execute('INSERT INTO "main"."NumberStroopSummary" SELECT * FROM "main"."StatLearnSummary"');/
 		// db.execute('CREATE TABLE "GameScores" ("ID" INTEGER PRIMARY KEY  NOT NULL ,"GAME" TEXT,"GAMEVERSION" TEXT,"PLAYSTART" DATETIME,"PLAYEND" DATETIME,"TOTALSCORE" DOUBLE,"SPEED_GO" DOUBLE,"COORD_GO" DOUBLE,"INHIBITIONSCORE" DOUBLE,"LEVEL" INTEGER,"FEEDBACK" TEXT,"CHOICES" TEXT,"MEMORYSCORE" DOUBLE,"SPEED_NOGO" DOUBLE, "COORD_NOGO" DOUBLE, "SessionID" INTEGER)');?
@@ -80,7 +80,7 @@
 	win.add(debug);
 	
 	var charttest = Titanium.UI.createImageView({
-		image:'../icons/line_chart.png',
+		image:'/icons/line_chart.png',
 		height:48,
 		width:48,
 		top:120,
@@ -88,9 +88,9 @@
 	});
 	charttest.addEventListener('click',function(){
 		var newchart = Titanium.UI.createWindow({ modal:true,
-			url:'../win/win_results2.js',
+			url:'/win/win_results2.js',
 			title:'How are you feeling?',
-			backgroundImage:'../images/smallcornercup.png',
+			backgroundImage:'/images/smallcornercup.png',
 			modal:true		
 		});
 		win.close();
@@ -104,9 +104,9 @@
 		// if (Ti.App.boozerlyzer.winHome === undefined 
 			 // || Ti.App.boozerlyzer.winHome === null) {
 			// Ti.App.boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
-				// url: '../app.js',
+				// url: '/app.js',
 				// title: 'Boozerlyzer',
-				// backgroundImage: '../images/smallcornercup.png',
+				// backgroundImage: '/images/smallcornercup.png',
 				// orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 			// })
 		// }

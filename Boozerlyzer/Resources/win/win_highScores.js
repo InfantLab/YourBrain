@@ -32,7 +32,7 @@
 	
 	
 	var highScores = Titanium.UI.createImageView({
-		image:'../icons/Evolution.png',
+		image:'/icons/Evolution.png',
 		height:72,
 		width:72 * 2.9,  //keep correct proportions
 		top:0,
@@ -41,7 +41,7 @@
 	});
 
 	var high = Ti.UI.createImageView({
-		image:'../icons/' + highicons[0],
+		image:'/icons/' + highicons[0],
 		height:sizeScoreIcon,
 		width:sizeScoreIcon,
 		top:topAxis,
@@ -50,7 +50,7 @@
 	win.add(high);
 	
 	var low = Ti.UI.createImageView({
-		image:'../icons/snail.png',
+		image:'/icons/snail.png',
 		height:sizeScoreIcon,
 		width:sizeScoreIcon,
 		top:topAxis+heightAxis-axisInset,
@@ -59,7 +59,7 @@
 	win.add(low);
 	
 	var time = Ti.UI.createImageView({
-		image:'../icons/time.png',
+		image:'/icons/time.png',
 		height:sizeScoreIcon,
 		width:sizeScoreIcon,
 		top:200,
@@ -114,7 +114,7 @@
 		
 		var len = thisGameHighScores.length;
 		
-		for(var i=0;i<len:i++){
+		for(var i=0;i<len;i++){
 			
 			var row = Ti.UI.createTableViewRow({
 		        height: 26,
@@ -143,9 +143,9 @@
 		if (Ti.App.boozerlyzer.winHome === undefined 
 			 || Ti.App.boozerlyzer.winHome === null) {
 			Ti.App.boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
-				url: '../app.js',
+				url: '/app.js',
 				title: 'Boozerlyzer',
-				backgroundImage: '../images/smallcornercup.png',
+				backgroundImage: '/images/smallcornercup.png',
 				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 			})
 		}

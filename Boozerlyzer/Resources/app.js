@@ -14,7 +14,7 @@
  * Copyright yourbrainondrugs.net 2011
  */
 
-
+Ti.API.debug('app main 0');
 //application namespace
 Ti.App.boozerlyzer = {};
 Ti.App.boozerlyzer.win = {};
@@ -38,6 +38,9 @@ Ti.include('/js/dateTimeHelpers.js');
 Ti.include('/win/win_main.js'); //construct main screen UI
 	
 var winMain = Ti.App.boozerlyzer.win.main.createApplicationWindow();
+Ti.API.debug('app main 1');
 winMain.open();
+Ti.API.debug('app main 2');
+
 Ti.App.boozerlyzer.winHome = winMain;
 

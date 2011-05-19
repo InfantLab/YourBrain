@@ -15,12 +15,12 @@
 		var loadedonce = false;
 		
 		var drinkNames = ['Beer','Wine','Spirits','NULL'];
-		var drinkImgs = ['../icons/beer-full.png','../icons/wine.png','../icons/whiskey.png','../icons/whiskey-empty.png'];
+		var drinkImgs = ['/icons/beer-full.png','/icons/wine.png','/icons/whiskey.png','/icons/whiskey-empty.png'];
 		
-		// //Ti.include('../js/datetimehelpers.js');
+		// //Ti.include('/js/datetimehelpers.js');
 		// Include component in page
-		Ti.include('../ui/picker_drinks.js');
-		Ti.include('../js/bloodalcohol.js');
+		Ti.include('/ui/picker_drinks.js');
+		Ti.include('/js/bloodalcohol.js');
 		
 		var persInfo = Ti.App.boozerlyzer.data.personalInfo.getData();
 		var stdDrinks = Ti.App.boozerlyzer.data.alcoholStandardDrinks.get(persInfo.Country);
@@ -110,7 +110,7 @@
 		win.add(sessionView);
 		
 		var beeradd = Titanium.UI.createImageView({
-			image:'../icons/beer-full.png',
+			image:'/icons/beer-full.png',
 			height:bigIcons,
 			width:bigIcons,
 			top:topBeer,
@@ -127,7 +127,7 @@
 		
 		
 		var beeradd_sml = Titanium.UI.createImageView({
-			image:'../icons/beer-full.png',
+			image:'/icons/beer-full.png',
 			height:smlIcon,
 			width:smlIcon,
 			top:topBeer+bigIcons-smlIcon,
@@ -157,7 +157,7 @@
 		
 		
 		var wineadd = Titanium.UI.createImageView({
-			image:'../icons/wine.png',
+			image:'/icons/wine.png',
 			height:bigIcons,
 			width:bigIcons,
 			top:topWine,
@@ -174,7 +174,7 @@
 		
 		
 		var wineadd_sml = Titanium.UI.createImageView({
-			image:'../icons/wine.png',
+			image:'/icons/wine.png',
 			height:smlIcon,
 			width:smlIcon,
 			top:topWine+bigIcons-smlIcon,
@@ -201,7 +201,7 @@
 		win.add(winecount);
 		
 		var spiritadd = Titanium.UI.createImageView({
-			image:'../icons/whiskey.png',
+			image:'/icons/whiskey.png',
 			height:bigIcons * 0.9,
 			width:bigIcons * 0.9,
 			top:topSpirit+10,
@@ -219,7 +219,7 @@
 		
 		
 		var spiritadd_sml = Titanium.UI.createImageView({
-			image:'../icons/whiskey.png',
+			image:'/icons/whiskey.png',
 			height:smlIcon * 0.9,
 			width:smlIcon * 0.9,
 			top:topSpirit+bigIcons-smlIcon,
@@ -462,7 +462,7 @@
 		var leftThird = 180;
 		
 		var newmood = Titanium.UI.createImageView({
-			image:'../icons/TheaterYellow2.png',
+			image:'/icons/TheaterYellow2.png',
 			height:bigIcons,
 			width:bigIcons,
 			bottom:bottomButtons,
@@ -470,9 +470,9 @@
 		});
 		newmood.addEventListener('click',function(){
 			var newmoodwin = Titanium.UI.createWindow({ modal:true,
-				url:'../win/win_emotion.js',
+				url:'/win/win_emotion.js',
 				title:'How are you feeling?',
-				backgroundImage:'../images/smallcornercup.png',
+				backgroundImage:'/images/smallcornercup.png',
 				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 			});
 			win.close();
@@ -481,7 +481,7 @@
 		win.add(newmood);
 		
 		var newtripreport = Titanium.UI.createImageView({
-			image:'../icons/tripreport.png',
+			image:'/icons/tripreport.png',
 			height:bigIcons * .8,
 			width:bigIcons * .8,
 			bottom:bottomButtons,
@@ -489,9 +489,9 @@
 		});
 		newtripreport.addEventListener('click',function(){
 			var newtripwin = Titanium.UI.createWindow({ modal:true,
-				url:'../win/win_tripreport.js',
+				url:'/win/win_tripreport.js',
 				title:'How are you feeling?',
-				backgroundImage:'../images/smallcornercup.png',
+				backgroundImage:'/images/smallcornercup.png',
 				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 			});
 			win.close();
@@ -500,7 +500,7 @@
 		win.add(newtripreport);
 		
 		var newgame = Titanium.UI.createImageView({
-			image:'../icons/hamsterwheel.png',
+			image:'/icons/hamsterwheel.png',
 			height:bigIcons,
 			width:bigIcons,	
 			bottom:bottomButtons,
@@ -510,7 +510,7 @@
 			// var winplay = Titanium.UI.createWindow({ modal:true,
 				// url:'/win/win_gameMenu.js',
 				// title:'YBOB Game ',
-				// backgroundImage:'../images/smallcornercup.png',
+				// backgroundImage:'/images/smallcornercup.png',
 				// orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 			// });
 			// winplay.home = winHome;
@@ -521,7 +521,7 @@
 			var winplay = Titanium.UI.createWindow({ modal:true,
 				url:'/ui/picker_drinks.js',
 				title:'YBOB Game ',
-				backgroundImage:'../images/smallcornercup.png',
+				backgroundImage:'/images/smallcornercup.png',
 				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 			});
 			win.close();
@@ -536,9 +536,9 @@
 			if (Ti.App.boozerlyzer.winHome === undefined 
 			 || Ti.App.boozerlyzer.winHome === null) {
 				Ti.App.boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
-					url: '../app.js',
+					url: '/app.js',
 					title: 'Boozerlyzer',
-					backgroundImage: '../images/smallcornercup.png',
+					backgroundImage: '/images/smallcornercup.png',
 					orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 				})
 			}

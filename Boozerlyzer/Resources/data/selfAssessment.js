@@ -14,7 +14,7 @@
 	Titanium.App.boozerlyzer.data.selfAssessment = {};
 	
 	//maintain a database connection we can use
-	var conn = Titanium.Database.install('../ybob.db','ybob');
+	var conn = Titanium.Database.install('ybob.db','ybob');
 
   
 	//get data for the maximum row id 
@@ -121,6 +121,7 @@
 		}
 		//something didn't work
 		return false;
+		
 	};
 
 }());

@@ -147,7 +147,7 @@
 		//change height units
 		persInfo.Changed = true;
 		persInfo.HeightUnits = (persInfo.HeightUnits===1? 0: 1);
-		fillHeightWeight(); 
+		fillHeight(); 
 	})
 	
 	function fillHeight(){
@@ -275,9 +275,9 @@
 	// win.addEventListener('android:back', function(e) {
 		// if (winHome === undefined || winHome === null) {
 			// winHome = Titanium.UI.createWindow({ modal:true,
-				// url: '../app.js',
+				// url: '/app.js',
 				// title: 'Boozerlyzer',
-				// backgroundImage: '../images/smallcornercup.png',
+				// backgroundImage: '/images/smallcornercup.png',
 				// orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 			// })
 		// }

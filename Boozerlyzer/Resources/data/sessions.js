@@ -17,7 +17,7 @@
 	Ti.App.boozerlyzer.data.sessions = {};
 	
 	//maintain a database connection we can use
-	var conn = Titanium.Database.install('../ybob.db','ybob');
+	var conn = Titanium.Database.install('ybob.db','ybob');
   
 	//get data for the maximum row id for this userID
 	// where 0 is default and >0 implies we are in 'matemode'

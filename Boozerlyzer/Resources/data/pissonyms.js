@@ -14,8 +14,8 @@
 	Titanium.App.boozerlyzer.data.pissonyms = {};
 	
 	//maintain a database connection we can use
-	var conn = Titanium.Database.open('ybob');
-  
+	var conn = Titanium.Database.install('ybob.db','ybob');
+
 	//get data for the maximum row id 
 	Titanium.App.boozerlyzer.data.pissonyms.selectNRandomRows = function (numRows, frequencyRange){
 		var returnData = [];

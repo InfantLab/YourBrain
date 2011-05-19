@@ -15,7 +15,7 @@
 	Titanium.App.boozerlyzer.data.weFeelFine = {};
 	
 	//maintain a database connection we can use
-  	var conn = Titanium.Database.install('../ybob.db','ybob');
+  	var conn = Titanium.Database.install('ybob.db','ybob');
 
 	//get data for the maximum row id 
 	Titanium.App.boozerlyzer.data.weFeelFine.selectNRandomRows = function (numRows, frequencyRange){

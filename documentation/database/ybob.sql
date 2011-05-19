@@ -1,0 +1,18 @@
+CREATE TABLE "AlcoholStandardDrinks" ("Country" , "GramsPerUnit" , "MillilitresPerUnit" );
+CREATE TABLE AppSummary (DatabaseVersion TEXT, ID INTEGER PRIMARY KEY, DrunkWordListID NUMERIC, EmotionalWordListID NUMERIC, StatLearnMatrixID NUMERIC, Current NUMERIC, InstallDate NUMERIC, Version TEXT);
+CREATE TABLE "DoseageLog" ("DoseageChanged" INTEGER,"DoseageStart" INTEGER,"ExitCode" TEXT,"ID" INTEGER PRIMARY KEY ,"Volume" NUMERIC,"SessionID" NUMERIC,"Strength" NUMERIC,"StandardUnits" NUMERIC,"DrugType" TEXT, "TotalUnits" Numeric, "Number" NUMERIC, "DrugVariety" TEXT, "DoseDescription" TEXT);
+CREATE TABLE "DrugDoses" ("ID" INTEGER PRIMARY KEY  NOT NULL , "DRUGCLASS" TEXT, "DRUGTYPE" TEXT, "DRUGNAME" TEXT, "DOSESIZE" NUMERIC, "DOSESTRENGTH" DOUBLE, "DOSEDESCRIPTION" TEXT);
+CREATE TABLE "EmotionalWordLists" ("Word" , "WordID" , "ValenceMean" , "ValenceSD" , "ArousalMean" , "ArousalSD" , "DominanceMean" , "DominanceSD" , "Frequency" , "WordListID" , "Weight" , "Category" );
+CREATE TABLE "GameScores" ("ID" INTEGER PRIMARY KEY  NOT NULL ,"GAME" TEXT,"GAMEVERSION" TEXT,"PLAYSTART" INTEGER,"PLAYEND" INTEGER,"TOTALSCORE" DOUBLE,"SPEED_GO" DOUBLE,"COORD_GO" DOUBLE,"INHIBITIONSCORE" DOUBLE,"LEVEL" INTEGER,"FEEDBACK" TEXT,"CHOICES" TEXT,"MEMORYSCORE" DOUBLE,"SPEED_NOGO" DOUBLE,"COORD_NOGO" DOUBLE,"SessionID" INTEGER,"LabPoints" DOUBLE,"UserID" INTEGER);
+CREATE TABLE "NumberStroopSummary" (Errors_GO NUMERIC, Errors_NOGO NUMERIC, GameDuration NUMERIC, GameFinish NUMERIC, GameStart NUMERIC, Hits_GO NUMERIC, Hits_NOGO NUMERIC, ID INTEGER PRIMARY KEY, Level NUMERIC, ReactionTimeGO NUMERIC, ReactionTimeNOGO NUMERIC, TotalScore NUMERIC);
+CREATE TABLE "PersonalInfo" ("Gender" NUMERIC,"UpdateTime" INTEGER,"BirthMonth" NUMERIC,"BirthYear" NUMERIC,"Height" NUMERIC,"HeightUnits" NUMERIC,"ID" INTEGER PRIMARY KEY ,"Nickname" TEXT,"Weight" NUMERIC,"WeightUnits" NUMERIC, "Country" TEXT);
+CREATE TABLE "Pissonyms" ("ID" , "Pissonym" , "DrunkFactor" , "DrunkListID" , "Frequency" );
+CREATE TABLE PrivacyInfo (DatabasePrivacyLevel NUMERIC, PhonePrivacyLevel NUMERIC, ServerGUID TEXT);
+CREATE TABLE "SelfAssessment" ("SessionID" NUMERIC,"DrunkBlur" NUMERIC,"Drunkeness" NUMERIC,"Energy" NUMERIC,"EnergyBlur" NUMERIC,"Happiness" NUMERIC,"HappyBlur" NUMERIC,"ID" INTEGER PRIMARY KEY ,"SelfAssessmentChanged" INTEGER,"SelfAssessmentStart" INTEGER);
+CREATE TABLE "Sessions" ("LastUpdate" INTEGER,"Created" INTEGER,"AppVersion" TEXT,"ID" INTEGER PRIMARY KEY ,"UserID" INTEGER DEFAULT (0) ,"StartTime" INTEGER);
+CREATE TABLE StatLearnMatrices (FinishObject NUMERIC, GameMatrixID NUMERIC, StartObject NUMERIC, TransitionProbability NUMERIC);
+CREATE TABLE StatLearnSummary (Errors_GO NUMERIC, Errors_NOGO NUMERIC, GameDuration NUMERIC, GameFinish NUMERIC, GameStart NUMERIC, Hits_GO NUMERIC, Hits_NOGO NUMERIC, ID INTEGER PRIMARY KEY, Level NUMERIC, ReactionTimeGO NUMERIC, ReactionTimeNOGO NUMERIC, TotalScore NUMERIC);
+CREATE TABLE "TripReports" ("ID" INTEGER PRIMARY KEY  NOT NULL , "SessionID" INTEGER, "ReportStarted" INTEGER, "ReportChanged" INTEGER, "Content" TEXT);
+CREATE TABLE "WeFeelFineList" ("Feeling" , "Frequency" , "ColorCode" );
+CREATE TABLE "WordChoices" ("ID" INTEGER PRIMARY KEY ,"ReactionTime" NUMERIC,"WordList" TEXT,"SessionID" INTEGER,"ChosenWord" TEXT,"Coordination" NUMERIC, "ChoiceStart" INTEGER, "ChoiceFinish" INTEGER, "EmoitionalWordSession" INTEGER, "WordType" TEXT);
+CREATE TABLE android_metadata (locale TEXT);

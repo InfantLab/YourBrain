@@ -15,9 +15,9 @@
 	// create tab for personal / demographic data
 	//
 	var winpers = Titanium.UI.createWindow({ modal:true,
-		url: '../win/win_personal.js',
+		url: '/win/win_personal.js',
 		titleid: 'win_personal',
-		backgroundImage:'../images/smallcornercup.png'
+		backgroundImage:'/images/smallcornercup.png'
 	});
 	var tabpers = Titanium.UI.createTab({
 		title:'Personal Data',
@@ -28,9 +28,9 @@
 	// create tab for privacy settings
 	//
 	var winprivacy = Titanium.UI.createWindow({ modal:true,
-	    url:'../win/win_privacy.js',
+	    url:'/win/win_privacy.js',
 		titleid:'win_privacy',
-		backgroundImage:'../images/smallcornercup.png'
+		backgroundImage:'/images/smallcornercup.png'
 	});
 	var tabprivacy = Titanium.UI.createTab({
 		title:'Privacy settings',
@@ -52,9 +52,9 @@
 		if (Ti.App.boozerlyzer.winHome === undefined 
 			 || Ti.App.boozerlyzer.winHome === null) {
 			Ti.App.boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
-				url: '../app.js',
+				url: '/app.js',
 				title: 'Boozerlyzer',
-				backgroundImage: '../images/smallcornercup.png',
+				backgroundImage: '/images/smallcornercup.png',
 				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 			})
 		}

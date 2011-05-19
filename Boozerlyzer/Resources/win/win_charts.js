@@ -11,7 +11,7 @@
 	
 	// The main screen for plotting results
 	var win = Titanium.UI.currentWindow;
-	Ti.include('../analysis/dataOverTime.js');
+	Ti.include('/analysis/dataOverTime.js');
 	
 	
 	//size of axis object
@@ -82,7 +82,7 @@
 		left:0,
 		height:'auto',
 		width:'auto',
-		url:'../charts/chartSingleSession.html'
+		url:'/charts/chartSingleSession.html'
 	});
 	win.add(webview);
 	
@@ -93,7 +93,7 @@
 	});
 	
 	var fast = Ti.UI.createImageView({
-		image:'../icons/rocket.png',
+		image:'/icons/rocket.png',
 		height:sizeAxisIcon,
 		width:sizeAxisIcon,
 		top:topAxis,
@@ -102,7 +102,7 @@
 	win.add(fast);
 	
 	var slow = Ti.UI.createImageView({
-		image:'../icons/snail.png',
+		image:'/icons/snail.png',
 		height:sizeAxisIcon,
 		width:sizeAxisIcon,
 		top:topAxis+heightAxis-axisInset,
@@ -111,7 +111,7 @@
 	win.add(slow);
 	
 	var time = Ti.UI.createImageView({
-		image:'../icons/time.png',
+		image:'/icons/time.png',
 		height:sizeAxisIcon,
 		width:sizeAxisIcon,
 		top:topAxis+heightAxis,
@@ -195,9 +195,9 @@
 		if (Ti.App.boozerlyzer.winHome === undefined 
 			 || Ti.App.boozerlyzer.winHome === null) {
 			Ti.App.boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
-				url: '../app.js',
+				url: '/app.js',
 				title: 'Boozerlyzer',
-				backgroundImage: '../images/smallcornercup.png',
+				backgroundImage: '/images/smallcornercup.png',
 				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 			})
 		}

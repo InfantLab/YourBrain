@@ -96,14 +96,14 @@
 		var imgtop = [40,40,40,160,160,160];
 		var imgleft = [60,180,300,60,180,300];
 		for(var img=0;img<6;img++){
-			Titanium.API.debug('../icons/teddy_bear_toy_' + img + '.png');
+			Titanium.API.debug('/icons/teddy_bear_toy_' + img + '.png');
 			loc[img] = Ti.UI.createImageView({
 				idx:img,
 				anchorPoint: {x:0.5,y:0.5},
 				width:100,height:100,
 				top:imgtop[img],
 				left:imgleft[img],
-				image:'../icons/teddy_bear_toy_' + img + '.png'
+				image:'/icons/teddy_bear_toy_' + img + '.png'
 			});	
 			loc[img].visible = false;
 			loc[img].addEventListener('touchstart',whatClicked)
@@ -348,7 +348,7 @@
 	//// SUB VIEWS
 	////
 	//var image1 = Titanium.UI.createView({
-	//	backgroundImage:'../images/smallpic1.jpg',
+	//	backgroundImage:'/images/smallpic1.jpg',
 	//	height:75,
 	//	width:75,
 	//	borderWidth:3,
@@ -356,7 +356,7 @@
 	//});
 	//
 	//var image2 = Titanium.UI.createView({
-	//	backgroundImage:'../images/smallpic2.jpg',
+	//	backgroundImage:'/images/smallpic2.jpg',
 	//	height:75,
 	//	width:75,
 	//	borderWidth:3,
@@ -364,7 +364,7 @@
 	//});
 	//
 	//var image3 = Titanium.UI.createView({
-	//	backgroundImage:'../images/smallpic3.jpg',
+	//	backgroundImage:'/images/smallpic3.jpg',
 	//	height:75,
 	//	width:75,
 	//	borderWidth:3,
@@ -693,9 +693,9 @@
 		if (Ti.App.boozerlyzer.winHome === undefined 
 			 || Ti.App.boozerlyzer.winHome === null) {
 			Ti.App.boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
-				url: '../app.js',
+				url: '/app.js',
 				title: 'Boozerlyzer',
-				backgroundImage: '../images/smallcornercup.png',
+				backgroundImage: '/images/smallcornercup.png',
 				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 			})
 		}

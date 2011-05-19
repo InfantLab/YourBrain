@@ -9,6 +9,9 @@
  */
 
 (function() {
+	try{
+	Ti.API.debug('homeWin 0');
+
 	//Create sub-namespace
 	Ti.App.boozerlyzer.win.main = {};
 	
@@ -18,12 +21,14 @@
 		var homeWin = Titanium.UI.createWindow({
 			exitOnClose: true,
 			title:'YBOB Boozerlyzer',
-			backgroundImage:'../images/smallcornercup.png'});
+			backgroundImage:'/images/smallcornercup.png'
+			//backgroundImage:'/images/smallcornercup.png'
+		});
 			
-		homeWin.orientationModes = [
-		    Titanium.UI.LANDSCAPE_LEFT,
-		    Titanium.UI.LANDSCAPE_RIGHT
-		];
+		// homeWin.orientationModes = [
+		    // Titanium.UI.LANDSCAPE_LEFT,
+		    // Titanium.UI.LANDSCAPE_RIGHT
+		// ];
 //		Titanium.UI.orientation = Titanium.UI.LANDSCAPE_RIGHT;
 	
 				
@@ -68,6 +73,8 @@
 				newSessionDialog.show();
 			}
 		}
+		Ti.API.debug('homeWin 1');
+
 		// add event listener
 		newSessionDialog.addEventListener('click',function(e)
 		{
@@ -112,7 +119,7 @@
 		homeWin.add(labelCredits);
 		
 		var personalinfo = Titanium.UI.createImageView({
-			image:'../icons/safe.png',
+			image:'/icons/safe.png',
 			height:48,
 			width:48,
 			top:20,
@@ -122,10 +129,10 @@
 			var winpers = Titanium.UI.createWindow({ 
 				exitOnClose: false,
 				modal:true,
-				url:'../win/win_mydata.js',
+				url:'/win/win_mydata.js',
 				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT],  //Landscape mode only
 				title:'Personal and Privacy',
-				backgroundImage:'../images/smallcornercup.png'
+				backgroundImage:'/images/smallcornercup.png'
 			});
 			winpers.home = homeWin; //reference to home
 			winpers.open();
@@ -138,7 +145,7 @@
 			visible:false
 		});
 		var matemode = Titanium.UI.createImageView({
-			image:'../icons/Chorus.png',
+			image:'/icons/Chorus.png',
 			height:48,
 			width:48,
 			top:20,
@@ -170,7 +177,7 @@
 		
 		
 		var debug = Titanium.UI.createImageView({
-			image:'../icons/Misc.png',
+			image:'/icons/Misc.png',
 			height:48,
 			width:48,
 			top:80,
@@ -179,16 +186,16 @@
 		debug.addEventListener('click',function(){
 		
 		//reinstall the database - gets new structure but wipes ALL data.
-		var db0 = Titanium.Database.install('../ybob.db','ybob');
+		var db0 = Titanium.Database.install('/ybob.db','ybob');
 		db0.remove();
 		Titanium.API.debug('Removed old YBOB database')
 		db0.close();
 		
-		var db = Titanium.Database.install('../ybob.db','ybob');
+		var db = Titanium.Database.install('/ybob.db','ybob');
 		Titanium.API.debug('Installed new YBOB database')
 		db.close();
 			
-			// var db = Titanium.Database.install('../ybob.db','ybob');
+			// var db = Titanium.Database.install('/ybob.db','ybob');
 			// // db.execute('CREATE TABLE "main"."NumberStroopSummary" (Errors_GO NUMERIC, Errors_NOGO NUMERIC, GameDuration NUMERIC, GameFinish NUMERIC, GameStart NUMERIC, Hits_GO NUMERIC, Hits_NOGO NUMERIC, ID INTEGER PRIMARY KEY, Level NUMERIC, ReactionTimeGO NUMERIC, ReactionTimeNOGO NUMERIC, TotalScore NUMERIC)');
 			// // db.execute('INSERT INTO "main"."NumberStroopSummary" SELECT * FROM "main"."StatLearnSummary"');/
 			// db.execute('CREATE TABLE "GameScores" ("ID" INTEGER PRIMARY KEY  NOT NULL ,"GAME" TEXT,"GAMEVERSION" TEXT,"PLAYSTART" DATETIME,"PLAYEND" DATETIME,"TOTALSCORE" DOUBLE,"SPEED_GO" DOUBLE,"COORD_GO" DOUBLE,"INHIBITIONSCORE" DOUBLE,"LEVEL" INTEGER,"FEEDBACK" TEXT,"CHOICES" TEXT,"MEMORYSCORE" DOUBLE,"SPEED_NOGO" DOUBLE, "COORD_NOGO" DOUBLE, "SessionID" INTEGER)');?
@@ -196,7 +203,7 @@
 		homeWin.add(debug);
 			
 		var report = Titanium.UI.createImageView({
-			image:'../icons/ybob-logo2-sml.png',
+			image:'/icons/ybob-logo2-sml.png',
 			height:160,
 			width:140,
 			top:topResults,
@@ -205,9 +212,9 @@
 		
 		report.addEventListener('click',function(){
 			var winreport = Titanium.UI.createWindow({ modal:true,
-				url:'../win/win_charts.js',
+				url:'/win/win_charts.js',
 				title:'Personal Information',
-				backgroundImage:'../images/smallcornercup.png',
+				backgroundImage:'/images/smallcornercup.png',
 				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 				});
 			winreport.home = homeWin; //reference to home
@@ -217,7 +224,7 @@
 		
 		
 		var newdrinks = Titanium.UI.createImageView({
-			image:'../icons/newdrinks.png',
+			image:'/icons/newdrinks.png',
 			height:bigIcons,
 			width:bigIcons,
 			top:topNewDrinks,
@@ -227,7 +234,7 @@
 			var newdosewin = Titanium.UI.createWindow({ modal:true,
 				url:'/win/win_drinks.js',
 				title:'What have you had to drink?',
-				backgroundImage:'../images/smallcornercup.png',
+				backgroundImage:'/images/smallcornercup.png',
 				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 			});
 			newdosewin.home = homeWin; //reference to home
@@ -236,7 +243,7 @@
 		homeWin.add(newdrinks);
 		
 		var newmood = Titanium.UI.createImageView({
-			image:'../icons/TheaterYellow2.png',
+			image:'/icons/TheaterYellow2.png',
 			height:bigIcons,
 			width:bigIcons,
 			top:topEmotion,
@@ -245,9 +252,9 @@
 		newmood.addEventListener('click',function(){
 			var newmoodwin = Titanium.UI.createWindow({ 
 			modal:true,
-				url:'../win/win_emotion.js',
+				url:'/win/win_emotion.js',
 				title:'How are you feeling?',
-				backgroundImage:'../images/smallcornercup.png',
+				backgroundImage:'/images/smallcornercup.png',
 				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 				});
 			newmoodwin.home = homeWin; //reference to home
@@ -256,7 +263,7 @@
 		homeWin.add(newmood);
 		
 		var newtripreport = Titanium.UI.createImageView({
-			image:'../icons/tripreport.png',
+			image:'/icons/tripreport.png',
 			height:bigIcons * .8,
 			width:bigIcons * .8,
 			top:topNewDrinks,
@@ -264,9 +271,9 @@
 		});
 		newtripreport.addEventListener('click',function(){
 			var newtripwin = Titanium.UI.createWindow({ modal:true,
-				url:'../win/win_tripreport.js',
+				url:'/win/win_tripreport.js',
 				title:'How are you feeling?',
-				backgroundImage:'../images/smallcornercup.png',
+				backgroundImage:'/images/smallcornercup.png',
 				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 				});
 			newtripwin.home = homeWin; //reference to home
@@ -275,7 +282,7 @@
 		homeWin.add(newtripreport);
 		
 		var newgame = Titanium.UI.createImageView({
-			image:'../icons/hamsterwheel.png',
+			image:'/icons/hamsterwheel.png',
 			height:bigIcons,
 			width:bigIcons,
 			top:topGame,
@@ -283,9 +290,9 @@
 		});
 		newgame.addEventListener('click',function(){
 			var winplay = Titanium.UI.createWindow({ modal:true,
-				url:'../win/win_gameMenu.js',
+				url:'/win/win_gameMenu.js',
 				title:'YBOB Game Menu',
-				backgroundImage:'../images/smallcornercup.png',
+				backgroundImage:'/images/smallcornercup.png',
 				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 				});
 			winplay.home = homeWin; //reference to home
@@ -308,7 +315,7 @@
 		
 		
 		var highScores = Titanium.UI.createImageView({
-			image:'../icons/Evolution.png',
+			image:'/icons/Evolution.png',
 			height:bigIcons,
 			width:bigIcons * 2.9,  //keep correct proportions
 			top:topHighScores,
@@ -319,7 +326,7 @@
 			var highscoreswin = Titanium.UI.createWindow({ modal:true,
 				url:'/win/win_highScores.js',
 				title:'What have you had to drink?',
-				backgroundImage:'../images/smallcornercup.png',
+				backgroundImage:'/images/smallcornercup.png',
 				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 			});
 			highscoreswin.home = homeWin; //reference to home
@@ -381,7 +388,8 @@
 		});
 		homeWin.add(labelCurrentSession);
 		homeWin.add(labelLastUpdate);
-		
+		Ti.API.debug('homeWin 2');
+
 		//what is the current session? 
 		//if last update was >36 hours ago automatically start new session
 		//if last update was >12 hours ago ask if what to start new session
@@ -413,6 +421,8 @@
 			labelLastUpdate.text = 'Last activity\n' + timeSinceUpdate;
 		
 		}
+		Ti.API.debug('homeWin 3');
+
 		function rewriteLabPoints(){
 			var labPoints = Ti.App.boozerlyzer.data.gameScores.TotalPoints(); 
 			// if (isNaN(labPoints[0].Total)){
@@ -424,8 +434,11 @@
 			// }
 		}
 		
+		Ti.API.debug('homeWin 4');
 		rewriteUpdateLabel();
 		rewriteLabPoints();
+		Ti.API.debug('homeWin 5');
+
 		Titanium.API.debug("session info: " + JSON.stringify(session));
 		Titanium.API.debug("session lastupdate: " + session[0].LastUpdate);
 		var now = parseInt((new Date()).getTime()/1000);
@@ -437,6 +450,7 @@
 			//>36 hours since last update, don't ask just start new
 			session = Ti.App.boozerlyzer.data.sessions.createNewSession(false);
 		} 
+		Ti.API.debug('homeWin 6');
 		rewriteUpdateLabel();
 		labelCurrentSession.text = 'Session Started\n' + Titanium.App.boozerlyzer.dateTimeHelpers.formatDayPlusTime(session[0].StartTime,true);
 		Ti.API.debug('Session ID - ' + session[0].ID);
@@ -445,7 +459,8 @@
 		Titanium.App.Properties.setInt('SessionChanged',session[0].LastUpdate/1000);
 		
 		loadedonce = true;
-		
+		Ti.API.debug('homeWin 7');
+
 		homeWin.addEventListener('focus', function(){
 			Ti.API.debug('homeWin got focus');
 			if (loadedonce){
@@ -455,7 +470,12 @@
 				
 			}
 		});
+		Ti.API.debug('homeWin 0');
 		return homeWin;
+
 	};
+	} catch (err) {
+	    Ti.API.error(err);
+	}
 })();
 

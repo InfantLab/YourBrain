@@ -15,7 +15,7 @@
 	Ti.App.boozerlyzer.data.emotionWords = {};
 		
 	//maintain a database connection we can use
- 	var conn = Titanium.Database.install('../ybob.db','ybob');
+ 	var conn = Titanium.Database.install('ybob.db','ybob');
  
 	//get data for the maximum row id 
 	Ti.App.boozerlyzer.data.emotionWords.selectNRandomRows = function (numRows, frequencyRange){

@@ -15,7 +15,7 @@
 	Titanium.App.boozerlyzer.data.tripReports = {};
 	
 	//maintain a database connection we can use
-  	var conn = Titanium.Database.install('../ybob.db','ybob');
+  	var conn = Titanium.Database.install('ybob.db','ybob');
 
 	//get data for the maximum row id 
 	Titanium.App.boozerlyzer.data.tripReports.getLatestData = function (){
@@ -67,7 +67,7 @@
 		var insertstr = 'INSERT INTO TripReports (ReportStarted,ReportChanged,SessionID,Content)';
 		insertstr += 'VALUES(?,?,?,?)';
 		var now = parseInt((new Date()).getTime()/1000);
-		conn.execute(insertstr,now,now,'',sessionID,0,0,0);
+		conn.execute(insertstr,now,now,sessionID,'');
 		Titanium.API.debug('TripReports updated, rowsAffected = ' + conn.rowsAffected);
 		Titanium.API.debug('TripReports, lastInsertRowId = ' + conn.lastInsertRowId);
 		result.push({

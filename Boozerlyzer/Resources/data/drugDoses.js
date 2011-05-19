@@ -16,7 +16,7 @@
 	Titanium.App.boozerlyzer.data.drugDoses= {};
 	
 	//maintain a database connection we can use
-  	var conn = Titanium.Database.install('../ybob.db','ybob');
+  	var conn = Titanium.Database.install('ybob.db','ybob');
 	
 		
 	//get standard drinks either for a single country
