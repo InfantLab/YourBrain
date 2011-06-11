@@ -15,7 +15,6 @@
  * Works like an OptionDialog, but with a Picker object.
  *
  * Limitations (needs improvements):
- *  - Only supports a single column picker.
  *  - Not a true modal. Does not overlay TabGroup and etc.
  *
  *  Usage:

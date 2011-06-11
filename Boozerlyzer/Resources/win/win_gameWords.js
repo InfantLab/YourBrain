@@ -117,9 +117,9 @@
 		for (var i = 0; i < 6; i++) {
 			win.add(loc[i]);
 			loc[i].addEventListener('touchstart', function(ev){
-				for (t in ev)
-					Ti.API.debug(t);
-				Ti.API.debug('Clicked ' + ev.source );
+				// for (t in ev)
+					// Ti.API.debug(t);
+				// Ti.API.debug('Clicked ' + ev.source );
 				var choiceTime = parseInt((new Date()).getTime() / 1000);
 				buttonClicked(choiceTime, ev);
 			});
@@ -299,6 +299,7 @@
 		valence = 0;	
 		switch (MgameType) {
 			case 'Pissonyms':
+				pissonymFeedback();
 				break;
 			case 'Emotions':
 				emotionFeedback();
@@ -373,7 +374,7 @@
 			loc[i].visible = true;
 			loc[i].text = wordChoices[i];
 			var word = wordChoices[i];
-			loc[i].addEventListener('touchstart', function(ev){
+			loc[i].addEventListener('touchstart', function(event){
 				var l = i;
 				var choiceTime = parseInt((new Date()).getTime() / 1000);
 			});
@@ -406,10 +407,53 @@
 	    imageMisc.left = 60 + Math.floor(320*val)-15;
 	    imageMisc.top = Math.floor(320*aro)-15;
 	    imageMisc.visible = true;
-		showAxis(true);
+		showAxis(true,'pissonyms');
 	}
 	
-	function showAxis(visibleFlag){
+		/**
+	 * here we find the mean arousal and valence for all the words chosen
+	 * and plot these on xy-axis
+	 */ 
+	function pissonymFeedback(){
+		var drunkscore = 0;
+		var coordscore = 0;
+		var speedscore = 0;
+		for (var i =0; i< answers.length; i++){
+			var info = Titanium.App.boozerlyzer.data.pissonyms.getWordInfo(answers[i]);
+			Ti.API.debug('pissonym  info ' + JSON.stringify(info));
+			if (info!==null){
+				drunkscore += info[0].DrunkFactor;
+			}
+		}
+		Ti.API.debug('DrunkScore - ' + drunkscore/answers.length);
+//		Ti.API.debug('ValenceMean - ' + valence/answers.length);
+		
+		//convert this scores into values between 0 & 1
+		var drunk = (drunkscore/answers.length - 1)/(7-1);
+		//then use these to plot the x and y coords of the spot
+	    //TODO use layout variables instead of hard coding these values
+	    imageMisc.left = 60 + Math.floor(320*drunk)-15;
+	    imageMisc.top = Math.floor(320*0)-15;
+	    imageMisc.visible = true;
+		showAxis(true,'pissonyms');
+	}
+	
+	
+	function showAxis(visibleFlag, gameType){
+		
+		switch (gameType){
+		case 'Pissonyms':
+			imageXAxisLeft.image = '/icons/sober.png';
+			imageXAxisRight.image = '/icons/drunk.png';			
+			break;
+		case 'Emotions':
+			imageXAxisLeft.image = '/icons/Sad.png';
+			imageXAxisRight.image = '/icons/Happy.png';
+			break;
+			//currently the default
+		default:
+			//TODO what should we do here? Not sure
+		}
 		imageXyAxes.visible = visibleFlag;
 		imageYAxisUp.visible = visibleFlag;
 		imageYAxisDown.visible = visibleFlag;

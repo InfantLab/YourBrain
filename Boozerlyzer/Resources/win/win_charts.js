@@ -44,13 +44,21 @@
 	});
 	
 	function redrawGraph(){
+		
 		//webview has loaded so we can draw our chart
 		var options = {
 			plotDrinks:switchDrinks.value,
+			plotBloodAlcohol:switchBloodAlcohol.value,
 			plotHappiness:switchHappiness.value,
 			plotEnergy:switchEnergy.value,
 			plotDrunk:switchDrunk.value,
-			plotStroop:switchStroop.value
+			plotStroop:switchStroop.value,
+			colDrinks:switchDrinks.color,
+			colBloodAlcohol:switchBloodAlcohol.color,
+			colHappiness:switchHappiness.color,
+			colEnergy:switchEnergy.color,
+			colDrunk:switchDrunk.color,
+			colStroop:switchStroop.color
 		};	
 		var now = parseInt((new Date()).getTime()/1000);
 		var timeSteps =	Titanium.App.boozerlyzer.dateTimeHelpers.timeIntervals(24,sessionData[0].StartTime, now);
@@ -58,8 +66,13 @@
 
 		var showMins = ((now - timeSteps[0]) < 12*3600); //show minutes if short session
 		for (var t = 0;t< timeSteps.length;t++){
-			timeLabels[t] = Titanium.App.boozerlyzer.dateTimeHelpers.formatTime(timeSteps[t],showMins,true);
+			//just show every 4th label
+			if (t % 4 === 0){
+				timeLabels[t] = Titanium.App.boozerlyzer.dateTimeHelpers.formatTime(timeSteps[t],showMins,true);			
+			}
 		}
+		
+	
 		//Ti.API.debug('redrawGraph -allDrinks ' + JSON.stringify(allDrinks));
 		var drinkSteps = drinksByTime(timeSteps,allDrinks,personalInfo, millsPerStandardUnits);
 		Ti.API.debug('redrawGraph -selfAssess ' + JSON.stringify(selfAssess));
@@ -92,23 +105,23 @@
 	//do something
 	});
 	
-	var fast = Ti.UI.createImageView({
-		image:'/icons/rocket.png',
+	var yAxisTopIcon = Ti.UI.createImageView({
+		image:'/icons/whiskey.png',
 		height:sizeAxisIcon,
 		width:sizeAxisIcon,
 		top:topAxis,
 		left:0
 	})
-	win.add(fast);
+	win.add(yAxisTopIcon);
 	
-	var slow = Ti.UI.createImageView({
-		image:'/icons/snail.png',
-		height:sizeAxisIcon,
-		width:sizeAxisIcon,
+	var yAxisBottomIcon = Ti.UI.createImageView({
+		image:'/icons/whiskey-empty.png',
+		height:sizeAxisIcon * 0.7,
+		width:sizeAxisIcon * 0.7,
 		top:topAxis+heightAxis-axisInset,
 		left:0	
 	})
-	win.add(slow);
+	win.add(yAxisBottomIcon);
 	
 	var time = Ti.UI.createImageView({
 		image:'/icons/time.png',
@@ -125,23 +138,38 @@
 	var switchDrinks = Ti.UI.createSwitch({
 		style : Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
 		title: 'Drinks',
-		font:{fontSize:12},
-		bottom :10,
+		font:{fontSize:12,fontWeight:'bold'},
+		bottom :20,
 		left: 60,
-		value:true
+		value:true,
+		color:'green'
 	});
 	switchDrinks.addEventListener('change', function(){
 		redrawGraph();
 	});
 	win.add(switchDrinks);
+	var switchBloodAlcohol = Ti.UI.createSwitch({
+		style : Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
+		title: 'Blood Alcohol',
+		font:{fontSize:12,fontWeight:'bold'},
+		bottom :0,
+		left: 60,
+		value:true,
+		color:'pink'
+	});
+	switchBloodAlcohol.addEventListener('change', function(){
+		redrawGraph();
+	});
+	win.add(switchBloodAlcohol);
 	
 	var switchHappiness = Ti.UI.createSwitch({
 		style : Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
 		title: 'Happiness',
-		font:{fontSize:12},
+		font:{fontSize:12,fontWeight:'bold'},
 		bottom : 20,
-		left: 126,
-		value:true
+		left: 166,
+		value:true,
+		color:'yellow'
 	});
 	switchHappiness.addEventListener('change', function(){
 		redrawGraph();
@@ -151,10 +179,11 @@
 	var switchEnergy = Ti.UI.createSwitch({
 		style : Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
 		title: 'Energy',
-		font:{fontSize:12},
+		font:{fontSize:12,fontWeight:'bold'},
 		bottom : 0,
-		left: 126,
-		value:true
+		left: 166,
+		value:true,
+		color:'cyan'
 	});
 	switchEnergy.addEventListener('change', function(){
 		redrawGraph();
@@ -164,10 +193,11 @@
 	var switchDrunk = Ti.UI.createSwitch({
 		style : Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
 		title: 'Drunkeness',
-		font:{fontSize:12},
+		font:{fontSize:12,fontWeight:'bold'},
 		bottom :10,
-		left: 220,
-		value:true
+		left: 266,
+		value:true,
+		color:'purple'
 	});
 	switchDrunk.addEventListener('change', function(){
 		redrawGraph();
@@ -177,15 +207,17 @@
 	var switchStroop = Ti.UI.createSwitch({
 		style : Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
 		title: 'Stroop score',
-		font:{fontSize:12},
+		font:{fontSize:12,fontWeight:'bold'},
 		bottom : 10,
 		left: 320,
-		value:true
+		value:true,
+		color:'magenta'
 	});
 	switchStroop.addEventListener('change', function(){
 		redrawGraph();
 	});
-	win.add(switchStroop);
+	//TODO find a nice way to include games on here?
+	//win.add(switchStroop);
 	
 	
 	

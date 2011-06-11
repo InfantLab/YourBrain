@@ -22,7 +22,7 @@ Ti.include('/js/bloodalcohol.js');
 		var lenTime = timePoints.length;
 		var lenDrinks = drinkData.length;
 		Ti.API.debug('drinksByTime lenDrinks' + lenDrinks);
-		for (var t=1;t<lenTime;t++){
+		for (var t=0;t<lenTime;t++){
 			var totalUnits = 0;
 			var lastDrinkIdx = 0;
 			//first select all drinks that occur prior to current time
@@ -32,7 +32,7 @@ Ti.include('/js/bloodalcohol.js');
 					lastDrinkIdx = d; 
 				}
 			}
-			bac = BACalculate(timePoints[t],drinkData.slice(0,lastDrinkIdx),personalInfo);
+			bac = BACalculate(timePoints[t],drinkData.slice(0,lastDrinkIdx+1),personalInfo);
 			returnData.push({
 				time:timePoints[t],
 				millsAlcohol:totalUnits,
@@ -62,7 +62,7 @@ Ti.include('/js/bloodalcohol.js');
 					latestDataIdx = d; 
 				}
 			}
-			if (latestDataIdx=0 ){
+			if (latestDataIdx >= 0 ){
 				returnData.push({
 					time:currTime,
 					DrunkBlur: emotionData[latestDataIdx].DrunkBlur,

@@ -9,204 +9,13 @@ Logfile initialized
 [TRACE] adb devices returned 1 devices/emulators
 [TRACE] adb devices returned 1 devices/emulators
 [TRACE] adb devices returned 1 devices/emulators
-[DEBUG] Device connected... (waited 10 seconds)
-[DEBUG] waited 10.081447 seconds on emulator to get ready
-[INFO] Waiting for the Android Emulator to become available
 [TRACE] adb devices returned 1 devices/emulators
-[DEBUG] Device connected... (waited 30 seconds)
-[DEBUG] waited 30.907393 seconds on emulator to get ready
+[DEBUG] Device connected... (waited 25 seconds)
+[DEBUG] waited 25.140081 seconds on emulator to get ready
 [INFO] Waiting for the Android Emulator to become available
 [DEBUG] net.yourbrainondrugs.ybob installed? True
-[WARN] Fastdev enabled, but server isn't running, deploying normally
 [INFO] Copying project resources..
-[INFO] Detected tiapp.xml change, forcing full re-build...
-[DEBUG] net.yourbrainondrugs.ybob installed? True
-[WARN] Fastdev enabled, but server isn't running, deploying normally
-[INFO] Copying project resources..
-[ERROR] Exception occured while building Android project:
-[ERROR] Traceback (most recent call last):
-[ERROR]   File "/home/caspar/.titanium/mobilesdk/linux/1.7.0.RC1/android/builder.py", line 1934, in <module>
-[ERROR]     s.build_and_run(False, avd_id)
-[ERROR]   File "/home/caspar/.titanium/mobilesdk/linux/1.7.0.RC1/android/builder.py", line 1681, in build_and_run
-[ERROR]     self.copy_project_resources()
-[ERROR]   File "/home/caspar/.titanium/mobilesdk/linux/1.7.0.RC1/android/builder.py", line 567, in copy_project_resources
-[ERROR]     self.project_deltafy = Deltafy(resources_dir, include_callback=self.include_path)
-[ERROR]   File "/home/caspar/.titanium/mobilesdk/linux/1.7.0.RC1/android/deltafy.py", line 108, in __init__
-[ERROR]     self.conn.execute('create table if not exists timestamps (path text, modified timestamp)')
-[ERROR] OperationalError: database is locked
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/charts/chartSingleSession.html => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/charts/chartSingleSession.html
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/charts/raphtest.html => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/charts/raphtest.html
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/charts/chart2.html => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/charts/chart2.html
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/charts/raphtest.html~ => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/charts/raphtest.html~
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/charts/.tmp_chart3.html.47578~ => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/charts/.tmp_chart3.html.47578~
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/charts/.tmp_chart3.html.29439~ => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/charts/.tmp_chart3.html.29439~
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/charts/chart.html => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/charts/chart.html
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/charts/chart3.html => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/charts/chart3.html
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/.project => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/.project
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/app.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/app.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/win/win_results1.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/win/win_results1.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/win/win_tripreport.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/win/win_tripreport.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/win/win_privacy.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/win/win_privacy.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/win/win_main.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/win/win_main.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/win/win_drinks.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/win/win_drinks.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/win/win_highScores.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/win/win_highScores.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/win/win_gameMenu.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/win/win_gameMenu.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/win/win_personal.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/win/win_personal.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/win/win_doseage.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/win/win_doseage.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/win/win_gameStroop.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/win/win_gameStroop.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/win/win_gameWords.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/win/win_gameWords.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/win/win_mydata.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/win/win_mydata.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/win/win_emotion.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/win/win_emotion.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/win/win_gameStatLearn.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/win/win_gameStatLearn.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/win/win_charts.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/win/win_charts.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/js/dateTimeHelpers.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/js/dateTimeHelpers.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/js/bloodalcohol.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/js/bloodalcohol.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/libraries/RGraph.common.adjusting.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/libraries/RGraph.common.adjusting.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/libraries/RGraph.bar.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/libraries/RGraph.bar.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/libraries/RGraph.skeleton.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/libraries/RGraph.skeleton.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/libraries/RGraph.funnel.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/libraries/RGraph.funnel.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/libraries/RGraph.tradar.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/libraries/RGraph.tradar.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/libraries/RGraph.hbar.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/libraries/RGraph.hbar.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/libraries/RGraph.pie.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/libraries/RGraph.pie.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/libraries/RGraph.rscatter.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/libraries/RGraph.rscatter.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/libraries/RGraph.led.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/libraries/RGraph.led.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/libraries/RGraph.common.context.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/libraries/RGraph.common.context.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/libraries/RGraph.common.zoom.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/libraries/RGraph.common.zoom.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/libraries/RGraph.scatter.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/libraries/RGraph.scatter.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/libraries/g.raphael-min.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/libraries/g.raphael-min.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/libraries/RGraph.meter.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/libraries/RGraph.meter.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/libraries/RGraph.common.core.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/libraries/RGraph.common.core.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/libraries/RGraph.common.resizing.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/libraries/RGraph.common.resizing.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/libraries/RGraph.rose.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/libraries/RGraph.rose.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/libraries/RGraph.common.annotate.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/libraries/RGraph.common.annotate.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/libraries/RGraph.line.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/libraries/RGraph.line.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/libraries/RGraph.modaldialog.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/libraries/RGraph.modaldialog.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/libraries/RGraph.gantt.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/libraries/RGraph.gantt.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/libraries/RGraph.bipolar.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/libraries/RGraph.bipolar.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/libraries/RGraph.common.tooltips.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/libraries/RGraph.common.tooltips.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/libraries/raphael-min.lib => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/libraries/raphael-min.lib
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/libraries/RGraph.odo.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/libraries/RGraph.odo.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/libraries/RGraph.hprogress.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/libraries/RGraph.hprogress.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/libraries/g.pie-min.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/libraries/g.pie-min.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/libraries/RGraph.vprogress.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/libraries/RGraph.vprogress.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/Misc.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/Misc.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/Sad.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/Sad.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/wine-empty.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/wine-empty.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/time.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/time.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/line_chart.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/line_chart.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/full_size_snail_icon_by_jordanfc.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/full_size_snail_icon_by_jordanfc.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/teddy_bear_toy_5.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/teddy_bear_toy_5.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/X orange.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/X orange.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/snail.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/snail.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/rocket.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/rocket.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/rubik.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/rubik.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/Target-256.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/Target-256.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/baby_icon.jpg => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/baby_icon.jpg
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/ybob-logo2.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/ybob-logo2.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/teddy_bear_toy_4.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/teddy_bear_toy_4.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/DullLamp.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/DullLamp.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/tripreport.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/tripreport.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/AGrade.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/AGrade.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/rocket_256.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/rocket_256.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/drunk.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/drunk.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/orange white pill.gif => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/orange white pill.gif
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/Fish-256.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/Fish-256.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/Angel.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/Angel.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/pills-3-128x128.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/pills-3-128x128.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/pie_chart.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/pie_chart.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/X water.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/X water.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/inverted_teddy_bear_toy_1.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/inverted_teddy_bear_toy_1.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/Ice.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/Ice.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/whiskey-empty.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/whiskey-empty.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/ybod-logo2.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/ybod-logo2.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/brain1111.svg => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/brain1111.svg
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/credit_card.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/credit_card.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/coins.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/coins.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/whiskey.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/whiskey.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/teddy_bear_toy_1.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/teddy_bear_toy_1.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/beer-256x256.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/beer-256x256.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/Happy.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/Happy.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/teddy_bear_toy_0.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/teddy_bear_toy_0.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/shopping cart.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/shopping cart.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/send.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/send.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/astronaut_256.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/astronaut_256.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/brain.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/brain.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/OffLamp.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/OffLamp.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/pills-4-128x128.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/pills-4-128x128.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/calculator.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/calculator.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/bluebrain.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/bluebrain.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/colba-128x128.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/colba-128x128.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/Beer1.svg => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/Beer1.svg
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/teddy_bear_toy_3.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/teddy_bear_toy_3.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/OnLamp.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/OnLamp.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/wine.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/wine.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/Chorus.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/Chorus.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/Drink me.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/Drink me.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/X cola lemon.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/X cola lemon.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/safe.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/safe.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/hamsterwheel.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/hamsterwheel.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/beer-empty.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/beer-empty.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/inverted_teddy_bear_toy_4.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/inverted_teddy_bear_toy_4.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/X cola on the rocks.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/X cola on the rocks.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/sober.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/sober.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/Fish.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/Fish.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/inverted_teddy_bear_toy_0.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/inverted_teddy_bear_toy_0.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/Music.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/Music.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/emotionalwords.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/emotionalwords.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/gold_bullion.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/gold_bullion.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/X beer.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/X beer.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/Memory.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/Memory.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/beer-full.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/beer-full.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/Devil.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/Devil.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/cash_register.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/cash_register.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/newdrinks.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/newdrinks.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/feelings.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/feelings.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/alarmd-256.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/alarmd-256.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/X cola special.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/X cola special.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/teddy_bears.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/teddy_bears.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/X cola.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/X cola.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/X milk.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/X milk.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/inverted_teddy_bear_toy_2.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/inverted_teddy_bear_toy_2.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/Brain_eyes_cerebrellum.svg => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/Brain_eyes_cerebrellum.svg
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/inverted_teddy_bear_toy_5.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/inverted_teddy_bear_toy_5.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/X grape.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/X grape.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/ybob-logo2-sml.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/ybob-logo2-sml.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/invoice.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/invoice.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/Elephant.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/Elephant.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/numberStroop.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/numberStroop.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/gamebox.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/gamebox.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/TheaterYellow2.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/TheaterYellow2.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/banknote.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/banknote.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/teddy_bear_toy_2.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/teddy_bear_toy_2.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/X cola enjoy.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/X cola enjoy.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/Evolution.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/Evolution.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/pills-2-128x128.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/pills-2-128x128.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/inverted_teddy_bear_toy_3.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/inverted_teddy_bear_toy_3.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/blergh.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/blergh.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/icons/bar_chart.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/icons/bar_chart.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/ybob.db => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/ybob.db
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/images/smallcornercup.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/images/smallcornercup.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/images/xy-axes.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/images/xy-axes.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/images/diagonalaxes800x800.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/images/diagonalaxes800x800.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/images/mainmenu.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/images/mainmenu.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/images/blackaxis800x480.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/images/blackaxis800x480.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/ui/picker_drinks.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/ui/picker_drinks.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/data/selfAssessment.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/data/selfAssessment.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/data/tripReports.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/data/tripReports.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/data/gameScores.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/data/gameScores.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/data/alcoholStandardUnits.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/data/alcoholStandardUnits.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/data/doseageLog.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/data/doseageLog.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/data/pissonyms.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/data/pissonyms.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/data/drugDoses.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/data/drugDoses.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/data/sessions.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/data/sessions.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/data/weFeelFine.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/data/weFeelFine.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/data/personalInfo.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/data/personalInfo.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/data/emotionWords.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/data/emotionWords.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/analysis/dataOverTime.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/analysis/dataOverTime.js
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/ybob-logo2-sml.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/ybob-logo2-sml.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/android/default.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/default.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/android/appicon.png => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/appicon.png
-[TRACE] COPYING CREATED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/ybod_db.sql => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/ybod_db.sql
+[TRACE] COPYING MODIFIED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/win/win_main.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/win/win_main.js
 [TRACE] Generating Java Classes
 [DEBUG] Processing Android resource drawables
 [DEBUG] copying app icon: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/ybob-logo2-sml.png
@@ -243,11 +52,10 @@ Logfile initialized
 [DEBUG] Android classes.dex built
 [DEBUG] creating unsigned apk: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/app-unsigned.apk
 [DEBUG] from resource zip => assets/Resources/analysis/dataOverTime.js
-[DEBUG] from resource zip => assets/Resources/charts/chart.html
-[DEBUG] from resource zip => assets/Resources/charts/chart2.html
-[DEBUG] from resource zip => assets/Resources/charts/chart3.html
 [DEBUG] from resource zip => assets/Resources/charts/chartSingleSession.html
 [DEBUG] from resource zip => assets/Resources/charts/raphtest.html
+[DEBUG] from resource zip => assets/Resources/comm/geolocate.js
+[DEBUG] from resource zip => assets/Resources/comm/register.js
 [DEBUG] from resource zip => assets/Resources/data/alcoholStandardUnits.js
 [DEBUG] from resource zip => assets/Resources/data/doseageLog.js
 [DEBUG] from resource zip => assets/Resources/data/drugDoses.js
@@ -390,6 +198,7 @@ Logfile initialized
 [DEBUG] from resource zip => assets/Resources/libraries/g.raphael-min.js
 [DEBUG] from resource zip => assets/Resources/libraries/raphael-min.lib
 [DEBUG] from resource zip => assets/Resources/ui/picker_drinks.js
+[DEBUG] from resource zip => assets/Resources/ui/picker_monthyear.js
 [DEBUG] from resource zip => assets/Resources/win/win_charts.js
 [DEBUG] from resource zip => assets/Resources/win/win_doseage.js
 [DEBUG] from resource zip => assets/Resources/win/win_drinks.js
@@ -451,7 +260,7 @@ Logfile initialized
 [DEBUG] Waiting for device to be ready ...
 [TRACE] adb devices returned 1 devices/emulators
 [DEBUG] Device connected... (waited 0 seconds)
-[DEBUG] waited 0.022408 seconds on emulator to get ready
+[DEBUG] waited 0.025654 seconds on emulator to get ready
 [INFO] Installing application on device
 [INFO] Launching application ... Boozerlyzer
 [TRACE] Launch output: Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=net.yourbrainondrugs.ybob/.BoozerlyzerActivity }

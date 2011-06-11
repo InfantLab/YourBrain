@@ -46,7 +46,9 @@
 			querystr += idstr;
 		}
 		var rows = conn.execute(queryStr);
-		return fillDataObject(rows);
+		var retdata = fillDataObject(rows);
+		rows.close();
+		return retdata;
 	};
 	
 	Ti.App.boozerlyzer.data.gameScores.PlayCount = function (gameNames){
@@ -73,6 +75,7 @@
 			return returnData;
 		}
 		//something didn't work
+		rows.close();
 		return false;
 	};
 
@@ -91,6 +94,7 @@
 			rows.close();
 			return returnData;
 		}
+		rows.close();
 		//something didn't work
 		return false;
 	};

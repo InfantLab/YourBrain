@@ -11,6 +11,9 @@
 
 	var win = Titanium.UI.currentWindow;
 	var initialised = false;
+	
+	Ti.include('/ui/picker_monthyear.js');
+
 	//layout variables
 	var topHW = 100;
 	
@@ -46,12 +49,32 @@
 	});
 	win.add(birthDate);
 	
-	if (persInfo.BirthMonth > 0 && persInfo.BirthYear > 0){
-		birthDate.text = Titanium.App.boozerlyzer.data.personalInfo.monthname[persInfo.BirthMonth -1] + '-' + persInfo.BirthYear;
+	function updateDateOfBirth(){
+		if (persInfo.BirthMonth > 0 && persInfo.BirthYear > 0){
+			birthDate.text = Titanium.App.boozerlyzer.data.personalInfo.monthname[persInfo.BirthMonth -1] + '-' + persInfo.BirthYear;
+		}
 	}
+	
 	birthDate.addEventListener('click', function(){
 		Ti.API.debug('Change birthday goes here..');
+		var monthYear = [persInfo.BirthMonth,persInfo.BirthYear];
+		monthYearPickerDialog.setBirthMonthYear(1920,1999,monthYear);
+		monthYearPickerDialog.open();
 	});
+
+	// Respond when selection made and dialog closed
+	monthYearPickerDialog.addEventListener('close', function(e){
+		    if (e.done==true){
+		        Ti.API.debug('e.month '+ e.month );
+		        Ti.API.debug('e.year' + e.year);
+		        persInfo.Changed = true;
+		        persInfo.BirthMonth = e.month;
+		        persInfo.BirthYear = e.year;
+				updateDateOfBirth();
+		    }
+		});
+	
+	
 	
 	var nickName = Titanium.UI.createTextField({
 		value:persInfo.Nickname,
@@ -87,7 +110,7 @@
 		useSpinner: true, visibleItems: 3,
 		type : Ti.UI.PICKER_TYPE_PLAIN,
 		top: 10, height: 90,
-		left: 240,
+		right: 20 ,
 		columns:column0, 
 		font: {fontSize: "12"}
 	});
@@ -271,6 +294,7 @@
 		win.close();
 	});	
 	
+	updateDateOfBirth();
 	// // Cleanup and return home
 	// win.addEventListener('android:back', function(e) {
 		// if (winHome === undefined || winHome === null) {

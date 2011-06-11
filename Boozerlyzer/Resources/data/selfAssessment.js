@@ -90,7 +90,7 @@
 		var mostRecentData = [];
 		//cast cos sessionID sometimes treated as string
 		var sessID = parseInt(sessionID);
-		var rows = conn.execute('SELECT * FROM SelfAssessment WHERE SESSIONID = ? ORDER BY SelfAssessmentChanged ASC', sessID);
+		var rows = conn.execute('SELECT * FROM SelfAssessment WHERE SessionID = ? ORDER BY SelfAssessmentChanged ASC', sessID);
 		var returnData = fillDataObject(rows);
 		rows.close();
 		return returnData;

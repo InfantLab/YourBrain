@@ -44,7 +44,7 @@
 	tabGroup.addTab(tabprivacy);
 	//
 	
-	tabGroup.setActiveTab(1); 
+	tabGroup.setActiveTab(0); 
 	tabGroup.open();
 	
 	// Cleanup and return home
