@@ -30,7 +30,8 @@
   $RowsToSave = array ();
 
   foreach ($decoded as $key => $data) {
-	$RowsToSave[] = new $data->data_type ( $data->data );
+	if (in_array($data->data_type, $accepted_types))
+  	  $RowsToSave[] = new $data->data_type ( $data->data );
   }
 
   foreach ($RowsToSave as $RowToSave) {
