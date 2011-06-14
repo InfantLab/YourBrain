@@ -5,6 +5,8 @@ class GameScore extends BaseObject {
     return 'receive_GameScore';
   }
   var $fields = array (
+	'CreatedByUserID' => array('type' => 'int'),
+
     'GameScoreID' => array('type' => 'primarykey'),
     'remote_id' => array('type' => 'int'),
     'remote_session_id' => array('type' => 'int'),

@@ -9,6 +9,9 @@ class BaseObject {
   function getFields () {
     return $this->fields;
   }
+  function getFieldNames() {
+	return array_keys($this->fields);
+  }
 
   function getPrimaryKey () {
     if ($this->primarykeyfield!='') {
@@ -20,7 +23,9 @@ class BaseObject {
     return $this->getPrimaryKey()<=0;
   }
 
-
+  function hasField ($FieldName) {
+    return in_array($FieldName, $this->getFieldNames());	
+  }
   function setValue ($FieldName, $value) {
     $this->values[$FieldName] = $value;
   }
@@ -34,6 +39,10 @@ class BaseObject {
         $this->primarykeyfield = $FieldName;
       }
     }
+	if ($this->hasField('CreatedByUserID') && !$this->getValue('CreatedByUserID')>0) {
+		print 'setting UserID to ' . getUserID() . '<br>';
+		$this->setValue('CreatedByUserID', getUserID());
+	}
   }
 
   function save() {

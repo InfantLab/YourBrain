@@ -26,4 +26,8 @@ function escape($t) {
   }
 }
 
+function getUserID () {
+	return 1337; // hardcoded atm
+}
+
 ?>

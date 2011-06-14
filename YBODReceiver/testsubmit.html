@@ -1,8 +1,18 @@
-<form action='submit.php' method='post'>
-  data_type: <input type='text' name='data_type' value='GameScore'>
+<form action='submit_data.php' method='post'>
+  UserID: <input type='text' name='UserID' value='NewUser'><br>
+  AuthToken: <input type='text' name='AuthToken' value='ABCDEFG'><br>
+  ClientVersion: <input type='text' name='ClientVersion' value='testsubmit.html v0.2'><br>
+  ProtocolVersion: <input type='text' name='ProtocolVersion' value='0'><br>
   <br>
   data: <textarea name='data' cols=100 rows=20 >
-{"json_class":"GameScoreData","test":"value", "remote_id":1, "PlayStart":50920395290, "Feedback":"some remarks", "Game":"1", "GameVersion":"1"}
+	{
+     "3":{ "data_type":"GameScore", "data":{ "GameScoreID":3, "Game":1,
+	"GameVersion":"1", "PlayStart":"39594855", "MemoryScore":"76", "ReactionScore":"45" } },
+	 "7":{ "data_type":"GameScore", "data":{ "GameScoreID":"7", "Game":"1",
+	"GameVersion":"1", "PlayStart":"39603589", "MemoryScore":"80", "ReactionScore":"42" } },
+	 "8":{ "data_type":"GameScore", "data":{ "GameScoreID":"8", "Game":"2",
+	"GameVersion":"1", "PlayStart":"39653985", "MemoryScore":"-1", "ReactionScore":"50" } }
+    }
 </textarea>
   <hr>
   <input type='submit'>

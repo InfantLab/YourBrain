@@ -27,7 +27,7 @@ if (!$DB_DISABLE) {
 } else {
   function db_query($sql) {
     //
-    print "db_query($sql)\n";
+    print "db_query($sql) - not actually saved to database\n<br>";
   }
   function db_fetch_object($resultset) {
     //
