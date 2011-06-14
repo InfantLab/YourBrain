@@ -27,7 +27,12 @@ function escape($t) {
 }
 
 function getUserID () {
-	return 1337; // hardcoded atm
+	global $_USERID;
+	return $_USERID;
+}
+function setUserID ($n) {
+	global $_USERID;
+	$_USERID = $n;
 }
 
 ?>

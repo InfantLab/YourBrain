@@ -11,6 +11,8 @@
   $AuthToken = $_REQUEST['AuthToken'];
   // if we weren't just a simple test app, we should check those against our database and do something appropriate if they're not correct.
 
+  setUserID ($UserID);
+
   // get the version that the client claims to be.  enables us to handle old buggy clients and catch silly errors during development.
   $ClientVersion = $_REQUEST['ClientVersion'];
   $ProtocolVersion = $_REQUEST['ProtocolVersion'];

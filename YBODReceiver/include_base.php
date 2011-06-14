@@ -39,7 +39,7 @@ class BaseObject {
         $this->primarykeyfield = $FieldName;
       }
     }
-	if ($this->hasField('CreatedByUserID') && !$this->getValue('CreatedByUserID')>0) {
+	if ($this->hasField('CreatedByUserID') && !$this->getValue('CreatedByUserID')) {
 		print 'setting UserID to ' . getUserID() . '<br>';
 		$this->setValue('CreatedByUserID', getUserID());
 	}
