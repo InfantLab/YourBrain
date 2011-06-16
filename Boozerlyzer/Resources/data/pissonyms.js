@@ -11,13 +11,13 @@
 (function(){
 	
 	//create an object which will be our public API
-	Titanium.App.boozerlyzer.data.pissonyms = {};
+	Ti.App.boozerlyzer.data.pissonyms = {};
 	
 	//maintain a database connection we can use
 	var conn = Titanium.Database.install('ybob.db','ybob');
 
 	//get data for the maximum row id 
-	Titanium.App.boozerlyzer.data.pissonyms.selectNRandomRows = function (numRows, frequencyRange){
+	Ti.App.boozerlyzer.data.pissonyms.selectNRandomRows = function (numRows, frequencyRange){
 		var returnData = [];
 		var nRows = parseInt(numRows);
 		//TODO Filter by frequency range
@@ -40,7 +40,7 @@
 		return false;
 	};
 	
-	Titanium.App.boozerlyzer.data.pissonyms.getWordInfo = function (word){
+	Ti.App.boozerlyzer.data.pissonyms.getWordInfo = function (word){
 		var returnData = [];
 		//TODO Filter by frequency range
 		var rows = conn.execute('SELECT * FROM pissonyms WHERE Pissonym = ?', word);
@@ -66,7 +66,7 @@
 	 * Participant has chosen a pissonym - record their choice
 	 * @param {Object} choiceData
 	 */
-	Titanium.App.boozerlyzer.data.pissonyms.Chosen = function (choiceData){
+	Ti.App.boozerlyzer.data.pissonyms.Chosen = function (choiceData){
 		Titanium.API.debug('chosen Pissonym ' + JSON.stringify(choiceData));
 		var sessionID = Titanium.App.Properties.getInt('SessionID');
 		for (var i=0; i<choiceData.length; i++){
@@ -77,7 +77,7 @@
 		}
 	};
 	
-	Titanium.App.boozerlyzer.data.pissonyms.PlayCount = function (){
+	Ti.App.boozerlyzer.data.pissonyms.PlayCount = function (){
 		var selectStr = 'SELECT COUNT(*) from WORDCHOICES  where WordType = ?';
 		var rows = conn.execute(selectStr, 'Pissonym');
 		if (rows !== null) {
@@ -88,7 +88,7 @@
 			return 0;
 		}
 	};
-	Titanium.App.boozerlyzer.data.pissonyms.LastPlayed = function(){
+	Ti.App.boozerlyzer.data.pissonyms.LastPlayed = function(){
 		var selectStr = 'SELECT max(ChoiceFinish) from WORDCHOICES  where WordType = ?';
 		var rows = conn.execute(selectStr, 'Pissonym');
 		if (rows !== null) {
@@ -103,7 +103,7 @@
 	/** 
 	 * Participant has suggested new pissonym. Let's add it to the list
 	 */
-//	Titanium.App.boozerlyzer.data.pissonyms.addUserPissonym = function (pissonym){
+//	Ti.App.boozerlyzer.data.pissonyms.addUserPissonym = function (pissonym){
 //		Titanium.API.debug('addUserPissonym');
 //		
 //		//first check that suggestion is actually new.

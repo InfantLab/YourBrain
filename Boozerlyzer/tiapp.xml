@@ -9,7 +9,7 @@
     </deployment-targets>
 <id>net.yourbrainondrugs.ybob</id>
 <name>Boozerlyzer</name>
-<version>0.18</version>
+<version>0.20</version>
 <publisher>YourBrainonDrugs</publisher>
 <url>http://yourbrainondrugs.net</url>
 <description>Smartphone games to assess the cognitive and emotional effects of drugs and alcohol.</description>
@@ -35,6 +35,11 @@
 		</orientations>
 	</iphone>
 	<android xmlns:android="http://schemas.android.com/apk/res/android">
+	    <manifest>
+        <supports-screens 
+            android:anyDensity="false"
+        />
+    </manifest>
 	</android>
 	<modules>
 	</modules>

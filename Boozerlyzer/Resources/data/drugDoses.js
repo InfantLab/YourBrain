@@ -13,7 +13,7 @@
 (function(){
 	
 	//create an object which will be our public API
-	Titanium.App.boozerlyzer.data.drugDoses= {};
+	Ti.App.boozerlyzer.data.drugDoses= {};
 	
 	//maintain a database connection we can use
   	var conn = Titanium.Database.install('ybob.db','ybob');
@@ -21,7 +21,7 @@
 		
 	//get standard drinks either for a single country
 	//or for all of them!
-	Titanium.App.boozerlyzer.data.drugDoses.getStrengths = function (DrugName){
+	Ti.App.boozerlyzer.data.drugDoses.getStrengths = function (DrugName){
 		var returnData = [];
 		var rows;
 		var selectStr = 'SELECT DOSESTRENGTH FROM DrugDoses Where DOSESTRENGTH Is NOT NULL and  DrugName = ?';
@@ -43,7 +43,7 @@
 	
 	//get standard drinks either for a single country
 	//or for all of them!
-	Titanium.App.boozerlyzer.data.drugDoses.getSizes = function (DrugName){
+	Ti.App.boozerlyzer.data.drugDoses.getSizes = function (DrugName){
 		var returnData = [];
 		var rows;
 		var selectStr = 'SELECT DOSESIZE, DOSEDESCRIPTION FROM DrugDoses Where DOSESIZE Is NOT NULL and DrugName = ?';

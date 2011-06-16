@@ -13,7 +13,7 @@
 (function(){
 	
 	//create an object which will be our public API
-	Titanium.App.boozerlyzer.data.alcoholStandardDrinks= {};
+	Ti.App.boozerlyzer.data.alcoholStandardDrinks = {};
 
 	
 	//maintain a database connection we can use
@@ -22,7 +22,7 @@
 		
 	//get standard drinks either for a single country
 	//or for all of them!
-	Titanium.App.boozerlyzer.data.alcoholStandardDrinks.get = function (Country){
+	Ti.App.boozerlyzer.data.alcoholStandardDrinks.get = function (Country){
 		var returnData = [];
 		var rows;
 		var selectStr = 'SELECT * FROM AlcoholStandardDrinks ';

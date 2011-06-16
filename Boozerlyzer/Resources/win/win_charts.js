@@ -26,13 +26,13 @@
 	
 	//load up all the data
 	var SessionID = Titanium.App.Properties.getInt('SessionID');
-	var personalInfo = Titanium.App.boozerlyzer.data.personalInfo.getData();
-//	var Countries = Titanium.App.boozerlyzer.data.alcoholStandardDrinks.get();
+	var personalInfo = Ti.App.boozerlyzer.data.personalInfo.getData();
+//	var Countries = Ti.App.boozerlyzer.data.alcoholStandardDrinks.get();
 
-	var sessionData = Titanium.App.boozerlyzer.data.sessions.getSession(SessionID);
+	var sessionData = Ti.App.boozerlyzer.data.sessions.getSession(SessionID);
 	//All dose data for this session
-	var allDrinks = Titanium.App.boozerlyzer.data.doseageLog.getAllSessionData(SessionID);
-	var selfAssess = Titanium.App.boozerlyzer.data.selfAssessment.getAllSessionData(SessionID);
+	var allDrinks = Ti.App.boozerlyzer.data.doseageLog.getAllSessionData(SessionID);
+	var selfAssess = Ti.App.boozerlyzer.data.selfAssessment.getAllSessionData(SessionID);
 	var stdDrinks = Ti.App.boozerlyzer.data.alcoholStandardDrinks.get(personalInfo.Country);
 	var millsPerStandardUnits = stdDrinks[0].MillilitresPerUnit;
 
@@ -61,14 +61,14 @@
 			colStroop:switchStroop.color
 		};	
 		var now = parseInt((new Date()).getTime()/1000);
-		var timeSteps =	Titanium.App.boozerlyzer.dateTimeHelpers.timeIntervals(24,sessionData[0].StartTime, now);
+		var timeSteps =	Ti.App.boozerlyzer.dateTimeHelpers.timeIntervals(24,sessionData[0].StartTime, now);
 		var timeLabels = [];
 
 		var showMins = ((now - timeSteps[0]) < 12*3600); //show minutes if short session
 		for (var t = 0;t< timeSteps.length;t++){
 			//just show every 4th label
 			if (t % 4 === 0){
-				timeLabels[t] = Titanium.App.boozerlyzer.dateTimeHelpers.formatTime(timeSteps[t],showMins,true);			
+				timeLabels[t] = Ti.App.boozerlyzer.dateTimeHelpers.formatTime(timeSteps[t],showMins,true);			
 			}
 		}
 		

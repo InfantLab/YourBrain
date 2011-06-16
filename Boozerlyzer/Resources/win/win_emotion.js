@@ -24,10 +24,10 @@
 		Ti.API.debug('win_emotion retrieved SessionID property - ' + SessionID);
 		
 		//most recent emotion values for this session
-		var currentEmotion = Titanium.App.boozerlyzer.data.selfAssessment.getLatestData(SessionID);
+		var currentEmotion = Ti.App.boozerlyzer.data.selfAssessment.getLatestData(SessionID);
 		if (currentEmotion === null || currentEmotion === false){
 			Titanium.API.trace('Boozerlyzer - currentEmotion could not be retrieved');
-			currentEmotion = Titanium.App.boozerlyzer.data.selfAssessment.newEmotion(false);
+			currentEmotion = Ti.App.boozerlyzer.data.selfAssessment.newEmotion(false);
 		}
 		Titanium.API.debug(JSON.stringify(currentEmotion));
 		currentEmotion[0].SelfAssessmentStart = winOpened;
@@ -218,7 +218,7 @@
 		energy.value = currentEmotion[0].Energy;
 		happiness.value = currentEmotion[0].Happiness;
 		
-		var updated = Titanium.App.boozerlyzer.dateTimeHelpers.prettyDate(currentEmotion[0].SelfAssessmentStart);
+		var updated = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(currentEmotion[0].SelfAssessmentStart);
 		var lastchangedLabel = Ti.UI.createLabel({
 			text:'Last Updated  ' + updated,
 			top:topLastEvent,
@@ -249,9 +249,9 @@
 			currentEmotion[0].Drunkeness = drunkeness.value;
 			currentEmotion[0].Energy = energy.value;
 			currentEmotion[0].SessionID = SessionID;
-			Titanium.App.boozerlyzer.data.selfAssessment.setData(currentEmotion);
+			Ti.App.boozerlyzer.data.selfAssessment.setData(currentEmotion);
 			Ti.App.boozerlyzer.data.sessions.Updated(SessionID);
-			updated = Titanium.App.boozerlyzer.dateTimeHelpers.prettyDate(currentEmotion[0].SelfAssessmentStart);
+			updated = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(currentEmotion[0].SelfAssessmentStart);
 			lastchangedLabel.text = 'Last Updated  ' + updated;
 			currentEmotion[0].DrunkBlur = 0;
 			currentEmotion[0].HappyBlur = 0;
@@ -345,7 +345,7 @@
 		//
 		// Cleanup and return home
 		win.addEventListener('android:back', function(e) {
-			Titanium.App.boozerlyzer.data.selfAssessment.setData(currentEmotion);
+			Ti.App.boozerlyzer.data.selfAssessment.setData(currentEmotion);
 			Ti.App.boozerlyzer.data.sessions.Updated(SessionID);
 			if (Ti.App.boozerlyzer.winHome === undefined 
 			 || Ti.App.boozerlyzer.winHome === null) {
@@ -380,7 +380,7 @@
 							UserID:Titanium.App.Properties.getInt('UserID'),
 							LabPoints:2		
 						}];
-			Titanium.App.boozerlyzer.data.gameScores.Result(gameSaveData);
+			Ti.App.boozerlyzer.data.gameScores.Result(gameSaveData);
 		}
 
 				

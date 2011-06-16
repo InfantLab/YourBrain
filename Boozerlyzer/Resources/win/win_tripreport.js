@@ -21,9 +21,9 @@
 	var SessionID = Titanium.App.Properties.getInt('SessionID');
 	
 	//most recent emotion values for this session
-	var currentTripReport = Titanium.App.boozerlyzer.data.tripReports.getLatestData(SessionID);
+	var currentTripReport = Ti.App.boozerlyzer.data.tripReports.getLatestData(SessionID);
 	if (currentTripReport === null || currentTripReport === false){
-		currentTripReport = Titanium.App.boozerlyzer.data.tripReports.newReport();
+		currentTripReport = Ti.App.boozerlyzer.data.tripReports.newReport();
 	}
 	Titanium.API.debug(JSON.stringify(currentTripReport));
 	
@@ -54,7 +54,7 @@
 		currentTripReport[0].Nickname = tripContent.value;
 	});
 	
-	var updated = Titanium.App.boozerlyzer.dateTimeHelpers.prettyDate(currentTripReport[0].ReportChanged);
+	var updated = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(currentTripReport[0].ReportChanged);
 	var lastchangedLabel = Ti.UI.createLabel({
 		text:'Last Updated\n' + updated,
 		top:topChangedLabel,
@@ -77,8 +77,8 @@
 	
 	save.addEventListener('click',function()
 	{
-		Titanium.App.boozerlyzer.data.sessions.Updated(SessionID);
-		Titanium.App.boozerlyzer.data.tripReports.setData(currentTripReport);
+		Ti.App.boozerlyzer.data.sessions.Updated(SessionID);
+		Ti.App.boozerlyzer.data.tripReports.setData(currentTripReport);
 		win.close();
 	});	
 	// CANCEL BUTTON	

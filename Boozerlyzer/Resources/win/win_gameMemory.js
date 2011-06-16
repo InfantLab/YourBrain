@@ -1,19 +1,10 @@
 /**
  * @author Caspar Addyman
  * 
- * The statistical learning / reaction time game. Cute little animals
- * pop up at various locations on the screen. The player has to tap them
- * as quickly and as accurately as possible to gain points. However, the
- * animals will occasionally be upside-down and these must be avoided 
- * (more bonus points for click further away from these).
+ * The memory game.. an electronic version of the Concentration card matching game.
  * 
- * TODO -
- * The order in which the animals are appear will be controlled by a
- * matrix of probablities. Hence there are statistical patterns that 
- * the player may learn subconsciously. 
- * TODO
- * THe location of individual objects should be randomised on each round
- * or turn
+ * An grid of face down cards is laid out in a random order. Players turn over pairs
+ * of them trying to find matches. Score for timed and number of moves it taks.
  * 
  * Copyright yourbrainondrugs.net 2011
  */

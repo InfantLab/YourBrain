@@ -12,13 +12,13 @@
 (function(){
 	
 	//create an object which will be our public API
-	Titanium.App.boozerlyzer.data.weFeelFine = {};
+	Ti.App.boozerlyzer.data.weFeelFine = {};
 	
 	//maintain a database connection we can use
   	var conn = Titanium.Database.install('ybob.db','ybob');
 
 	//get data for the maximum row id 
-	Titanium.App.boozerlyzer.data.weFeelFine.selectNRandomRows = function (numRows, frequencyRange){
+	Ti.App.boozerlyzer.data.weFeelFine.selectNRandomRows = function (numRows, frequencyRange){
 		var returnData = [];
 		var nRows = parseInt(numRows);
 		//TODO Filter by frequency range
@@ -39,7 +39,7 @@
 		return false;
 	};
 	
-	Titanium.App.boozerlyzer.data.weFeelFine.getWordInfo = function (word){
+	Ti.App.boozerlyzer.data.weFeelFine.getWordInfo = function (word){
 		var returnData = [];
 		//TODO Filter by frequency range
 		var rows = conn.execute('SELECT * FROM weFeelFineLists WHERE Feeling = ?', word);
@@ -63,7 +63,7 @@
 	 * Participant has chosen a pissonym - record their choice
 	 * @param {Object} choiceData
 	 */
-	Titanium.App.boozerlyzer.data.weFeelFine.Chosen = function (choiceData){
+	Ti.App.boozerlyzer.data.weFeelFine.Chosen = function (choiceData){
 		Titanium.API.debug('chosen weFeelFine word ' + JSON.stringify(choiceData));
 		var sessionID = Titanium.App.Properties.getInt('SessionID');
 		for (var i=0; i<choiceData.length; i++){
@@ -74,7 +74,7 @@
 		}	
 	};	
 	
-	Titanium.App.boozerlyzer.data.weFeelFine.PlayCount = function (){
+	Ti.App.boozerlyzer.data.weFeelFine.PlayCount = function (){
 		var selectStr = 'SELECT COUNT(*) from WORDCHOICES  where WordType = ?';
 		var rows = conn.execute(selectStr, 'WeFeelFine');
 		if (rows !== null) {

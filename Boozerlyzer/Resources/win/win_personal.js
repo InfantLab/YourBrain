@@ -11,20 +11,19 @@
 
 	var win = Titanium.UI.currentWindow;
 	var initialised = false;
-	
-	Ti.include('/ui/picker_monthyear.js');
-
 	//layout variables
 	var topHW = 100;
 	
-	var persInfo = Titanium.App.boozerlyzer.data.personalInfo.getData();
-	var Countries = Titanium.App.boozerlyzer.data.alcoholStandardDrinks.get();
+	Ti.include('/ui/picker_monthyear.js');
 
-	Titanium.API.debug('win_pers Countries' + Countries.length);
-		
+	var Countries = Ti.App.boozerlyzer.data.alcoholStandardDrinks.get();
+	Titanium.API.debug('win_personal - Countries' + Countries.length);
+	
+	var persInfo = Ti.App.boozerlyzer.data.personalInfo.getData();
+	Ti.API.debug('win_personal - got persInfo');		
 	if (!persInfo){
-		Titanium.API.debug('win_pers settingdata');
-		persInfo = Titanium.App.boozerlyzer.data.personalInfo.setDefaults();
+		Titanium.API.debug('win_personal settingdata');
+		persInfo = Ti.App.boozerlyzer.data.personalInfo.setDefaults();
 	}
 	
 	var label = Titanium.UI.createLabel({
@@ -51,7 +50,7 @@
 	
 	function updateDateOfBirth(){
 		if (persInfo.BirthMonth > 0 && persInfo.BirthYear > 0){
-			birthDate.text = Titanium.App.boozerlyzer.data.personalInfo.monthname[persInfo.BirthMonth -1] + '-' + persInfo.BirthYear;
+			birthDate.text = Ti.App.boozerlyzer.data.personalInfo.monthname[persInfo.BirthMonth -1] + '-' + persInfo.BirthYear;
 		}
 	}
 	
@@ -81,7 +80,7 @@
 		color:'#336699',
 		hintText:'nickname',
 		textAlign:'left',
-		height:42,
+		height:52,
 		top:10,
 		left:150,
 		borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
@@ -137,8 +136,8 @@
 		
 	// set a picker for gender.
 	var rows1 = [];
-	for (var i = 0; i < Titanium.App.boozerlyzer.data.personalInfo.gender.length; i++) {
-		rows1.push(Ti.UI.createPickerRow({title: Titanium.App.boozerlyzer.data.personalInfo.gender[i]}));
+	for (var i = 0; i < Ti.App.boozerlyzer.data.personalInfo.gender.length; i++) {
+		rows1.push(Ti.UI.createPickerRow({title: Ti.App.boozerlyzer.data.personalInfo.gender[i]}));
 	}
 	var column1 = Ti.UI.createPickerColumn( {
 		rows: rows1
@@ -177,10 +176,10 @@
 		var rows2 = [];
 		var height = null;
 		if (persInfo.HeightUnits == 1){
-			height = Titanium.App.boozerlyzer.data.personalInfo.height_m;
+			height = Ti.App.boozerlyzer.data.personalInfo.height_m;
 			heightUnit.text = 'm'; 
 		}else{
-			height = Titanium.App.boozerlyzer.data.personalInfo.height_ft;	
+			height = Ti.App.boozerlyzer.data.personalInfo.height_ft;	
 			heightUnit.text = 'ft'; 
 		}
 		rows2 = [];
@@ -198,10 +197,10 @@
 		var rows2 = [];
 		var Weight = null;
 		if (persInfo.WeightUnits == 1){
-			weight = Titanium.App.boozerlyzer.data.personalInfo.weight_kg;
+			weight = Ti.App.boozerlyzer.data.personalInfo.weight_kg;
 			weightUnit.text = 'kg'; 
 		}else{
-			weight = Titanium.App.boozerlyzer.data.personalInfo.weight_lb;	
+			weight = Ti.App.boozerlyzer.data.personalInfo.weight_lb;	
 			weightUnit.text = 'lb'; 
 		}
 		rows2 = [];
@@ -275,7 +274,7 @@
 	
 	save.addEventListener('click',function()
 	{
-		Titanium.App.boozerlyzer.data.personalInfo.setData(persInfo);
+		Ti.App.boozerlyzer.data.personalInfo.setData(persInfo);
 		win.close();
 	});	
 	// CANCEL BUTTON	

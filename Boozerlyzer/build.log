@@ -5,17 +5,11 @@ Logfile initialized
 [INFO] Titanium SDK version: 1.7.0 (05/15/11 17:26 e6afca8)
 [DEBUG] Waiting for device to be ready ...
 [TRACE] adb devices returned 1 devices/emulators
-[TRACE] adb devices returned 1 devices/emulators
-[TRACE] adb devices returned 1 devices/emulators
-[TRACE] adb devices returned 1 devices/emulators
-[TRACE] adb devices returned 1 devices/emulators
-[TRACE] adb devices returned 1 devices/emulators
-[DEBUG] Device connected... (waited 25 seconds)
-[DEBUG] waited 25.140081 seconds on emulator to get ready
-[INFO] Waiting for the Android Emulator to become available
+[DEBUG] Device connected... (waited 0 seconds)
+[DEBUG] waited 0.007018 seconds on emulator to get ready
 [DEBUG] net.yourbrainondrugs.ybob installed? True
 [INFO] Copying project resources..
-[TRACE] COPYING MODIFIED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/win/win_main.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/win/win_main.js
+[TRACE] COPYING MODIFIED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/data/gameScores.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/data/gameScores.js
 [TRACE] Generating Java Classes
 [DEBUG] Processing Android resource drawables
 [DEBUG] copying app icon: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/ybob-logo2-sml.png
@@ -55,7 +49,8 @@ Logfile initialized
 [DEBUG] from resource zip => assets/Resources/charts/chartSingleSession.html
 [DEBUG] from resource zip => assets/Resources/charts/raphtest.html
 [DEBUG] from resource zip => assets/Resources/comm/geolocate.js
-[DEBUG] from resource zip => assets/Resources/comm/register.js
+[DEBUG] from resource zip => assets/Resources/comm/sendGameData.js
+[DEBUG] from resource zip => assets/Resources/comm/ybodnet.js
 [DEBUG] from resource zip => assets/Resources/data/alcoholStandardUnits.js
 [DEBUG] from resource zip => assets/Resources/data/doseageLog.js
 [DEBUG] from resource zip => assets/Resources/data/drugDoses.js
@@ -164,6 +159,7 @@ Logfile initialized
 [DEBUG] from resource zip => assets/Resources/icons/ybod-logo2.png
 [DEBUG] from resource zip => assets/Resources/images/blackaxis800x480.png
 [DEBUG] from resource zip => assets/Resources/images/diagonalaxes800x800.png
+[DEBUG] from resource zip => assets/Resources/images/grid3x3.png
 [DEBUG] from resource zip => assets/Resources/images/mainmenu.png
 [DEBUG] from resource zip => assets/Resources/images/smallcornercup.png
 [DEBUG] from resource zip => assets/Resources/images/xy-axes.png
@@ -203,15 +199,18 @@ Logfile initialized
 [DEBUG] from resource zip => assets/Resources/win/win_doseage.js
 [DEBUG] from resource zip => assets/Resources/win/win_drinks.js
 [DEBUG] from resource zip => assets/Resources/win/win_emotion.js
+[DEBUG] from resource zip => assets/Resources/win/win_gameMemory.js
 [DEBUG] from resource zip => assets/Resources/win/win_gameMenu.js
 [DEBUG] from resource zip => assets/Resources/win/win_gameStatLearn.js
 [DEBUG] from resource zip => assets/Resources/win/win_gameStroop.js
 [DEBUG] from resource zip => assets/Resources/win/win_gameWords.js
 [DEBUG] from resource zip => assets/Resources/win/win_highScores.js
+[DEBUG] from resource zip => assets/Resources/win/win_login.js
 [DEBUG] from resource zip => assets/Resources/win/win_main.js
 [DEBUG] from resource zip => assets/Resources/win/win_mydata.js
 [DEBUG] from resource zip => assets/Resources/win/win_personal.js
 [DEBUG] from resource zip => assets/Resources/win/win_privacy.js
+[DEBUG] from resource zip => assets/Resources/win/win_register.js
 [DEBUG] from resource zip => assets/Resources/win/win_results1.js
 [DEBUG] from resource zip => assets/Resources/win/win_tripreport.js
 [DEBUG] from resource zip => assets/Resources/app.js
@@ -260,7 +259,7 @@ Logfile initialized
 [DEBUG] Waiting for device to be ready ...
 [TRACE] adb devices returned 1 devices/emulators
 [DEBUG] Device connected... (waited 0 seconds)
-[DEBUG] waited 0.025654 seconds on emulator to get ready
+[DEBUG] waited 0.040345 seconds on emulator to get ready
 [INFO] Installing application on device
 [INFO] Launching application ... Boozerlyzer
 [TRACE] Launch output: Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=net.yourbrainondrugs.ybob/.BoozerlyzerActivity }

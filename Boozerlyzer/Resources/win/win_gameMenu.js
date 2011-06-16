@@ -154,15 +154,15 @@
 	
 	function updateAllGameStats(){
 		for(var i=0;i<6;i++){
-			var countObj =Titanium.App.boozerlyzer.data.gameScores.PlayCount(gameTypes[i]);
+			var countObj =Ti.App.boozerlyzer.data.gameScores.PlayCount(gameTypes[i]);
 			Ti.API.debug('i, countObj ' + i + ' ' + JSON.stringify(countObj));
 			if (countObj){
 				gameCounts[i].text = 'Games played ' + countObj[0].PlayCount;
 			}	
-			var lastObj = Titanium.App.boozerlyzer.data.gameScores.LastPlayed(gameTypes[i]);
+			var lastObj = Ti.App.boozerlyzer.data.gameScores.LastPlayed(gameTypes[i]);
 			Ti.API.debug('i, lastObj ' + i + ' ' + JSON.stringify(lastObj));
 			if (lastObj){
-				gameLastPlayedLabels[i].text = Titanium.App.boozerlyzer.dateTimeHelpers.prettyDate(lastObj[0].LastPlayed);
+				gameLastPlayedLabels[i].text = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(lastObj[0].LastPlayed);
 			}
 		}
 	}

@@ -303,7 +303,7 @@
 		win.add(BloodAlcohol);
 		
 		function formatTableRow(DrinkData){
-			var currentTime = Titanium.App.boozerlyzer.dateTimeHelpers.formatTime(DrinkData.DoseageChanged,true);
+			var currentTime = Ti.App.boozerlyzer.dateTimeHelpers.formatTime(DrinkData.DoseageChanged,true);
 			var numPints = DrinkData.HalfPints/2;
 			var numUnits = DrinkData.HalfPints+ DrinkData.SmallWine + DrinkData.SingleSpirits; 
 			var runningTotal = numPints + ' p, ' + DrinkData.SmallWine + ' w,' + DrinkData.SingleSpirits + ' s  (' + numUnits + 'u)' ;

@@ -30,7 +30,7 @@
 		    Titanium.UI.LANDSCAPE_RIGHT
 		];
 //		Titanium.UI.orientation = Titanium.UI.LANDSCAPE_RIGHT;
-	
+//		Ti.UI.orientation = Titanium.UI.LANDSCAPE_RIGHT;
 				
 		var loadedonce = false;
 		
@@ -150,7 +150,7 @@
 			height:48,
 			width:48,
 			top:20,
-			opacity:0.5,
+//			opacity:0.5,
 			left:optionsLeft + 52
 		});
 		//if we click this icon toggle between normal use
@@ -410,7 +410,7 @@
 			if (e.index === 0) {
 				session = Ti.App.boozerlyzer.data.sessions.createNewSession(false);
 				rewriteUpdateLabel();
-				labelCurrentSession.text = 'Session Started\n' + Titanium.App.boozerlyzer.dateTimeHelpers.formatDayPlusTime(session[0].StartTime,true);
+				labelCurrentSession.text = 'Session Started\n' + Ti.App.boozerlyzer.dateTimeHelpers.formatDayPlusTime(session[0].StartTime,true);
 			}
 		});
 		
@@ -419,9 +419,9 @@
 		if (session === null || session === false){
 			session = Ti.App.boozerlyzer.data.sessions.createNewSession(false);
 		}
-		var timeSinceUpdate = Titanium.App.boozerlyzer.dateTimeHelpers.prettyDate(session[0].LastUpdate);
+		var timeSinceUpdate = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(session[0].LastUpdate);
 		function rewriteUpdateLabel(){
-			timeSinceUpdate = Titanium.App.boozerlyzer.dateTimeHelpers.prettyDate(session[0].LastUpdate);
+			timeSinceUpdate = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(session[0].LastUpdate);
 			labelLastUpdate.text = 'Last activity\n' + timeSinceUpdate;
 		
 		}
@@ -456,7 +456,7 @@
 		} 
 		Ti.API.debug('homeWin 6');
 		rewriteUpdateLabel();
-		labelCurrentSession.text = 'Session Started\n' + Titanium.App.boozerlyzer.dateTimeHelpers.formatDayPlusTime(session[0].StartTime,true);
+		labelCurrentSession.text = 'Session Started\n' + Ti.App.boozerlyzer.dateTimeHelpers.formatDayPlusTime(session[0].StartTime,true);
 		Ti.API.debug('Session ID - ' + session[0].ID);
 		Titanium.App.Properties.setInt('SessionID', session[0].ID);
 		Titanium.App.Properties.setInt('SessionStart',session[0].StartTime/1000);
@@ -464,6 +464,22 @@
 		
 		loadedonce = true;
 		Ti.API.debug('homeWin 7');
+		
+		
+		//TODO - find a nice way to synchronise data
+		var sync = Ti.UI.createButton({
+			title:'Send Data',
+			width:90,
+			height:28,
+			bottom:30,
+			right:10,
+			backgroundColor:'gray'
+		});
+		sync.addEventListener('click',function()
+		{
+			Ti.App.boozerlyzer.comm.sendGameData.sync();
+		});	
+		homeWin.add(sync);
 
 		homeWin.addEventListener('focus', function(){
 			Ti.API.debug('homeWin got focus');
