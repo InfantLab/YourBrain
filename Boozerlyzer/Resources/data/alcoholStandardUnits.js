@@ -23,8 +23,7 @@
 	//get standard drinks either for a single country
 	//or for all of them!
 	Ti.App.boozerlyzer.data.alcoholStandardDrinks.get = function (Country){
-		var returnData = [];
-		var rows;
+		var rows, returnData = [];
 		var selectStr = 'SELECT * FROM AlcoholStandardDrinks ';
 		if (typeof(Country)=="undefined" || Country === null){
 			rows = conn.execute(selectStr);	 

@@ -87,5 +87,4 @@ Ti.include('/js/bloodalcohol.js');
 		}//end time loop
 		return returnData;
 	}
-
 //})();

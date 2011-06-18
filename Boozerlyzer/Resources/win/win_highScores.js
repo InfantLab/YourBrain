@@ -14,18 +14,14 @@
 	var win = Titanium.UI.currentWindow;
 	
 	//layout variables
-	var sizeScoreIcon = 48;
-	var selectedGameIdx = 0;
-	
+	var sizeScoreIcon = 48,	sizeIcons = 66, selectedGameIdx = 0;	
 	var subtypes = ['Total', 'Speed', 'Coordination', 'Accuracy','Alcohol'];
 	var highicons = ['', 'rocket.png', 'astronaut_256.png', 'Angel.png','beer-full.png'];
 	var lowicons = ['', 'snail.png', 'baby_icon.png','Devil.png','beer-empty.png'];
 	var gameNames = ['Raccoon Hunt','Memory','Number Stroop', 'Pissonyms', 'Emotional Words', 'We feel fine'];
 	var gameTypes = ['StatLearning','Memory','NumberStroop','Pissonyms', 'Emotions', 'WeFeelFine'];
-	var sizeIcons = 66;
 	var choiceImgUrls = ['/icons/teddy_bears.png','/icons/Memory.png','/icons/numberStroop.png','/icons/Ice.png','/icons/emotionalwords.png','/icons/feelings.png'];
 
-	
 	var labelHighScores = Titanium.UI.createLabel({
 		text:'High Scores',
 		font:{fontSize:36,fontFamily:'sans-serif',fontWeight:'bold'},

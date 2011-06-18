@@ -65,7 +65,8 @@
 		var timeLabels = [];
 
 		var showMins = ((now - timeSteps[0]) < 12*3600); //show minutes if short session
-		for (var t = 0;t< timeSteps.length;t++){
+		var nsteps = timeSteps.length;
+		for (var t = 0;t< nsteps;t++){
 			//just show every 4th label
 			if (t % 4 === 0){
 				timeLabels[t] = Ti.App.boozerlyzer.dateTimeHelpers.formatTime(timeSteps[t],showMins,true);			

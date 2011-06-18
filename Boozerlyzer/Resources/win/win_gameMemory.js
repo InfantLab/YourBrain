@@ -1,108 +1,288 @@
 /**
  * @author Caspar Addyman
  * 
- * The memory game.. an electronic version of the Concentration card matching game.
+ * The memory game.. is basically a dual N-back task. The player must keep track of
+ * both the  
  * 
- * An grid of face down cards is laid out in a random order. Players turn over pairs
- * of them trying to find matches. Score for timed and number of moves it taks.
  * 
  * Copyright yourbrainondrugs.net 2011
  */
 
 (function() {
 
+	Ti.include('/ui/scoresDialog.js');
+
 	var win = Titanium.UI.currentWindow;
-	win.idx = -1;
+	var stimulus, grid;
+	var currentObj = 0, points = 0, coordbonus = 0, speedbonus = 0,  inhibitbonus = 0;
+	var startTime = 0, stepStartTime = 0, count = 0, missCount = 0, falseAlarmCount = 0;
+	var gameStarted = false, gameAllowRestart = true, clicked = false;
+	var iconSize = 90;
+	var imgtop = [2,2,2,96,96,96,190,190,190];
+	var imgleft = [2,96,190,2,96,190,2,96,190];
 	
-	var startTime = 0;
-	var	stepStartTime = 0;
-	var gameStarted = false;
-	var currentObj = 0;
-	var points = 0;
-	var coordbonus = 0;
-	var speedbonus = 0;
-	var inhibitbonus = 0;
-	var count = 0;
-	var missCount = 0;
-	var falseAlarmCount = 0;
-	var inverted = false;
-	var shrinkTime = 5000; // how long does this blob stay visible?
-	var clicked = false;
-	var imgtop = [40,40,40,160,160,160];
-	var imgleft = [60,180,300,60,180,300];
-	var stopAnim  = Titanium.UI.createAnimation();
+	var fruitprefix = '/images/fruit/';
+	var fruits = ['apple.png','banana.png','cherry.png','grapefruit.png','kiwi.png','lemon.png','lime.png','strawberry.png','watermelon.png','starfruit.png']
 	
-	//
-	// a set of virtual objects that must be clicked quickly when made visible
-	//
-	var loc = [];
+	//	track what object is shown and its location for each step
+	var stepImage = [],stepLocation = [];
+	var nBack = 1;
+	
+	// funtion to handle the button presses
 	var whatClicked = function (e) {
-		if (currentObj < 0){ 
-			//don't fire more than once
+		if (clicked ){ 
+			//don't do anything
 			return;
 		}
-
 		clicked = true;
 		Titanium.API.debug("whatClicked x,y " + e.x + ", " + e.y  );
-		 for(x in e)
-			 Ti.API.debug(JSON.stringify(x));	
+		 // for(x in e)
+			 // Ti.API.debug(JSON.stringify(x));	
 		Ti.API.debug('source ' + JSON.stringify(e.source));
 		var cen = e.source.center;
 		Ti.API.debug('source cen' + JSON.stringify(cen));
 
 		var idx = parseInt(e.source.idx);
-		Ti.API.debug('idx:' + idx);
-		if (idx === currentObj && !inverted){ //clicked correct one
-			currentObj = -1;
-			points += 10;
-//			Titanium.API.debug("e.globalPoint.x, e.globalPoint.y " + e.globalPoint.x +"," + e.globalPoint.y);
-			coordbonus += calcCoordinationBonus(cen,e);
-			speedbonus += calcSpeedBonus(stepStartTime, new Date().getTime());
-			loc[idx].animate(stopAnim);			//cancel remaining animation 
-			loc[idx].visible = false;	//and hide the object
-			count++;
-			gameStep(count);			
-		}else if (idx === currentObj && inverted){ // accidently clicked inverted
-			falseAlarmCount++;
-			labelGameMessage.text = 'Keep away!';
-			clear(labelGameMessage);
-			count++;
-			gameStep(count);
-			inhibitbonus -= 10;
-		}else if (inverted){ //correctly clicked away 
-			points += 10;
-			loc[currentObj].animate(stopAnim);			//cancel remaining animation 
-			loc[currentObj].visible = false;	//and hide the object
-			inhibitbonus += 5;
-			coordbonus += calcCoordinationBonus(cen,e);
-			speedbonus += calcSpeedBonus(stepStartTime, new Date().getTime());
-			count++;
-			currentObj = -1;
-			gameStep(count);			
-		}
-		else{ //missed
-			missCount++;
-			labelGameMessage.text = 'Oops!'
-			clear(labelGameMessage);
+		Ti.API.debug('Button clicked idx:' + idx);
+		Ti.API.debug('stepLocation   :' + stepLocation[count]);
+		Ti.API.debug('stepLocation -n:' + stepLocation[count-nBack]);
+		Ti.API.debug('stepImage   :' + stepImage[count]);
+		Ti.API.debug('stepImage -n:' + stepImage[count-nBack]);
+		if(count < nBack){
+			//nothing to do
+		}else if (idx === -1){ 
+			//clicked left button, cheick if image matches N back item
+			//clicked teh right button see if location matches nBack location.
+			if (stepImage[count] === stepImage[count - nBack]){
+				Ti.API.debug('image match');
+				//CORRECT!
+				points += 10;
+				speedbonus += calcSpeedBonus(stepStartTime, new Date().getTime());
+				coordbonus += calcCoordinationBonus(cen,e);
+			}else{
+				//WRONG!
+				inhibitbonus -= 5;
+				missCount++;
+			} 			
+		}else if (idx === 1){ 
+			//clicked teh right button see if location matches nBack location.
+			if (stepLocation[count] === stepLocation[count - nBack]){
+				Ti.API.debug('location match');
+				//CORRECT!
+				points += 10;
+				speedbonus += calcSpeedBonus(stepStartTime, new Date().getTime());
+				coordbonus += calcCoordinationBonus(cen,e);
+			}else{
+				//WRONG!
+				inhibitbonus -= 5; 
+				missCount++;
+			} 			
+		}else if (idx === -10 || idx === 10){
+			if (stepLocation[count] === stepLocation[count - nBack]
+			|| stepImage[count] === stepImage[count - nBack] ){
+				//player missed this one.
+				//too bad
+				missCount++;
+			}else{
+				score += 2;
+			}			
 		}	
+		count++;
+		gameStep(count);			
 	};
 	
-	function setUpOnce(){	
-		for(var img=0;img<6;img++){
-			Titanium.API.debug('/icons/teddy_bear_toy_' + img + '.png');
-			loc[img] = Ti.UI.createImageView({
-				idx:img,
-				anchorPoint: {x:0.5,y:0.5},
-				width:100,height:100,
-				top:imgtop[img],
-				left:imgleft[img],
-				image:'/icons/teddy_bear_toy_' + img + '.png'
-			});	
-			loc[img].visible = false;
-			loc[img].addEventListener('touchstart',whatClicked)
-			win.add(loc[img]);
-		}
+
+	function updateScore(){
+		Ti.API.debug('updateScore :' + points + 'pts');
+		score.text = points;
+		//round the bonus points
+		bonus.text = Math.round(speedbonus) + ' speed\t' + Math.round(coordbonus) + ' coord\t' + Math.round(inhibitbonus) + ' oops';
+	}
 	
+	// new game function
+	function newGame(){
+		//ultimately this should log stuff
+		//at moment it doesn't do much
+		
+		//reset counters & other variables 
+		currentObj = 0;
+		points = 0;
+		coordbonus = 0;
+		speedbonus = 0;
+		inhibitbonus = 0;
+		count = 0;
+		missCount = 0;
+		falseAlarmCount = 0;
+	
+		gameStarted = true;
+		gameAllowRestart = false;
+		startTime = new Date().getTime();
+		labelGameMessage.visible = false;
+		
+		gameStep(0);
+	}
+	
+	/**
+	 * The main game loop all the clever stuff happens in here
+	 */
+	function gameStep(stepcount){
+	 	Ti.API.debug('Game Step ' + stepcount);
+	 	clicked = false;
+		if (missCount > 4){
+			//GAME OVER!
+			stimulus.visible = false;	
+			labelGameMessage.visible = true;
+			labelGameMessage.text = 'Final Score: ' + Math.floor(points+inhibitbonus+coordbonus+speedbonus) + '\nGame Over';
+			count = 0;
+			missCount = 0;
+			gameStarted = false;
+			gameEndSaveScores();
+			setTimeout(function()
+			{// do something 
+				labelGameMessage.text = 'Tap to start game';
+				gameStarted = false;
+				gameAllowRestart = true;
+			},4000);
+			scoresDialog.setScores( 'Memory Game', 
+									Math.floor(points+inhibitbonus+coordbonus+speedbonus),
+									speedbonus, 
+									coordbonus,
+									inhibitbonus,
+									5,
+									"",
+									'/icons/Memory.png' )
+			scoresDialog.open();
+			return;
+		}
+		updateScore();
+		
+		stepStartTime = new Date().getTime();
+		
+		//get next item
+		currentImg = Math.floor(9*Math.random());
+		currentLoc = Math.floor(9*Math.random());
+		//keep track of what has been shown.
+		stepImage[stepcount] = currentImg;
+		stepLocation[stepcount] = currentLoc;
+		
+		//show new item
+		stimulus.visible = false;
+		stimulus.image = fruitprefix + fruits[currentImg];
+		stimulus.top = imgtop[currentLoc];
+		stimulus.left = imgleft[currentLoc];
+		stimulus.visible = true;
+
+	}
+	
+	function calcSpeedBonus(stepStart,clickTime){
+		//TODO - the reaction time bonus
+		//Ti.API.debug('calcSpeedBonus - stepStart' + stepStart);
+		//Ti.API.debug('calcSpeedBonus - clickTime' + clickTime);
+		var timediff = 10 - (clickTime -stepStart) /100;
+		Ti.API.debug('calcSpeedBonus - timediff' + timediff);
+		return Math.max(0, timediff);
+	}
+	
+	function calcCoordinationBonus(centObj,centTouch){
+		// a simple linear bonus of between 0 & 10 points for being
+		// between 50 and 0 units from the object center
+		var distx = centObj.x - centTouch.x; 
+		var disty = centObj.y - centTouch.y;
+		var dist = Math.sqrt(distx*distx + disty*disty);
+		Ti.API.debug('calcCoordinationBonus - dist' + dist);
+		var bonusdist = Math.min(dist,50);
+		return 10*(50-bonusdist)/50;
+	}
+	function clear(o){
+		var t  = o.text;
+		setTimeout(function()
+		{
+			if (o.text == t)
+			{
+				o.text = "";
+			}
+		},2000);
+	}
+	
+	function setUpOnce(){	
+	
+		var leftNOButton = Ti.UI.createButton({
+			title:'No match',
+			width:'20%',
+			height:'30%',
+			bottom:'60%',
+			left:'1%',
+			backgroundColor:'#888',
+			idx:-10
+		});
+		leftNOButton.addEventListener('click',function(events)
+		{
+			whatClicked(events);
+		});	
+		win.add(leftNOButton);
+		var leftYESButton = Ti.UI.createButton({
+			title:'Shape matched item 1 step before',
+			width:'20%',
+			height:'30%',
+			bottom:'23%',
+			left:'1%',
+			backgroundColor:'#888',
+			idx:-1
+		});
+		leftYESButton.addEventListener('click',function(events)
+		{
+			whatClicked(events);
+		});	
+		win.add(leftYESButton);
+
+		var rightNOButton = Ti.UI.createButton({
+			title:'No match',
+			width:'20%',
+			height:'30%',
+			bottom:'60%',
+			right:'1%',
+			backgroundColor:'#888',
+			idx:10
+		});
+		rightNOButton.addEventListener('click',function(events)
+		{
+			whatClicked(events);
+		});	
+		win.add(rightNOButton);
+		
+		var rightYESButton = Ti.UI.createButton({
+			title:'Location matched item 1 step before',
+			width:'20%',
+			height:'30%',
+			bottom:'23%',
+			right:'1%',
+			backgroundColor:'#888',
+			idx:1
+		});
+		rightYESButton.addEventListener('click',function(events)
+		{
+			whatClicked(events);
+		});	
+		win.add(rightYESButton);
+	
+		grid = Ti.UI.createView({
+			backgroundImage:'/images/grid3x3.png',
+			height:282,
+			width:282,
+			top:20,
+			left:100
+		});
+//		grid.visible = false;
+		win.add(grid);
+		stimulus = Ti.UI.createImageView({
+				width:iconSize,height:iconSize,
+				top:imgtop[0],
+				left:imgleft[0],
+				image:fruitprefix + fruits[0]
+			});	
+		stimulus.visible = false;
+		grid.add(stimulus);
+
 	}
 	
 	
@@ -154,143 +334,33 @@
 	win.add(score);
 	win.add(labelBonus);
 	win.add(bonus);
+
+	//label for how many steps back we are currently counting
+	var nBackLabel = Ti.UI.createLabel({
+		color:'blue',
+		font:{fontSize:18,fontWeight:'bold',fontFamily:'Helvetica Neue'},
+		bottom:2,
+		right:2,
+		textAlign:'right',
+		text:'1 Back',
+		width:100
+	});
+	win.add(nBackLabel);
 	
 	// label across centre of screen for pause, start etc
 	var labelGameMessage = Ti.UI.createLabel({
 		color:'purple',
 		font:{fontSize:18,fontWeight:'bold',fontFamily:'Helvetica Neue'},
 		textAlign:'center',
-		text:'Double click to start'
+		text:'Tap to start'
 	});
 	win.add(labelGameMessage);
 	
-	function updateScore(){
-		score.text = points;
-		//round the bonus points
-		bonus.text = Math.round(speedbonus) + ' speed\t' + Math.round(coordbonus) + ' coord\t' + Math.round(inhibitbonus) + ' oops';
-	}
-	
-	// new game function
-	function newGame(){
-		//ultimately this should log stuff
-		//at moment it doesn't do much
-		
-		//reset counters & other variables 
-		currentObj = 0;
-		points = 0;
-		coordbonus = 0;
-		speedbonus = 0;
-		inhibitbonus = 0;
-		count = 0;
-		missCount = 0;
-		falseAlarmCount = 0;
-		inverted = false;
-		shrinkTime = 5000; // how long does this blob stay visible?
-	
-		gameStarted = true;
-		startTime = new Date().getTime();
-		labelGameMessage.visible = false;
-		gameStep(0);
-	}
-	
-	/**
-	 * The main game loop all the clever stuff happens in here
-	 */
-	function gameStep(stepcount){
-	 	Ti.API.debug('Game Step ' + stepcount);
-	 	stepStartTime = new Date().getTime();
-		clicked = false;
-		if (missCount > 3){
-			
-			labelGameMessage.visible = true;
-			labelGameMessage.text = 'Final Score: ' + Math.floor(points+inhibitbonus+coordbonus+speedbonus) + '\nGame Over';
-			count = 0;
-			missCount = 0;
-			gameStarted = false;
-			gameEndSaveScores();
-			setTimeout(function()
-			{// do something 
-				labelGameMessage.text = 'Double click to start game';
-				gameStarted = false;
-			},6000);
-			return;
-		}
-		shrinkTime *= .97; //shrink quicker each step
-		currentObj = Math.floor(6*Math.random());
-		inverted = (Math.random()<0.1);
-		if (inverted){		
-	//		var flip = Ti.UI.create2DMatrix();
-	//		flip = flip.rotate(180);
-	//		var a1 = Titanium.UI.createAnimation();
-	//		a1.transform = flip;
-	//		a1.duration = 10;
-	//		loc[currentObj].animate(a1);
-			//loc[currentObj].animate({transform:flip,duration:10});
-			//loc[currentObj].transform = Ti.UI.create2DMatrix().rotate(180);
-			loc[currentObj].image = '/icons/inverted_teddy_bear_toy_' + currentObj + '.png';
-		}else{
-			loc[currentObj].image = '/icons/teddy_bear_toy_' + currentObj + '.png';			
-		}
-		//only show currentObj
-		for(i=0;i<6;i++){
-			loc[i].visible = (i===currentObj);			
-		}
-		var shrink = Ti.UI.create2DMatrix();
-		shrink = shrink.scale(0.001);
-//		var a2 = Titanium.UI.createAnimation();
-//		a2.transform = shrink;
-		//a2.opacity = 0;
-//		a2.duration = shrinkTime;
-		// anchor = loc[currentObj].center;
-		// Ti.API.debug('object center -' + JSON.stringify(anchor));
-		//yes this next bit looks crazy but it just might work
-		anchor={
-			x:loc[currentObj].center.x,
-			y:loc[currentObj].center.y
-		};
-		loc[currentObj].animate({transform:shrink,center:anchor,duration:shrinkTime});
-		updateScore();	
-	}
-	
-	function calcSpeedBonus(stepStart,clickTime){
-		//TODO - the reaction time bonus
-		//Ti.API.debug('calcSpeedBonus - stepStart' + stepStart);
-		//Ti.API.debug('calcSpeedBonus - clickTime' + clickTime);
-		var timediff = 10 - (clickTime -stepStart) /100;
-		Ti.API.debug('calcSpeedBonus - timediff' + timediff);
-		return Math.max(0, timediff);
-	}
-	
-	function calcCoordinationBonus(centObj,centTouch){
-		// a simple linear bonus of between 0 & 10 points for being
-		// between 50 and 0 units from the object center
-		var distx = centObj.x - centTouch.x; 
-		var disty = centObj.y - centTouch.y;
-		var dist = Math.sqrt(distx*distx + disty*disty);
-		Ti.API.debug('calcCoordinationBonus - dist' + dist);
-		var bonusdist = Math.min(dist,50);
-		return 10*(50-bonusdist)/50;
-	}
-	function clear(o){
-		var t  = o.text;
-		setTimeout(function()
-		{
-			if (o.text == t)
-			{
-				o.text = "";
-			}
-		},2000);
-	}
-	
 	win.addEventListener('click',function(ev)
 	{
-		if (!gameStarted){
+		if (!gameStarted && gameAllowRestart){
 		 	Ti.API.debug('Game Start');
-			gameStarted = true;
 			newGame();
-		}else{
-			//add a whatClicked event to window 
-			whatClicked(ev);
 		}
 	});
 	
@@ -317,7 +387,7 @@
 	setUpOnce();
 	
 	function gameEndSaveScores(){
-		var gameSaveData = [{Game: 'StatLearning',
+		var gameSaveData = [{Game: 'DualNBack',
 							GameVersion:1,
 							PlayStart:startTime ,
 							PlayEnd: parseInt((new Date()).getTime()/1000),
