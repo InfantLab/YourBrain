@@ -2,7 +2,7 @@
   require_once('include_setup.php');
 
   // some debug info
-  print_rp($_REQUEST, 'Request is:');
+  print_rp($_REQUEST, 'Request is:', true);
 
   $accepted_types = array('GameScore'); // which row types to accept for entry to the database
 
@@ -23,10 +23,10 @@
 
   // take POST request, get authentication details and data
   $data = stripslashes($_REQUEST['data']); // the data as a JSON string.
-  print_rp ($data, 'got data:');
+  print_rp ($data, 'got data:', true);
   $decoded = json_decode($data); // the data as a tree of associative arrays
 
-  print_rp ($decoded, 'Got decoded JSON data:');
+  print_rp ($decoded, 'Got decoded JSON data:', true);
   ?><hr><?
 
   $RowsToSave = array ();

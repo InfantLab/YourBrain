@@ -1,9 +1,16 @@
 <?
 
-function print_rp($var, $message = '') {
+function debug ($text) {
+  global $debug_file;
+  if (!$debug_file) $debug_file = fopen('debug.log','a');
+  fwrite ($debug_file, $text . "\n");
+}
+
+function print_rp($var, $message = '', $log = true) {
   print "\n\n$message: <pre>";
   print_r($var);
   print "</pre>\n\n";
+  if ($log) debug($message . ':' . print_r($var, true));
 }
 
 function __autoload($classname) {
