@@ -40,6 +40,8 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		//what is the last row id from this dataset?
 		var newLastID = dataToSend[dataToSend.length -1].ID;
 
+        var xhrPost = Ti.Network.createHTTPClient();
+
 		// send the data to the server
 		xhrPost.open('POST', 'http://yourbrainondrugs.net/boozerlyzer/submit_data.php');
 		xhrPost.setRequestHeader('Content-type','application/json');
@@ -68,6 +70,8 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 	};
 
 	Ti.App.boozerlyzer.comm.sendGameData.getLastServerRowID = function(){
+		
+		var xhrPost = Ti.Network.createHTTPClient();
 	
 		xhrPost.open('POST', 'http://yourbrainondrugs.net/boozerlyzer/req_GamesScoresLastID.php');
 		xhrPost.setRequestHeader('Content-type','application/json');
@@ -84,11 +88,12 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		//what do we get back?
 		xhrPost.onload = function() {
 				var rc = eval('('+this.responseText+')');
-				if (rc['Last'] == 'success') {
-					alert('Game scores saved.');
+				if (rc['status'] == 'success') {
+					newLastID = rc['Last'];
+					alert('Got last ID ' + newLastID);
 					Titanium.App.Properties.setInt('LastSentID', newLastID);
 				} else {
-					alert('Cloud Error: try again.');
+					alert('Cloud Error: try again (' + this.responseText + ')');
 				}
 			};
 	
