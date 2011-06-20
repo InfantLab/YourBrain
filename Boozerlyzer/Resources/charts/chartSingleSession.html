@@ -22,9 +22,12 @@
 		Ti.App.fireEvent('webViewLoaded', message);
 	}
 	
-		function paintLineChart(e) {
+	function paintLineChart(e) {
 		//Ti.API.info("webview chart e -" + JSON.stringify(e));
 	
+		//clear any existing graph
+		RGraph.Clear(document.getElementById("myLineGraph"));
+
 		//get the passed in data	
 		var asobj = JSON.parse(e);
 		var options = asobj.options;
@@ -46,7 +49,8 @@
 		var maxBAC = 0;
 		for (var i = 0; i < drinkArray.length; i++) {
 			totalDrink.push(drinkArray[i].standardDrinks);
-			totalBAC.push( drinkArray[i].bloodAlcohol/ 0.003); // 0.30% is enough to put you in a coma
+			//TODO make instant blood alcohol for 1 unit equal height 0
+			totalBAC.push( drinkArray[i].bloodAlcohol/ 0.00138); // 0.0013 is about 1 UK unit's worth
 			//also find max number of drinks in this session
 			maxDrink = Math.max(maxDrink,totalDrink[i]);
 			//hopefully the drinks are in chronological order but do same for time
@@ -62,16 +66,23 @@
 			lastEnergy.push(selfData[i].Energy);
 		}
 		
+		
+		if (!options.plotDrinks){		totalDrink = nNullsArray(totalDrink);}
+		if (!options.plotBloodAlcohol){	totalBAC = nNullsArray(totalDrink);}
+		if (!options.plotHappiness){	lastHappiness = nNullsArray(totalDrink);}
+		if (!options.plotDrunk){		lastDrunkeness = nNullsArray(totalDrink);}
+		if (!options.plotEnergy){		lastEnergy = nNullsArray(totalDrink);}
 			
-	 	if (options.plotDrinks){
+			
+	 	if (options.plotDrinks || options.plotBloodAlcohol){
 			Ti.API.info("webview start drink plotting ");
 	        var lineDrinks = new RGraph.Line('myLineGraph', totalDrink, totalBAC);
 	        lineDrinks.Set('chart.line', true);
 		    lineDrinks.Set('chart.linewidth', 3);
 	        lineDrinks.Set('chart.labels', timeLabels);	   
-			lineDrinks.Set('chart.gutter', 20);
-			lineDrinks.Set('chart.colors', ['green', 'pink']);
-			lineDrinks.Set('chart.key', ['Drinks','Blood Alcohol']);
+			lineDrinks.Set('chart.gutter', 22);
+			lineDrinks.Set('chart.colors', [options.colDrinks, options.colBloodAlcohol]);
+			//lineDrinks.Set('chart.key', ['Drinks','Blood Alcohol']);
 	     //   lineDrinks.Set('chart.filled', true);
          //   lineDrinks.Set('chart.fillstyle', 'rgba(128,255,128,0.5)');
           //  lineDrinks.Set('chart.title', 'A range chart');
@@ -79,15 +90,16 @@
 		 	lineDrinks.Draw();
         	Ti.API.info("webview end drink plotting ");
 		}	
-	 	if (false &&  options.plotHappiness){
+	 	if (options.plotHappiness || options.plotDrunk || options.plotEnergy){
 			Ti.API.info("webview start emotion plotting ");
 	        var lineHappy = new RGraph.Line('myLineGraph', lastDrunkeness, lastHappiness, lastEnergy);
 	        lineHappy.Set('chart.line', true);
 		    lineHappy.Set('chart.linewidth', 3);
-	        lineHappy.Set('chart.labels', timeLabels);	   
-			lineHappy.Set('chart.gutter', 20);
+	      //  lineHappy.Set('chart.labels', timeLabels);	   
+			lineHappy.Set('chart.gutter', 22);
 			lineHappy.Set('chart.yaxispos', 'right');
 	     	lineHappy.Set('chart.ymax', 100);
+	     	lineHappy.Set('chart.colors', [options.colDrunk,options.colHappiness,options.colEnergy]);
 	     //   lineHappy.Set('chart.filled', true);
          //   lineHappy.Set('chart.fillstyle', 'rgba(128,255,128,0.5)');
           //  lineHappy.Set('chart.title', 'A range chart');
@@ -97,6 +109,12 @@
 		}
             
 	}
+		//helper to give us an N element array of nulls
+		function nNullsArray(array){
+			var nullArray = [];
+			nullArray[array.length -1 ] = null;
+			return nullArray;
+		}
     
     </script>
                          

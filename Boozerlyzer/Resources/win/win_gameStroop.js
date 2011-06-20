@@ -265,6 +265,19 @@
 		},2000);
 	}
 	
+	function resetScores(){
+		var maxDigit = 10;
+		var points = 0;
+		var coordbonus = 0;
+		var speedbonus = 0;
+		var inhibitbonus = 0;
+		var	level = 0;
+		var missCount = 0;
+		var correctCount = 0;
+		var stroopMissTotal = 0;
+		var nonStroopMissTotal = 0;		
+	}	
+
 	//take these sets each time we reset this screen
 	function nextStep(){
 		if (correctCount > 9){
@@ -371,7 +384,7 @@
 							UserID:Titanium.App.Properties.getInt('UserID'),
 							LabPoints:5		
 						}];
-		Titanium.App.boozerlyzer.data.gameScores.Result(gameSaveData);
+		Ti.App.boozerlyzer.data.gameScores.Result(gameSaveData);
 	}
 
 	

@@ -25,12 +25,12 @@
 			//backgroundImage:'/images/smallcornercup.png'
 		});
 			
-		// homeWin.orientationModes = [
-		    // Titanium.UI.LANDSCAPE_LEFT,
-		    // Titanium.UI.LANDSCAPE_RIGHT
-		// ];
+		homeWin.orientationModes = [
+		    Titanium.UI.LANDSCAPE_LEFT,
+		    Titanium.UI.LANDSCAPE_RIGHT
+		];
 //		Titanium.UI.orientation = Titanium.UI.LANDSCAPE_RIGHT;
-	
+//		Ti.UI.orientation = Titanium.UI.LANDSCAPE_RIGHT;
 				
 		var loadedonce = false;
 		
@@ -49,7 +49,7 @@
 		var leftHighScores = 100;
 		var topLabPoints = 160
 		var leftLabPoints =20;
-		var topResults = 120;
+		var topResults = 80;
 		var leftResults = 340;
 		var optionsLeft = 320;
 		
@@ -140,16 +140,17 @@
 		homeWin.add(personalinfo);
 		var labelMateMode = Titanium.UI.createLabel({
 			text:'Mate Mode',
-			top:120,
+			top:80,
 			left:optionsLeft + 52,
 			visible:false
 		});
+		homeWin.add(labelMateMode);
 		var matemode = Titanium.UI.createImageView({
 			image:'/icons/Chorus.png',
 			height:48,
 			width:48,
 			top:20,
-//			opacity:1,
+//			opacity:0.5,
 			left:optionsLeft + 52
 		});
 		//if we click this icon toggle between normal use
@@ -158,15 +159,18 @@
 			if (Titanium.App.Properties.getBool('inMateMode',false)){
 				//set to false
 				Titanium.App.Properties.setBool('inMateMode', false);
-				matemode.height *= 0.5;
-				matemode.width *= 0.5;
-				//matemode.opacity = 0.5;
+				var shrink = Ti.UI.create2DMatrix();
+				shrink.scale(0.5);
+				mateModeOffAnimation = Ti.UI.createAnimation({transform:shrink, opacity:.5});
+				matemode.animate(mateModeOffAnimation);
 				labelMateMode.visible = false;
 			}else{
 				//set to true
 				Titanium.App.Properties.setBool('inMateMode', true);
-				matemode.height *= 2;
-				matemode.width *= 2;
+				var grow = Ti.UI.create2DMatrix();
+				grow.scale(2);
+				mateModeOnAnimation = Ti.UI.createAnimation({transform:grow, opacity:1});
+				matemode.animate(mateModeOnAnimation);
 				//matemode.opacity = 1;
 				labelMateMode.visible = true;
 			}
@@ -185,22 +189,22 @@
 		});
 		debug.addEventListener('click',function(){
 		
-		//reinstall the database - gets new structure but wipes ALL data.
-		var db0 = Titanium.Database.install('/ybob.db','ybob');
-		db0.remove();
-		Titanium.API.debug('Removed old YBOB database')
-		db0.close();
-		
-		var db = Titanium.Database.install('/ybob.db','ybob');
-		Titanium.API.debug('Installed new YBOB database')
-		db.close();
+			//reinstall the database - gets new structure but wipes ALL data.
+			var db0 = Titanium.Database.install('/ybob.db','ybob');
+			db0.remove();
+			Titanium.API.debug('Removed old YBOB database')
+			db0.close();
+			
+			var db = Titanium.Database.install('/ybob.db','ybob');
+			Titanium.API.debug('Installed new YBOB database')
+			db.close();
 			
 			// var db = Titanium.Database.install('/ybob.db','ybob');
 			// // db.execute('CREATE TABLE "main"."NumberStroopSummary" (Errors_GO NUMERIC, Errors_NOGO NUMERIC, GameDuration NUMERIC, GameFinish NUMERIC, GameStart NUMERIC, Hits_GO NUMERIC, Hits_NOGO NUMERIC, ID INTEGER PRIMARY KEY, Level NUMERIC, ReactionTimeGO NUMERIC, ReactionTimeNOGO NUMERIC, TotalScore NUMERIC)');
 			// // db.execute('INSERT INTO "main"."NumberStroopSummary" SELECT * FROM "main"."StatLearnSummary"');/
 			// db.execute('CREATE TABLE "GameScores" ("ID" INTEGER PRIMARY KEY  NOT NULL ,"GAME" TEXT,"GAMEVERSION" TEXT,"PLAYSTART" DATETIME,"PLAYEND" DATETIME,"TOTALSCORE" DOUBLE,"SPEED_GO" DOUBLE,"COORD_GO" DOUBLE,"INHIBITIONSCORE" DOUBLE,"LEVEL" INTEGER,"FEEDBACK" TEXT,"CHOICES" TEXT,"MEMORYSCORE" DOUBLE,"SPEED_NOGO" DOUBLE, "COORD_NOGO" DOUBLE, "SessionID" INTEGER)');?
 		});
-		homeWin.add(debug);
+		//homeWin.add(debug);
 			
 		var report = Titanium.UI.createImageView({
 			image:'/icons/ybob-logo2-sml.png',
@@ -406,7 +410,7 @@
 			if (e.index === 0) {
 				session = Ti.App.boozerlyzer.data.sessions.createNewSession(false);
 				rewriteUpdateLabel();
-				labelCurrentSession.text = 'Session Started\n' + Titanium.App.boozerlyzer.dateTimeHelpers.formatDayPlusTime(session[0].StartTime,true);
+				labelCurrentSession.text = 'Session Started\n' + Ti.App.boozerlyzer.dateTimeHelpers.formatDayPlusTime(session[0].StartTime,true);
 			}
 		});
 		
@@ -415,9 +419,9 @@
 		if (session === null || session === false){
 			session = Ti.App.boozerlyzer.data.sessions.createNewSession(false);
 		}
-		var timeSinceUpdate = Titanium.App.boozerlyzer.dateTimeHelpers.prettyDate(session[0].LastUpdate);
+		var timeSinceUpdate = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(session[0].LastUpdate);
 		function rewriteUpdateLabel(){
-			timeSinceUpdate = Titanium.App.boozerlyzer.dateTimeHelpers.prettyDate(session[0].LastUpdate);
+			timeSinceUpdate = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(session[0].LastUpdate);
 			labelLastUpdate.text = 'Last activity\n' + timeSinceUpdate;
 		
 		}
@@ -452,7 +456,7 @@
 		} 
 		Ti.API.debug('homeWin 6');
 		rewriteUpdateLabel();
-		labelCurrentSession.text = 'Session Started\n' + Titanium.App.boozerlyzer.dateTimeHelpers.formatDayPlusTime(session[0].StartTime,true);
+		labelCurrentSession.text = 'Session Started\n' + Ti.App.boozerlyzer.dateTimeHelpers.formatDayPlusTime(session[0].StartTime,true);
 		Ti.API.debug('Session ID - ' + session[0].ID);
 		Titanium.App.Properties.setInt('SessionID', session[0].ID);
 		Titanium.App.Properties.setInt('SessionStart',session[0].StartTime/1000);
@@ -460,6 +464,22 @@
 		
 		loadedonce = true;
 		Ti.API.debug('homeWin 7');
+		
+		
+		//TODO - find a nice way to synchronise data
+		var sync = Ti.UI.createButton({
+			title:'Send Data',
+			width:90,
+			height:28,
+			bottom:30,
+			right:10,
+			backgroundColor:'gray'
+		});
+		sync.addEventListener('click',function()
+		{
+			Ti.App.boozerlyzer.comm.sendGameData.sync();
+		});	
+		homeWin.add(sync);
 
 		homeWin.addEventListener('focus', function(){
 			Ti.API.debug('homeWin got focus');

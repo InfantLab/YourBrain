@@ -280,7 +280,7 @@
 		    row.drinkData = DrinkData;
 		    //convert DrinkData obj into text, etc.
 		    Titanium.API.debug('DrinkData.DoseageStart '+ DrinkData.DoseageStart);
-		    var addedTime = Titanium.App.boozerlyzer.dateTimeHelpers.formatTime(DrinkData.DoseageStart,true);
+		    var addedTime = Ti.App.boozerlyzer.dateTimeHelpers.formatTime(DrinkData.DoseageStart,true);
 			var numUnits = DrinkData.TotalUnits / stdDrinks[0].MillilitresPerUnit;
 			//calorie calculation = 7kCals per gram of alcohol , 0.79 grams per millilitre
 			var numkCals = DrinkData.TotalUnits * 0.79 * 7;
@@ -567,7 +567,7 @@
 							UserID:Titanium.App.Properties.getInt('UserID'),
 							LabPoints:2		
 						}];
-			Titanium.App.boozerlyzer.data.gameScores.Result(gameSaveData);
+			Ti.App.boozerlyzer.data.gameScores.Result(gameSaveData);
 		}
 
 				

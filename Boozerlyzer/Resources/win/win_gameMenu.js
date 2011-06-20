@@ -25,19 +25,16 @@
 	var win = Titanium.UI.currentWindow;
 	var winHome = win.Home;
 	var initialised = false;
-	var gameViews = []; //keep an array of subviews each containing info for one game
-	var gameIcons = [];
-	var gameCounts = [];
-	var gameNameLabels = [];
-	var gameLastPlayedLabels = [];
+	//keep an array of subviews each containing info for one game
+	var gameViews = [], gameIcons = [],gameCounts = [], gameNameLabels = [], gameLastPlayedLabels = [];
 	var gameNames = ['Raccoon Hunt','Memory','Number Stroop', 'Pissonyms', 'Emotional Words', 'We feel fine'];
-	var gameTypes = ['StatLearning','Memory','NumberStroop','Pissonyms', 'Emotions', 'WeFeelFine'];
+	var gameTypes = ['StatLearning','DualNBack','NumberStroop','Pissonyms', 'Emotions', 'WeFeelFine'];
 	var numRounds = [0,0,0,3,10,10];
 	var imgtop = [20,20,20,160,160,160];
 	var imgleft = [60,180,300,60,180,300];
 	var iconSize = 94;
 	var gameImgUrls = ['/icons/teddy_bears.png','/icons/Memory.png','/icons/numberStroop.png','/icons/Ice.png','/icons/emotionalwords.png','/icons/feelings.png'];
-	var gameWinUrls = ['/win/win_gameStatLearn.js','/win/win_game1.js','/win/win_gameStroop.js','/win/win_gameWords.js','/win/win_gameWords.js','/win/win_gameWords.js'];
+	var gameWinUrls = ['/win/win_gameStatLearn.js','/win/win_gameMemory.js','/win/win_gameStroop.js','/win/win_gameWords.js','/win/win_gameWords.js','/win/win_gameWords.js'];
 	
 	//this code just needs to be called once for this window
 	function setUpOnce(){
@@ -154,15 +151,15 @@
 	
 	function updateAllGameStats(){
 		for(var i=0;i<6;i++){
-			var countObj =Titanium.App.boozerlyzer.data.gameScores.PlayCount(gameTypes[i]);
+			var countObj =Ti.App.boozerlyzer.data.gameScores.PlayCount(gameTypes[i]);
 			Ti.API.debug('i, countObj ' + i + ' ' + JSON.stringify(countObj));
 			if (countObj){
 				gameCounts[i].text = 'Games played ' + countObj[0].PlayCount;
 			}	
-			var lastObj = Titanium.App.boozerlyzer.data.gameScores.LastPlayed(gameTypes[i]);
+			var lastObj = Ti.App.boozerlyzer.data.gameScores.LastPlayed(gameTypes[i]);
 			Ti.API.debug('i, lastObj ' + i + ' ' + JSON.stringify(lastObj));
 			if (lastObj){
-				gameLastPlayedLabels[i].text = Titanium.App.boozerlyzer.dateTimeHelpers.prettyDate(lastObj[0].LastPlayed);
+				gameLastPlayedLabels[i].text = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(lastObj[0].LastPlayed);
 			}
 		}
 	}

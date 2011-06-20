@@ -12,10 +12,9 @@
 	var win = Titanium.UI.currentWindow;
 	var winHome = win.home;
 	
-	
 	var netprivacy = ['Never send my data', 'Send totally anonymous data', 'Send data with anonymous key', 'Send data with nickname'];
 	var phoneprivacy = ['Never store data', 'Store games scores but not drinking data', 'Store all data'];
-	//
+	
 	var rows1 = [];
 	for (var i = 0; i < netprivacy.length; i++) {
 		rows1.push(Ti.UI.createPickerRow({title: netprivacy[i]}));
@@ -62,20 +61,15 @@
 	});
 	debug.addEventListener('click',function(){
 	
-	//reinstall the database - gets new structure but wipes ALL data.
-	var db0 = Titanium.Database.install('/ybob.db','ybob');
-	db0.remove();
-	Titanium.API.debug('Removed old YBOB database')
-	db0.close();
-	
-	var db = Titanium.Database.install('/ybob.db','ybob');
-	Titanium.API.debug('Installed new YBOB database')
-	db.close();
+		//reinstall the database - gets new structure but wipes ALL data.
+		var db0 = Titanium.Database.install('/ybob.db','ybob');
+		db0.remove();
+		Titanium.API.debug('Removed old YBOB database')
+		db0.close();
 		
-		// var db = Titanium.Database.install('/ybob.db','ybob');
-		// // db.execute('CREATE TABLE "main"."NumberStroopSummary" (Errors_GO NUMERIC, Errors_NOGO NUMERIC, GameDuration NUMERIC, GameFinish NUMERIC, GameStart NUMERIC, Hits_GO NUMERIC, Hits_NOGO NUMERIC, ID INTEGER PRIMARY KEY, Level NUMERIC, ReactionTimeGO NUMERIC, ReactionTimeNOGO NUMERIC, TotalScore NUMERIC)');
-		// // db.execute('INSERT INTO "main"."NumberStroopSummary" SELECT * FROM "main"."StatLearnSummary"');/
-		// db.execute('CREATE TABLE "GameScores" ("ID" INTEGER PRIMARY KEY  NOT NULL ,"GAME" TEXT,"GAMEVERSION" TEXT,"PLAYSTART" DATETIME,"PLAYEND" DATETIME,"TOTALSCORE" DOUBLE,"SPEED_GO" DOUBLE,"COORD_GO" DOUBLE,"INHIBITIONSCORE" DOUBLE,"LEVEL" INTEGER,"FEEDBACK" TEXT,"CHOICES" TEXT,"MEMORYSCORE" DOUBLE,"SPEED_NOGO" DOUBLE, "COORD_NOGO" DOUBLE, "SessionID" INTEGER)');?
+		var db = Titanium.Database.install('/ybob.db','ybob');
+		Titanium.API.debug('Installed new YBOB database')
+		db.close();
 	});
 	win.add(debug);
 	
@@ -97,20 +91,29 @@
 		newchart.open();
 	});
 	win.add(charttest);
+
+	// //what username does this user connect to ybodnet with 
+	// var userName = 
 // 	
-	// //
-	// // Cleanup and return home
-	// win.addEventListener('android:back', function(e) {
-		// if (Ti.App.boozerlyzer.winHome === undefined 
-			 // || Ti.App.boozerlyzer.winHome === null) {
-			// Ti.App.boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
-				// url: '/app.js',
-				// title: 'Boozerlyzer',
-				// backgroundImage: '/images/smallcornercup.png',
-				// orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
-			// })
-		// }
-		// win.close();
-		// Ti.App.boozerlyzer.winHome.open();
-	// });
+	// //label to let us know if we are connected 
+	// var connectionStatus = Titanium.UI.createLabel({
+// 		
+	// })
+ 	
+ 	
+	//
+	// Cleanup and return home
+	win.addEventListener('android:back', function(e) {
+		if (Ti.App.boozerlyzer.winHome === undefined 
+			 || Ti.App.boozerlyzer.winHome === null) {
+			Ti.App.boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
+				url: '/app.js',
+				title: 'Boozerlyzer',
+				backgroundImage: '/images/smallcornercup.png',
+				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
+			})
+		}
+		win.close();
+		Ti.App.boozerlyzer.winHome.open();
+	});
 })();

@@ -19,6 +19,7 @@ Ti.API.debug('app main 0');
 Ti.App.boozerlyzer = {};
 Ti.App.boozerlyzer.win = {};
 Ti.App.boozerlyzer.data ={};
+Ti.App.boozerlyzer.comm = {};
 
 //all of the data handling routines.
 Ti.include('/data/sessions.js');
@@ -34,6 +35,9 @@ Ti.include('/data/tripReports.js');
 Ti.include('/data/weFeelFine.js');
 //helper functions
 Ti.include('/js/dateTimeHelpers.js');
+//the scripts that communicate with server
+Ti.include('/comm/ybodnet.js');
+Ti.include('/comm/sendGameData.js');
 	
 Ti.include('/win/win_main.js'); //construct main screen UI
 	

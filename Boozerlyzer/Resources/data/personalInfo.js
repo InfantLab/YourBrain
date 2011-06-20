@@ -11,20 +11,20 @@
 (function(){
 
 	//create an object which will be our public API
-	Titanium.App.boozerlyzer.data.personalInfo = {};
+	Ti.App.boozerlyzer.data.personalInfo = {};
 	
 	//hardcoded values for the personal info form
 	//bad practice I know. will fix it eventually
-	Titanium.App.boozerlyzer.data.personalInfo.minYear = 1910;
-	Titanium.App.boozerlyzer.data.personalInfo.maxYear = 1999;
-	Titanium.App.boozerlyzer.data.personalInfo.monthname = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-	Titanium.App.boozerlyzer.data.personalInfo.gender =  ['Female', 'Male','Not Set'];
-	Titanium.App.boozerlyzer.data.personalInfo.weight_kg = [ 'Not Set', '35-40 kg', '40-5 kg', '45-50 kg','50-5 kg', '55-60 kg','60-5 kg', '65-70 kg','70-5 kg', '75-80 kg','80-5 kg', '85-90 kg','90-5 kg', '95-100 kg','100-5 kg', '105-110 kg','110-5 kg', '115-120 kg','120-5 kg', '125-130 kg', '130-5 kg', '135-140 kg', '140+ kg'];
-	Titanium.App.boozerlyzer.data.personalInfo.weight_lb = ['Not Set', '80-90 lb', '90-100 lb', '100-110 lb', '110-120 lb','120-130 lb', '130-140 lb','140-150 lb', '150-160 lb','160-170 lb', '170-180 lb','180-190 lb', '190-200 lb','210-210 lb', '220-230 lb','230-240 lb', '240-250 lb','250-260 lb', '260-270 lb','270-280 lb', '280-290 lb', '300+ lb']
-	Titanium.App.boozerlyzer.data.personalInfo.weight_units = ['kg', 'lb'];
-	Titanium.App.boozerlyzer.data.personalInfo.height_m = ['Not Set', '<1.2m','1.3m','1.4m','1.5m','1.6m','1.7m','1.8m','1.9m','2.0m','2.1m'];
-	Titanium.App.boozerlyzer.data.personalInfo.height_ft = ['Not Set', '<4ft','4ft 3in', '4ft 6in','4ft 9','5ft ','5ft 3in','5ft 6in','5ft 9in','6ft ','6ft 3in', '6ft 6in', '6ft 9in'];
-	Titanium.App.boozerlyzer.data.personalInfo.height_units = ['m','ft'];
+	Ti.App.boozerlyzer.data.personalInfo.minYear = 1910;
+	Ti.App.boozerlyzer.data.personalInfo.maxYear = 1999;
+	Ti.App.boozerlyzer.data.personalInfo.monthname = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+	Ti.App.boozerlyzer.data.personalInfo.gender =  ['Female', 'Male','Not Set'];
+	Ti.App.boozerlyzer.data.personalInfo.weight_kg = [ 'Not Set', '35-40 kg', '40-5 kg', '45-50 kg','50-5 kg', '55-60 kg','60-5 kg', '65-70 kg','70-5 kg', '75-80 kg','80-5 kg', '85-90 kg','90-5 kg', '95-100 kg','100-5 kg', '105-110 kg','110-5 kg', '115-120 kg','120-5 kg', '125-130 kg', '130-5 kg', '135-140 kg', '140+ kg'];
+	Ti.App.boozerlyzer.data.personalInfo.weight_lb = ['Not Set', '80-90 lb', '90-100 lb', '100-110 lb', '110-120 lb','120-130 lb', '130-140 lb','140-150 lb', '150-160 lb','160-170 lb', '170-180 lb','180-190 lb', '190-200 lb','210-210 lb', '220-230 lb','230-240 lb', '240-250 lb','250-260 lb', '260-270 lb','270-280 lb', '280-290 lb', '300+ lb']
+	Ti.App.boozerlyzer.data.personalInfo.weight_units = ['kg', 'lb'];
+	Ti.App.boozerlyzer.data.personalInfo.height_m = ['Not Set', '<1.2m','1.3m','1.4m','1.5m','1.6m','1.7m','1.8m','1.9m','2.0m','2.1m'];
+	Ti.App.boozerlyzer.data.personalInfo.height_ft = ['Not Set', '<4ft','4ft 3in', '4ft 6in','4ft 9','5ft ','5ft 3in','5ft 6in','5ft 9in','6ft ','6ft 3in', '6ft 6in', '6ft 9in'];
+	Ti.App.boozerlyzer.data.personalInfo.height_units = ['m','ft'];
 
 	
 	
@@ -32,7 +32,7 @@
   	var conn = Titanium.Database.install('ybob.db','ybob');
 
 	
-	Titanium.App.boozerlyzer.data.personalInfo.getData = function (){
+	Ti.App.boozerlyzer.data.personalInfo.getData = function (){
 		var mostRecentData = [];
 		var rows = conn.execute('SELECT max(ID) FROM PERSONALINFO');
 		if ((rows !== null) && (rows.isValidRow())) {
@@ -61,7 +61,7 @@
 		return false;
 	};
 	
-	Titanium.App.boozerlyzer.data.personalInfo.setData = function (newData){
+	Ti.App.boozerlyzer.data.personalInfo.setData = function (newData){
 		Titanium.API.debug('personalInfo setData');
 		
 		if (newData.Changed){
@@ -75,7 +75,7 @@
 		}
 	};
 	
-	Titanium.App.boozerlyzer.data.personalInfo.setDefaults = function (){
+	Ti.App.boozerlyzer.data.personalInfo.setDefaults = function (){
 		var result = null;
 		result = {
 			Changed: false,

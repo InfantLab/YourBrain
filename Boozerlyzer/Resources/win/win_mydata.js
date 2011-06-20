@@ -36,15 +36,47 @@
 		title:'Privacy settings',
 	    window:winprivacy
 	});
+
+	//  
+	// create tab for registration settings
+	// TODO
+	// only show this tab if needed.
+	var winregister = Titanium.UI.createWindow({ modal:true,
+	    url:'/win/win_register.js',
+		titleid:'win_register',
+		backgroundImage:'/images/smallcornercup.png'
+	});
+	var tabregister = Titanium.UI.createTab({
+		title:'Register',
+	    window:winregister
+	});
+	
+	
+	//  
+	// create tab for login
+	// TODO
+	// only show this tab if needed.
+	var winlogin = Titanium.UI.createWindow({ modal:true,
+	    url:'/win/win_login.js',
+		titleid:'win_login',
+		backgroundImage:'/images/smallcornercup.png'
+	});
+	var tablogin = Titanium.UI.createTab({
+		title:'Log In',
+	    window:winlogin
+	});
+	
 	
 	//
 	//  add tabs
 	//
 	tabGroup.addTab(tabpers);
 	tabGroup.addTab(tabprivacy);
+	tabGroup.addTab(tabregister);
+	tabGroup.addTab(tablogin)
 	//
 	
-	tabGroup.setActiveTab(1); 
+	tabGroup.setActiveTab(0); 
 	tabGroup.open();
 	
 	// Cleanup and return home

@@ -9,7 +9,7 @@
  * 
  * TODO -
  * The order in which the animals are appear will be controlled by a
- * matrix of probablities. Hence the are statistical patterns that 
+ * matrix of probablities. Hence there are statistical patterns that 
  * the player may learn subconsciously. 
  * TODO
  * THe location of individual objects should be randomised on each round
@@ -24,10 +24,11 @@
 	win.idx = -1;
 	
 	var startTime = 0;
+	var	stepStartTime = 0;
 	var gameStarted = false;
 	var currentObj = 0;
 	var points = 0;
-	var accbonus = 0;
+	var coordbonus = 0;
 	var speedbonus = 0;
 	var inhibitbonus = 0;
 	var count = 0;
@@ -36,34 +37,38 @@
 	var inverted = false;
 	var shrinkTime = 5000; // how long does this blob stay visible?
 	var clicked = false;
+	var imgtop = [40,40,40,160,160,160];
+	var imgleft = [60,180,300,60,180,300];
+	var stopAnim  = Titanium.UI.createAnimation();
 	
 	//
 	// a set of virtual objects that must be clicked quickly when made visible
 	//
 	var loc = [];
 	var whatClicked = function (e) {
-		
+		if (currentObj < 0){ 
+			//don't fire more than once
+			return;
+		}
+
 		clicked = true;
-		Titanium.API.debug("touchstart " + e.x + ", " + e.y  );
-		for(x in e)
-			Ti.API.debug(x);
-	
+		Titanium.API.debug("whatClicked x,y " + e.x + ", " + e.y  );
+		 for(x in e)
+			 Ti.API.debug(JSON.stringify(x));	
+		Ti.API.debug('source ' + JSON.stringify(e.source));
 		var cen = e.source.center;
+		Ti.API.debug('source cen' + JSON.stringify(cen));
+
 		var idx = parseInt(e.source.idx);
 		Ti.API.debug('idx:' + idx);
 		if (idx === currentObj && !inverted){ //clicked correct one
+			currentObj = -1;
 			points += 10;
-		//	Titanium.API.debug(e.globalPoint.x+","+e.globalPoint.y+")");
-			accbonus += calcAccuracyBonus(cen,e);
-			speedbonus += calcSpeedBonus(null, null);
-	//		//shrink this one fast so we can move on.
-	//		var shrink = Ti.UI.create2DMatrix();
-	//		shrink = shrink.scale(0.001);
-			var endanimation = Titanium.UI.createAnimation();
-			endanimation.opacity = 100;
-			endanimation.duration = 10;
-			loc[idx].animate(endanimation);
-			loc[idx].visible = false;
+//			Titanium.API.debug("e.globalPoint.x, e.globalPoint.y " + e.globalPoint.x +"," + e.globalPoint.y);
+			coordbonus += calcCoordinationBonus(cen,e);
+			speedbonus += calcSpeedBonus(stepStartTime, new Date().getTime());
+			loc[idx].animate(stopAnim);			//cancel remaining animation 
+			loc[idx].visible = false;	//and hide the object
 			count++;
 			gameStep(count);			
 		}else if (idx === currentObj && inverted){ // accidently clicked inverted
@@ -71,17 +76,17 @@
 			labelGameMessage.text = 'Keep away!';
 			clear(labelGameMessage);
 			count++;
-			gameStep(count);			
-		}
-		else if (inverted){ //correctly clicked away 
+			gameStep(count);
+			inhibitbonus -= 10;
+		}else if (inverted){ //correctly clicked away 
 			points += 10;
+			loc[currentObj].animate(stopAnim);			//cancel remaining animation 
+			loc[currentObj].visible = false;	//and hide the object
 			inhibitbonus += 5;
-			accbonus += calcAccuracyBonus(cen,e);
-			speedbonus += calcSpeedBonus(null, null);
+			coordbonus += calcCoordinationBonus(cen,e);
+			speedbonus += calcSpeedBonus(stepStartTime, new Date().getTime());
 			count++;
-			var emptyanimation = Titanium.UI.createAnimation();
-			loc[currentObj].animate(emptyanimation);
-			loc[currentObj].visible = false;
+			currentObj = -1;
 			gameStep(count);			
 		}
 		else{ //missed
@@ -91,10 +96,7 @@
 		}	
 	};
 	
-	function setUpOnce(){
-	
-		var imgtop = [40,40,40,160,160,160];
-		var imgleft = [60,180,300,60,180,300];
+	function setUpOnce(){	
 		for(var img=0;img<6;img++){
 			Titanium.API.debug('/icons/teddy_bear_toy_' + img + '.png');
 			loc[img] = Ti.UI.createImageView({
@@ -174,13 +176,26 @@
 	function updateScore(){
 		score.text = points;
 		//round the bonus points
-		bonus.text = Math.round(speedbonus) + ' speed\t' + Math.round(accbonus) + ' coord\t' + Math.round(inhibitbonus) + ' oops';
+		bonus.text = Math.round(speedbonus) + ' speed\t' + Math.round(coordbonus) + ' coord\t' + Math.round(inhibitbonus) + ' oops';
 	}
 	
 	// new game function
 	function newGame(){
 		//ultimately this should log stuff
 		//at moment it doesn't do much
+		
+		//reset counters & other variables 
+		currentObj = 0;
+		points = 0;
+		coordbonus = 0;
+		speedbonus = 0;
+		inhibitbonus = 0;
+		count = 0;
+		missCount = 0;
+		falseAlarmCount = 0;
+		inverted = false;
+		shrinkTime = 5000; // how long does this blob stay visible?
+	
 		gameStarted = true;
 		startTime = new Date().getTime();
 		labelGameMessage.visible = false;
@@ -192,19 +207,21 @@
 	 */
 	function gameStep(stepcount){
 	 	Ti.API.debug('Game Step ' + stepcount);
+	 	stepStartTime = new Date().getTime();
 		clicked = false;
-		if (missCount > 4){
+		if (missCount > 3){
 			
 			labelGameMessage.visible = true;
-			labelGameMessage.text = 'Final Score: ' + Math.floor(points+inhibitbonus+accbonus+speedbonus) + '\nGame Over';
+			labelGameMessage.text = 'Final Score: ' + Math.floor(points+inhibitbonus+coordbonus+speedbonus) + '\nGame Over';
 			count = 0;
 			missCount = 0;
+			gameStarted = false;
+			gameEndSaveScores();
 			setTimeout(function()
 			{// do something 
 				labelGameMessage.text = 'Double click to start game';
 				gameStarted = false;
 			},6000);
-			gameEndSaveScores();
 			return;
 		}
 		shrinkTime *= .97; //shrink quicker each step
@@ -218,24 +235,39 @@
 	//		a1.duration = 10;
 	//		loc[currentObj].animate(a1);
 			//loc[currentObj].animate({transform:flip,duration:10});
-			loc[currentObj].transform = Ti.UI.create2DMatrix().rotate(180);
-	
+			//loc[currentObj].transform = Ti.UI.create2DMatrix().rotate(180);
+			loc[currentObj].image = '/icons/inverted_teddy_bear_toy_' + currentObj + '.png';
+		}else{
+			loc[currentObj].image = '/icons/teddy_bear_toy_' + currentObj + '.png';			
 		}
-		loc[currentObj].visible = true;
-	//	var shrink = Ti.UI.create2DMatrix();
-	//	shrink = shrink.scale(0.001);
-		var a2 = Titanium.UI.createAnimation();
-		//a2.transform = shrink;
-		a2.opacity = 0;
-		a2.duration = shrinkTime;
-		//loc[currentObj].animate({transform:transform,duration:shrinkTime});
-		loc[currentObj].animate(a2);
+		//only show currentObj
+		for(i=0;i<6;i++){
+			loc[i].visible = (i===currentObj);			
+		}
+		var shrink = Ti.UI.create2DMatrix();
+		shrink = shrink.scale(0.001);
+//		var a2 = Titanium.UI.createAnimation();
+//		a2.transform = shrink;
+		//a2.opacity = 0;
+//		a2.duration = shrinkTime;
+		// anchor = loc[currentObj].center;
+		// Ti.API.debug('object center -' + JSON.stringify(anchor));
+		//yes this next bit looks crazy but it just might work
+		anchor={
+			x:loc[currentObj].center.x,
+			y:loc[currentObj].center.y
+		};
+		loc[currentObj].animate({transform:shrink,center:anchor,duration:shrinkTime});
 		updateScore();	
 	}
 	
-	function calcSpeedBonus(startTime,clickTime){
+	function calcSpeedBonus(stepStart,clickTime){
 		//TODO - the reaction time bonus
-		return 3;
+		//Ti.API.debug('calcSpeedBonus - stepStart' + stepStart);
+		//Ti.API.debug('calcSpeedBonus - clickTime' + clickTime);
+		var timediff = 10 - (clickTime -stepStart) /100;
+		Ti.API.debug('calcSpeedBonus - timediff' + timediff);
+		return Math.max(0, timediff);
 	}
 	
 	function calcCoordinationBonus(centObj,centTouch){
@@ -244,6 +276,7 @@
 		var distx = centObj.x - centTouch.x; 
 		var disty = centObj.y - centTouch.y;
 		var dist = Math.sqrt(distx*distx + disty*disty);
+		Ti.API.debug('calcCoordinationBonus - dist' + dist);
 		var bonusdist = Math.min(dist,50);
 		return 10*(50-bonusdist)/50;
 	}
@@ -291,392 +324,18 @@
 	});
 	
 	setUpOnce();
-	//
-	//var transformed = false;
-	//
-	//// create button event listener
-	//animateTabButton.addEventListener('click', function(e)
-	//{
-	//	if (transformed == false)
-	//	{
-	//		var transform = Ti.UI.create2DMatrix();
-	//		transform = transform.scale(0.6);
-	//		transform = transform.rotate(45);
-	//		tabGroup.animate({transform:transform,duration:1000});
-	//
-	//		transformed = true;
-	//	}
-	//	else
-	//	{
-	//		var transform = Ti.UI.create2DMatrix();
-	//		tabGroup.animate({transform:transform,duration:1000});
-	//
-	//		transformed = false;
-	//	}
-	//});
-	//
-	//messageWin.animate({opacity:1,duration:800});
-	//
-	//// close timer window after 4 seconds
-	//setTimeout(function()
-	//{
-	//	messageWin.animate({opacity:0,duration:800},function()
-	//	{
-	//		messageWin.close();
-	//		messageWin=null;
-	//	});
-	//},4000);
-	//add1.addEventListener('click', function()
-	//{
-	//	Ti.API.log("Adding...");
-	//	row1.backgroundColor = '#390A0E';
-	//	setTimeout(function()
-	//	{
-	//		delete1.show();
-	//	},100);
-	//	add1.hide();
-	//	cost1.animate({left:50, duration:100});
-	//	item1.animate({left:50, duration:100});
-	//
-	//});
-	//
-	//
-	//
-	//
-	//// 
-	////
-	//// SUB VIEWS
-	////
-	//var image1 = Titanium.UI.createView({
-	//	backgroundImage:'/images/smallpic1.jpg',
-	//	height:75,
-	//	width:75,
-	//	borderWidth:3,
-	//	borderColor:'#777'
-	//});
-	//
-	//var image2 = Titanium.UI.createView({
-	//	backgroundImage:'/images/smallpic2.jpg',
-	//	height:75,
-	//	width:75,
-	//	borderWidth:3,
-	//	borderColor:'#777'
-	//});
-	//
-	//var image3 = Titanium.UI.createView({
-	//	backgroundImage:'/images/smallpic3.jpg',
-	//	height:75,
-	//	width:75,
-	//	borderWidth:3,
-	//	borderColor:'#777'
-	//});
-	//
-	//image1.addEventListener('click', function()
-	//{
-	//	imageView.animate({view:image2,transition:Ti.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT});
-	//});
-	//
-	//image2.addEventListener('click', function()
-	//{
-	//	imageView.animate({view:image3,transition:Ti.UI.iPhone.AnimationStyle.CURL_DOWN});
-	//});
-	//
-	//image3.addEventListener('click', function()
-	//{
-	//	imageView.animate({view:image1,transition:Ti.UI.iPhone.AnimationStyle.CURL_UP});
-	//});
-	//
-	//view.add(imageView);
-	//
-	//imageView.add(image3);
-	//imageView.add(image2);
-	//imageView.add(image1);
-	//
-	////
-	////  SLIDE
-	////
-	//var button2 = Titanium.UI.createButton({
-	//	title:'Animate (Slide)',
-	//	width:200,
-	//	height:40,
-	//	top:70
-	//});
-	//
-	//button2.addEventListener('click', function()
-	//{
-	//	// use inline style
-	//	win.animate({right:-320, duration:500}, function()
-	//	{
-	//		win.animate({right:0, left:-320, duration:500}, function()
-	//		{
-	//			win.animate({right:0, left:0, duration:500});
-	//		});
-	//	});
-	//});
-	//
-	//
-	////
-	////  CUSTOM
-	////
-	//var button3 = Titanium.UI.createButton({
-	//	title:'Animate (Custom)',
-	//	width:200,
-	//	height:40,
-	//	top:120
-	//});
-	//
-	//button3.addEventListener('click', function()
-	//{
-	//	var t1 = Ti.UI.create3DMatrix();
-	//	t1 = t1.scale(0.00001);
-	//	t1 = t1.rotate(180,0,0,1);
-	//	var a1 = Titanium.UI.createAnimation();
-	//	a1.transform = t1;
-	//	a1.duration = 500;
-	//	win.animate(a1);
-	//	
-	//	a1.addEventListener('complete', function()
-	//	{
-	//		// simply reset animation
-	//		var t2 = Ti.UI.create3DMatrix();
-	//		var a2 = Titanium.UI.createAnimation();
-	//		a2.transform = t2;
-	//		a2.duration = 500;
-	//		win.animate(a2);
-	//		
-	//	});
-	//});
-	//
-	//
-	//win.addEventListener('touchstart', function(e)
-	//{
-	//	l.text = "touchstart " + e.x + ", " + e.y + " ("+e.globalPoint.x+","+e.globalPoint.y+")";
-	//    Titanium.API.log("touchstart " + e.x + ", " + e.y + " ("+e.globalPoint.x+","+e.globalPoint.y+")");
-	//});
-	//
-	//win.addEventListener('singletap', function(e)
-	//{
-	//	l2.text = "singletap " + e.x + ", " + e.y + " ("+e.globalPoint.x+","+e.globalPoint.y+")";
-	//    Titanium.API.log("singletap " + e.x + ", " + e.y + " ("+e.globalPoint.x+","+e.globalPoint.y+")");
-	//});
-	//
-	//win.addEventListener('touchmove', function(e)
-	//{
-	//	l3.text = "touchmove " + e.x + ", " + e.y + " ("+e.globalPoint.x+","+e.globalPoint.y+")";
-	//    Titanium.API.log("touchmove " + e.x + ", " + e.y + " ("+e.globalPoint.x+","+e.globalPoint.y+")");
-	//});
-	//
-	//win.addEventListener('swipe', function(e)
-	//{
-	//	l4.text = "swipe ("+e.direction+") " + e.x + ", " + e.y + " ("+e.globalPoint.x+","+e.globalPoint.y+")";
-	//    Titanium.API.log("swipe ("+e.direction+") " + e.x + ", " + e.y + " ("+e.globalPoint.x+","+e.globalPoint.y+")");
-	//});
-	//
-	//
-	//var circle0 = Titanium.UI.createView({
-	//	height:100,
-	//	width:100,
-	//	borderRadius:50,
-	//	backgroundColor:'#336699',
-	//	top:0,
-	//	left:0
-	//});
-	//
-	//win.add(circle0);
-	//
-	//var a = Ti.UI.createAnimation();
-	//a.top = 400;
-	//a.left = 300;
-	//a.duration = 10000;
-	//
-	//var l = Ti.UI.createLabel({
-	//	text:'N/A',
-	//	bottom:10,
-	//	height:20,
-	//	color:'#999',
-	//	textAlign:'center'
-	//});
-	//
-	//win.add(l);
-	//
-	//var b = Ti.UI.createButton({
-	//	title:'Stop Animation',
-	//	height:30,
-	//	width:200
-	//});
-	//win.add(b);
-	//b.addEventListener('click', function()
-	//{
-	//	circle0.animate({center:{x:circle0.animatedCenter.x,y:circle0.animatedCenter.y }});
-	//});
-	//circle0.animate(a, function()
-	//{
-	//	clearInterval(interval);
-	//});
-	//
-	//var interval = setInterval(function(){
-	//	l.text = 'center x: ' + circle0.animatedCenter.x + ' y: ' + circle0.animatedCenter.y;
-	//},1000);
-	//
-	//var circle = Titanium.UI.createView({
-	//	height:100,
-	//	width:100,
-	//	borderRadius:50,
-	//	backgroundColor:'#666699',
-	//	top:10
-	//});
-	//
-	//win.add(circle);
-	//
-	//var label = Titanium.UI.createLabel({
-	//	text:'Click circle repeatedly to animate or drag the circle',
-	//	bottom:100,
-	//	color:'#555',
-	//	font:{fontSize:12,fontFamily:'Helvetica Neue'},
-	//	textAlign:'center',
-	//	height:'auto',
-	//	width:'auto'
-	//});
-	//
-	//win.add(label);
-	//
-	//circle.addEventListener('touchmove', function(e)
-	//{
-	//	Ti.API.debug('Our event tells us the center is ' + e.x + ', ' + e.y );
-	//	var newX = e.x + circle.animatedCenter.x - circle.width/2;
-	//	var newY = e.y + circle.animatedCenter.y - circle.height/2;
-	//	circle.animate({center:{x:newX,y:newY}, duration:1});
-	//});
-	//
-	//var mode = 0;
-	//circle.addEventListener('click', function()
-	//{
-	//	switch(mode)
-	//	{
-	//		case 0:
-	//		{
-	//			firstAnimation();
-	//			mode++;
-	//			break;
-	//		}
-	//		case 1:
-	//		{
-	//			secondAnimation();
-	//			mode++;
-	//			break;
-	//		}
-	//		case 2:
-	//		{
-	//			thirdAnimation();
-	//			mode++;
-	//			break;
-	//		}
-	//		case 3:
-	//		{
-	//			fourthAnimation();
-	//			mode=0;
-	//			break;
-	//		}
-	//
-	//	}
-	//});
-	//
-	//
-	// ANIMATION FUNCTIONS
-	//
-	//
-	// opacity - use inline animation object
-	//function firstAnimation()
-	//{
-	//	var t = Ti.UI.create2DMatrix();
-	//	t.a = 1;
-	//	t.b = 2;
-	//	t.c = 3;
-	//	t.d = 4;
-	//
-	//	// pass inline animation objects and get callback when done
-	//	circle.animate({opacity:0,transform:t,duration:500}, function()
-	//	{
-	//		var t = Ti.UI.create2DMatrix();
-	//
-	//		circle.animate({opacity:1,transform:t,duration:500});
-	//	});
-	//};
-	//
-	// background color - use animation object
-	//function secondAnimation()
-	//{
-	//	var a = Titanium.UI.createAnimation();
-	//	a.backgroundColor = '#ff0000';
-	//	a.duration = 1000;
-	//
-	//	var b = Titanium.UI.createAnimation();
-	//	b.backgroundColor = '#336699';
-	//	b.duration = 1000;
-	//
-	//	circle.animate(a);
-	//
-	//	//
-	//	// ANIMATIONS SUPPORT A START EVENT
-	//	//
-	//	a.addEventListener('start', function()
-	//	{
-	//		Ti.API.debug('IN START');
-	//		label.text = 'Animation started';
-	//
-	//	});
-	//
-	//	//
-	//	// ANIMATIONS SUPPORT A COMPLETE EVENT
-	//	//
-	//	a.addEventListener('complete', function()
-	//	{
-	//		Ti.API.debug('IN COMPLETE');
-	//		label.text = 'Animation completed';
-	//		circle.animate(b);
-	//
-	//		setTimeout(function()
-	//		{
-	//			label.text = 'Click circle repeatedly to animate or drag window';
-	//		},2000);
-	//	});
-	//};
-	//
-	// animate the top and right property
-	//function thirdAnimation()
-	//{
-	//	circle.animate({top:200,right:30,duration:500}, function()
-	//	{
-	//		circle.animate({top:0,left:0, duration:500});
-	//	});
-	//};
-	//
-	// animate the center point object
-	//function fourthAnimation()
-	//{
-	//	circle.animate({center:{x:100,y:100},curve:Ti.UI.ANIMATION_CURVE_EASE_IN_OUT,duration:1000}, function()
-	//	{
-	//		circle.animate({center:{x:0,y:200},duration:1000}, function()
-	//		{
-	//			circle.animate({center:{x:300,y:300},duration:1000},function()
-	//			{
-	//				circle.animate({center:{x:150,y:60, duration:1000}});
-	//			});
-	//		});
-	//	});
-	//};
 	
 	function gameEndSaveScores(){
 		var gameSaveData = [{Game: 'StatLearning',
 							GameVersion:1,
-							PlayStart:winopened ,
+							PlayStart:startTime ,
 							PlayEnd: parseInt((new Date()).getTime()/1000),
 							TotalScore:points,
 							Speed_GO:speedbonus,
 							Speed_NOGO:0,
 							Coord_GO:coordbonus,
 							Coord_NOGO:0,
-							Level:level,
+							Level:0,
 							Inhibition:inhibitbonus,
 							Feedback:'',
 							Choices:'',
@@ -684,7 +343,7 @@
 							UserID:Titanium.App.Properties.getInt('UserID'),
 							LabPoints:5		
 						}];
-		Titanium.App.boozerlyzer.data.gameScores.Result(gameSaveData);
+		Ti.App.boozerlyzer.data.gameScores.Result(gameSaveData);
 	}
 	
 	//

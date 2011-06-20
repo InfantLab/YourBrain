@@ -12,7 +12,6 @@
 		
 	//maintain a database connection we can use
  	var conn = Titanium.Database.install('ybob.db','ybob');
-
 	
 	/***
 	 * Returns a set of summary statistcs for the games.
@@ -22,7 +21,7 @@
 	 */
 	Ti.App.boozerlyzer.data.gameScores.GamePlaySummary = function (gameNames, userId, greaterthanID){
 		//This gets a bit of a mess as we build the query!
-		var queryStr = 'SELECT * FROM gameScores ORDER BY gameType WHERE ';
+		var querystr = 'SELECT * FROM gameScores WHERE ';
 		var gamestr = '';
 		var userstr = '';
 		var idstr = '';
@@ -45,8 +44,11 @@
 		}else{
 			querystr += idstr;
 		}
-		var rows = conn.execute(queryStr);
-		return fillDataObject(rows);
+		//querystr += ' ORDER BY gameType'
+		var rows = conn.execute(querystr);
+		var retdata = fillDataObject(rows);
+		rows.close();
+		return retdata;
 	};
 	
 	Ti.App.boozerlyzer.data.gameScores.PlayCount = function (gameNames){
@@ -73,6 +75,7 @@
 			return returnData;
 		}
 		//something didn't work
+		rows.close();
 		return false;
 	};
 
@@ -91,6 +94,7 @@
 			rows.close();
 			return returnData;
 		}
+		rows.close();
 		//something didn't work
 		return false;
 	};

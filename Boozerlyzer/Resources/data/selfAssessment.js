@@ -11,14 +11,14 @@
 (function(){
 	
 	//create an object which will be our public API
-	Titanium.App.boozerlyzer.data.selfAssessment = {};
+	Ti.App.boozerlyzer.data.selfAssessment = {};
 	
 	//maintain a database connection we can use
 	var conn = Titanium.Database.install('ybob.db','ybob');
 
   
 	//get data for the maximum row id 
-	Titanium.App.boozerlyzer.data.selfAssessment.getLatestData = function (sessionID){
+	Ti.App.boozerlyzer.data.selfAssessment.getLatestData = function (sessionID){
 		var mostRecentData = [];
 		//have to do count first because max on empty set behaves badly
 		//and a cast cos sessionID sometimes treated as string
@@ -46,7 +46,7 @@
 		return false;
 	};
 	
-	Titanium.App.boozerlyzer.data.selfAssessment.newEmotion = function (insertFlag){
+	Ti.App.boozerlyzer.data.selfAssessment.newEmotion = function (insertFlag){
 		var result = [];
 		var sessionID = Titanium.App.Properties.getInt('SessionID', 0);
 		var now = parseInt((new Date()).getTime()/1000);
@@ -72,7 +72,7 @@
 		return result;
 	};
 	
-	Titanium.App.boozerlyzer.data.selfAssessment.setData = function (newData){
+	Ti.App.boozerlyzer.data.selfAssessment.setData = function (newData){
 		Titanium.API.debug('selfAssessment setData');		
 		if (newData[0].Changed){
 			var now = parseInt((new Date()).getTime()/1000);
@@ -86,11 +86,11 @@
 	};
 	
 	//get all data for this Session ID 
-	Titanium.App.boozerlyzer.data.selfAssessment.getAllSessionData = function (sessionID){
+	Ti.App.boozerlyzer.data.selfAssessment.getAllSessionData = function (sessionID){
 		var mostRecentData = [];
 		//cast cos sessionID sometimes treated as string
 		var sessID = parseInt(sessionID);
-		var rows = conn.execute('SELECT * FROM SelfAssessment WHERE SESSIONID = ? ORDER BY SelfAssessmentChanged ASC', sessID);
+		var rows = conn.execute('SELECT * FROM SelfAssessment WHERE SessionID = ? ORDER BY SelfAssessmentChanged ASC', sessID);
 		var returnData = fillDataObject(rows);
 		rows.close();
 		return returnData;

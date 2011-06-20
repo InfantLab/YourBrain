@@ -12,13 +12,13 @@
 (function(){
 	
 	//create an object which will be our public API
-	Titanium.App.boozerlyzer.data.tripReports = {};
+	Ti.App.boozerlyzer.data.tripReports = {};
 	
 	//maintain a database connection we can use
   	var conn = Titanium.Database.install('ybob.db','ybob');
 
 	//get data for the maximum row id 
-	Titanium.App.boozerlyzer.data.tripReports.getLatestData = function (){
+	Ti.App.boozerlyzer.data.tripReports.getLatestData = function (){
 		var mostRecentData = [];
 		var sessionID = Titanium.App.Properties.getInt('SessionID',1);
 		//have to do count first because max on empty set seems to behave badly
@@ -46,7 +46,7 @@
 		return false;
 	};
 	
-	Titanium.App.boozerlyzer.data.tripReports.setData = function (newData){
+	Ti.App.boozerlyzer.data.tripReports.setData = function (newData){
 		Titanium.API.debug('TripReports setData');
 		
 		for (var i = 0; i< newData.length; i++){
@@ -61,7 +61,7 @@
 		}
 	};
 	
-	Titanium.App.boozerlyzer.data.tripReports.newReport = function (){
+	Ti.App.boozerlyzer.data.tripReports.newReport = function (){
 		var result = [];
 		var sessionID = Titanium.App.Properties.getInt('SessionID');
 		var insertstr = 'INSERT INTO TripReports (ReportStarted,ReportChanged,SessionID,Content)';
@@ -81,7 +81,7 @@
 	};
 		
 	//get all data for this Session ID 
-	Titanium.App.boozerlyzer.data.tripReports.getAllSessionData = function (sessionID){
+	Ti.App.boozerlyzer.data.tripReports.getAllSessionData = function (sessionID){
 		var mostRecentData = [];
 		var sessID = parseInt(sessionID);
 		var rows = conn.execute('SELECT * FROM TripReports WHERE SESSIONID = ? ORDER BY DoseageStart ASC', sessionID);
@@ -103,7 +103,7 @@
 		return false;
 	};
 	
-	Titanium.App.boozerlyzer.data.tripReports.PlayCount = function (){
+	Ti.App.boozerlyzer.data.tripReports.PlayCount = function (){
 		var selectStr = 'SELECT COUNT(*) from TripReports';
 		var rows = conn.execute(selectStr);
 		if (rows !== null) {
