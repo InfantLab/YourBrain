@@ -433,18 +433,25 @@
 		//then use these to plot the x and y coords of the spot
 	    //TODO use layout variables instead of hard coding these values
 	    imageMisc.left = 60 + Math.floor(320*drunk)-15;
-	    imageMisc.top = Math.floor(320*0)-15;
+	    imageMisc.top = Math.floor(320*0.5)-15;
 	    imageMisc.visible = true;
-		showAxis(true,'pissonyms');
+		showAxis(true,'Pissonyms');
 	}
 	
 	
 	function showAxis(visibleFlag, gameType){
+		imageXyAxes.visible = visibleFlag;
+		imageYAxisUp.visible = visibleFlag;
+		imageYAxisDown.visible = visibleFlag;
+		imageXAxisLeft.visible = visibleFlag;
+		imageXAxisRight.visible = visibleFlag;
 		
 		switch (gameType){
 		case 'Pissonyms':
 			imageXAxisLeft.image = '/icons/sober.png';
 			imageXAxisRight.image = '/icons/drunk.png';			
+			imageYAxisUp.visible = false;
+			imageYAxisDown.visible = false;
 			break;
 		case 'Emotions':
 			imageXAxisLeft.image = '/icons/Sad.png';
@@ -454,11 +461,6 @@
 		default:
 			//TODO what should we do here? Not sure
 		}
-		imageXyAxes.visible = visibleFlag;
-		imageYAxisUp.visible = visibleFlag;
-		imageYAxisDown.visible = visibleFlag;
-		imageXAxisLeft.visible = visibleFlag;
-		imageXAxisRight.visible = visibleFlag;
 	}
 	
 	setUpOnce();

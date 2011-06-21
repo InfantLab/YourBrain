@@ -2,7 +2,7 @@
  * @author Caspar Addyman
  * 
  * TThe graph plotting screen, which sends the data to a
- * webview which uses RGraph library to plot the results. 
+ * webView which uses RGraph library to plot the results. 
  * 
  * Copyright yourbrainondrugs.net 2011
  */
@@ -36,29 +36,49 @@
 	var stdDrinks = Ti.App.boozerlyzer.data.alcoholStandardDrinks.get(personalInfo.Country);
 	var millsPerStandardUnits = stdDrinks[0].MillilitresPerUnit;
 
-	
+	var webView = Ti.UI.createWebView({
+		bottom:60,
+		left:0,
+		height:'auto',
+		width:'auto',
+		url:'/charts/chartSingleSession.html',
+		zIndex:9
+	});
+	win.add(webView);
+		
 	// Attach an APP wide event listener	
 	// it gets fired when the webView has finished loading
 	Ti.App.addEventListener('webViewLoaded', function(e) {
 		redrawGraph();
 	});
 	
+	/**
+	 * change from daily to hourly graph types.
+	 * if a type is passed in use that otherwise
+	 * toggle from current type to the other.
+	 */
+	function changeGraphTimeAxis(type){
+		if (type === null || type === undefined){
+			type = (switchMonthlyDailyGraph.text === "Monthly Graph" ? "Hourly Graph" :"Monthly Graph");
+		}
+	}
+	
 	function redrawGraph(){
 		
-		//webview has loaded so we can draw our chart
+		//webView has loaded so we can draw our chart
 		var options = {
 			plotDrinks:switchDrinks.value,
 			plotBloodAlcohol:switchBloodAlcohol.value,
 			plotHappiness:switchHappiness.value,
 			plotEnergy:switchEnergy.value,
 			plotDrunk:switchDrunk.value,
-			plotStroop:switchStroop.value,
+			//plotStroop:switchStroop.value,
 			colDrinks:switchDrinks.color,
 			colBloodAlcohol:switchBloodAlcohol.color,
 			colHappiness:switchHappiness.color,
 			colEnergy:switchEnergy.color,
-			colDrunk:switchDrunk.color,
-			colStroop:switchStroop.color
+			colDrunk:switchDrunk.color//,
+			//colStroop:switchStroop.color
 		};	
 		var now = parseInt((new Date()).getTime()/1000);
 		var timeSteps =	Ti.App.boozerlyzer.dateTimeHelpers.timeIntervals(24,sessionData[0].StartTime, now);
@@ -87,21 +107,12 @@
 			selfData: emotionSteps, 			
 			drinkData:drinkSteps	});
 		
-		webview.evalJS("paintLineChart('" + myData + "')");
-	
+		webView.evalJS("paintLineChart('" + myData + "')");
 	}
 	
-	var webview = Ti.UI.createWebView({
-		bottom:60,
-		left:0,
-		height:'auto',
-		width:'auto',
-		url:'/charts/chartSingleSession.html'
-	});
-	win.add(webview);
-	
-	//listen for errors from webview
-	webview.addEventListener("error", function(e){
+
+	//listen for errors from webView
+	webView.addEventListener("error", function(e){
 	    Ti.API.log("Error: " + e.message);
 	//do something
 	});
@@ -204,22 +215,83 @@
 		redrawGraph();
 	});
 	win.add(switchDrunk);
-	
-	var switchStroop = Ti.UI.createSwitch({
-		style : Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
-		title: 'Stroop score',
-		font:{fontSize:12,fontWeight:'bold'},
-		bottom : 10,
-		left: 320,
-		value:true,
-		color:'magenta'
-	});
-	switchStroop.addEventListener('change', function(){
-		redrawGraph();
-	});
-	//TODO find a nice way to include games on here?
+
+	//TODO find a nice way to include games on here?	
+	// var switchStroop = Ti.UI.createSwitch({
+		// style : Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
+		// title: 'Stroop score',
+		// font:{fontSize:12,fontWeight:'bold'},
+		// bottom : 10,
+		// left: 320,
+		// value:true,
+		// color:'magenta'
+	// });
+	// switchStroop.addEventListener('change', function(){
+		// redrawGraph();
+	// });
 	//win.add(switchStroop);
 	
+	var labelMenu = Ti.UI.createLabel({
+		color:'white',
+		font:{fontSize:14,fontFamily:'Helvetica Neue'},
+		top:20,
+		left:20,
+		textAlign:'left',
+		text:'Chart options..',
+		height:'auto',
+		width:'auto'
+	});
+	win.add(labelMenu);
+	
+	
+	//cludge to implement vertical swipe on android
+	var	webViewSwipeUpAnimation = Ti.UI.createAnimation({bottom:400,duration:500});
+	var	webViewSwipeDownAnimation = Ti.UI.createAnimation({bottom:60,duration:500});
+	var y_start;
+	win.addEventListener('touchstart', function (e) {
+	    y_start = e.y;
+	});
+	win.addEventListener('touchend', function (e) {
+	    if (e.y - y_start > 20) {
+	        swipe({direction: 'down'});
+	    } else if (e.y - y_start < -20)  {
+	        swipe({direction: 'up'});
+	    }
+	});
+	 
+	 // And then my swipe function:
+	function swipe(e) {
+	    if (e.direction == 'down') {
+	    	Ti.API.debug('charts swipe down');
+	       webView.animate(webViewSwipeDownAnimation);
+	       webView.show();
+	    } else { 
+	    	Ti.API.debug('charts swipe up');
+	       webView.animate(webViewSwipeUpAnimation);
+	    }
+	}
+	
+	var switchMonthlyDailyGraph, controlsDrawn = false; 
+	
+	function drawGraphControls(){	
+		if (controlsDrawn) { return;}
+	
+		switchMonthlyDailyGraph = Ti.UI.createSwitch({
+			style : Ti.UI.Android.SWITCH_STYLE_TOGGLEBUTTON,
+			title: 'Monthly Graph',
+			font:{fontSize:12,fontWeight:'bold'},
+			bottom : 90,
+			right: 10,
+			value:true,
+			color:'black'
+		});
+		switchMonthlyDailyGraph.addEventListener('change', function(){
+			changeGraphTimeAxis();
+			redrawGraph();
+		});
+		win.add(switchMonthlyDailyGraph);
+		controlsDrawn = true;
+	}
 	
 	
 	//

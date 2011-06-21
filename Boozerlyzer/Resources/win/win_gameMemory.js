@@ -35,14 +35,11 @@
 			return;
 		}
 		clicked = true;
-		Titanium.API.debug("whatClicked x,y " + e.x + ", " + e.y  );
-		 // for(x in e)
-			 // Ti.API.debug(JSON.stringify(x));	
-		Ti.API.debug('source ' + JSON.stringify(e.source));
 		var cen = e.source.center;
-		Ti.API.debug('source cen' + JSON.stringify(cen));
-
 		var idx = parseInt(e.source.idx);
+		
+		Ti.API.debug("whatClicked x,y " + e.x + ", " + e.y  );
+		Ti.API.debug('source cen' + JSON.stringify(cen));
 		Ti.API.debug('Button clicked idx:' + idx);
 		Ti.API.debug('stepLocation   :' + stepLocation[count]);
 		Ti.API.debug('stepLocation -n:' + stepLocation[count-nBack]);
@@ -84,17 +81,19 @@
 				//too bad
 				missCount++;
 			}else{
+				Ti.API.debug('no match');
 				score += 2;
 			}			
 		}	
-		count++;
-		gameStep(count);			
+		gameStep();			
 	};
 	
 
 	function updateScore(){
 		Ti.API.debug('updateScore :' + points + 'pts');
 		score.text = points;
+		countLabel.text = Math.round(count);
+		missCountLabel.text = (missCount === 0 ? '' : missCount + " missed");
 		//round the bonus points
 		bonus.text = Math.round(speedbonus) + ' speed\t' + Math.round(coordbonus) + ' coord\t' + Math.round(inhibitbonus) + ' oops';
 	}
@@ -119,14 +118,15 @@
 		startTime = new Date().getTime();
 		labelGameMessage.visible = false;
 		
-		gameStep(0);
+		gameStep();
 	}
 	
 	/**
 	 * The main game loop all the clever stuff happens in here
 	 */
-	function gameStep(stepcount){
-	 	Ti.API.debug('Game Step ' + stepcount);
+	function gameStep(){
+		count++;
+	 	Ti.API.debug('Game Step ' + count);
 	 	clicked = false;
 		if (missCount > 4){
 			//GAME OVER!
@@ -162,8 +162,8 @@
 		currentImg = Math.floor(9*Math.random());
 		currentLoc = Math.floor(9*Math.random());
 		//keep track of what has been shown.
-		stepImage[stepcount] = currentImg;
-		stepLocation[stepcount] = currentLoc;
+		stepImage[count] = currentImg;
+		stepLocation[count] = currentLoc;
 		
 		//show new item
 		stimulus.visible = false;
@@ -336,6 +336,18 @@
 	win.add(bonus);
 
 	//label for how many steps back we are currently counting
+	var countLabel = Ti.UI.createLabel({
+		color:'black',
+		font:{fontSize:18,fontWeight:'bold',fontFamily:'Helvetica Neue'},
+		bottom:2,
+		right:70,
+		textAlign:'right',
+		text:'0',
+		width:100
+	});
+	win.add(countLabel);
+	
+	//label for how many steps back we are currently counting
 	var nBackLabel = Ti.UI.createLabel({
 		color:'blue',
 		font:{fontSize:18,fontWeight:'bold',fontFamily:'Helvetica Neue'},
@@ -346,6 +358,18 @@
 		width:100
 	});
 	win.add(nBackLabel);
+
+	//label for how many location or shape misses we have
+	var missCountLabel = Ti.UI.createLabel({
+		color:'blue',
+		font:{fontSize:18,fontWeight:'bold',fontFamily:'Helvetica Neue'},
+		top:2,
+		right:2,
+		textAlign:'right',
+		text:'0 Missed',
+		width:100
+	});
+	win.add(missCountLabel);
 	
 	// label across centre of screen for pause, start etc
 	var labelGameMessage = Ti.UI.createLabel({
@@ -396,9 +420,9 @@
 							Speed_NOGO:0,
 							Coord_GO:coordbonus,
 							Coord_NOGO:0,
-							Level:0,
+							Level:nBack,
 							Inhibition:inhibitbonus,
-							Feedback:'',
+							Feedback:count + ' steps',
 							Choices:'',
 							SessionID:Titanium.App.Properties.getInt('SessionID'),
 							UserID:Titanium.App.Properties.getInt('UserID'),

@@ -6,10 +6,10 @@ Logfile initialized
 [DEBUG] Waiting for device to be ready ...
 [TRACE] adb devices returned 1 devices/emulators
 [DEBUG] Device connected... (waited 0 seconds)
-[DEBUG] waited 0.007018 seconds on emulator to get ready
+[DEBUG] waited 0.015827 seconds on emulator to get ready
 [DEBUG] net.yourbrainondrugs.ybob installed? True
 [INFO] Copying project resources..
-[TRACE] COPYING MODIFIED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/data/gameScores.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/data/gameScores.js
+[TRACE] COPYING MODIFIED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/win/win_charts.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/win/win_charts.js
 [TRACE] Generating Java Classes
 [DEBUG] Processing Android resource drawables
 [DEBUG] copying app icon: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/ybob-logo2-sml.png
@@ -46,6 +46,7 @@ Logfile initialized
 [DEBUG] Android classes.dex built
 [DEBUG] creating unsigned apk: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/app-unsigned.apk
 [DEBUG] from resource zip => assets/Resources/analysis/dataOverTime.js
+[DEBUG] from resource zip => assets/Resources/charts/chartSessionTotals.html
 [DEBUG] from resource zip => assets/Resources/charts/chartSingleSession.html
 [DEBUG] from resource zip => assets/Resources/charts/raphtest.html
 [DEBUG] from resource zip => assets/Resources/comm/geolocate.js
@@ -62,61 +63,36 @@ Logfile initialized
 [DEBUG] from resource zip => assets/Resources/data/sessions.js
 [DEBUG] from resource zip => assets/Resources/data/tripReports.js
 [DEBUG] from resource zip => assets/Resources/data/weFeelFine.js
-[DEBUG] from resource zip => assets/Resources/icons/AGrade.png
 [DEBUG] from resource zip => assets/Resources/icons/Angel.png
-[DEBUG] from resource zip => assets/Resources/icons/Beer1.svg
-[DEBUG] from resource zip => assets/Resources/icons/Brain_eyes_cerebrellum.svg
 [DEBUG] from resource zip => assets/Resources/icons/Chorus.png
 [DEBUG] from resource zip => assets/Resources/icons/Devil.png
-[DEBUG] from resource zip => assets/Resources/icons/Drink me.png
 [DEBUG] from resource zip => assets/Resources/icons/DullLamp.png
 [DEBUG] from resource zip => assets/Resources/icons/Elephant.png
 [DEBUG] from resource zip => assets/Resources/icons/Evolution.png
 [DEBUG] from resource zip => assets/Resources/icons/Fish-256.png
-[DEBUG] from resource zip => assets/Resources/icons/Fish.png
 [DEBUG] from resource zip => assets/Resources/icons/Happy.png
 [DEBUG] from resource zip => assets/Resources/icons/Ice.png
 [DEBUG] from resource zip => assets/Resources/icons/Memory.png
 [DEBUG] from resource zip => assets/Resources/icons/Misc.png
-[DEBUG] from resource zip => assets/Resources/icons/Music.png
 [DEBUG] from resource zip => assets/Resources/icons/OffLamp.png
 [DEBUG] from resource zip => assets/Resources/icons/OnLamp.png
 [DEBUG] from resource zip => assets/Resources/icons/Sad.png
 [DEBUG] from resource zip => assets/Resources/icons/Target-256.png
 [DEBUG] from resource zip => assets/Resources/icons/TheaterYellow2.png
 [DEBUG] from resource zip => assets/Resources/icons/X beer.png
-[DEBUG] from resource zip => assets/Resources/icons/X cola enjoy.png
-[DEBUG] from resource zip => assets/Resources/icons/X cola lemon.png
-[DEBUG] from resource zip => assets/Resources/icons/X cola on the rocks.png
-[DEBUG] from resource zip => assets/Resources/icons/X cola special.png
-[DEBUG] from resource zip => assets/Resources/icons/X cola.png
-[DEBUG] from resource zip => assets/Resources/icons/X grape.png
-[DEBUG] from resource zip => assets/Resources/icons/X milk.png
-[DEBUG] from resource zip => assets/Resources/icons/X orange.png
-[DEBUG] from resource zip => assets/Resources/icons/X water.png
 [DEBUG] from resource zip => assets/Resources/icons/alarmd-256.png
 [DEBUG] from resource zip => assets/Resources/icons/astronaut_256.png
 [DEBUG] from resource zip => assets/Resources/icons/baby_icon.jpg
-[DEBUG] from resource zip => assets/Resources/icons/banknote.png
 [DEBUG] from resource zip => assets/Resources/icons/bar_chart.png
-[DEBUG] from resource zip => assets/Resources/icons/beer-256x256.png
 [DEBUG] from resource zip => assets/Resources/icons/beer-empty.png
 [DEBUG] from resource zip => assets/Resources/icons/beer-full.png
 [DEBUG] from resource zip => assets/Resources/icons/blergh.png
-[DEBUG] from resource zip => assets/Resources/icons/bluebrain.png
 [DEBUG] from resource zip => assets/Resources/icons/brain.png
-[DEBUG] from resource zip => assets/Resources/icons/brain1111.svg
 [DEBUG] from resource zip => assets/Resources/icons/calculator.png
-[DEBUG] from resource zip => assets/Resources/icons/cash_register.png
-[DEBUG] from resource zip => assets/Resources/icons/coins.png
 [DEBUG] from resource zip => assets/Resources/icons/colba-128x128.png
-[DEBUG] from resource zip => assets/Resources/icons/credit_card.png
 [DEBUG] from resource zip => assets/Resources/icons/drunk.png
 [DEBUG] from resource zip => assets/Resources/icons/emotionalwords.png
 [DEBUG] from resource zip => assets/Resources/icons/feelings.png
-[DEBUG] from resource zip => assets/Resources/icons/full_size_snail_icon_by_jordanfc.png
-[DEBUG] from resource zip => assets/Resources/icons/gamebox.png
-[DEBUG] from resource zip => assets/Resources/icons/gold_bullion.png
 [DEBUG] from resource zip => assets/Resources/icons/hamsterwheel.png
 [DEBUG] from resource zip => assets/Resources/icons/inverted_teddy_bear_toy_0.png
 [DEBUG] from resource zip => assets/Resources/icons/inverted_teddy_bear_toy_1.png
@@ -124,7 +100,6 @@ Logfile initialized
 [DEBUG] from resource zip => assets/Resources/icons/inverted_teddy_bear_toy_3.png
 [DEBUG] from resource zip => assets/Resources/icons/inverted_teddy_bear_toy_4.png
 [DEBUG] from resource zip => assets/Resources/icons/inverted_teddy_bear_toy_5.png
-[DEBUG] from resource zip => assets/Resources/icons/invoice.png
 [DEBUG] from resource zip => assets/Resources/icons/line_chart.png
 [DEBUG] from resource zip => assets/Resources/icons/newdrinks.png
 [DEBUG] from resource zip => assets/Resources/icons/numberStroop.png
@@ -134,10 +109,8 @@ Logfile initialized
 [DEBUG] from resource zip => assets/Resources/icons/pills-3-128x128.png
 [DEBUG] from resource zip => assets/Resources/icons/pills-4-128x128.png
 [DEBUG] from resource zip => assets/Resources/icons/rocket.png
-[DEBUG] from resource zip => assets/Resources/icons/rocket_256.png
 [DEBUG] from resource zip => assets/Resources/icons/rubik.png
 [DEBUG] from resource zip => assets/Resources/icons/safe.png
-[DEBUG] from resource zip => assets/Resources/icons/send.png
 [DEBUG] from resource zip => assets/Resources/icons/shopping cart.png
 [DEBUG] from resource zip => assets/Resources/icons/snail.png
 [DEBUG] from resource zip => assets/Resources/icons/sober.png
@@ -157,6 +130,20 @@ Logfile initialized
 [DEBUG] from resource zip => assets/Resources/icons/ybob-logo2-sml.png
 [DEBUG] from resource zip => assets/Resources/icons/ybob-logo2.png
 [DEBUG] from resource zip => assets/Resources/icons/ybod-logo2.png
+[DEBUG] from resource zip => assets/Resources/images/fruit/apple.png
+[DEBUG] from resource zip => assets/Resources/images/fruit/banana.png
+[DEBUG] from resource zip => assets/Resources/images/fruit/cherry.png
+[DEBUG] from resource zip => assets/Resources/images/fruit/coconut.png
+[DEBUG] from resource zip => assets/Resources/images/fruit/grapefruit.png
+[DEBUG] from resource zip => assets/Resources/images/fruit/kiwi.png
+[DEBUG] from resource zip => assets/Resources/images/fruit/lemon.png
+[DEBUG] from resource zip => assets/Resources/images/fruit/lime.png
+[DEBUG] from resource zip => assets/Resources/images/fruit/maracuja.png
+[DEBUG] from resource zip => assets/Resources/images/fruit/readme.txt
+[DEBUG] from resource zip => assets/Resources/images/fruit/starfruit.png
+[DEBUG] from resource zip => assets/Resources/images/fruit/strawberry.png
+[DEBUG] from resource zip => assets/Resources/images/fruit/watermelon.png
+[DEBUG] from resource zip => assets/Resources/images/fruit/yellow watermelon.png
 [DEBUG] from resource zip => assets/Resources/images/blackaxis800x480.png
 [DEBUG] from resource zip => assets/Resources/images/diagonalaxes800x800.png
 [DEBUG] from resource zip => assets/Resources/images/grid3x3.png
@@ -195,6 +182,7 @@ Logfile initialized
 [DEBUG] from resource zip => assets/Resources/libraries/raphael-min.lib
 [DEBUG] from resource zip => assets/Resources/ui/picker_drinks.js
 [DEBUG] from resource zip => assets/Resources/ui/picker_monthyear.js
+[DEBUG] from resource zip => assets/Resources/ui/scoresDialog.js
 [DEBUG] from resource zip => assets/Resources/win/win_charts.js
 [DEBUG] from resource zip => assets/Resources/win/win_doseage.js
 [DEBUG] from resource zip => assets/Resources/win/win_drinks.js
@@ -259,9 +247,10 @@ Logfile initialized
 [DEBUG] Waiting for device to be ready ...
 [TRACE] adb devices returned 1 devices/emulators
 [DEBUG] Device connected... (waited 0 seconds)
-[DEBUG] waited 0.040345 seconds on emulator to get ready
+[DEBUG] waited 0.010033 seconds on emulator to get ready
 [INFO] Installing application on device
 [INFO] Launching application ... Boozerlyzer
 [TRACE] Launch output: Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=net.yourbrainondrugs.ybob/.BoozerlyzerActivity }
 
 [INFO] Deployed Boozerlyzer ... Application should be running.
+[INFO] Android Emulator has exited

@@ -43,6 +43,7 @@
 			}
 		}
 		//something didn't work
+		rows.close();
 		return false;
 	};
 	
@@ -100,6 +101,7 @@
 			return mostRecentData;
 		}
 		//something didn't work
+		rows.close();
 		return false;
 	};
 	
@@ -107,7 +109,9 @@
 		var selectStr = 'SELECT COUNT(*) from TripReports';
 		var rows = conn.execute(selectStr);
 		if (rows !== null) {
-			return rows.field(0);
+			var count = rows.field(0);
+			rows.close();
+			return count;
 		}else{
 			return 0;
 		}
