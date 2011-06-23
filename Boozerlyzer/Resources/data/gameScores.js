@@ -21,15 +21,15 @@
 	 */
 	Ti.App.boozerlyzer.data.gameScores.GamePlaySummary = function (gameNames, userId, greaterthanID){
 		//This gets a bit of a mess as we build the query!
-		var querystr = 'SELECT * FROM gameScores ORDER BY gameType WHERE ';
+		var querystr = 'SELECT * FROM gameScores WHERE ';
 		var gamestr = '';
 		var userstr = '';
 		var idstr = '';
 		if (gameNames !== null){
-			gamestr = 'Game in (' + ArrayToQuotedString(gameNames) +')';
+			gamestr = ' Game in (' + ArrayToQuotedString(gameNames) +')';
 		}
 		if (userId !== null){
-			userstr = 'UserID = ' + userId;
+			userstr = ' UserID = ' + userId;
 		}
 		if (gameNames !== null && userId !== null){
 			querystr += gamestr + ' AND ' + userstr;
@@ -37,13 +37,14 @@
 			querystr += gamestr + userstr;
 		}
 		if (greaterthanID !== null){
-			idstr = 'ID > ' + greaterthanID;
+			idstr = ' ID > ' + greaterthanID;
 		}
 		if (gamestr + userstr !== ''){
 			querystr += ' AND ' + idstr;
 		}else{
 			querystr += idstr;
 		}
+		//querystr += ' ORDER BY gameType'
 		var rows = conn.execute(querystr);
 		var retdata = fillDataObject(rows);
 		rows.close();

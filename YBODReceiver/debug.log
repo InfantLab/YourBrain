@@ -1,0 +1,80 @@
+Request is:\ngot data:\nGot decoded JSON data:\nRequest is:\ngot data:\nGot decoded JSON data:\nRequest is:\ngot data:\nGot decoded JSON data:\nRequest is:\ngot data:\nGot decoded JSON data:\nRequest is:
+got data:
+Got decoded JSON data:
+Request is::Array
+(
+    [UserID] => NewUser
+    [AuthToken] => ABCDEFG
+    [ClientVersion] => testsubmit.html v0.2
+    [ProtocolVersion] => 0
+    [data] => 	{
+     \"3\":{ \"data_type\":\"GameScore\", \"data\":{ \"GameScoreID\":3, \"Game\":1,
+	\"GameVersion\":\"1\", \"PlayStart\":\"39594855\", \"MemoryScore\":\"76\", \"ReactionScore\":\"45\" } },
+	 \"7\":{ \"data_type\":\"GameScore\", \"data\":{ \"GameScoreID\":\"7\", \"Game\":\"1\",
+	\"GameVersion\":\"1\", \"PlayStart\":\"39603589\", \"MemoryScore\":\"80\", \"ReactionScore\":\"42\" } },
+	 \"8\":{ \"data_type\":\"GameScore\", \"data\":{ \"GameScoreID\":\"8\", \"Game\":\"2\",
+	\"GameVersion\":\"1\", \"PlayStart\":\"39653985\", \"MemoryScore\":\"-1\", \"ReactionScore\":\"50\" } }
+    }
+
+    [rack_session] => BAh7BjoOX19GTEFTSF9fewA=
+--f1e448e9b3bf5b92d2aaa97690318341cbc26491
+)
+
+got data::	{
+     "3":{ "data_type":"GameScore", "data":{ "GameScoreID":3, "Game":1,
+	"GameVersion":"1", "PlayStart":"39594855", "MemoryScore":"76", "ReactionScore":"45" } },
+	 "7":{ "data_type":"GameScore", "data":{ "GameScoreID":"7", "Game":"1",
+	"GameVersion":"1", "PlayStart":"39603589", "MemoryScore":"80", "ReactionScore":"42" } },
+	 "8":{ "data_type":"GameScore", "data":{ "GameScoreID":"8", "Game":"2",
+	"GameVersion":"1", "PlayStart":"39653985", "MemoryScore":"-1", "ReactionScore":"50" } }
+    }
+
+Got decoded JSON data::stdClass Object
+(
+    [3] => stdClass Object
+        (
+            [data_type] => GameScore
+            [data] => stdClass Object
+                (
+                    [GameScoreID] => 3
+                    [Game] => 1
+                    [GameVersion] => 1
+                    [PlayStart] => 39594855
+                    [MemoryScore] => 76
+                    [ReactionScore] => 45
+                )
+
+        )
+
+    [7] => stdClass Object
+        (
+            [data_type] => GameScore
+            [data] => stdClass Object
+                (
+                    [GameScoreID] => 7
+                    [Game] => 1
+                    [GameVersion] => 1
+                    [PlayStart] => 39603589
+                    [MemoryScore] => 80
+                    [ReactionScore] => 42
+                )
+
+        )
+
+    [8] => stdClass Object
+        (
+            [data_type] => GameScore
+            [data] => stdClass Object
+                (
+                    [GameScoreID] => 8
+                    [Game] => 2
+                    [GameVersion] => 1
+                    [PlayStart] => 39653985
+                    [MemoryScore] => -1
+                    [ReactionScore] => 50
+                )
+
+        )
+
+)
+

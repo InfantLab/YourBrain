@@ -13,28 +13,34 @@
 	var win = Titanium.UI.currentWindow;
 	Ti.include('/analysis/dataOverTime.js');
 	
+	var  sizeAxisIcon = 48;
 	
-	//size of axis object
-	var topAxis = 10;
-	var leftAxis = 30;
-	var sizeDataPoint = 24;
-	var sizeAxisIcon = 48;
-	var widthAxis = 360;	
-	var heightAxis = 216;
-	var axisInset = 18;  //how far inset is the origin?
-	
-	
-	//load up all the data
 	var SessionID = Titanium.App.Properties.getInt('SessionID');
 	var personalInfo = Ti.App.boozerlyzer.data.personalInfo.getData();
-//	var Countries = Ti.App.boozerlyzer.data.alcoholStandardDrinks.get();
-
-	var sessionData = Ti.App.boozerlyzer.data.sessions.getSession(SessionID);
-	//All dose data for this session
-	var allDrinks = Ti.App.boozerlyzer.data.doseageLog.getAllSessionData(SessionID);
-	var selfAssess = Ti.App.boozerlyzer.data.selfAssessment.getAllSessionData(SessionID);
 	var stdDrinks = Ti.App.boozerlyzer.data.alcoholStandardDrinks.get(personalInfo.Country);
 	var millsPerStandardUnits = stdDrinks[0].MillilitresPerUnit;
+
+	//data variables
+	var sessionData, allDrinks, selfAssess;
+	var timeAxis = Titanium.App.Properties.getString('GraphTimeAxis', 'Hourly Graph');
+	Ti.API.debug('Charts - timeAxis ' + timeAxis);	
+	
+	function loadData(type){
+		
+		if (type === "Hourly Graph"){		
+			//All dose data for this session
+			sessionData = Ti.App.boozerlyzer.data.sessions.getSession(SessionID);
+			allDrinks = Ti.App.boozerlyzer.data.doseageLog.getAllSessionData(SessionID);
+			selfAssess = Ti.App.boozerlyzer.data.selfAssessment.getAllSessionData(SessionID);
+		}else if (type === "Monthly Graph"){
+			
+		}
+
+	}
+
+	loadData(timeAxis);
+
+
 
 	var webView = Ti.UI.createWebView({
 		bottom:60,
@@ -61,6 +67,13 @@
 		if (type === null || type === undefined){
 			type = (switchMonthlyDailyGraph.text === "Monthly Graph" ? "Hourly Graph" :"Monthly Graph");
 		}
+		if (type === "Monthly Graph"){
+			time.image = '/icons/time.png';
+		}else {
+			time.image = '/icons/calendar.png';
+		}
+		switchMonthlyDailyGraph.text = type;
+		Titanium.App.Properties.setString('GraphTimeAxis', type);
 	}
 	
 	function redrawGraph(){
@@ -117,32 +130,39 @@
 	//do something
 	});
 	
-	var yAxisTopIcon = Ti.UI.createImageView({
-		image:'/icons/whiskey.png',
-		height:sizeAxisIcon,
-		width:sizeAxisIcon,
-		top:topAxis,
-		left:0
-	})
-	win.add(yAxisTopIcon);
-	
-	var yAxisBottomIcon = Ti.UI.createImageView({
-		image:'/icons/whiskey-empty.png',
-		height:sizeAxisIcon * 0.7,
-		width:sizeAxisIcon * 0.7,
-		top:topAxis+heightAxis-axisInset,
-		left:0	
-	})
-	win.add(yAxisBottomIcon);
+	// var yAxisTopIcon = Ti.UI.createImageView({
+		// image:'/icons/whiskey.png',
+		// height:sizeAxisIcon,
+		// width:sizeAxisIcon,
+		// top:10,
+		// left:0
+	// })
+	// win.add(yAxisTopIcon);
+// 	
+	// var yAxisBottomIcon = Ti.UI.createImageView({
+		// image:'/icons/whiskey-empty.png',
+		// height:sizeAxisIcon * 0.7,
+		// width:sizeAxisIcon * 0.7,
+		// top:topAxis+heightAxis-axisInset,
+		// left:0	
+	// })
+	// win.add(yAxisBottomIcon);
 	
 	var time = Ti.UI.createImageView({
 		image:'/icons/time.png',
 		height:sizeAxisIcon,
 		width:sizeAxisIcon,
-		top:topAxis+heightAxis,
-		right:4	
+		bottom:60,
+		right:4,
+		zIndex:10
 	})
 	win.add(time);
+	
+	time.addEventListener('click', function(){
+		//click on the time icon to toggle the time axis
+		//and hence the type of graph we plot. 
+		changeGraphTimeAxis();	
+	});
 	
 	// 
 	// SOME TOGGLES FOR WHAT WE WILL DISPLAY
@@ -292,9 +312,8 @@
 		win.add(switchMonthlyDailyGraph);
 		controlsDrawn = true;
 	}
+	drawGraphControls();
 	
-	
-	//
 	// Cleanup and return home
 	win.addEventListener('android:back', function(e) {
 		if (Ti.App.boozerlyzer.winHome === undefined 

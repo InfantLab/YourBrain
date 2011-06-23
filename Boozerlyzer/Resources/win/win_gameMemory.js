@@ -1,8 +1,9 @@
 /**
  * @author Caspar Addyman
  * 
- * The memory game.. is basically a dual N-back task. The player must keep track of
- * both the  
+ * The memory game.. is basically a dual N-back task. The player must 
+ * keep track of both the the location and identity of objects from 
+ * N steps before hand and press the appropriate button if they match. 
  * 
  * 
  * Copyright yourbrainondrugs.net 2011

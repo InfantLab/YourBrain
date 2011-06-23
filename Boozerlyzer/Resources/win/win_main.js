@@ -29,9 +29,8 @@
 		    Titanium.UI.LANDSCAPE_LEFT,
 		    Titanium.UI.LANDSCAPE_RIGHT
 		];
-//		Titanium.UI.orientation = Titanium.UI.LANDSCAPE_RIGHT;
-//		Ti.UI.orientation = Titanium.UI.LANDSCAPE_RIGHT;
-				
+		// Titanium.UI.orientation = Titanium.UI.LANDSCAPE_LEFT;
+		
 		var loadedonce = false;
 		
 		// layout variables
