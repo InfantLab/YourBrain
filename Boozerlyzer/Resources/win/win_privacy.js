@@ -8,10 +8,14 @@
 
 (function() {
 	
-	
 	var win = Titanium.UI.currentWindow;
 	var winHome = win.home;
-	
+	//include the menu choices	
+	Ti.include('/ui/menu.js');
+	var menu = menus;
+	//need to give it specific help for this screen
+	menu.setHelpMessage("Please indicate your preferred level of privacy.");
+
 	var netprivacy = ['Never send my data', 'Send totally anonymous data', 'Send data with anonymous key', 'Send data with nickname'];
 	var phoneprivacy = ['Never store data', 'Store games scores but not drinking data', 'Store all data'];
 	
@@ -61,15 +65,20 @@
 	});
 	debug.addEventListener('click',function(){
 	
-		//reinstall the database - gets new structure but wipes ALL data.
-		var db0 = Titanium.Database.install('/ybob.db','ybob');
-		db0.remove();
-		Titanium.API.debug('Removed old YBOB database')
-		db0.close();
-		
-		var db = Titanium.Database.install('/ybob.db','ybob');
-		Titanium.API.debug('Installed new YBOB database')
-		db.close();
+		// //reinstall the database - gets new structure but wipes ALL data.
+		// var db0 = Titanium.Database.install('/ybob.db','ybob');
+		// db0.remove();
+		// Titanium.API.debug('Removed old YBOB database')
+		// db0.close();
+// 		
+		// var db = Titanium.Database.install('/ybob.db','ybob');
+		// Titanium.API.debug('Installed new YBOB database')
+		// db.close();
+
+		//quick fix		
+		var conn = Titanium.Database.install('ybob.db','ybob');
+		conn.execute('UPDATE GameScores set UserID = 0 ');
+		conn.close();
 	});
 	win.add(debug);
 	

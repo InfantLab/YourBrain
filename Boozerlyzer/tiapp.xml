@@ -9,10 +9,10 @@
     </deployment-targets>
 <id>net.yourbrainondrugs.ybob</id>
 <name>Boozerlyzer</name>
-<version>0.20</version>
-<publisher>YourBrainonDrugs</publisher>
+<version>0.21</version>
+<publisher>YourBrainonDrugs.net</publisher>
 <url>http://yourbrainondrugs.net</url>
-<description>Smartphone games to assess the cognitive and emotional effects of drugs and alcohol.</description>
+<description>An app to track alcohol comsumption and its effects. </description>
 <copyright>2011 by Caspar Addyman</copyright>
 <icon>ybob-logo2-sml.png</icon>
     <persistent-wifi>false</persistent-wifi>
@@ -38,13 +38,7 @@
 	    <manifest>
         <supports-screens android:anyDensity="false"/>
         <application>
-        <activity 
-        	android:configChanges="keyboardHidden"
-			android:screenOrientation="landscape" 
-			android:label="Boozerlyzer" 
-			android:name=".BoozerlyzerActivity" 
-			android:theme="@style/Theme.Titanium"
-		>
+        <activity android:configChanges="keyboardHidden" android:label="Boozerlyzer" android:name=".BoozerlyzerActivity" android:screenOrientation="landscape" android:theme="@style/Theme.Titanium">
         <intent-filter>
             <action android:name="android.intent.action.MAIN"/>
             <category android:name="android.intent.category.LAUNCHER"/>
@@ -52,18 +46,9 @@
         </activity>
        <!-- TI_APPLICATION -->
 		
-		<activity 
-			android:configChanges="keyboardHidden"
-			android:screenOrientation="landscape" 
-			android:name="org.appcelerator.titanium.TiActivity"/>
-		<activity 
-			android:configChanges="keyboardHidden"
-			android:screenOrientation="landscape"
-			android:name="org.appcelerator.titanium.TiModalActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"/>
-		<activity 
-			android:configChanges="keyboardHidden"
-			android:screenOrientation="landscape"
-			android:name="ti.modules.titanium.ui.TiTabActivity"/>
+		<activity android:configChanges="keyboardHidden" android:name="org.appcelerator.titanium.TiActivity" android:screenOrientation="landscape"/>
+		<activity android:configChanges="keyboardHidden" android:name="org.appcelerator.titanium.TiModalActivity" android:screenOrientation="landscape" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"/>
+		<activity android:configChanges="keyboardHidden" android:name="ti.modules.titanium.ui.TiTabActivity" android:screenOrientation="landscape"/>
 
         </application>
     </manifest>

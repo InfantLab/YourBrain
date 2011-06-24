@@ -9,14 +9,14 @@
 (function() {
 	
 	var win = Titanium.UI.currentWindow;
-	
+	//include the menu choices	
+	Ti.include('/ui/menu.js');
+	var menu = menus;
+	//need to give it specific help for this screen
+	menu.setHelpMessage("Simply record how you are feeling right now. Thanks :-)");
 	
 	//layout variables
-	var topHeading = 5;
-	var topContent = 50;
-	var topChangedLabel = 200;
-	
-	
+	var topHeading = 5, topContent = 50, topChangedLabel = 200;
 	//current session ID
 	var SessionID = Titanium.App.Properties.getInt('SessionID');
 	

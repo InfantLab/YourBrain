@@ -8,12 +8,18 @@
  */
 
 (function() {
+
 	
 	// The main screen for plotting results
 	var win = Titanium.UI.currentWindow;
 	Ti.include('/analysis/dataOverTime.js');
-	
-	var  sizeAxisIcon = 48;
+	//include the menu choices	
+	Ti.include('/ui/menu.js');
+	var menu = menus;
+	//need to give it specific help for this screen
+	menu.setHelpMessage("Chart plots drinks, blood alcohol and happiness levels over various time periods. Swipe upwards to access controls.");
+
+	var  sizeAxisIcon = 48, reloadData;
 	
 	var SessionID = Titanium.App.Properties.getInt('SessionID');
 	var personalInfo = Ti.App.boozerlyzer.data.personalInfo.getData();
@@ -21,26 +27,30 @@
 	var millsPerStandardUnits = stdDrinks[0].MillilitresPerUnit;
 
 	//data variables
-	var sessionData, allDrinks, selfAssess;
+	var startTime, nTimeSteps, allDrinks, selfAssess;
 	var timeAxis = Titanium.App.Properties.getString('GraphTimeAxis', 'Hourly Graph');
 	Ti.API.debug('Charts - timeAxis ' + timeAxis);	
 	
-	function loadData(type){
-		
+	function loadData(type){	
 		if (type === "Hourly Graph"){		
 			//All dose data for this session
 			sessionData = Ti.App.boozerlyzer.data.sessions.getSession(SessionID);
 			allDrinks = Ti.App.boozerlyzer.data.doseageLog.getAllSessionData(SessionID);
 			selfAssess = Ti.App.boozerlyzer.data.selfAssessment.getAllSessionData(SessionID);
-		}else if (type === "Monthly Graph"){
-			
+			startTime = sessionData[0].StartTime;
+			nTimeSteps = 24;
+		}else if (type === "Weekly Graph"){
+			Ti.API.debug('Charts load week of data')
+			//sessionData = Ti.App.boozerlyzer.data.sessions.getSession(SessionID);
+			var aWeekAgo = parseInt((new Date()).getTime()/1000) - 3600 * 24 * 7;
+			allDrinks = Ti.App.boozerlyzer.data.doseageLog.getTimeRangeData(aWeekAgo);
+			selfAssess = Ti.App.boozerlyzer.data.selfAssessment.getTimeRangeData(aWeekAgo);
+			startTime = aWeekAgo;
+			nTimeSteps = 84;
 		}
-
+		reloadData  = false;
 	}
-
 	loadData(timeAxis);
-
-
 
 	var webView = Ti.UI.createWebView({
 		bottom:60,
@@ -58,6 +68,22 @@
 		redrawGraph();
 	});
 	
+	var time = Ti.UI.createImageView({
+		image:'/icons/time.png',
+		height:sizeAxisIcon,
+		width:sizeAxisIcon,
+		bottom:30,
+		right:4,
+		zIndex:10
+	})
+	win.add(time);	
+	time.addEventListener('click', function(){
+		//click on the time icon to toggle the time axis
+		//and hence the type of graph we plot. 
+		changeGraphTimeAxis();
+		redrawGraph();
+	});
+	
 	/**
 	 * change from daily to hourly graph types.
 	 * if a type is passed in use that otherwise
@@ -65,19 +91,24 @@
 	 */
 	function changeGraphTimeAxis(type){
 		if (type === null || type === undefined){
-			type = (switchMonthlyDailyGraph.text === "Monthly Graph" ? "Hourly Graph" :"Monthly Graph");
+			type = (labelWeeklyDailyGraph.text === "Weekly Graph" ? "Hourly Graph" :"Weekly Graph");
 		}
-		if (type === "Monthly Graph"){
-			time.image = '/icons/time.png';
-		}else {
+		if (type === "Weekly Graph"){
 			time.image = '/icons/calendar.png';
+		}else {
+			time.image = '/icons/time.png';
 		}
-		switchMonthlyDailyGraph.text = type;
+		labelWeeklyDailyGraph.text = type;
 		Titanium.App.Properties.setString('GraphTimeAxis', type);
+		timeAxis = type;
+		reloadData  = true; //need to reload the data next time we plot graph
 	}
+	changeGraphTImeAxis(timeAxis);
 	
 	function redrawGraph(){
-		
+		if (reloadData){
+			loadData(timeAxis);
+		}
 		//webView has loaded so we can draw our chart
 		var options = {
 			plotDrinks:switchDrinks.value,
@@ -94,16 +125,26 @@
 			//colStroop:switchStroop.color
 		};	
 		var now = parseInt((new Date()).getTime()/1000);
-		var timeSteps =	Ti.App.boozerlyzer.dateTimeHelpers.timeIntervals(24,sessionData[0].StartTime, now);
+		var timeSteps =	Ti.App.boozerlyzer.dateTimeHelpers.timeIntervals(nTimeSteps,startTime, now);
 		var timeLabels = [];
 
-		var showMins = ((now - timeSteps[0]) < 12*3600); //show minutes if short session
-		var nsteps = timeSteps.length;
-		for (var t = 0;t< nsteps;t++){
-			//just show every 4th label
-			if (t % 4 === 0){
-				timeLabels[t] = Ti.App.boozerlyzer.dateTimeHelpers.formatTime(timeSteps[t],showMins,true);			
+		if (timeAxis === "Monthly Graph"){
+			for (var t = 0;t< nTimeSteps;t++){
+				//just show every 12th label
+				if (t % 12 === 0){
+					timeLabels[t] = Ti.App.boozerlyzer.dateTimeHelpers.formatDay(timeSteps[t]);			
+				}
 			}
+			
+		}else{
+			var showMins = ((now - timeSteps[0]) < 12*3600); //show minutes if short session
+			for (var t = 0;t< nTimeSteps;t++){
+				//just show every 4th label
+				if (t % 4 === 0){
+					timeLabels[t] = Ti.App.boozerlyzer.dateTimeHelpers.formatTime(timeSteps[t],showMins,true);			
+				}
+			}
+			
 		}
 		
 	
@@ -116,7 +157,7 @@
 		var myData =  JSON.stringify({
 			options: options,
 			timeLabels:timeLabels,
-			sessData: sessionData,
+			//sessData: sessionData,
 			selfData: emotionSteps, 			
 			drinkData:drinkSteps	});
 		
@@ -148,21 +189,6 @@
 	// })
 	// win.add(yAxisBottomIcon);
 	
-	var time = Ti.UI.createImageView({
-		image:'/icons/time.png',
-		height:sizeAxisIcon,
-		width:sizeAxisIcon,
-		bottom:60,
-		right:4,
-		zIndex:10
-	})
-	win.add(time);
-	
-	time.addEventListener('click', function(){
-		//click on the time icon to toggle the time axis
-		//and hence the type of graph we plot. 
-		changeGraphTimeAxis();	
-	});
 	
 	// 
 	// SOME TOGGLES FOR WHAT WE WILL DISPLAY
@@ -291,25 +317,24 @@
 	    }
 	}
 	
-	var switchMonthlyDailyGraph, controlsDrawn = false; 
+	var labelWeeklyDailyGraph, controlsDrawn = false; 
 	
 	function drawGraphControls(){	
 		if (controlsDrawn) { return;}
 	
-		switchMonthlyDailyGraph = Ti.UI.createSwitch({
-			style : Ti.UI.Android.SWITCH_STYLE_TOGGLEBUTTON,
-			title: 'Monthly Graph',
+		labelWeeklyDailyGraph = Ti.UI.createLabel({
+			title: 'Weekly Graph',
 			font:{fontSize:12,fontWeight:'bold'},
 			bottom : 90,
 			right: 10,
 			value:true,
 			color:'black'
 		});
-		switchMonthlyDailyGraph.addEventListener('change', function(){
+		labelWeeklyDailyGraph.addEventListener('change', function(){
 			changeGraphTimeAxis();
 			redrawGraph();
 		});
-		win.add(switchMonthlyDailyGraph);
+		win.add(labelWeeklyDailyGraph);
 		controlsDrawn = true;
 	}
 	drawGraphControls();

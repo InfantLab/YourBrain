@@ -11,10 +11,21 @@
 (function() {
 			
 		var win = Titanium.UI.currentWindow;
+		if (Titanium.App.Properties.getBool('MateMode',false)){
+			win.backgroundImage = '/images/smallcornercup.matemode.png';
+		}else{
+			win.backgroundImage = '/images/smallcornercup.png';
+		}
 		var winHome = win.home;
 		var winOpened = parseInt((new Date()).getTime()/1000);
 		var tic = new Date(); //used for counting blur times.
-		
+
+		//include the menu choices	
+		Ti.include('/ui/menu.js');
+		var menu = menus;
+		//need to give it specific help for this screen
+		menu.setHelpMessage("Move sliders to appropriate points to indicate how you currently feel.");
+
 		
 		var emotionsChanged = false;
 		var happyBlur = 0;

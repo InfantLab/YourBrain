@@ -15,7 +15,12 @@
 		var winOpened = parseInt((new Date()).getTime()/1000);
 		var loadedonce = false;
 		
-		//Ti.include('/js/datetimehelpers.js');
+		//include the menu choices	
+		Ti.include('/ui/menu.js');
+		var menu = menus;
+		//need to give it specific help for this screen
+		menu.setHelpMessage("Click on the icons to add new drinks. Double click on drinks list to edit or delete an entry.");
+
 		
 		Ti.include('/js/bloodalcohol.js');
 		

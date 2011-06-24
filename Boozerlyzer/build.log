@@ -1,0 +1,260 @@
+Logfile initialized
+[INFO] logfile = /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build.log
+[DEBUG] /home/caspar/.titanium/mobilesdk/linux/1.7.1/android/builder.py simulator Boozerlyzer /usr/local/android-sdk-linux_x86 /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer net.yourbrainondrugs.ybob 7 HVGA 
+[INFO] Building Boozerlyzer for Android ... one moment
+[INFO] Titanium SDK version: 1.7.1 (06/21/11 14:28 1293a6d)
+[DEBUG] Waiting for device to be ready ...
+[TRACE] adb devices returned 1 devices/emulators
+[DEBUG] Device connected... (waited 0 seconds)
+[DEBUG] waited 0.012711 seconds on emulator to get ready
+[DEBUG] net.yourbrainondrugs.ybob installed? True
+[INFO] Copying project resources..
+[TRACE] COPYING MODIFIED FILE: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/win/win_main.js => /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/win/win_main.js
+[TRACE] Generating Java Classes
+[DEBUG] Processing Android resource drawables
+[DEBUG] copying app icon: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/ybob-logo2-sml.png
+[DEBUG] generating theme.xml
+[DEBUG] found drawable-long-land-hdpi splash screen at /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/android/images/res-long-land-hdpi/default.png
+[DEBUG] copying /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/android/images/res-long-land-hdpi/default.png splash screen to /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/res/drawable-long-land-hdpi/background.png
+[DEBUG] found drawable-long-port-hdpi splash screen at /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/android/images/res-long-port-hdpi/default.png
+[DEBUG] copying /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/android/images/res-long-port-hdpi/default.png splash screen to /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/res/drawable-long-port-hdpi/background.png
+[DEBUG] found drawable-notlong-land-ldpi splash screen at /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/android/images/res-notlong-land-ldpi/default.png
+[DEBUG] copying /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/android/images/res-notlong-land-ldpi/default.png splash screen to /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/res/drawable-notlong-land-ldpi/background.png
+[DEBUG] found drawable-notlong-land-mdpi splash screen at /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/android/images/res-notlong-land-mdpi/default.png
+[DEBUG] copying /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/android/images/res-notlong-land-mdpi/default.png splash screen to /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/res/drawable-notlong-land-mdpi/background.png
+[DEBUG] found drawable-long-land-ldpi splash screen at /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/android/images/res-long-land-ldpi/default.png
+[DEBUG] copying /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/android/images/res-long-land-ldpi/default.png splash screen to /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/res/drawable-long-land-ldpi/background.png
+[DEBUG] found drawable-notlong-land-hdpi splash screen at /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/android/images/res-notlong-land-hdpi/default.png
+[DEBUG] copying /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/android/images/res-notlong-land-hdpi/default.png splash screen to /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/res/drawable-notlong-land-hdpi/background.png
+[DEBUG] found drawable-notlong-port-hdpi splash screen at /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/android/images/res-notlong-port-hdpi/default.png
+[DEBUG] copying /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/android/images/res-notlong-port-hdpi/default.png splash screen to /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/res/drawable-notlong-port-hdpi/background.png
+[DEBUG] found drawable-long-port-ldpi splash screen at /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/android/images/res-long-port-ldpi/default.png
+[DEBUG] copying /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/android/images/res-long-port-ldpi/default.png splash screen to /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/res/drawable-long-port-ldpi/background.png
+[DEBUG] found drawable-notlong-port-mdpi splash screen at /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/android/images/res-notlong-port-mdpi/default.png
+[DEBUG] copying /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/android/images/res-notlong-port-mdpi/default.png splash screen to /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/res/drawable-notlong-port-mdpi/background.png
+[DEBUG] found drawable-notlong-port-ldpi splash screen at /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/android/images/res-notlong-port-ldpi/default.png
+[DEBUG] copying /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/Resources/android/images/res-notlong-port-ldpi/default.png splash screen to /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/res/drawable-notlong-port-ldpi/background.png
+[DEBUG] found splash screen at /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/assets/Resources/default.png
+[WARN] Use of AndroidManifest.custom.xml is deprecated. Please put your custom manifest as "AndroidManifest.xml" in the "platform/android" directory if you do not need to compile for versions < 1.5
+[INFO] Detected custom ApplicationManifest.xml -- no Titanium version migration supported
+[TRACE] Writing out AndroidManifest.xml
+[DEBUG] adding /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/gen/net/yourbrainondrugs/ybob/BoozerlyzerAppInfo.java to javac build list
+[DEBUG] adding /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/gen/net/yourbrainondrugs/ybob/BoozerlyzerActivity.java to javac build list
+[DEBUG] adding /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/gen/net/yourbrainondrugs/ybob/BoozerlyzerApplication.java to javac build list
+[DEBUG] adding /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/gen/net/yourbrainondrugs/ybob/R.java to javac build list
+[DEBUG] Building Java Sources: "/home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/gen/net/yourbrainondrugs/ybob/BoozerlyzerAppInfo.java" "/home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/gen/net/yourbrainondrugs/ybob/BoozerlyzerActivity.java" "/home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/gen/net/yourbrainondrugs/ybob/BoozerlyzerApplication.java" "/home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/gen/net/yourbrainondrugs/ybob/R.java"
+[INFO] Waiting for SDCard to become available..
+[INFO] Compiling Android Resources... This could take some time
+[DEBUG] Android classes.dex built
+[DEBUG] creating unsigned apk: /home/caspar/Dropbox/Code/Titanium/YourBrain/Boozerlyzer/build/android/bin/app-unsigned.apk
+[DEBUG] from resource zip => assets/Resources/analysis/dataOverTime.js
+[DEBUG] from resource zip => assets/Resources/charts/chartSessionTotals.html
+[DEBUG] from resource zip => assets/Resources/charts/chartSingleSession.html
+[DEBUG] from resource zip => assets/Resources/charts/raphtest.html
+[DEBUG] from resource zip => assets/Resources/comm/geolocate.js
+[DEBUG] from resource zip => assets/Resources/comm/sendGameData.js
+[DEBUG] from resource zip => assets/Resources/comm/ybodnet.js
+[DEBUG] from resource zip => assets/Resources/data/alcoholStandardUnits.js
+[DEBUG] from resource zip => assets/Resources/data/doseageLog.js
+[DEBUG] from resource zip => assets/Resources/data/drugDoses.js
+[DEBUG] from resource zip => assets/Resources/data/emotionWords.js
+[DEBUG] from resource zip => assets/Resources/data/gameScores.js
+[DEBUG] from resource zip => assets/Resources/data/personalInfo.js
+[DEBUG] from resource zip => assets/Resources/data/pissonyms.js
+[DEBUG] from resource zip => assets/Resources/data/selfAssessment.js
+[DEBUG] from resource zip => assets/Resources/data/sessions.js
+[DEBUG] from resource zip => assets/Resources/data/tripReports.js
+[DEBUG] from resource zip => assets/Resources/data/weFeelFine.js
+[DEBUG] from resource zip => assets/Resources/icons/Angel.png
+[DEBUG] from resource zip => assets/Resources/icons/Chorus.png
+[DEBUG] from resource zip => assets/Resources/icons/Devil.png
+[DEBUG] from resource zip => assets/Resources/icons/DullLamp.png
+[DEBUG] from resource zip => assets/Resources/icons/Elephant.png
+[DEBUG] from resource zip => assets/Resources/icons/Evolution.png
+[DEBUG] from resource zip => assets/Resources/icons/Fish-256.png
+[DEBUG] from resource zip => assets/Resources/icons/Happy.png
+[DEBUG] from resource zip => assets/Resources/icons/Ice.png
+[DEBUG] from resource zip => assets/Resources/icons/Memory.png
+[DEBUG] from resource zip => assets/Resources/icons/Misc.png
+[DEBUG] from resource zip => assets/Resources/icons/OffLamp.png
+[DEBUG] from resource zip => assets/Resources/icons/OnLamp.png
+[DEBUG] from resource zip => assets/Resources/icons/Sad.png
+[DEBUG] from resource zip => assets/Resources/icons/Target-256.png
+[DEBUG] from resource zip => assets/Resources/icons/TheaterYellow2.png
+[DEBUG] from resource zip => assets/Resources/icons/X beer.png
+[DEBUG] from resource zip => assets/Resources/icons/alarmd-256.png
+[DEBUG] from resource zip => assets/Resources/icons/astronaut_256.png
+[DEBUG] from resource zip => assets/Resources/icons/baby_icon.jpg
+[DEBUG] from resource zip => assets/Resources/icons/bar_chart.png
+[DEBUG] from resource zip => assets/Resources/icons/beer-empty.png
+[DEBUG] from resource zip => assets/Resources/icons/beer-full.png
+[DEBUG] from resource zip => assets/Resources/icons/blergh.png
+[DEBUG] from resource zip => assets/Resources/icons/brain.png
+[DEBUG] from resource zip => assets/Resources/icons/calculator.png
+[DEBUG] from resource zip => assets/Resources/icons/calendar.png
+[DEBUG] from resource zip => assets/Resources/icons/colba-128x128.png
+[DEBUG] from resource zip => assets/Resources/icons/drunk.png
+[DEBUG] from resource zip => assets/Resources/icons/emotionalwords.png
+[DEBUG] from resource zip => assets/Resources/icons/feelings.png
+[DEBUG] from resource zip => assets/Resources/icons/hamsterwheel.png
+[DEBUG] from resource zip => assets/Resources/icons/inverted_teddy_bear_toy_0.png
+[DEBUG] from resource zip => assets/Resources/icons/inverted_teddy_bear_toy_1.png
+[DEBUG] from resource zip => assets/Resources/icons/inverted_teddy_bear_toy_2.png
+[DEBUG] from resource zip => assets/Resources/icons/inverted_teddy_bear_toy_3.png
+[DEBUG] from resource zip => assets/Resources/icons/inverted_teddy_bear_toy_4.png
+[DEBUG] from resource zip => assets/Resources/icons/inverted_teddy_bear_toy_5.png
+[DEBUG] from resource zip => assets/Resources/icons/line_chart.png
+[DEBUG] from resource zip => assets/Resources/icons/newdrinks.png
+[DEBUG] from resource zip => assets/Resources/icons/numberStroop.png
+[DEBUG] from resource zip => assets/Resources/icons/orange white pill.gif
+[DEBUG] from resource zip => assets/Resources/icons/pie_chart.png
+[DEBUG] from resource zip => assets/Resources/icons/pills-2-128x128.png
+[DEBUG] from resource zip => assets/Resources/icons/pills-3-128x128.png
+[DEBUG] from resource zip => assets/Resources/icons/pills-4-128x128.png
+[DEBUG] from resource zip => assets/Resources/icons/rocket.png
+[DEBUG] from resource zip => assets/Resources/icons/rubik.png
+[DEBUG] from resource zip => assets/Resources/icons/safe.png
+[DEBUG] from resource zip => assets/Resources/icons/shopping cart.png
+[DEBUG] from resource zip => assets/Resources/icons/snail.png
+[DEBUG] from resource zip => assets/Resources/icons/sober.png
+[DEBUG] from resource zip => assets/Resources/icons/teddy_bear_toy_0.png
+[DEBUG] from resource zip => assets/Resources/icons/teddy_bear_toy_1.png
+[DEBUG] from resource zip => assets/Resources/icons/teddy_bear_toy_2.png
+[DEBUG] from resource zip => assets/Resources/icons/teddy_bear_toy_3.png
+[DEBUG] from resource zip => assets/Resources/icons/teddy_bear_toy_4.png
+[DEBUG] from resource zip => assets/Resources/icons/teddy_bear_toy_5.png
+[DEBUG] from resource zip => assets/Resources/icons/teddy_bears.png
+[DEBUG] from resource zip => assets/Resources/icons/time.png
+[DEBUG] from resource zip => assets/Resources/icons/tripreport.png
+[DEBUG] from resource zip => assets/Resources/icons/whiskey-empty.png
+[DEBUG] from resource zip => assets/Resources/icons/whiskey.png
+[DEBUG] from resource zip => assets/Resources/icons/wine-empty.png
+[DEBUG] from resource zip => assets/Resources/icons/wine.png
+[DEBUG] from resource zip => assets/Resources/icons/ybob-logo2-sml.png
+[DEBUG] from resource zip => assets/Resources/icons/ybob-logo2.png
+[DEBUG] from resource zip => assets/Resources/icons/ybod-logo2.png
+[DEBUG] from resource zip => assets/Resources/images/fruit/apple.png
+[DEBUG] from resource zip => assets/Resources/images/fruit/banana.png
+[DEBUG] from resource zip => assets/Resources/images/fruit/cherry.png
+[DEBUG] from resource zip => assets/Resources/images/fruit/coconut.png
+[DEBUG] from resource zip => assets/Resources/images/fruit/grapefruit.png
+[DEBUG] from resource zip => assets/Resources/images/fruit/kiwi.png
+[DEBUG] from resource zip => assets/Resources/images/fruit/lemon.png
+[DEBUG] from resource zip => assets/Resources/images/fruit/lime.png
+[DEBUG] from resource zip => assets/Resources/images/fruit/maracuja.png
+[DEBUG] from resource zip => assets/Resources/images/fruit/readme.txt
+[DEBUG] from resource zip => assets/Resources/images/fruit/starfruit.png
+[DEBUG] from resource zip => assets/Resources/images/fruit/strawberry.png
+[DEBUG] from resource zip => assets/Resources/images/fruit/watermelon.png
+[DEBUG] from resource zip => assets/Resources/images/fruit/yellow watermelon.png
+[DEBUG] from resource zip => assets/Resources/images/blackaxis800x480.png
+[DEBUG] from resource zip => assets/Resources/images/diagonalaxes800x800.png
+[DEBUG] from resource zip => assets/Resources/images/grid3x3.png
+[DEBUG] from resource zip => assets/Resources/images/mainmenu.png
+[DEBUG] from resource zip => assets/Resources/images/smallcornercup.matemode.png
+[DEBUG] from resource zip => assets/Resources/images/smallcornercup.png
+[DEBUG] from resource zip => assets/Resources/images/xy-axes.png
+[DEBUG] from resource zip => assets/Resources/js/bloodalcohol.js
+[DEBUG] from resource zip => assets/Resources/js/dateTimeHelpers.js
+[DEBUG] from resource zip => assets/Resources/libraries/RGraph.bar.js
+[DEBUG] from resource zip => assets/Resources/libraries/RGraph.bipolar.js
+[DEBUG] from resource zip => assets/Resources/libraries/RGraph.common.adjusting.js
+[DEBUG] from resource zip => assets/Resources/libraries/RGraph.common.annotate.js
+[DEBUG] from resource zip => assets/Resources/libraries/RGraph.common.context.js
+[DEBUG] from resource zip => assets/Resources/libraries/RGraph.common.core.js
+[DEBUG] from resource zip => assets/Resources/libraries/RGraph.common.resizing.js
+[DEBUG] from resource zip => assets/Resources/libraries/RGraph.common.tooltips.js
+[DEBUG] from resource zip => assets/Resources/libraries/RGraph.common.zoom.js
+[DEBUG] from resource zip => assets/Resources/libraries/RGraph.funnel.js
+[DEBUG] from resource zip => assets/Resources/libraries/RGraph.gantt.js
+[DEBUG] from resource zip => assets/Resources/libraries/RGraph.hbar.js
+[DEBUG] from resource zip => assets/Resources/libraries/RGraph.hprogress.js
+[DEBUG] from resource zip => assets/Resources/libraries/RGraph.led.js
+[DEBUG] from resource zip => assets/Resources/libraries/RGraph.line.js
+[DEBUG] from resource zip => assets/Resources/libraries/RGraph.meter.js
+[DEBUG] from resource zip => assets/Resources/libraries/RGraph.modaldialog.js
+[DEBUG] from resource zip => assets/Resources/libraries/RGraph.odo.js
+[DEBUG] from resource zip => assets/Resources/libraries/RGraph.pie.js
+[DEBUG] from resource zip => assets/Resources/libraries/RGraph.rose.js
+[DEBUG] from resource zip => assets/Resources/libraries/RGraph.rscatter.js
+[DEBUG] from resource zip => assets/Resources/libraries/RGraph.scatter.js
+[DEBUG] from resource zip => assets/Resources/libraries/RGraph.skeleton.js
+[DEBUG] from resource zip => assets/Resources/libraries/RGraph.tradar.js
+[DEBUG] from resource zip => assets/Resources/libraries/RGraph.vprogress.js
+[DEBUG] from resource zip => assets/Resources/libraries/g.pie-min.js
+[DEBUG] from resource zip => assets/Resources/libraries/g.raphael-min.js
+[DEBUG] from resource zip => assets/Resources/libraries/raphael-min.lib
+[DEBUG] from resource zip => assets/Resources/ui/menu.js
+[DEBUG] from resource zip => assets/Resources/ui/picker_drinks.js
+[DEBUG] from resource zip => assets/Resources/ui/picker_monthyear.js
+[DEBUG] from resource zip => assets/Resources/ui/scoresDialog.js
+[DEBUG] from resource zip => assets/Resources/win/win_charts.js
+[DEBUG] from resource zip => assets/Resources/win/win_doseage.js
+[DEBUG] from resource zip => assets/Resources/win/win_drinks.js
+[DEBUG] from resource zip => assets/Resources/win/win_emotion.js
+[DEBUG] from resource zip => assets/Resources/win/win_gameMemory.js
+[DEBUG] from resource zip => assets/Resources/win/win_gameMenu.js
+[DEBUG] from resource zip => assets/Resources/win/win_gameStatLearn.js
+[DEBUG] from resource zip => assets/Resources/win/win_gameStroop.js
+[DEBUG] from resource zip => assets/Resources/win/win_gameWords.js
+[DEBUG] from resource zip => assets/Resources/win/win_highScores.js
+[DEBUG] from resource zip => assets/Resources/win/win_login.js
+[DEBUG] from resource zip => assets/Resources/win/win_main.js
+[DEBUG] from resource zip => assets/Resources/win/win_mydata.js
+[DEBUG] from resource zip => assets/Resources/win/win_personal.js
+[DEBUG] from resource zip => assets/Resources/win/win_privacy.js
+[DEBUG] from resource zip => assets/Resources/win/win_register.js
+[DEBUG] from resource zip => assets/Resources/win/win_results1.js
+[DEBUG] from resource zip => assets/Resources/win/win_tripreport.js
+[DEBUG] from resource zip => assets/Resources/app.js
+[DEBUG] from resource zip => assets/Resources/appicon.png
+[DEBUG] from resource zip => assets/Resources/default.png
+[DEBUG] from resource zip => assets/Resources/ybob-logo2-sml.png
+[DEBUG] from resource zip => assets/Resources/ybob.db
+[DEBUG] from resource zip => assets/Resources/ybod_db.sql
+[DEBUG] from resource zip => assets/tiapp.xml
+[DEBUG] from resource zip => res/drawable/appicon.png
+[DEBUG] from resource zip => res/drawable/background.png
+[DEBUG] from resource zip => res/layout/titanium_tabgroup.xml
+[DEBUG] from resource zip => AndroidManifest.xml
+[DEBUG] from resource zip => resources.arsc
+[DEBUG] from resource zip => res/drawable-long-land-hdpi/background.png
+[DEBUG] from resource zip => res/drawable-long-land-ldpi/background.png
+[DEBUG] from resource zip => res/drawable-long-port-hdpi/background.png
+[DEBUG] from resource zip => res/drawable-long-port-ldpi/background.png
+[DEBUG] from resource zip => res/drawable-notlong-land-hdpi/background.png
+[DEBUG] from resource zip => res/drawable-notlong-land-ldpi/background.png
+[DEBUG] from resource zip => res/drawable-notlong-land-mdpi/background.png
+[DEBUG] from resource zip => res/drawable-notlong-port-hdpi/background.png
+[DEBUG] from resource zip => res/drawable-notlong-port-ldpi/background.png
+[DEBUG] from resource zip => res/drawable-notlong-port-mdpi/background.png
+[DEBUG] from JAR /home/caspar/.titanium/mobilesdk/linux/1.7.1/android/titanium.jar => org/apache/Commons-NOTICE.txt
+[DEBUG] from JAR /home/caspar/.titanium/mobilesdk/linux/1.7.1/android/titanium.jar => org/apache/HttpComponents-NOTICE.txt
+[DEBUG] from JAR /home/caspar/.titanium/mobilesdk/linux/1.7.1/android/titanium.jar => org/apache/mime4j-NOTICE.txt
+[DEBUG] from JAR /home/caspar/.titanium/mobilesdk/linux/1.7.1/android/titanium.jar => org/appcelerator/titanium/build.properties
+[DEBUG] from JAR /home/caspar/.titanium/mobilesdk/linux/1.7.1/android/titanium.jar => org/appcelerator/titanium/res/drawable/background.png
+[DEBUG] from JAR /home/caspar/.titanium/mobilesdk/linux/1.7.1/android/titanium.jar => org/appcelerator/titanium/res/drawable/btn_check_buttonless_on.png
+[DEBUG] from JAR /home/caspar/.titanium/mobilesdk/linux/1.7.1/android/titanium.jar => org/appcelerator/titanium/res/drawable/btn_check_buttonless_on_18.png
+[DEBUG] from JAR /home/caspar/.titanium/mobilesdk/linux/1.7.1/android/titanium.jar => org/appcelerator/titanium/res/drawable/btn_check_buttonless_on_48.png
+[DEBUG] from JAR /home/caspar/.titanium/mobilesdk/linux/1.7.1/android/titanium.jar => org/appcelerator/titanium/res/drawable/btn_more.png
+[DEBUG] from JAR /home/caspar/.titanium/mobilesdk/linux/1.7.1/android/titanium.jar => org/appcelerator/titanium/res/drawable/btn_more_18.png
+[DEBUG] from JAR /home/caspar/.titanium/mobilesdk/linux/1.7.1/android/titanium.jar => org/appcelerator/titanium/res/drawable/btn_more_48.png
+[DEBUG] from JAR /home/caspar/.titanium/mobilesdk/linux/1.7.1/android/titanium.jar => org/appcelerator/titanium/res/drawable/btn_picker_normal.9.png
+[DEBUG] from JAR /home/caspar/.titanium/mobilesdk/linux/1.7.1/android/titanium.jar => org/appcelerator/titanium/res/drawable/btn_picker_pressed.9.png
+[DEBUG] from JAR /home/caspar/.titanium/mobilesdk/linux/1.7.1/android/titanium.jar => org/appcelerator/titanium/res/drawable/btn_picker_selected.9.png
+[DEBUG] from JAR /home/caspar/.titanium/mobilesdk/linux/1.7.1/android/titanium.jar => org/appcelerator/titanium/res/drawable/default_icon.png
+[DEBUG] from JAR /home/caspar/.titanium/mobilesdk/linux/1.7.1/android/titanium.jar => org/appcelerator/titanium/res/drawable/photoDefault.png
+[DEBUG] from JAR /home/caspar/.titanium/mobilesdk/linux/1.7.1/android/smalljs.jar => org/mozilla/javascript/resources/Messages.properties
+[DEBUG] from JAR /home/caspar/.titanium/mobilesdk/linux/1.7.1/android/smalljs.jar => org/mozilla/javascript/resources/Messages_fr.properties
+[DEBUG] from JAR /home/caspar/.titanium/mobilesdk/linux/1.7.1/android/modules/titanium-ui.jar => ti/modules/titanium/ui/widget/webview/binding.js
+[DEBUG] from JAR /home/caspar/.titanium/mobilesdk/linux/1.7.1/android/modules/titanium-ui.jar => ti/modules/titanium/ui/widget/webview/binding.min.js
+[DEBUG] from JAR /home/caspar/.titanium/mobilesdk/linux/1.7.1/android/modules/titanium-ui.jar => ti/modules/titanium/ui/widget/webview/json2.js
+[DEBUG] Waiting for device to be ready ...
+[TRACE] adb devices returned 1 devices/emulators
+[DEBUG] Device connected... (waited 0 seconds)
+[DEBUG] waited 0.014436 seconds on emulator to get ready
+[INFO] Installing application on device
+[INFO] Launching application ... Boozerlyzer
+[TRACE] Launch output: Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=net.yourbrainondrugs.ybob/.BoozerlyzerActivity }
+
+[INFO] Deployed Boozerlyzer ... Application should be running.

@@ -54,6 +54,7 @@
 			}
 		}
 		//something didn't work
+		rows.close();
 		return false;
 	};
 
@@ -80,10 +81,10 @@
 	};
 
 	//get a Session by ID (id is unique) 
-	Ti.App.boozerlyzer.data.sessions.getSession = function (ID){
+	Ti.App.boozerlyzer.data.sessions.getSession = function (SessionID){
 		var allSessionData = [];
 		var rows = null;
-		var id = parseInt(ID);
+		var id = parseInt(SessionID);
 		rows = conn.execute('SELECT * FROM Sessions WHERE ID = ?', id);
 		if ((rows !== null) && (rows.isValidRow())) {
 			while(rows.isValidRow()){
@@ -190,7 +191,9 @@
 		
 		var rows = conn.execute(selectStr);
 		if (rows !== null) {
-			return rows.field(0);
+			var count = rows.field(0);
+			rows.close();
+			return count;
 		}else{
 			return 0;
 		}

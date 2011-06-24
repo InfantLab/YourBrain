@@ -36,6 +36,9 @@ var lastSentID = Titanium.App.Properties.getInt('LastSentID', 0);
 // build an object containing the data that we should send
 var dataToSend = Ti.App.boozerlyzer.data.gameScores.GamePlaySummary(null,null,lastSentID);
 
+Ti.API.debug("sendGameData - dataToSend")
+Ti.API.debug(JSON.stringify({"data":dataToSend}));
+
 
 //what is the last row id from this dataset?
 var newLastID = dataToSend[dataToSend.length -1].ID;
@@ -46,6 +49,14 @@ var xhrPost = Ti.Network.createHTTPClient();
 xhrPost.open('POST', 'http://yourbrainondrugs.net/boozerlyzer/submit_data.php');
 xhrPost.setRequestHeader('Content-type','application/json');
 xhrPost.setRequestHeader('Accept','application/json');
+Ti.API.debug("sendGameData - post")
+Ti.API.debug(JSON.stringify({
+User: Ti.App.boozerlyzer.comm.ybodnet.getUserID(), // our user ID, username, email etc - unique identifier of the submitter
+AuthToken: Ti.App.boozerlyzer.comm.ybodnet.getAuthToken(), // some kind of magic key that the client-server has previously negotiated to determine authenticity
+ClientVersion: Ti.App.boozerlyzer.comm.ybodnet.getClientVersion(), // software version of the client
+ProtocolVersion: Ti.App.boozerlyzer.comm.ybodnet.getProtocolVersion(), // protocol version to use
+data: dataToSend
+}));
 xhrPost.send(
 {
 User: Ti.App.boozerlyzer.comm.ybodnet.getUserID(), // our user ID, username, email etc - unique identifier of the submitter

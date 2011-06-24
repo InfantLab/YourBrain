@@ -32,17 +32,17 @@
 		var asobj = JSON.parse(e);
 		var options = asobj.options;
 		var timeLabels = asobj.timeLabels;
-		var session = asobj.sessData;
+		//var session = asobj.sessData;
 		var selfData = asobj.selfData;
 		var drinkArray = asobj.drinkData;
-		Ti.API.info("options - " + JSON.stringify(session));
-		Ti.API.info("webview session - " + JSON.stringify(session));
+		Ti.API.info("options - " + JSON.stringify(options));
+		//Ti.API.info("webview session - " + JSON.stringify(session));
 		Ti.API.info("webview timeLabels - " + JSON.stringify(timeLabels));
 		Ti.API.info("webview chart selfData - " + JSON.stringify(selfData));
 		Ti.API.info("webview chart alldrinks - " + JSON.stringify(drinkArray));
 		
-		var startTime = session[0].StartTime;
-		Ti.API.info("webview chart starttime - " + startTime);
+		//var startTime = session[0].StartTime;
+		//Ti.API.info("webview chart starttime - " + startTime);
 		var totalDrink = [];
 		var totalBAC = [];
 		var maxDrink = 0;

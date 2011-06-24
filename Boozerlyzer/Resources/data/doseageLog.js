@@ -136,7 +136,7 @@
 		if (maxTime !== null){
 			rows = conn.execute('SELECT * FROM DoseageLog WHERE DoseageChanged > ? and DoseageChanged < ? ORDER BY DoseageChanged ASC', minTime, maxTime);
 		}else{
-			rows = conn.execute('SELECT * FROM DoseageLog WHERE DoseageChanged > ? ORDER BY DoseageChanged ASC', sessionID);
+			rows = conn.execute('SELECT * FROM DoseageLog WHERE DoseageChanged > ? ORDER BY DoseageChanged ASC', minTime);
 		}
 		var returnData = fillDataObject(rows);
 		rows.close();

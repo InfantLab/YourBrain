@@ -13,6 +13,12 @@
 	var initialised = false;
 	//layout variables
 	var topHW = 100;
+		//include the menu choices	
+	Ti.include('/ui/menu.js');
+	var menu = menus;
+	//need to give it specific help for this screen
+	menu.setHelpMessage("Please enter your personal information. Click on the Birth Date button to enter birth month and year.");
+
 	
 	Ti.include('/ui/picker_monthyear.js');
 

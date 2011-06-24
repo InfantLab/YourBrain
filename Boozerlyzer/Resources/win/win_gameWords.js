@@ -21,27 +21,27 @@
 (function() {
 				
 	var win = Titanium.UI.currentWindow;
+	if (Titanium.App.Properties.getBool('MateMode',false)){
+		win.backgroundImage = '/images/smallcornercup.matemode.png';
+	}else{
+		win.backgroundImage = '/images/smallcornercup.png';
+	}
+
 	var winHome = win.Home;
-	var suggest;
-	var labelGameMessage;
-	var labelGameMessage;
+	//include the menu choices	
+	Ti.include('/ui/menu.js');
+	var menu = menus;
+	//need to give it specific help for this screen
+	menu.setHelpMessage("Simply pick which ever words you like best. There are no right answers.");
+
+	var suggest, labelGameMessage;
 	var winopened = parseInt((new Date()).getTime()/1000);
-	var gameStarted = false;
-	var	initialised = false;
-	var loc = [];
-	var wordChoices = [];
-	var wordList = '';
-	var answers = [];  		//array to store the selected answers.
+	var gameStarted = false, initialised = false;
+	var wordList = '', loc = [], wordChoices = [], answers = [];  		//array to store the selected answers.
 	var numRounds = Titanium.UI.currentWindow.numRounds;
 	var MgameType = Titanium.UI.currentWindow.gameType;
-	var imageXyAxes;
-	var imageYAxisUp;
-	var imageYAxisDown;
-	var imageXAxisLeft;
-	var imageXAxisRight;
-	var imageMisc;
-	var arousal = 0;
-	var	valence = 0;	
+	var imageXyAxes, imageYAxisUp, imageYAxisDown, imageXAxisLeft, imageXAxisRight;
+	var imageMisc, arousal = 0,	valence = 0;	
 		
 	Ti.API.debug('wordgame - numRounds ' + numRounds);
 	Ti.API.debug('wordgame - gameType ' + MgameType);

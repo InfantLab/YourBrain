@@ -1,7 +1,7 @@
 /**
  * @author Caspar Addyman
  * 
- * The user interface for the drinking tracking screen.
+ * The user interface for the drink tracking screen. Can add new drinks here.
  * We wrap all code in a self-calling function to protect the 
  * global namespace.
  * 
@@ -11,6 +11,17 @@
 (function() {
 	
 		var win = Ti.UI.currentWindow;
+		if (Titanium.App.Properties.getBool('MateMode',false)){
+			win.backgroundImage = '/images/smallcornercup.matemode.png';
+		}else{
+			win.backgroundImage = '/images/smallcornercup.png';
+		}
+		//include the menu choices	
+		Ti.include('/ui/menu.js');
+		var menu = menus;
+		//need to give it specific help for this screen
+		menu.setHelpMessage("Click on the icons to add new drinks. Double click on drinks list to edit or delete an entry.");
+
 		var winOpened = parseInt((new Date()).getTime()/1000);
 		var loadedonce = false;
 		
@@ -81,21 +92,12 @@
 		
 		//layout variables
 		//glass icons and drink counters  
-		var leftEmpty = 20;
-		var leftFull = 140;
-		var leftDrinkType = 40;
-		var bigIcons = 60;
+		var leftFull = 140, leftDrinkType = 40;
+		var smlIcon = 40, bigIcons = 60;
 		var halfOffset = bigIcons-15;
-		var smlIcon = 40;
-		
-		var topBeer = 10;
-		var topWine = 85;
-		var topSpirit =150; 
-		var topTotal= 200;
-		
+		var topBeer = 10, topWine = 85, topSpirit =150,  topTotal= 200;		
 		//session log 
-		var leftSession = 250;
-		var topSession = 0;
+		var leftSession = 250,  topSession = 0;
 		
 		var sessionView = Ti.UI.createView({
 			borderColor:'#888',
@@ -118,8 +120,6 @@
 		});
 		win.add(beeradd);
 		beeradd.addEventListener('click',function (){
-			// AllDrinks[lastIndex].HalfPints += 2;
-			// totalizeDrinks();
 			// Set data in picker and open as a modal
 			optionPickerDialog.setDrinkType('Beer',[2,4,0]);
 			optionPickerDialog.open();
@@ -135,8 +135,6 @@
 		});
 		win.add(beeradd_sml);
 		beeradd_sml.addEventListener('click',function (){
-			// AllDrinks[lastIndex].HalfPints += 1;
-			// totalizeDrinks();
 			// Set data in picker and open as a modal
 			optionPickerDialog.setDrinkType('Beer',[2,0,0]);
 			optionPickerDialog.open();
@@ -145,7 +143,7 @@
 		
 		
 		var beercount = Ti.UI.createLabel({
-			text:'0 pints',
+			text:'Beer / cider',
 			top:topBeer,
 			left:leftDrinkType,
 			width:100,
@@ -165,8 +163,6 @@
 		});
 		win.add(wineadd);
 		wineadd.addEventListener('click',function (){
-			// AllDrinks[lastIndex].SmallWine += 2;
-			// totalizeDrinks();
 			// Set data in picker and open as a modal
 			optionPickerDialog.setDrinkType('Wine',[2,2,0]);
 			optionPickerDialog.open();
@@ -182,15 +178,13 @@
 		});
 		win.add(wineadd_sml);
 		wineadd_sml.addEventListener('click',function (){
-			// AllDrinks[lastIndex].SmallWine += 1;
-			// totalizeDrinks();
 			// Set data in picker and open as a modal
 			optionPickerDialog.setDrinkType('Wine',[2,0,0]);
 			optionPickerDialog.open();
 		});
 		
 		var winecount = Ti.UI.createLabel({
-			text:'0 wines',
+			text:'Wine',
 			top:topWine,
 			left:leftDrinkType,
 			width:100,
@@ -209,12 +203,9 @@
 		});
 		win.add(spiritadd);
 		spiritadd.addEventListener('click',function (){
-			// AllDrinks[lastIndex].SingleSpirits += 2;
-			// totalizeDrinks();
 			// Set data in picker and open as a modal
 			optionPickerDialog.setDrinkType('Spirits',[2,2,0]);
 			optionPickerDialog.open();
-
 		});
 		
 		
@@ -227,17 +218,14 @@
 		});
 		win.add(spiritadd_sml);
 		spiritadd_sml.addEventListener('click',function (){
-			// AllDrinks[lastIndex].SingleSpirits += 1;
-			// totalizeDrinks();
 			// Set data in picker and open as a modal
 			optionPickerDialog.setDrinkType('Spirits',[2,0,0]);
 			optionPickerDialog.open();
-
 		});
 		
 		
 		var spiritcount = Ti.UI.createLabel({
-			text:'0 spirits',
+			text:'Add spirits',
 			top:topSpirit,
 			left:leftDrinkType,
 			width:100,
@@ -247,17 +235,6 @@
 		});
 		win.add(spiritcount);
 		
-		
-		var UnitCount = Ti.UI.createLabel({
-			text:'Total 0 units',
-			top:topTotal,
-			left:leftDrinkType - 40,
-			width:180,
-			height:'auto',
-			textAlign:'center',
-			color:'white'
-		});
-		win.add(UnitCount);
 		var BloodAlcohol = Ti.UI.createLabel({
 			text:'Blood Alcohol',
 			top:topTotal+22,
@@ -284,8 +261,7 @@
 			var numUnits = DrinkData.TotalUnits / stdDrinks[0].MillilitresPerUnit;
 			//calorie calculation = 7kCals per gram of alcohol , 0.79 grams per millilitre
 			var numkCals = DrinkData.TotalUnits * 0.79 * 7;
-			var thisDrinkUnits = '';
-			var thisDrinkkCals = '';
+			var thisDrinkUnits = '', thisDrinkkCals = '';
 			if (!isNaN(numUnits) && numUnits > 0){
 				thisDrinkUnits = numUnits.toFixed(1) + ' u';
 				thisDrinkkCals = numkCals.toFixed(0) + 'kCal'
@@ -350,7 +326,9 @@
 														font:{fontSize:12,fontWeight:'normal'}
 													});
 			row.add(drinkkCalsLabel);
-
+			row.addEventListener('click', function(){
+				alert('Row clicked - row info:' + JSON.stringify(row.drinkData));
+			});
 			
 			return row;
 		}
@@ -379,11 +357,8 @@
 		}
 		
 
-		var footer = Ti.UI.createView({
-			backgroundColor:'#111',
-			height:30
-		});
-		
+		var footer = Ti.UI.createView({	backgroundColor:'#111',height:30});
+
 		var footerLabel = Ti.UI.createLabel({
 			font:{fontFamily:'Helvetica Neue',fontSize:14,fontWeight:'normal'},
 			text:'Totals: ',
@@ -440,26 +415,21 @@
 		});
 		
 		//initial population of drink list.
-		for(var idx=0;idx<AllDrinks.length; idx++){
+		var len = AllDrinks.length;
+		for(var idx=0;idx<len; idx++){
 			tv.appendRow(formatTableRow(AllDrinks[idx]));	
 		}
-		
-		
 		sessionView.add(tv);
 		
 		function setSessionLabel(){
 			headerLabel.text = 'Session began: ' + Ti.App.boozerlyzer.dateTimeHelpers.formatDayPlusTime(sessionData[0].StartTime,true);
-		}
-		
+		}		
 		setSessionLabel();
 		totalizeDrinks();
 		//buttons to navigate to other screens
 		
 		//Button layout Vars
-		var bottomButtons = 5;
-		var leftFirst = 50;
-		var leftSecond = 132;
-		var leftThird = 180;
+		var bottomButtons = 5, leftFirst = 50, leftSecond = 132, leftThird = 180;
 		
 		var newmood = Titanium.UI.createImageView({
 			image:'/icons/TheaterYellow2.png',
@@ -506,20 +476,9 @@
 			bottom:bottomButtons,
 			left:leftThird
 		});
-		// newgame.addEventListener('click',function(){
-			// var winplay = Titanium.UI.createWindow({ modal:true,
-				// url:'/win/win_gameMenu.js',
-				// title:'YBOB Game ',
-				// backgroundImage:'/images/smallcornercup.png',
-				// orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
-			// });
-			// winplay.home = winHome;
-			// win.close();
-			// winplay.open();
-		// });
 		newgame.addEventListener('click',function(){
 			var winplay = Titanium.UI.createWindow({ modal:true,
-				url:'/ui/picker_drinks.js',
+				url:'/win/win_gameMenu.js',
 				title:'YBOB Game ',
 				backgroundImage:'/images/smallcornercup.png',
 				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
@@ -529,7 +488,6 @@
 		});
 		win.add(newgame);
 		
-		//
 		// Cleanup and return home
 		win.addEventListener('android:back', function(e) {
 			gameEndSaveScores();
@@ -577,9 +535,7 @@
 				gameEndSaveScores();
 			}
 		});
-		
 				
 		loadedonce = true;
-		
 		
 })();

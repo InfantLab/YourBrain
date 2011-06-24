@@ -10,10 +10,15 @@
  */
 
 (function() {
+	var win = Titanium.UI.currentWindow;
 
 	Ti.include('/ui/scoresDialog.js');
+	//include the menu choices	
+	Ti.include('/ui/menu.js');
+	var menu = menus;
+	//need to give it specific help for this screen
+	menu.setHelpMessage("Press the buttons to advance the images. If two IMAGES are the same press the lower LEFT button. If the LOCATION is the same press the lower RIGHT button. Otherwise press either NO MATCH button. Points are awarded for speed & coordination.");
 
-	var win = Titanium.UI.currentWindow;
 	var stimulus, grid;
 	var currentObj = 0, points = 0, coordbonus = 0, speedbonus = 0,  inhibitbonus = 0;
 	var startTime = 0, stepStartTime = 0, count = 0, missCount = 0, falseAlarmCount = 0;
@@ -92,8 +97,8 @@
 
 	function updateScore(){
 		Ti.API.debug('updateScore :' + points + 'pts');
-		score.text = points;
-		countLabel.text = Math.round(count);
+		score.text = '' + Math.round(points);
+		countLabel.text = '' + Math.round(count);
 		missCountLabel.text = (missCount === 0 ? '' : missCount + " missed");
 		//round the bonus points
 		bonus.text = Math.round(speedbonus) + ' speed\t' + Math.round(coordbonus) + ' coord\t' + Math.round(inhibitbonus) + ' oops';

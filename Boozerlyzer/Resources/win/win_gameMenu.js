@@ -23,7 +23,19 @@
 (function() {
 	
 	var win = Titanium.UI.currentWindow;
+	if (Titanium.App.Properties.getBool('MateMode',false)){
+		win.backgroundImage = '/images/smallcornercup.matemode.png';
+	}else{
+		win.backgroundImage = '/images/smallcornercup.png';
+	}
 	var winHome = win.Home;
+	//include the menu choices	
+	Ti.include('/ui/menu.js');
+	var menu = menus;
+	//need to give it specific help for this screen
+	menu.setHelpMessage("Click on game icon to start the game.");
+
+	
 	var initialised = false;
 	//keep an array of subviews each containing info for one game
 	var gameViews = [], gameIcons = [],gameCounts = [], gameNameLabels = [], gameLastPlayedLabels = [];

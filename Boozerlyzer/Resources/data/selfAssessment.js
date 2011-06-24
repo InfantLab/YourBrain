@@ -85,6 +85,22 @@
 		}
 	};
 	
+	
+		/***
+	 * return all the relevant rows from a given time range.
+	 */
+	Ti.App.boozerlyzer.data.selfAssessment.getTimeRangeData = function (minTime, maxTime){
+		var rows
+		if (maxTime !== null){
+			rows = conn.execute('SELECT * FROM SelfAssessment WHERE SelfAssessmentChanged > ? and SelfAssessmentChanged < ? ORDER BY SelfAssessmentChanged ASC', minTime, maxTime);
+		}else{
+			rows = conn.execute('SELECT * FROM DoseageLog WHERE SelfAssessmentChanged > ? ORDER BY SelfAssessmentChanged ASC', minTime);
+		}
+		var returnData = fillDataObject(rows);
+		rows.close();
+		return returnData;
+	};
+
 	//get all data for this Session ID 
 	Ti.App.boozerlyzer.data.selfAssessment.getAllSessionData = function (sessionID){
 		var mostRecentData = [];
