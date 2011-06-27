@@ -37,7 +37,7 @@
 	var fontsLarger =  [12, 20, 30, 55, 70, 90, 110, 136]; // eight possible sizes for levels with only 2 digit numbers
 	var fontsSmaller = [10,14,18,24,30,40,50,61,72,84,95, 110]; //
 	var startTime = 0, maxDigit = 10;
-	var points = 0, coordbonus = 0, speedbonus = 0, inhibitbonus = 0, level = 0;
+	var points = 0, count = 0; coordbonus = 0, speedbonus = 0, inhibitbonus = 0, level = 0;
 	var missCount = 0, correctCount = 0, stroopMissTotal = 0, nonStroopMissTotal = 0;
 	var stepInterval = 2000;
 	var loc = [];
@@ -266,20 +266,22 @@
 	}
 	
 	function resetScores(){
-		var maxDigit = 10;
-		var points = 0;
-		var coordbonus = 0;
-		var speedbonus = 0;
-		var inhibitbonus = 0;
-		var	level = 0;
-		var missCount = 0;
-		var correctCount = 0;
-		var stroopMissTotal = 0;
-		var nonStroopMissTotal = 0;		
+		maxDigit = 10;
+		count = 0;
+		points = 0;
+		coordbonus = 0;
+		speedbonus = 0;
+		inhibitbonus = 0;
+		level = 0;
+		missCount = 0;
+		correctCount = 0;
+		stroopMissTotal = 0;
+		nonStroopMissTotal = 0;		
 	}	
 
 	//take these sets each time we reset this screen
 	function nextStep(){
+		count++;
 		if (correctCount > 9){
 			//nextLevel!
 			level++;

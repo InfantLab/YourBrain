@@ -19,16 +19,26 @@
 	//maintain a database connection we can use
 	var conn = Titanium.Database.install('ybob.db','ybob');
   
-	//get data for the maximum row id for this userID
-	// where 0 is default and >0 implies we are in 'matemode'
-	Ti.App.boozerlyzer.data.sessions.getLatestData = function (userID){
+	/***
+	 * Tell us the most recent session (before timestamp)
+	 * get data for the maximum row id for this userID
+	 * where 0 is default and >0 implies we are in 'matemode'
+	 * if an optional timestamp is included we get the maximum
+	 * session id BEFORE that time.
+	 */
+	Ti.App.boozerlyzer.data.sessions.getLatestData = function (userID, timeStamp){
 		var mostRecentData = [];
 		var uid = parseInt(userID);
 		//this line probably unnecessary but i had some paranoia that max(id) didn't work properly
 		var rows = conn.execute('SELECT count(*) FROM Sessions WHERE userID = ?', uid);
 		if (rows !== null && rows.isValidRow() && rows.field(0) > 0) {
 			rows.close();
-			rows = conn.execute('SELECT max(ID) FROM Sessions where userID = ?', uid);
+			if (timeStamp !== null && timeStamp !== undefined ){
+				rows = conn.execute('SELECT max(ID) FROM Sessions where userID = ?', uid);
+			}else{
+				//include time restriction
+				rows = conn.execute('SELECT max(ID) FROM Sessions where userID = ? and Created < ?', uid, timeStamp);
+			}
 			if ((rows !== null) && (rows.isValidRow())) {
 				var maxid = 1;
 				try {
@@ -187,8 +197,7 @@
 		}else {
 			//just main user sessions
 			selectStr = 'SELECT COUNT(*) from sessions where UserID = 0'
-		}
-		
+		}		
 		var rows = conn.execute(selectStr);
 		if (rows !== null) {
 			var count = rows.field(0);
@@ -198,6 +207,8 @@
 			return 0;
 		}
 	};
+	
+
 
 //	return api;
 }());

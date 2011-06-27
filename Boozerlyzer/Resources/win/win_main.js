@@ -87,11 +87,11 @@
 		homeWin.add(label1);
 		
 		var labelVers = Titanium.UI.createLabel({
-			color:'#999',
+			color:'#888',
 			text:'Version: '+ Titanium.App.getVersion(),
 			font:{fontSize:12,fontFamily:'Helvetica Neue'},
 			textAlign:'center',
-			top:52,
+			top:53,
 			left:leftAppName
 		});
 		homeWin.add(labelVers);
@@ -467,7 +467,20 @@
 		});
 		sync.addEventListener('click',function()
 		{
-			Ti.App.boozerlyzer.comm.sendGameData.sync();
+						Ti.API.debug("Get total drinks");
+			var now = parseInt((new Date()).getTime()/1000);
+			var monthago = now - 31*3600*24;
+			var totalDrinks	=Ti.App.boozerlyzer.data.doseageLog.drinksinTimePeriod(monthago, now);
+			
+			var len = totalDrinks.length;
+			var drinksList = '';
+			for (i=0;i<len;i++){
+				//drinksList += totalDrinks[i].DrugVariety + ': ' + (totalDrinks[i].TotalUnits / stdDrinks[0].MillilitresPerUnit).toFixed(1) + ' U\n';
+				drinksList += totalDrinks[i].DrugVariety + ': ' + (totalDrinks[i].TotalUnits / 10).toFixed(1) + ' U\n';
+			}
+			Ti.API.debug(drinksList);
+			alert("Total alcohol consumed this month\n\n" + drinksList);
+//			Ti.App.boozerlyzer.comm.sendGameData.sync();
 		});	
 		homeWin.add(sync);
 
@@ -477,6 +490,7 @@
 				//this code only runs when we reload this page
 			    rewriteUpdateLabel();		
 				rewriteLabPoints();
+		
 			}
 		});
 		Ti.API.debug('homeWin 0');

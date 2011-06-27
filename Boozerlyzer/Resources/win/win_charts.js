@@ -103,7 +103,7 @@
 		timeAxis = type;
 		reloadData  = true; //need to reload the data next time we plot graph
 	}
-	changeGraphTImeAxis(timeAxis);
+	changeGraphTimeAxis(timeAxis);
 	
 	function redrawGraph(){
 		if (reloadData){

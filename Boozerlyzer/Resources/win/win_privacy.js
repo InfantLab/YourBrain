@@ -77,7 +77,10 @@
 
 		//quick fix		
 		var conn = Titanium.Database.install('ybob.db','ybob');
-		conn.execute('UPDATE GameScores set UserID = 0 ');
+		// conn.execute('UPDATE GameScores set UserID = 0 ');
+		// conn.execute('ALTER TABLE "main"."GameScores" ADD COLUMN "GameSteps" INTEGER');
+		conn.execute('ALTER TABLE "main"."GameScores" ADD COLUMN "Alcohol_ml" NUMERIC');
+		conn.execute('ALTER TABLE "main"."GameScores" ADD COLUMN "BloodAlcoholConc" NUMERIC');
 		conn.close();
 	});
 	win.add(debug);

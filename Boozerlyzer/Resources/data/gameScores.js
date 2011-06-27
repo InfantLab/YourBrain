@@ -167,26 +167,31 @@
 		var sessionID = Titanium.App.Properties.getInt('SessionID');
 		for (var i=0; i<scoreData.length; i++){
 			var insertstr = 'INSERT INTO GameScores ';
-			insertstr += '(SessionID,Game,GameVersion,PlayStart,PlayEnd,TotalScore,';
+			insertstr += '(SessionID,Game,GameVersion,PlayStart,PlayEnd,TotalScore,GameSteps,';
 			insertstr += 'Speed_GO,Speed_NOGO,Coord_GO,Coord_NOGO,InhibitionScore,MemoryScore, '
-			insertstr += 'Level, Feedback,Choices,LabPoints,UserID)  VALUES(?,?,?,?,?,?, ?,?,?,?,?,?, ?,?,?,?,?)';
+			insertstr += 'Level, Feedback,Choices,LabPoints,UserID,Alcohol_ml,BloodAlcoholConc)  VALUES(?,?,?,?,?,?, ?,?,?,?,?,?, ?,?,?,?,?,?, ?,?)';
 			conn.execute(insertstr,sessionID,
 								   scoreData[i].Game, 
 								   scoreData[i].GameVersion, 
 								   scoreData[i].PlayStart,
 								   scoreData[i].PlayEnd,
 								   scoreData[i].TotalScore, 
+
+								   scoreData[i].GameSteps, 
 								   scoreData[i].Speed_Go, 
 								   scoreData[i].Speed_Nogo,
 								   scoreData[i].Coord_GO,
 								   scoreData[i].Coord_NOGO, 
 								   scoreData[i].InhibtionScore, 
+
 								   scoreData[i].MemoryScore,
 								   scoreData[i].Level,
 								   scoreData[i].Feedback,
 								   JSON.stringify(scoreData[i].Choices),
 								   scoreData[i].LabPoints,
-								   scoreData[i].UserID);
+								   scoreData[i].UserID,
+								   scoreData[i].Alcohol_ml,
+								   scoreData[i].BloodAlcoholConc);
 			Titanium.API.debug('gameScores result, rowsAffected = ' + conn.rowsAffected);
 			Titanium.API.debug('gameScores result, lastInsertRowId = ' + conn.lastInsertRowId);	
 		}
@@ -249,6 +254,7 @@
 					PlayStart:		(rows.fieldByName('PlayStart')==='undefined'?null:parseInt(rows.fieldByName('PlayStart'))),
 					PlayEnd:		(rows.fieldByName('PlayEnd')==='undefined'?null:parseInt(rows.fieldByName('PlayEnd'))),
 					TotalScore: 	(rows.fieldByName('TotalScore')==='undefined'?null:parseFloat(rows.fieldByName('TotalScore'))),
+					GameSteps: 		(rows.fieldByName('GameSteps')==='undefined'?null:parseFloat(rows.fieldByName('GameSteps'))),
 					Speed_GO:		(rows.fieldByName('Speed_GO')==='undefined'?null:parseFloat(rows.fieldByName('Speed_GO'))),
 					Speed_NOGO:		(rows.fieldByName('Speed_NOGO')==='undefined'?null:parseFloat(rows.fieldByName('Speed_NOGO'))),
 					Coord_GO:		(rows.fieldByName('Coord_GO')==='undefined'?null:parseFloat(rows.fieldByName('Coord_GO'))),
@@ -261,6 +267,8 @@
 					SessionID:		(rows.fieldByName('SessionID')==='undefined'?null:parseInt(rows.fieldByName('SessionID'))),
 					UserID:			(rows.fieldByName('UserID')==='undefined'?null:parseInt(rows.fieldByName('UserID'))),
 					LabPoints:		(rows.fieldByName('LabPoints')==='undefined'?null:parseFloat(rows.fieldByName('LabPoints'))),
+					Alcohol_ml:		(rows.fieldByName('Alcohol_ml')==='undefined'?null:parseFloat(rows.fieldByName('Alcohol_ml'))),
+					BloodAlcoholConc:(rows.fieldByName('BloodAlcoholConc')==='undefined'?null:parseFloat(rows.fieldByName('BloodAlcoholConc'))),
 				});
 				rows.next();
 			};

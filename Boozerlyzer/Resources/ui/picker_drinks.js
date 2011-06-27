@@ -53,7 +53,7 @@ var optionPickerDialog = (function(){
 
 		colVolumeLabel = Ti.UI.createLabel({text:'%',top:28,left:120,color:'blue',font: {fontSize: "16"}});
 		colDescriptionLabel = Ti.UI.createLabel({text:'Amount',top:28,left:210,color:'blue',font: {fontSize: "16"}});
-		colCountLabel = Ti.UI.createLabel({text:'No',top:28,left:320,color:'blue',font: {fontSize: "16"}});
+		colCountLabel = Ti.UI.createLabel({text:'Num',top:28,left:330,color:'blue',font: {fontSize: "16"}});
 
 		picker = Ti.UI.createPicker({		
 			useSpinner: true, visibleItems: 4,

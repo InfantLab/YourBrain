@@ -25,6 +25,8 @@
 		var winOpened = parseInt((new Date()).getTime()/1000);
 		var loadedonce = false;
 		
+		var howLong = ['this session', '1 week', '4 weeks', 'a year'];
+		var howLongDays = [1, 7, 28, 365];
 		var drinkNames = ['Beer','Wine','Spirits','NULL'];
 		var drinkImgs = ['/icons/beer-full.png','/icons/wine.png','/icons/whiskey.png','/icons/whiskey-empty.png'];
 		
@@ -92,7 +94,7 @@
 		
 		//layout variables
 		//glass icons and drink counters  
-		var leftFull = 140, leftDrinkType = 40;
+		var leftFull = 140, leftDrinkType = 22;
 		var smlIcon = 40, bigIcons = 60;
 		var halfOffset = bigIcons-15;
 		var topBeer = 10, topWine = 85, topSpirit =150,  topTotal= 200;		
@@ -110,6 +112,37 @@
 			left:leftSession,
 		});
 		win.add(sessionView);
+		
+		//TODO - find a nice way to show this data
+		var grandTotalDrinksButton = Ti.UI.createButton({
+			title:'Total Drinks in last ' + Ti.App.Properties.setString('GrandTotal','4 weeks'),
+			width:136,
+			height:36,
+			top:3,
+			left:3,
+			backgroundColor:'gray',
+			borderRadius:4
+		});
+		grandTotalDrinksButton.addEventListener('click',function()
+		{
+			howLongDialog.show();
+		});	
+		win.add(grandTotalDrinksButton);
+
+		var howLongDialog = Titanium.UI.createOptionDialog({
+			options:howLong,
+			destructive:2,
+			cancel:1,
+			title:'Count drinks over what time period?'
+		});
+		// add event listener
+		howLongDialog.addEventListener('click',function(e)
+		{
+			Ti.App.Properties.setString('GrandTotal',howLong[e.index]);
+			howLongDialog.title = 'Total Drinks in last ' + Ti.App.Properties.setString('GrandTotal','4 weeks'),
+			grandTotalDrinks();
+		});
+		
 		
 		var beeradd = Titanium.UI.createImageView({
 			image:'/icons/beer-full.png',
@@ -140,18 +173,18 @@
 			optionPickerDialog.open();
 
 		});
-		
-		
-		var beercount = Ti.UI.createLabel({
+
+		var drinkCountLabels = [];
+		drinkCountLabels[0] = Ti.UI.createLabel({
 			text:'Beer / cider',
-			top:topBeer,
+			top:topBeer + 20,
 			left:leftDrinkType,
 			width:100,
 			height:bigIcons,
 			textAlign:'center',
 			color:'white'
 		});
-		win.add(beercount);
+		win.add(drinkCountLabels[0]);
 		
 		
 		var wineadd = Titanium.UI.createImageView({
@@ -183,16 +216,16 @@
 			optionPickerDialog.open();
 		});
 		
-		var winecount = Ti.UI.createLabel({
+		drinkCountLabels[1]= Ti.UI.createLabel({
 			text:'Wine',
-			top:topWine,
+			top:topWine + 20,
 			left:leftDrinkType,
 			width:100,
 			height:bigIcons,
 			textAlign:'center',
 			color:'white'
 		});
-		win.add(winecount);
+		win.add(drinkCountLabels[1]);
 		
 		var spiritadd = Titanium.UI.createImageView({
 			image:'/icons/whiskey.png',
@@ -224,21 +257,21 @@
 		});
 		
 		
-		var spiritcount = Ti.UI.createLabel({
-			text:'Add spirits',
-			top:topSpirit,
+		drinkCountLabels[2] = Ti.UI.createLabel({
+			text:'Spirits',
+			top:topSpirit + 20,
 			left:leftDrinkType,
 			width:100,
 			height:bigIcons,
 			textAlign:'center',
 			color:'white'
 		});
-		win.add(spiritcount);
+		win.add(drinkCountLabels[2]);
 		
 		var BloodAlcohol = Ti.UI.createLabel({
 			text:'Blood Alcohol',
 			top:topTotal+22,
-			left:leftDrinkType - 40,
+			left:leftDrinkType,
 			width:180,
 			height:'auto',
 			textAlign:'center',
@@ -343,8 +376,30 @@
 				footerUnits.text = (totalvolAlcohol / stdDrinks[0].MillilitresPerUnit).toFixed(1) +'u';
 				//calorie calculation = 7kCals per gram of alcohol , 0.79 grams per millilitre
 				footerkCals.text = (totalvolAlcohol * 0.79 * 7).toFixed(0) + 'kCal'; 
+			} 
+			grandTotalDrinks();
+  		 	calcDisplayBloodAlcohol();
+		}
+		function grandTotalDrinks(){
+			var now = parseInt((new Date()).getTime()/1000);
+			var howLongAgo;
+			var idx = howLong.indexOf(Titanium.App.Properties.getString('GrandTotal','1 week'));
+			Ti.API.debug('grandTotalDrinks idx, N' + idx + '  ' + howLongDays[idx]);
+			if (idx === 0){
+				howLongAgo = sessionData[0].StartTime;
+			}else{
+				howLongAgo = now - howLongDays[idx]*3600*24;
 			}
-			 calcDisplayBloodAlcohol();
+			var totalDrinks	=Ti.App.boozerlyzer.data.doseageLog.drinksinTimePeriod(howLongAgo, now);			
+			var lenType = drinkNames.length -1;
+			var len = totalDrinks.length;
+			for (d=-0;d<lenType;d++){				
+				for (i=0;i<len;i++){
+					if (drinkNames[d] === totalDrinks[i].DrugVariety){
+						drinkCountLabels[d].text = (totalDrinks[i].TotalUnits / stdDrinks[0].MillilitresPerUnit).toFixed(1) + ' U ' + drinkNames[d];
+					}
+				}
+			}
 		}
 		
 		function calcDisplayBloodAlcohol(){
@@ -513,6 +568,7 @@
 							PlayStart:winOpened ,
 							PlayEnd: parseInt((new Date()).getTime()/1000),
 							TotalScore:parseFloat(footerUnits.text),
+							GameSteps:0,
 							Speed_GO:0,
 							Speed_NOGO:0,
 							Coord_GO:0,

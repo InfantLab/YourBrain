@@ -33,6 +33,10 @@ var scoresDialog = (function(){
 			width:'90%',
 			zIndex:9
 		});
+		containerView.addEventListener('click', function(){
+			//e.cancel = true;
+			api.close();
+		});		
 		
 		coverView = Ti.UI.createView({
 			top:'5%',
@@ -146,10 +150,12 @@ var scoresDialog = (function(){
 	api.open = function(){	
 		coverView.animate(coverViewOpenAnimation);
 		containerView.animate(containerViewOpenAnimation);
+		containerView.visible = true;
 	};
 	api.close = function(){
 		coverView.animate(coverViewCloseAnimation);
 		containerView.animate(containerViewCloseAnimation);
+		containerView.visible = false;
 		if (callbackOnClose){
 			callbackOnClose(e);
 		}

@@ -142,8 +142,28 @@
 		rows.close();
 		return returnData;
 	};
-
 	
+	/***
+	 * when passed a starttime and an endtime returns the total
+	 * amount of alcohol in ML consumed in that period. 
+	 * Grouped by drink type
+	 */
+	Ti.App.boozerlyzer.data.doseageLog.drinksinTimePeriod= function (minTime, maxTime){
+		Ti.API.debug("drinksinTimePeriod started");
+		var returnData =[];		
+		var drink = ['Beer','Wine','Spirits'];
+		var rows = conn.execute('SELECT DrugVariety, SUM(totalUnits) as SumUnits from DoseageLog where DrugVariety != "NULL" and DoseageChanged > ? and DoseageChanged < ? GROUP BY DrugVariety', minTime, maxTime);
+		while(rows.isValidRow()){
+			returnData.push({
+				DrugVariety:rows.fieldByName('DrugVariety'),
+				TotalUnits:rows.fieldByName('SumUnits')
+			});
+			rows.next();
+		}
+		rows.close();
+		return returnData;
+	}
+
 	/***
 	 * copy data from recordset into our own datastructure
 	 */

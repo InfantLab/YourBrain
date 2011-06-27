@@ -10,14 +10,6 @@
  *  http://www.highbeam.com/doc/1G1-132050585.html
  */
 
-var minHeightM = 1.4;
-var heightStepM = 0.1;
-var minHeightFt = 4.5;
-var heightStepFt = 0.25;
-var minWeightKg = 37.5;
-var weightStepKg = 5;
-var minWeightLb = 85;
-var heightStepLb = 10;
  
 /**
  * Blood Alcohol calculation, returns an array of values for each row of doseageData.
@@ -99,7 +91,7 @@ function BACalculate(timeStamp,doseageData,personalInfo) {
 		Ti.API.debug('BAC endProcessingThis ' + endProcessingThis);
 		Ti.API.debug('BAC units ' + remainingAlcohol);
 		
-		var BAC= CalcBAC(metricInfo.weight,mPercentWater,remainingAlcohol);
+		var BAC= CalcBAC(metricInfo.weight_kg,mPercentWater,remainingAlcohol);
 		Ti.API.debug('BAC out '+ BAC);
 		return BAC;
 	}
@@ -179,50 +171,50 @@ function BALevels(BAC){
 
 function ConvertPersonalInfo(personalInfo, defaultSexFlag){
 	try{ //try to convert the values from the personalInfo table into actual height, weight, age
-		var sex = personalInfo.gender;		
+		//initialise with default values
+		var retObj = {
+				success:false,
+				height_m: 1.64,
+				sex: 0,
+				weight_kg: 66.7,
+				age:30
+		};
+				
+		retObj.sex = personalInfo.gender;		
 		var approxDOB = new Date(('15/' + personalInfo.BirthMonth + '/' + personalInfo.BirthYear));					
 		var now = new Date();
 		var ageinms = now - approxDOB;
-		var age = (ageinms / 1000 ) / 31557600;
-
-		var height_m = 0;
-		if (personalInfo.HeightUnits === 0){
-			Height_m = minHeight + personalInfo.Height * heightStepM;
-		} else {
-			//convert from feet to metres
-			Height_m = 0.3048*(minHeight + personalInfo.Height * heightStepFt);	
+		retObj.age = (ageinms / 1000 ) / 31557600;
+		
+		function isNumber(n) {
+		  return !isNaN(parseFloat(n)) && isFinite(n);
 		}
-		var weightinKG = 0;
-		if (personalInfo.WeightUnits === 0){
-			weightinKG  = minWeight + personalInfo.Weight * weightStepKg;	
-		} else {
-			weightinKG  = 0.4536 * (minWeight + personalInfo.Weight * weightStepKg);				
+		if (isNumber(personalInfo.Weight)){
+			retObj.weight_kg = personalInfo.Weight;	
 		}
-		return ({
-			success:true,
-			height_m: heightinM,
-			sex: sex,
-			weight_kg: weightinKG,
-			age:age
-		});
+		if (isNumber(personalInfo.Height)){
+			retObj.weight_m = personalInfo.Height;	
+		}
+		return retObj;
 	} catch (error) {
 		//if it goes wrong return some defaults (from wikipedia)
 		if (defaultSexFlag === 0) {
 			return ({
 				success:false,
-				height: 1.64,
+				height_m: 1.64,
 				sex: 0,
-				weight: 66.7,
+				weight_kg: 66.7,
 				age:30
 			});
 		}else{
 			return ({
 				success:false,
-				height:1.776,
+				height_m:1.776,
 				sex:1,
-				weight:80,
+				weight_kg:80,
 				age:30
 			});
 		}
 	}
 }
+

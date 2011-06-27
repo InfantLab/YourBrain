@@ -5,6 +5,8 @@
  * keep track of both the the location and identity of objects from 
  * N steps before hand and press the appropriate button if they match. 
  * 
+ * There is some evidence that this task might lead to "Brain Training" effects
+ * but it's far from certain.  http://www.pnas.org/content/108/25/10081.full
  * 
  * Copyright yourbrainondrugs.net 2011
  */
@@ -22,7 +24,7 @@
 	var stimulus, grid;
 	var currentObj = 0, points = 0, coordbonus = 0, speedbonus = 0,  inhibitbonus = 0;
 	var startTime = 0, stepStartTime = 0, count = 0, missCount = 0, falseAlarmCount = 0;
-	var gameStarted = false, gameAllowRestart = true, clicked = false;
+	var gameStarted = false, gameAllowRestart = true, clicked = false,dialogOpen  = false;
 	var iconSize = 90;
 	var imgtop = [2,2,2,96,96,96,190,190,190];
 	var imgleft = [2,96,190,2,96,190,2,96,190];
@@ -135,29 +137,7 @@
 	 	Ti.API.debug('Game Step ' + count);
 	 	clicked = false;
 		if (missCount > 4){
-			//GAME OVER!
-			stimulus.visible = false;	
-			labelGameMessage.visible = true;
-			labelGameMessage.text = 'Final Score: ' + Math.floor(points+inhibitbonus+coordbonus+speedbonus) + '\nGame Over';
-			count = 0;
-			missCount = 0;
-			gameStarted = false;
-			gameEndSaveScores();
-			setTimeout(function()
-			{// do something 
-				labelGameMessage.text = 'Tap to start game';
-				gameStarted = false;
-				gameAllowRestart = true;
-			},4000);
-			scoresDialog.setScores( 'Memory Game', 
-									Math.floor(points+inhibitbonus+coordbonus+speedbonus),
-									speedbonus, 
-									coordbonus,
-									inhibitbonus,
-									5,
-									"",
-									'/icons/Memory.png' )
-			scoresDialog.open();
+			gameOver();
 			return;
 		}
 		updateScore();
@@ -179,7 +159,37 @@
 		stimulus.visible = true;
 
 	}
-	
+	function gameOver(){
+		//GAME OVER!
+		stimulus.visible = false;	
+		// labelGameMessage.visible = true;
+		// labelGameMessage.text = 'Final Score: ' + Math.floor(points+inhibitbonus+coordbonus+speedbonus) + '\nGame Over';
+		count = 0;
+		missCount = 0;
+		gameStarted = false;
+		gameEndSaveScores();
+		dialogOpen = true;
+		scoresDialog.setScores( 'Memory Game', 
+								Math.floor(points+inhibitbonus+coordbonus+speedbonus),
+								speedbonus, 
+								coordbonus,
+								inhibitbonus,
+								5,
+								"",
+								'/icons/Memory.png' )
+		scoresDialog.open();
+	}
+	scoresDialog.addEventListener('close', function(e){
+		setTimeout(function(){
+			dialogOpen = false;
+			labelGameMessage.visible = true;
+			labelGameMessage.text = 'Tap to start game';
+			gameStarted = false;
+			gameAllowRestart = true;
+		}, 1000);
+	});
+
+
 	function calcSpeedBonus(stepStart,clickTime){
 		//TODO - the reaction time bonus
 		//Ti.API.debug('calcSpeedBonus - stepStart' + stepStart);
@@ -388,7 +398,7 @@
 	
 	win.addEventListener('click',function(ev)
 	{
-		if (!gameStarted && gameAllowRestart){
+		if (!gameStarted && gameAllowRestart && !dialogOpen){
 		 	Ti.API.debug('Game Start');
 			newGame();
 		}
@@ -417,11 +427,19 @@
 	setUpOnce();
 	
 	function gameEndSaveScores(){
+		var now = parseInt((new Date()).getTime()/1000);
+
+		// var drinkSteps = drinksByTime([now],
+									  // Ti.App.booozerlyzer.currentDrinks,
+									  // Ti.App.booozerlyzer.personalInfo, 
+									  // millsPerStandardUnits);
+									  
 		var gameSaveData = [{Game: 'DualNBack',
 							GameVersion:1,
 							PlayStart:startTime ,
-							PlayEnd: parseInt((new Date()).getTime()/1000),
+							PlayEnd: now,
 							TotalScore:points,
+							GameSteps:count,
 							Speed_GO:speedbonus,
 							Speed_NOGO:0,
 							Coord_GO:coordbonus,
@@ -432,7 +450,9 @@
 							Choices:'',
 							SessionID:Titanium.App.Properties.getInt('SessionID'),
 							UserID:Titanium.App.Properties.getInt('UserID'),
-							LabPoints:5		
+							LabPoints:5 //,
+							//Alcohol_ml:drinkSteps[0].millsAlcohol,
+							//BloodAlcoholConc:drinkSteps[0].bloodAlcohol		
 						}];
 		Ti.App.boozerlyzer.data.gameScores.Result(gameSaveData);
 	}
