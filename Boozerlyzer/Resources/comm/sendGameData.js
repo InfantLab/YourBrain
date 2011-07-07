@@ -39,22 +39,40 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		
 		//what is the last row id from this dataset?
 		if (!dataToSend || dataToSend.length==0) {
-			alert('sendGameData: no data to send; play some games first!');
+			Ti.API.error('sendGameData: no data to send; play some games first!');
 			return;
 		}
 		
-		var newLastID = dataToSend[dataToSend.length -1].ID;
+		//var newLastID = dataToSend[dataToSend.length -1].ID;
 
         var xhrPost = Ti.Network.createHTTPClient();
         
         //Ti.API.debug('About to send data for ' + dataToSend);
         //Ti.API.debug(dataToSend);
 
+
+		//what do we get back?
+		xhrPost.onload = function() {
+				var rc = Titanium.JSON.parse(this.responseText);
+				if (rc['status'] == 'success') {
+					alert('Game scores saved.');
+					Ti.API.info('Game scores saved.');
+					Titanium.App.Properties.setInt('LastSentID', rc['LastReceivedID']/*newLastID*/);
+				} else {
+					Ti.API.error('Cloud Error: try again (' + this.responseText + ')');
+				}
+			};
+		xhrPost.onerror = function(e) {
+			Ti.API.error('got error ' + e.error);
+		}
+		
+
 		// send the data to the server
 		xhrPost.open('POST', 'http://yourbrainondrugs.net/boozerlyzer/submit_data.php');
-		xhrPost.setRequestHeader("content-type", "application/x-www-form-urlencoded");
+		xhrPost.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		//xhrPost.setRequestHeader('Content-type','application/json');
 		//xhrPost.setRequestHeader('Accept','application/json');
+		alert('about to send data for ' + dataToSend.length + ' items');
 		xhrPost.send(
 		 /*JSON.stringify(*/{
 		   User: Ti.App.boozerlyzer.comm.ybodnet.getUserID(),  // our user ID, username, email etc - unique identifier of the submitter
@@ -63,19 +81,9 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		   ProtocolVersion: Ti.App.boozerlyzer.comm.ybodnet.getProtocolVersion(), // protocol version to use
 		   //data: dataToSend.to_json(),
 		   data: Titanium.JSON.stringify(dataToSend)
-		 }/*)*/
+		 }//)
 		);
-		
-		//what do we get back?
-		xhrPost.onload = function() {
-				var rc = Titanium.JSON.parse(this.responseText);
-				if (rc['status'] == 'success') {
-					alert('Game scores saved.');
-					Titanium.App.Properties.setInt('LastSentID', newLastID);
-				} else {
-					alert('Cloud Error: try again (' + this.responseText + ')');
-				}
-			};
+		alert('sent.');
 		
 	};
 
@@ -87,12 +95,14 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		xhrPost.setRequestHeader('Content-type','application/json');
 		xhrPost.setRequestHeader('Accept','application/json');
 		xhrPost.send(
+	     JSON.stringify(
 		 {
 		   User: Ti.App.boozerlyzer.comm.ybodnet.getUserID(),  // our user ID, username, email etc - unique identifier of the submitter
 		   AuthToken: Ti.App.boozerlyzer.comm.ybodnet.getAuthToken(), // some kind of magic key that the client-server has previously negotiated to determine authenticity
 		   ClientVersion: Ti.App.boozerlyzer.comm.ybodnet.getClientVersion(), // software version of the client
 		   ProtocolVersion: Ti.App.boozerlyzer.comm.ybodnet.getProtocolVersion(), // protocol version to use
 		 }
+		 )
 		);
 		
 		//what do we get back?

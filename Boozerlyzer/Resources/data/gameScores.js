@@ -225,11 +225,12 @@
 			var returnData = [];
 			while(rows.isValidRow()){
 				returnData.push({
-					ID: 			parseInt(rows.fieldByName('ID')),
+					data_type:      'GameScore',
+					GameScoreID: 	parseInt(rows.fieldByName('ID')),
 					Game: 			rows.fieldByName('Game'),
 					GameVersion:	rows.fieldByName('GameVersion'),
-					PlayStart:		parseInt(rows.fieldByName('PlayStart')),
-					PlayEnd:		parseInt(rows.fieldByName('PlayEnd')),
+					PlayStart:		rows.fieldByName('PlayStart'),
+					PlayEnd:		rows.fieldByName('PlayEnd'),
 					TotalScore: 	parseFloat(rows.fieldByName('TotalScore')),
 					Speed_GO:		parseFloat(rows.fieldByName('Speed_GO')),
 					Speed_NOGO:		parseFloat(rows.fieldByName('Speed_NOGO')),
