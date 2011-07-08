@@ -5,7 +5,7 @@ Logfile initialized
 [DEBUG] Waiting for device to be ready ...
 [TRACE] adb devices returned 1 devices/emulators
 [DEBUG] Device connected... (waited 0 seconds)
-[DEBUG] waited 0.012493 seconds on emulator to get ready
+[DEBUG] waited 0.014911 seconds on emulator to get ready
 [DEBUG] net.yourbrainondrugs.ybob installed? False
 [INFO] Copying project resources..
 [INFO] Tiapp.xml unchanged, skipping class generation
@@ -253,6 +253,6 @@ Logfile initialized
 [DEBUG] Waiting for device to be ready ...
 [TRACE] adb devices returned 1 devices/emulators
 [DEBUG] Device connected... (waited 0 seconds)
-[DEBUG] waited 0.013807 seconds on emulator to get ready
+[DEBUG] waited 0.013355 seconds on emulator to get ready
 [INFO] Installing application on emulator
 [INFO] Application installed. Launch from drawer on Home Screen
