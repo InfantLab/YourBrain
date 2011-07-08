@@ -328,7 +328,7 @@
 	function gameEndSaveScores(){
 		var gameSaveData = [{Game: 'StatLearning',
 							GameVersion:1,
-							PlayStart:startTime ,
+							PlayStart:startTime/1000 ,
 							PlayEnd: parseInt((new Date()).getTime()/1000),
 							TotalScore:points,
 							Speed_GO:speedbonus,
