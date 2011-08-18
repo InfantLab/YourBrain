@@ -399,7 +399,7 @@
 							UserID:Titanium.App.Properties.getInt('UserID'),
 							LabPoints:5		
 						}];
-		Ti.App.boozerlyzer.data.gameScores.Result(gameSaveData);
+		Ti.App.boozerlyzer.db.gameScores.Result(gameSaveData);
 	}
 	
 	//

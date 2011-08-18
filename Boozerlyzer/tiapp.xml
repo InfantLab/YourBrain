@@ -9,7 +9,7 @@
     </deployment-targets>
 <id>net.yourbrainondrugs.ybob</id>
 <name>Boozerlyzer</name>
-<version>0.21</version>
+<version>0.22</version>
 <publisher>YourBrainonDrugs.net</publisher>
 <url>http://yourbrainondrugs.net</url>
 <description>An app to track alcohol comsumption and its effects. </description>
@@ -55,5 +55,5 @@
 	</android>
 	<modules>
 	</modules>
-	<property name="ti.android.fastdev" type="bool">false</property>
+	<property name="ti.android.fastdev" type="bool">true</property>
 </ti:app>

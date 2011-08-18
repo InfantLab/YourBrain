@@ -22,8 +22,8 @@
 	var  sizeAxisIcon = 48, reloadData;
 	
 	var SessionID = Titanium.App.Properties.getInt('SessionID');
-	var personalInfo = Ti.App.boozerlyzer.data.personalInfo.getData();
-	var stdDrinks = Ti.App.boozerlyzer.data.alcoholStandardDrinks.get(personalInfo.Country);
+	var personalInfo = Ti.App.boozerlyzer.db.personalInfo.getData();
+	var stdDrinks = Ti.App.boozerlyzer.db.alcoholStandardDrinks.get(personalInfo.Country);
 	var millsPerStandardUnits = stdDrinks[0].MillilitresPerUnit;
 
 	//data variables
@@ -34,17 +34,17 @@
 	function loadData(type){	
 		if (type === "Hourly Graph"){		
 			//All dose data for this session
-			sessionData = Ti.App.boozerlyzer.data.sessions.getSession(SessionID);
-			allDrinks = Ti.App.boozerlyzer.data.doseageLog.getAllSessionData(SessionID);
-			selfAssess = Ti.App.boozerlyzer.data.selfAssessment.getAllSessionData(SessionID);
+			sessionData = Ti.App.boozerlyzer.db.sessions.getSession(SessionID);
+			allDrinks = Ti.App.boozerlyzer.db.doseageLog.getAllSessionData(SessionID);
+			selfAssess = Ti.App.boozerlyzer.db.selfAssessment.getAllSessionData(SessionID);
 			startTime = sessionData[0].StartTime;
 			nTimeSteps = 24;
 		}else if (type === "Weekly Graph"){
 			Ti.API.debug('Charts load week of data')
-			//sessionData = Ti.App.boozerlyzer.data.sessions.getSession(SessionID);
+			//sessionData = Ti.App.boozerlyzer.db.sessions.getSession(SessionID);
 			var aWeekAgo = parseInt((new Date()).getTime()/1000) - 3600 * 24 * 7;
-			allDrinks = Ti.App.boozerlyzer.data.doseageLog.getTimeRangeData(aWeekAgo);
-			selfAssess = Ti.App.boozerlyzer.data.selfAssessment.getTimeRangeData(aWeekAgo);
+			allDrinks = Ti.App.boozerlyzer.db.doseageLog.getTimeRangeData(aWeekAgo);
+			selfAssess = Ti.App.boozerlyzer.db.selfAssessment.getTimeRangeData(aWeekAgo);
 			startTime = aWeekAgo;
 			nTimeSteps = 84;
 		}
@@ -84,6 +84,28 @@
 		redrawGraph();
 	});
 	
+	var labelWeeklyDailyGraph, controlsDrawn = false; 
+	
+	function drawGraphControls(){	
+		if (controlsDrawn) { return;}
+	
+		labelWeeklyDailyGraph = Ti.UI.createLabel({
+			title: 'Weekly Graph',
+			font:{fontSize:12,fontWeight:'bold'},
+			bottom : 90,
+			right: 10,
+			value:true,
+			color:'black'
+		});
+		labelWeeklyDailyGraph.addEventListener('change', function(){
+			changeGraphTimeAxis();
+			redrawGraph();
+		});
+		win.add(labelWeeklyDailyGraph);
+		controlsDrawn = true;
+	}
+	drawGraphControls();
+
 	/**
 	 * change from daily to hourly graph types.
 	 * if a type is passed in use that otherwise
@@ -317,27 +339,6 @@
 	    }
 	}
 	
-	var labelWeeklyDailyGraph, controlsDrawn = false; 
-	
-	function drawGraphControls(){	
-		if (controlsDrawn) { return;}
-	
-		labelWeeklyDailyGraph = Ti.UI.createLabel({
-			title: 'Weekly Graph',
-			font:{fontSize:12,fontWeight:'bold'},
-			bottom : 90,
-			right: 10,
-			value:true,
-			color:'black'
-		});
-		labelWeeklyDailyGraph.addEventListener('change', function(){
-			changeGraphTimeAxis();
-			redrawGraph();
-		});
-		win.add(labelWeeklyDailyGraph);
-		controlsDrawn = true;
-	}
-	drawGraphControls();
 	
 	// Cleanup and return home
 	win.addEventListener('android:back', function(e) {

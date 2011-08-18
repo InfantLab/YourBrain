@@ -35,8 +35,8 @@
 		Ti.include('/ui/picker_drinks.js');
 		Ti.include('/js/bloodalcohol.js');
 		
-		var persInfo = Ti.App.boozerlyzer.data.personalInfo.getData();
-		var stdDrinks = Ti.App.boozerlyzer.data.alcoholStandardDrinks.get(persInfo.Country);
+		var persInfo = Ti.App.boozerlyzer.db.personalInfo.getData();
+		var stdDrinks = Ti.App.boozerlyzer.db.alcoholStandardDrinks.get(persInfo.Country);
 		var millsPerStandardUnits = stdDrinks[0].MillilitresPerUnit;
 		Ti.API.debug('stdDrinks ' + JSON.stringify(stdDrinks));
 		
@@ -46,13 +46,13 @@
 		var SessionID = Titanium.App.Properties.getInt('SessionID');
 		
 		//All dose data for this session
-		var AllDrinks = Ti.App.boozerlyzer.data.doseageLog.getAllSessionData(SessionID);
+		var AllDrinks = Ti.App.boozerlyzer.db.doseageLog.getAllSessionData(SessionID);
 		if (AllDrinks === null || AllDrinks === false){
-			AllDrinks = Ti.App.boozerlyzer.data.doseageLog.newDrink();
-			Ti.App.boozerlyzer.data.sessions.Updated(SessionID);
+			AllDrinks = Ti.App.boozerlyzer.db.doseageLog.newDrink();
+			Ti.App.boozerlyzer.db.sessions.Updated(SessionID);
 		}
 		Titanium.API.debug(JSON.stringify(AllDrinks));
-		var sessionData = Ti.App.boozerlyzer.data.sessions.getSession(SessionID);
+		var sessionData = Ti.App.boozerlyzer.db.sessions.getSession(SessionID);
 //		Titanium.API.debug('sessionData -' + JSON.stringify(sessionData));
 		//find the last row 
 		var lastIndex = AllDrinks.length - 1;
@@ -67,7 +67,7 @@
 		        Ti.API.debug('e.doseSize '+ e.doseSize );
 		        Ti.API.debug('e.strength '+ e.strength );
 		        Ti.API.debug('e.NumDoses' + e.NumDoses);
-		   		newDrinks = Ti.App.boozerlyzer.data.doseageLog.newDrink();
+		   		newDrinks = Ti.App.boozerlyzer.db.doseageLog.newDrink();
 		   		newDrinks[0].DoseDescription = e.doseDescription;
 		   		newDrinks[0].DrugVariety = e.drugVariety;
 		   		newDrinks[0].Volume = e.doseSize;
@@ -83,7 +83,7 @@
 		   		}
 		   		newDrinks[0].Changed = true;
 		   		Ti.API.debug('std units ' + newDrinks[0].StandardUnits );
-		   		Ti.App.boozerlyzer.data.doseageLog.setData(newDrinks);
+		   		Ti.App.boozerlyzer.db.doseageLog.setData(newDrinks);
 				tv.appendRow(formatTableRow(newDrinks[0]));
 				AllDrinks.push(newDrinks[0]);	
 				tv.scrollToIndex(AllDrinks.length -1);
@@ -115,7 +115,7 @@
 		
 		//TODO - find a nice way to show this data
 		var grandTotalDrinksButton = Ti.UI.createButton({
-			title:'Total Drinks in last ' + Ti.App.Properties.setString('GrandTotal','4 weeks'),
+			title:'Total Drinks in last ' + Ti.App.Properties.getString('GrandTotal','4 weeks'),
 			width:136,
 			height:36,
 			top:3,
@@ -390,7 +390,7 @@
 			}else{
 				howLongAgo = now - howLongDays[idx]*3600*24;
 			}
-			var totalDrinks	=Ti.App.boozerlyzer.data.doseageLog.drinksinTimePeriod(howLongAgo, now);			
+			var totalDrinks	=Ti.App.boozerlyzer.db.doseageLog.drinksinTimePeriod(howLongAgo, now);			
 			var lenType = drinkNames.length -1;
 			var len = totalDrinks.length;
 			for (d=-0;d<lenType;d++){				
@@ -581,7 +581,7 @@
 							UserID:Titanium.App.Properties.getInt('UserID'),
 							LabPoints:2		
 						}];
-			Ti.App.boozerlyzer.data.gameScores.Result(gameSaveData);
+			Ti.App.boozerlyzer.db.gameScores.Result(gameSaveData);
 		}
 
 				

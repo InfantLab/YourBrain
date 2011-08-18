@@ -231,13 +231,13 @@
 		Ti.API.debug('MgameType' + MgameType);
 		switch (MgameType) {	
 			case 'Pissonyms':
-				Ti.App.boozerlyzer.data.pissonyms.Chosen(choice);
+				Ti.App.boozerlyzer.db.pissonyms.Chosen(choice);
 				break;
 			case 'Emotions':
-				Ti.App.boozerlyzer.data.emotionWords.Chosen(choice);
+				Ti.App.boozerlyzer.db.emotionWords.Chosen(choice);
 				break;
 			case 'WeFeelFine':
-				Ti.App.boozerlyzer.data.weFeelFine.Chosen(choice);
+				Ti.App.boozerlyzer.db.weFeelFine.Chosen(choice);
 				break;
 			default:
 			//do nothing	
@@ -274,7 +274,7 @@
 							UserID:Titanium.App.Properties.getInt('UserID'),
 							LabPoints:2		
 						}];
-		Ti.App.boozerlyzer.data.gameScores.Result(gameSaveData);
+		Ti.App.boozerlyzer.db.gameScores.Result(gameSaveData);
 	}
 	/**
 	 * Here we display list of chosen words and 
@@ -347,17 +347,17 @@
 		
 		wordChoices = [];
 		if (MgameType === 'Emotions') {
-			var emotionwords = Ti.App.boozerlyzer.data.emotionWords.selectNRandomRows(6);
+			var emotionwords = Ti.App.boozerlyzer.db.emotionWords.selectNRandomRows(6);
 			for (var i = 0; i < 6; i++) {
 				wordChoices[i] = emotionwords[i].EmotionalWord;
 			}
 		} else if (MgameType === 'WeFeelFine') {
-			var wefeelfinewords = Ti.App.boozerlyzer.data.weFeelFine.selectNRandomRows(6);
+			var wefeelfinewords = Ti.App.boozerlyzer.db.weFeelFine.selectNRandomRows(6);
 			for (var i = 0; i < 6; i++) {
 				wordChoices[i] = wefeelfinewords[i].Feeling;
 			}
 		} else if (MgameType === 'Pissonyms') {
-			var pissonymList = Ti.App.boozerlyzer.data.pissonyms.selectNRandomRows(6);
+			var pissonymList = Ti.App.boozerlyzer.db.pissonyms.selectNRandomRows(6);
 			for (var i = 0; i < 6; i++) {
 				wordChoices[i] = pissonymList[i].Pissonym;
 			}
@@ -389,7 +389,7 @@
 		var arousal = 0;
 		var valence = 0;
 		for (var i =0; i< answers.length; i++){
-			var info = Ti.App.boozerlyzer.data.emotionWords.getWordInfo(answers[i]);
+			var info = Ti.App.boozerlyzer.db.emotionWords.getWordInfo(answers[i]);
 			Ti.API.debug('emotion word info ' + JSON.stringify(info));
 			if (info!==null){
 				arousal += info[0].ArousalMean;
@@ -419,7 +419,7 @@
 		var coordscore = 0;
 		var speedscore = 0;
 		for (var i =0; i< answers.length; i++){
-			var info = Ti.App.boozerlyzer.data.pissonyms.getWordInfo(answers[i]);
+			var info = Ti.App.boozerlyzer.db.pissonyms.getWordInfo(answers[i]);
 			Ti.API.debug('pissonym  info ' + JSON.stringify(info));
 			if (info!==null){
 				drunkscore += info[0].DrunkFactor;

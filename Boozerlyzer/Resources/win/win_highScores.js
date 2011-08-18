@@ -155,7 +155,7 @@
 	function populateHighScores(){
 		tv.data = [];
 		headerLabel.text = gameNames[selectedGameIdx];
-		var thisGameHighScores = Ti.App.boozerlyzer.data.gameScores.HighScores(gameTypes[selectedGameIdx],10);
+		var thisGameHighScores = Ti.App.boozerlyzer.db.gameScores.HighScores(gameTypes[selectedGameIdx],10);
 		
 		var len = thisGameHighScores.length;
 		

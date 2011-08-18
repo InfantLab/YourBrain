@@ -145,7 +145,7 @@
 		function swapMateMode(){
 			if (Titanium.App.Properties.getBool('MateMode',false)){
 				//switch back into regular mode
-				session = Ti.App.boozerlyzer.data.sessions.getLatestData(0);
+				Ti.App.boozerlyzer.data.session = Ti.App.boozerlyzer.db.sessions.getLatestData(0);
 				//retrieve current session
 				Titanium.App.Properties.setBool('MateMode', false);			//set to false
 				Titanium.App.Properties.setInt('SessionID', session[0].ID);
@@ -159,7 +159,7 @@
 				homeWin.backgroundImage = '/images/smallcornercup.png';
 			}else{
 				//switch into mate mode.. create a new session.
-				session = Ti.App.boozerlyzer.data.sessions.createNewSession(true);
+				Ti.App.boozerlyzer.data.session = Ti.App.boozerlyzer.db.sessions.createNewSession(true);
 				//set properties
 				Titanium.App.Properties.setBool('MateMode', true);
 				Titanium.App.Properties.setInt('SessionID', session[0].ID);
@@ -398,27 +398,31 @@
 		newSessionDialog.addEventListener('click',function(e)
 		{
 			if (e.index === 0) {
-				session = Ti.App.boozerlyzer.data.sessions.createNewSession(false);
+				Ti.App.boozerlyzer.data.session = Ti.App.boozerlyzer.db.sessions.createNewSession(false);
 				rewriteUpdateLabel();
-				labelCurrentSession.text = 'Session Started\n' + Ti.App.boozerlyzer.dateTimeHelpers.formatDayPlusTime(session[0].StartTime,true);
+				labelCurrentSession.text = 'Session Started\n' + Ti.App.boozerlyzer.dateTimeHelpers.formatDayPlusTime(Ti.App.boozerlyzer.data.session[0].StartTime,true);
 			}
 		});
 		
 		
-		var session = Ti.App.boozerlyzer.data.sessions.getLatestData(0);
-		if (session === null || session === false){
-			session = Ti.App.boozerlyzer.data.sessions.createNewSession(false);
+		if (Ti.App.boozerlyzer.data.session === undefined){
+			Ti.App.boozerlyzer.data.session = Ti.App.boozerlyzer.db.sessions.getLatestData(0);
+			if (Ti.App.boozerlyzer.data.session === null 
+			|| Ti.App.boozerlyzer.data.session === false){
+				Ti.App.boozerlyzer.data.session = Ti.App.boozerlyzer.db.sessions.createNewSession(false);
+			}
+				
 		}
-		var timeSinceUpdate = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(session[0].LastUpdate);
+		var timeSinceUpdate = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(Ti.App.boozerlyzer.data.session[0].LastUpdate);
 		function rewriteUpdateLabel(){
-			timeSinceUpdate = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(session[0].LastUpdate);
+			timeSinceUpdate = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(Ti.App.boozerlyzer.data.session[0].LastUpdate);
 			labelLastUpdate.text = 'Last activity\n' + timeSinceUpdate;
 		
 		}
 		Ti.API.debug('homeWin 3');
 
 		function rewriteLabPoints(){
-			var labPoints = Ti.App.boozerlyzer.data.gameScores.TotalPoints(); 
+			var labPoints = Ti.App.boozerlyzer.db.gameScores.TotalPoints(); 
 			// if (isNaN(labPoints[0].Total)){
 				// labelLabPoints.text = 'Err';
 			// }
@@ -433,24 +437,23 @@
 		rewriteLabPoints();
 		Ti.API.debug('homeWin 5');
 
-		Titanium.API.debug("session info: " + JSON.stringify(session));
-		Titanium.API.debug("session lastupdate: " + session[0].LastUpdate);
+		Titanium.API.debug("session info: " + JSON.stringify(Ti.App.boozerlyzer.data.session));
 		var now = parseInt((new Date()).getTime()/1000);
-		if (now - session[0].LastUpdate  <43200){ //12hours
-		}else if (now - session[0].LastUpdate < 129600){ //36 hours
+		if (now - Ti.App.boozerlyzer.data.session[0].LastUpdate  <43200){ //12hours
+		}else if (now - Ti.App.boozerlyzer.data.session[0].LastUpdate < 129600){ //36 hours
 			newSessionDialog.title = 'Last update ' + timeSinceUpdate + '\nStart a new session?';
 			newSessionDialog.show();
 		}else{
 			//>36 hours since last update, don't ask just start new
-			session = Ti.App.boozerlyzer.data.sessions.createNewSession(false);
+			Ti.App.boozerlyzer.data.session = Ti.App.boozerlyzer.db.sessions.createNewSession(false);
 		} 
 		Ti.API.debug('homeWin 6');
 		rewriteUpdateLabel();
-		labelCurrentSession.text = 'Session Started\n' + Ti.App.boozerlyzer.dateTimeHelpers.formatDayPlusTime(session[0].StartTime,true);
-		Ti.API.debug('Session ID - ' + session[0].ID);
-		Titanium.App.Properties.setInt('SessionID', session[0].ID);
-		Titanium.App.Properties.setInt('SessionStart',session[0].StartTime/1000);
-		Titanium.App.Properties.setInt('SessionChanged',session[0].LastUpdate/1000);
+		labelCurrentSession.text = 'Session Started\n' + Ti.App.boozerlyzer.dateTimeHelpers.formatDayPlusTime(Ti.App.boozerlyzer.data.session[0].StartTime,true);
+		Ti.API.debug('Session ID - ' + Ti.App.boozerlyzer.data.session[0].ID);
+		Titanium.App.Properties.setInt('SessionID', Ti.App.boozerlyzer.data.session[0].ID);
+		Titanium.App.Properties.setInt('SessionStart',Ti.App.boozerlyzer.data.session[0].StartTime/1000);
+		Titanium.App.Properties.setInt('SessionChanged',Ti.App.boozerlyzer.data.session[0].LastUpdate/1000);
 		
 		loadedonce = true;
 		Ti.API.debug('homeWin 7');
@@ -467,20 +470,20 @@
 		});
 		sync.addEventListener('click',function()
 		{
-						Ti.API.debug("Get total drinks");
-			var now = parseInt((new Date()).getTime()/1000);
-			var monthago = now - 31*3600*24;
-			var totalDrinks	=Ti.App.boozerlyzer.data.doseageLog.drinksinTimePeriod(monthago, now);
-			
-			var len = totalDrinks.length;
-			var drinksList = '';
-			for (i=0;i<len;i++){
-				//drinksList += totalDrinks[i].DrugVariety + ': ' + (totalDrinks[i].TotalUnits / stdDrinks[0].MillilitresPerUnit).toFixed(1) + ' U\n';
-				drinksList += totalDrinks[i].DrugVariety + ': ' + (totalDrinks[i].TotalUnits / 10).toFixed(1) + ' U\n';
-			}
-			Ti.API.debug(drinksList);
-			alert("Total alcohol consumed this month\n\n" + drinksList);
-//			Ti.App.boozerlyzer.comm.sendGameData.sync();
+			// Ti.API.debug("Get total drinks");
+			// var now = parseInt((new Date()).getTime()/1000);
+			// var monthago = now - 31*3600*24;
+			// var totalDrinks	=Ti.App.boozerlyzer.db.doseageLog.drinksinTimePeriod(monthago, now);
+// 			
+			// var len = totalDrinks.length;
+			// var drinksList = '';
+			// for (i=0;i<len;i++){
+				// //drinksList += totalDrinks[i].DrugVariety + ': ' + (totalDrinks[i].TotalUnits / stdDrinks[0].MillilitresPerUnit).toFixed(1) + ' U\n';
+				// drinksList += totalDrinks[i].DrugVariety + ': ' + (totalDrinks[i].TotalUnits / 10).toFixed(1) + ' U\n';
+			// }
+			// Ti.API.debug(drinksList);
+			// alert("Total alcohol consumed this month\n\n" + drinksList);
+			Ti.App.boozerlyzer.comm.sendGameData.sync();
 		});	
 		homeWin.add(sync);
 

@@ -35,10 +35,10 @@
 		Ti.API.debug('win_emotion retrieved SessionID property - ' + SessionID);
 		
 		//most recent emotion values for this session
-		var currentEmotion = Ti.App.boozerlyzer.data.selfAssessment.getLatestData(SessionID);
+		var currentEmotion = Ti.App.boozerlyzer.db.selfAssessment.getLatestData(SessionID);
 		if (currentEmotion === null || currentEmotion === false){
 			Titanium.API.trace('Boozerlyzer - currentEmotion could not be retrieved');
-			currentEmotion = Ti.App.boozerlyzer.data.selfAssessment.newEmotion(false);
+			currentEmotion = Ti.App.boozerlyzer.db.selfAssessment.newEmotion(false);
 		}
 		Titanium.API.debug(JSON.stringify(currentEmotion));
 		currentEmotion[0].SelfAssessmentStart = winOpened;
@@ -260,8 +260,8 @@
 			currentEmotion[0].Drunkeness = drunkeness.value;
 			currentEmotion[0].Energy = energy.value;
 			currentEmotion[0].SessionID = SessionID;
-			Ti.App.boozerlyzer.data.selfAssessment.setData(currentEmotion);
-			Ti.App.boozerlyzer.data.sessions.Updated(SessionID);
+			Ti.App.boozerlyzer.db.selfAssessment.setData(currentEmotion);
+			Ti.App.boozerlyzer.db.sessions.Updated(SessionID);
 			updated = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(currentEmotion[0].SelfAssessmentStart);
 			lastchangedLabel.text = 'Last Updated  ' + updated;
 			currentEmotion[0].DrunkBlur = 0;
@@ -307,7 +307,7 @@
 		newdrinks.addEventListener('click',function(){
 			var newdosewin = Titanium.UI.createWindow({ modal:true,
 				modal:true,
-				url:'/win/win_dosage.js',
+				url:'/win/win_drinks.js',
 				title:'What have you had to drink?',
 				backgroundImage:'/images/smallcornercup.png'
 			});
@@ -356,8 +356,8 @@
 		//
 		// Cleanup and return home
 		win.addEventListener('android:back', function(e) {
-			Ti.App.boozerlyzer.data.selfAssessment.setData(currentEmotion);
-			Ti.App.boozerlyzer.data.sessions.Updated(SessionID);
+			Ti.App.boozerlyzer.db.selfAssessment.setData(currentEmotion);
+			Ti.App.boozerlyzer.db.sessions.Updated(SessionID);
 			if (Ti.App.boozerlyzer.winHome === undefined 
 			 || Ti.App.boozerlyzer.winHome === null) {
 				Ti.App.boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
@@ -391,7 +391,7 @@
 							UserID:Titanium.App.Properties.getInt('UserID'),
 							LabPoints:2		
 						}];
-			Ti.App.boozerlyzer.data.gameScores.Result(gameSaveData);
+			Ti.App.boozerlyzer.db.gameScores.Result(gameSaveData);
 		}
 
 				

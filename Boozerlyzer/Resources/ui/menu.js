@@ -34,7 +34,7 @@ activity.onCreateOptionsMenu = function( event ) {
 		  });
 		//legal.
 		menuLegal.addEventListener( 'click', function( event ) {
-			var disclaimers = ["It's just a game.", "Your mileage may vary","Warning: Not dishwasher safe","Warning: May cause drowsiness or irritablity.","This statement is false","May contain nuts.", "Not a floatation device","All characters appearing in this work are fictitious. Any resemblance to real persons, living or dead, is purely coincidental."];
+			var disclaimers = ["Warning: It's just a game.", "Warning: Your mileage may vary","Warning: Not dishwasher safe","Warning: May cause drowsiness or irritablity.","This statement is false","Warning: May contain nuts.", "Warning: Not a floatation device","All characters appearing in this work are fictitious. Any resemblance to real persons, living or dead, is purely coincidental."];
 		    var alertDialog = Titanium.UI.createAlertDialog({
 		      title: Titanium.App.name,
 		      message:disclaimers[Math.floor(8*Math.random())] ,

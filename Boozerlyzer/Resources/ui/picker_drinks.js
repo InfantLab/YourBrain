@@ -175,7 +175,7 @@ var optionPickerDialog = (function(){
 
 		Ti.API.debug('picker_drinks set data 3');		
 		//Retrieve the strengths for this DrugType
-		strengths = Ti.App.boozerlyzer.data.drugDoses.getStrengths(DrinkType);
+		strengths = Ti.App.boozerlyzer.db.drugDoses.getStrengths(DrinkType);
 		//Fill the appropriate column	
 		var columnStrength = Ti.UI.createPickerColumn();
 		for (i=0;i<strengths.length;i++){
@@ -188,7 +188,7 @@ var optionPickerDialog = (function(){
 		}
 
 		//Retrieve the strengths for this DrugType
-		sizes = Ti.App.boozerlyzer.data.drugDoses.getSizes(DrinkType);
+		sizes = Ti.App.boozerlyzer.db.drugDoses.getSizes(DrinkType);
 		//Fill the appropriate column	
 		var columnSize = Ti.UI.createPickerColumn();
 		// Loop with each data instance to create picker rows

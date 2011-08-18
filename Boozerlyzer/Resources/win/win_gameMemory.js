@@ -229,6 +229,8 @@
 			bottom:'60%',
 			left:'1%',
 			backgroundColor:'#888',
+			borderWidth:3,
+			borderRadius:4,
 			idx:-10
 		});
 		leftNOButton.addEventListener('click',function(events)
@@ -243,6 +245,8 @@
 			bottom:'23%',
 			left:'1%',
 			backgroundColor:'#888',
+			borderWidth:3,
+			borderRadius:4,
 			idx:-1
 		});
 		leftYESButton.addEventListener('click',function(events)
@@ -258,6 +262,8 @@
 			bottom:'60%',
 			right:'1%',
 			backgroundColor:'#888',
+			borderWidth:3,
+			borderRadius:4,
 			idx:10
 		});
 		rightNOButton.addEventListener('click',function(events)
@@ -273,6 +279,8 @@
 			bottom:'23%',
 			right:'1%',
 			backgroundColor:'#888',
+			borderWidth:3,
+			borderRadius:4,
 			idx:1
 		});
 		rightYESButton.addEventListener('click',function(events)
@@ -454,7 +462,7 @@
 							//Alcohol_ml:drinkSteps[0].millsAlcohol,
 							//BloodAlcoholConc:drinkSteps[0].bloodAlcohol		
 						}];
-		Ti.App.boozerlyzer.data.gameScores.Result(gameSaveData);
+		Ti.App.boozerlyzer.db.gameScores.Result(gameSaveData);
 	}
 	
 	//
