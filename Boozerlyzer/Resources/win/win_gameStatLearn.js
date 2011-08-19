@@ -381,6 +381,11 @@
 	
 	function gameEndSaveScores(){
 		Ti.API.debug('save game scores USERID' + Titanium.App.Properties.getInt('UserID'));
+		//have to be careful of dividing by zero as NaN upset the database 
+		var AvSpeed_GO = (count_GO-miss_GO===0 ? null :speed_GO/(count_GO-miss_GO) )
+		var AvSpeed_NOGO = (count_NOGO-miss_NOGO===0 ? null :speed_NOGO/(count_NOGO-miss_NOGO) )
+		var AvCoord_GO = (count_GO-miss_GO===0 ? null :coord_GO/(count_GO-miss_GO) )
+		var AvCoord_NOGO = (count_NOGO-miss_NOGO===0 ? null :coord_NOGO/(count_NOGO-miss_NOGO) )
 		var gameSaveData = [{Game: 'StatLearning',
 							GameVersion:1,
 							PlayStart:startTime ,

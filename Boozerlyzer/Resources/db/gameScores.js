@@ -22,9 +22,7 @@
 	Ti.App.boozerlyzer.db.gameScores.GamePlaySummary = function (gameNames, userId, greaterthanID){
 		//This gets a bit of a mess as we build the query!
 		var querystr = 'SELECT * FROM gameScores WHERE ';
-		var gamestr = '';
-		var userstr = '';
-		var idstr = '';
+		var gamestr = '', userstr = '', idstr = '', rowcount=0;
 		if (gameNames !== null){
 			gamestr = ' Game in (' + ArrayToQuotedString(gameNames) +')';
 		}
@@ -49,6 +47,34 @@
 		var retdata = fillDataObject(rows);
 		rows.close();
 		return retdata;
+	};
+	
+	/***
+	 * Returns a set of summary statistcs for the games.
+	 * but wrapped in the format that the webserver likes to see.
+	 * see
+	 * http://yourbrainondrugs.net/boozerlyzer/submit.php
+	 */
+	Ti.App.boozerlyzer.db.gameScores.GamePlaySummaryforWebserver = function (gameNames, userId, greaterthanID){
+	 	var retdata = Ti.App.boozerlyzer.db.gameScores.GamePlaySummary(gameNames, userId, greaterthanID);
+		Ti.API.debug('webformatted string - ' + retdata);
+		return Ti.App.boozerlyzer.db.gameScores.LabelRows(retdata);
+	}
+	/**
+	 * Create a new data object labelling each row of data with an id
+	 * This is the format the webserver requires the data to be passed in. 
+	*/
+	Ti.App.boozerlyzer.db.gameScores.LabelRows = function (scoreData){
+		Ti.API.debug('db.gameScores.LabelRows num rows' + scoreData.length );
+		var jsonout = "{",rowcount = 0, retdata = [];
+		for(row in scoreData){
+			//r = (rowcount++).toString();
+			//this line is a bit of mess to get right format
+			var thisrow =  '"'+ (rowcount++) + '":{ "data_type":"GameScore","data":' + Titanium.JSON.stringify(scoreData[row]) +'}'; 
+			Ti.API.debug('scoreData[row] ' + thisrow);
+			jsonout += thisrow + ',';
+		}
+		return Titanium.JSON.parse(jsonout.substring(0, jsonout.length-1) + '}');
 	};
 	
 	Ti.App.boozerlyzer.db.gameScores.PlayCount = function (gameNames){
@@ -171,16 +197,16 @@
 			var insertstr = 'INSERT INTO GameScores ';
 			insertstr += '(SessionID,Game,GameVersion,PlayStart,PlayEnd,TotalScore,GameSteps,';
 			insertstr += 'Speed_GO,Speed_NOGO,Coord_GO,Coord_NOGO,InhibitionScore,MemoryScore, '
-			insertstr += 'Level, Feedback,Choices,LabPoints,UserID,Alcohol_ml,BloodAlcoholConc)  VALUES(?,?,?,?,?,?, ?,?,?,?,?,?, ?,?,?,?,?,?, ?,?)';
+			insertstr += 'Level, Feedback,Choices,LabPoints,UserID,Alcohol_ml,BloodAlcoholConc)  VALUES(?,?,?,?,?,?,?, ?,?,?,?,?,?, ?,?,?,?,?,?,?)';
 			conn.execute(insertstr,sessionID,
 								   scoreData[i].Game, 
 								   scoreData[i].GameVersion, 
 								   scoreData[i].PlayStart,
 								   scoreData[i].PlayEnd,
 								   scoreData[i].TotalScore, 
-
 								   scoreData[i].GameSteps, 
-								   scoreData[i].Speed_Go, 
+								   
+								   scoreData[i].Speed_GO, 
 								   scoreData[i].Speed_Nogo,
 								   scoreData[i].Coord_GO,
 								   scoreData[i].Coord_NOGO, 
@@ -228,28 +254,7 @@
 		if ((rows !== null) && (rows.isValidRow())) {
 			var returnData = [];
 			while(rows.isValidRow()){
-				// returnData.push({
-					// ID: 			parseInt(rows.fieldByName('ID')),
-					// Game: 			rows.fieldByName('Game'),
-					// GameVersion:	rows.fieldByName('GameVersion'),
-					// PlayStart:		parseInt(rows.fieldByName('PlayStart')),
-					// PlayEnd:		parseInt(rows.fieldByName('PlayEnd')),
-					// TotalScore: 	parseFloat(rows.fieldByName('TotalScore')),
-					// Speed_GO:		parseFloat(rows.fieldByName('Speed_GO')),
-					// Speed_NOGO:		parseFloat(rows.fieldByName('Speed_NOGO')),
-					// Coord_GO:		parseFloat(rows.fieldByName('Coord_GO')),
-					// Coord_NOGO: 	parseFloat(rows.fieldByName('Coord_NOGO')),
-					// InhibitionScore:parseFloat(rows.fieldByName('InhibitionScore')),
-					// Level: 			parseInt(rows.fieldByName('Level')),
-					// Feedback:		rows.fieldByName('Feedback'),
-					// Choices:		rows.fieldByName('Choices'),
-					// MemoryScore:	parseFloat(rows.fieldByName('MemoryScore')),
-					// SessionID:		parseInt(rows.fieldByName('SessionID')),
-					// UserID:			parseInt(rows.fieldByName('UserID')),
-					// LabPoints:		parseFloat(rows.fieldByName('LabPoints')),
-				// });
-				//row.fieldByNAme returns undefined for null values so reconvert them to avoid problems passing data around
-				returnData.push({
+			returnData.push({
 					ID: 			parseInt(rows.fieldByName('ID')),
 					Game: 			(rows.fieldByName('Game')==='undefined'?null:rows.fieldByName('Game')),
 					GameVersion:	(rows.fieldByName('GameVersion')==='undefined'?null:rows.fieldByName('GameVersion')),

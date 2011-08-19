@@ -6,11 +6,11 @@
 	<application android:debuggable="false" android:icon="@drawable/appicon" android:label="Boozerlyzer" android:name="BoozerlyzerApplication">
 
 		<activity android:configChanges="keyboardHidden" android:label="Boozerlyzer" android:name=".BoozerlyzerActivity" android:screenOrientation="landscape" android:theme="@style/Theme.Titanium">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN"/>
-            <category android:name="android.intent.category.LAUNCHER"/>
-        </intent-filter>
-        </activity><activity android:configChanges="keyboardHidden" android:name="org.appcelerator.titanium.TiActivity" android:screenOrientation="landscape"/><activity android:configChanges="keyboardHidden" android:name="org.appcelerator.titanium.TiModalActivity" android:screenOrientation="landscape" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"/><activity android:configChanges="keyboardHidden" android:name="ti.modules.titanium.ui.TiTabActivity" android:screenOrientation="landscape"/>
+                    <intent-filter>
+                        <action android:name="android.intent.action.MAIN"/>
+                        <category android:name="android.intent.category.LAUNCHER"/>
+                    </intent-filter>
+                </activity><activity android:configChanges="keyboardHidden" android:name="org.appcelerator.titanium.TiActivity" android:screenOrientation="landscape"/><activity android:configChanges="keyboardHidden" android:name="org.appcelerator.titanium.TiModalActivity" android:screenOrientation="landscape" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"/><activity android:configChanges="keyboardHidden" android:name="ti.modules.titanium.ui.TiTabActivity" android:screenOrientation="landscape"/>
 
 		
 

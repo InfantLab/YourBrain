@@ -500,6 +500,7 @@
 				backgroundImage:'/images/smallcornercup.png',
 				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 			});
+			gameEndSaveScores();
 			win.close();
 			newmoodwin.open();
 		});
@@ -519,6 +520,7 @@
 				backgroundImage:'/images/smallcornercup.png',
 				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 			});
+			gameEndSaveScores();
 			win.close();
 			newtripwin.open();
 		});
@@ -538,6 +540,7 @@
 				backgroundImage:'/images/smallcornercup.png',
 				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 			});
+			gameEndSaveScores();
 			win.close();
 			winplay.open();
 		});
@@ -563,6 +566,7 @@
 		// record the total units at the moemnt
 		// and give user 2 lab points for using this screen
 		function gameEndSaveScores(){
+			Ti.API.debug('Drinks gameEndSaveScores');
 		var gameSaveData = [{Game: 'DoseageLog',
 							GameVersion:1,
 							PlayStart:winOpened ,

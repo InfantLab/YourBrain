@@ -312,6 +312,9 @@
 				backgroundImage:'/images/smallcornercup.png'
 			});
 			newdosewin.open();
+			newdosewin.home = winHome;
+			gameEndSaveScores();
+			win.close();
 		});
 		win.add(newdrinks);
 		
@@ -330,6 +333,9 @@
 				backgroundImage:'/images/smallcornercup.png'
 			});
 			newtripwin.open();
+			newtripwin.home = winHome;
+			gameEndSaveScores();
+			win.close();
 		});
 		win.add(newtripreport);
 		
@@ -349,6 +355,7 @@
 			});
 			winplay.open();
 			winplay.home = winHome;
+			gameEndSaveScores();
 			win.close();
 		});
 		win.add(newgame);
@@ -367,6 +374,7 @@
 					orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 				})
 			}
+			gameEndSaveScores();
 			win.close();
 			Ti.App.boozerlyzer.winHome.open();
 	});

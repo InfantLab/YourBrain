@@ -33,8 +33,9 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		//TODO retrieve this from server.
 		var lastSentID = Titanium.App.Properties.getInt('LastSentID', 0);
 		
+		Ti.API.debug('sendGameData - lastSentID ' + lastSentID);
 		// build an object containing the data that we should send
-		var dataToSend = Ti.App.boozerlyzer.db.gameScores.GamePlaySummary(null,null,lastSentID);
+		var dataToSend = Ti.App.boozerlyzer.db.gameScores.GamePlaySummaryforWebserver(null,null,lastSentID);
 		
 		
 		//what is the last row id from this dataset?
