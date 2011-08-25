@@ -33,8 +33,9 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		//TODO retrieve this from server.
 		var lastSentID = Titanium.App.Properties.getInt('LastSentID', 0);
 		
+		Ti.API.debug('sendGameData - lastSentID ' + lastSentID);
 		// build an object containing the data that we should send
-		var dataToSend = Ti.App.boozerlyzer.data.gameScores.GamePlaySummary(null,null,lastSentID);
+		var dataToSend = Ti.App.boozerlyzer.db.gameScores.GamePlaySummaryforWebserver(null,null,lastSentID);
 		
 		
 		//what is the last row id from this dataset?
@@ -72,7 +73,7 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		xhrPost.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		//xhrPost.setRequestHeader('Content-type','application/json');
 		//xhrPost.setRequestHeader('Accept','application/json');
-		alert('about to send data for ' + dataToSend.length + ' items');
+		Ti.API.debug('about to send data for ' + dataToSend.length + ' items');
 		xhrPost.send(
 		 /*JSON.stringify(*/{
 		   User: Ti.App.boozerlyzer.comm.ybodnet.getUserID(),  // our user ID, username, email etc - unique identifier of the submitter
@@ -83,7 +84,7 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		   data: Titanium.JSON.stringify(dataToSend)
 		 }//)
 		);
-		alert('sent.');
+		Ti.API.debug( dataToSend.length + ' items sent.');
 		
 	};
 

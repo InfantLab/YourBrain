@@ -12,18 +12,26 @@
 	var win = Titanium.UI.currentWindow;
 	var initialised = false;
 	//layout variables
-	var topHW = 100;
+	var topHW = 140, topNickname = 50, topSex = 10,topCountry = 10;
+	var leftH = 80, leftW = 240, leftNickname = 40, leftSex = 215, leftCountry = 320;
+	var bottomDOB =4, leftDOB =80; 
+	//include the menu choices	
+	Ti.include('/ui/menu.js');
+	var menu = menus;
+	//need to give it specific help for this screen
+	menu.setHelpMessage("Please enter your personal information.\nClick on the Birth Date button to enter birth month and year. \nTo change from metric to imperial click on height (m) or weight (kg) units.");
+
 	
 	Ti.include('/ui/picker_monthyear.js');
 
-	var Countries = Ti.App.boozerlyzer.data.alcoholStandardDrinks.get();
+	var Countries = Ti.App.boozerlyzer.db.alcoholStandardDrinks.get();
 	Titanium.API.debug('win_personal - Countries' + Countries.length);
 	
-	var persInfo = Ti.App.boozerlyzer.data.personalInfo.getData();
+	var persInfo = Ti.App.boozerlyzer.db.personalInfo.getData();
 	Ti.API.debug('win_personal - got persInfo');		
 	if (!persInfo){
 		Titanium.API.debug('win_personal settingdata');
-		persInfo = Ti.App.boozerlyzer.data.personalInfo.setDefaults();
+		persInfo = Ti.App.boozerlyzer.db.personalInfo.setDefaults();
 	}
 	
 	var label = Titanium.UI.createLabel({
@@ -36,26 +44,25 @@
 	
 	var birthDate = Ti.UI.createLabel({
 		text:'Birth Date..',
-		bottom:5,
-		left:80,
+		bottom:bottomDOB,
+		left:leftDOB,
 		width:120,
 		height:36,
 		textAlign:'center',
 		color:'white',
 		backgroundColor:'black',
-		borderColor:'grey',
+		borderColor:'#336699',
 		borderRadius:4
 	});
 	win.add(birthDate);
 	
 	function updateDateOfBirth(){
 		if (persInfo.BirthMonth > 0 && persInfo.BirthYear > 0){
-			birthDate.text = Ti.App.boozerlyzer.data.personalInfo.monthname[persInfo.BirthMonth -1] + '-' + persInfo.BirthYear;
+			birthDate.text = Ti.App.boozerlyzer.db.personalInfo.monthname[persInfo.BirthMonth -1] + '-' + persInfo.BirthYear;
 		}
 	}
 	
 	birthDate.addEventListener('click', function(){
-		Ti.API.debug('Change birthday goes here..');
 		var monthYear = [persInfo.BirthMonth,persInfo.BirthYear];
 		monthYearPickerDialog.setBirthMonthYear(1920,1999,monthYear);
 		monthYearPickerDialog.open();
@@ -81,8 +88,8 @@
 		hintText:'nickname',
 		textAlign:'left',
 		height:52,
-		top:10,
-		left:150,
+		top:topNickname,
+		left:leftNickname,
 		borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
 		font:{fontSize:20,fontWeight:'bold'}
 	});
@@ -90,7 +97,7 @@
 	nickName.addEventListener('change', function(){
 		persInfo.Changed = true;
 		persInfo.Nickname = nickName.value;
-		Titanium.API.debug('nickName Changed');
+		
 	});
 
 	// set a picker for country/standard drinks.
@@ -108,13 +115,13 @@
 	var countrypicker = Ti.UI.createPicker({
 		useSpinner: true, visibleItems: 3,
 		type : Ti.UI.PICKER_TYPE_PLAIN,
-		top: 10, height: 90,
-		right: 20 ,
+		top: topCountry, height: 104,
+		left: leftCountry ,
 		columns:column0, 
 		font: {fontSize: "12"}
 	});
 	var stdDrink = Ti.UI.createLabel({
-		top:100,left:240,
+		top:110,left:240,
 		text:'1 Standard Drink = 10 mls alcohol'
 	})
 	win.add(stdDrink);
@@ -131,13 +138,12 @@
 			stdDrink.text = '1 Standard Drink = ' +  Countries[i].MillilitresPerUnit + ' ml Alc.';
 		}
 	}
-	
 	win.add(countrypicker);
 		
 	// set a picker for gender.
 	var rows1 = [];
-	for (var i = 0; i < Ti.App.boozerlyzer.data.personalInfo.gender.length; i++) {
-		rows1.push(Ti.UI.createPickerRow({title: Ti.App.boozerlyzer.data.personalInfo.gender[i]}));
+	for (var i = 0; i < Ti.App.boozerlyzer.db.personalInfo.gender.length; i++) {
+		rows1.push(Ti.UI.createPickerRow({title: Ti.App.boozerlyzer.db.personalInfo.gender[i]}));
 	}
 	var column1 = Ti.UI.createPickerColumn( {
 		rows: rows1
@@ -145,8 +151,8 @@
 	var sexpicker = Ti.UI.createPicker({
 		useSpinner: true, visibleItems: 3,
 		type : Ti.UI.PICKER_TYPE_PLAIN,
-		top: 40, height: 90,
-		left: 20,
+		top: topSex, height: 104,
+		left: leftSex,
 		columns:column1, 
 		font: {fontSize: "12"}
 	});
@@ -157,109 +163,157 @@
 	sexpicker.setSelectedRow(0,persInfo.Gender,true);
 	win.add(sexpicker);
 	
-	// set a picker for height.
+	//units for height
 	var heightUnit = Ti.UI.createLabel({
-		text:'m',
-		left:180,
-		top:topHW+30,
+		text:Ti.App.Properties.getString("HeightUnits",'m'),
+		left:leftH + 100,
+		top:topHW+10,
 		font:{fontSize:18,fontWeight:'bold'}	
 	});
 	win.add(heightUnit);
 	heightUnit.addEventListener('click',function (e){
 		//change height units
 		persInfo.Changed = true;
-		persInfo.HeightUnits = (persInfo.HeightUnits===1? 0: 1);
-		fillHeight(); 
-	})
-	
-	function fillHeight(){
-		var rows2 = [];
-		var height = null;
-		if (persInfo.HeightUnits == 1){
-			height = Ti.App.boozerlyzer.data.personalInfo.height_m;
-			heightUnit.text = 'm'; 
-		}else{
-			height = Ti.App.boozerlyzer.data.personalInfo.height_ft;	
-			heightUnit.text = 'ft'; 
-		}
-		rows2 = [];
-		for (var i = 0; i < height.length; i++) {
-			rows2.push(Ti.UI.createPickerRow({title: height[i]}));
-		}	
-		columnheight = Ti.UI.createPickerColumn( {
-			rows: rows2
-		});
-		heightpicker.columns = columnheight;
-		heightpicker.setSelectedRow(0,persInfo.Height,false);
-	
-	}
-	function fillWeight(){
-		var rows2 = [];
-		var Weight = null;
-		if (persInfo.WeightUnits == 1){
-			weight = Ti.App.boozerlyzer.data.personalInfo.weight_kg;
-			weightUnit.text = 'kg'; 
-		}else{
-			weight = Ti.App.boozerlyzer.data.personalInfo.weight_lb;	
-			weightUnit.text = 'lb'; 
-		}
-		rows2 = [];
-		for (var i = 0; i < weight.length; i++) {
-			rows2.push(Ti.UI.createPickerRow({title: weight[i]}));
-		}	
-		columnweight = Ti.UI.createPickerColumn( {
-			rows: rows2
-		});
-		weightpicker.columns = columnweight;
-		weightpicker.setSelectedRow(0,persInfo.Weight,false);
-	}
-	
-	var heightpicker = Ti.UI.createPicker({
-		useSpinner: true, visibleItems: 3,
-		type : Ti.UI.PICKER_TYPE_PLAIN,
-		top: topHW,	left: 10,
-		height: 90, width:165,
-		font: {fontSize: "12"}
+		heightUnit.text = (heightUnit.text==='m'? 'in': 'm');
+		Ti.App.Properties.setString("HeightUnits", heightUnit.text);
+		//convert the value
+		heightField.value = ''+Ti.App.boozerlyzer.db.personalInfo.convertIntoNewUnits(heightField.value,heightUnit.text);
+		validateHeight(); 
 	});
-	heightpicker.addEventListener('change', function(e) {
-		persInfo.Changed = true;
-		persInfo.Height = e.rowIndex;
-		Titanium.API.debug('Height Changed');
-	});
-	win.add(heightpicker);
-	
-	
-	// set a picker for weight.
+
+	//units for weight.
 	var weightUnit = Ti.UI.createLabel({
-		text:'kg',
-		left:400,
-		top:topHW + 30,
+		text:Ti.App.Properties.getString("WeightUnits",'kg'),
+		left:leftW + 100,
+		top:topHW+10,
 		font:{fontSize:18,fontWeight:'bold'}	
 	});
 	win.add(weightUnit);
 	weightUnit.addEventListener('click',function (e){
-		//change height units
+		//change weight units
 		persInfo.Changed = true;
-		persInfo.WeightUnits = (persInfo.WeightUnits===1? 0: 1);
-		fillWeight(); 
+		weightUnit.text = (weightUnit.text==='kg'? 'lb': 'kg');
+		Ti.App.Properties.setString("WeightUnits", weightUnit.text);
+		weightField.value = ''+Ti.App.boozerlyzer.db.personalInfo.convertIntoNewUnits(weightField.value,weightUnit.text);
+		validateWeight(); 
 	})
-	
-	var weightpicker = Ti.UI.createPicker({
-		useSpinner: true, visibleItems: 3,
-		type : Ti.UI.PICKER_TYPE_PLAIN,
-		top: topHW,	left:200,
-		height: 90,width:170,
-		font: {fontSize: "12"}
+
+	var heightField = Titanium.UI.createTextField({
+		value:'',
+		color:'#336699',
+		hintText:'height',
+		textAlign:'left',
+		height:42,
+		top:topHW,
+		left:leftH,
+		borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
+		font:{fontSize:18,fontWeight:'bold'}
 	});
-	weightpicker.addEventListener('change', function(e) {
-		Titanium.API.debug('weight Changed');
-		persInfo.Changed = true;
-		persInfo.Weight = e.rowIndex;
+	heightField.addEventListener('blur', function(e) {
+		if (initialised){
+			Titanium.API.debug('height Changed');
+			persInfo.Changed = true;
+			validateHeight();
+		}
 	});
-	win.add(weightpicker);
+	win.add(heightField);
+	//height might need converting before we display it.
+	if (heightUnit.text ==='m'){
+		heightField.value = persInfo.Height;		
+	}else{//store value converted into kilo
+		heightField.value = Ti.App.boozerlyzer.db.personalInfo.convertIntoNewUnits(persInfo.Height,'in');
+	}
+	var weightField = Titanium.UI.createTextField({
+		value:'',
+		color:'#336699',
+		hintText:'weight',
+		textAlign:'left',
+		height:42,
+		top:topHW,
+		left:leftW,
+		borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
+		font:{fontSize:18,fontWeight:'bold'}
+	});
+	weightField.addEventListener('blur', function(e) {
+		if (initialised){
+			Titanium.API.debug('weight Changed');
+			persInfo.Changed = true;
+			validateWeight();
+		}
+	});
+	win.add(weightField);
+	//height might need converting before we display it.
+	if (weightUnit.text ==='kg'){
+		weightField.value = persInfo.Weight;		
+	}else{//store value converted into kilo
+		weightField.value = Ti.App.boozerlyzer.db.personalInfo.convertIntoNewUnits(persInfo.Weight,'lb');
+	}
 	
-	fillHeight();
-	fillWeight();
+	function validateHeight(){
+		var newval,min,max;
+		if (isNumber(heightField.value)){
+			newval = 1*heightField.value;
+		}else{
+			heightField.value = '';
+			persInfo.Height = null;
+			return;
+		}
+		if (heightUnit.text ==='m'){
+			min = Ti.App.boozerlyzer.db.personalInfo.minHeight_m;
+			max = Ti.App.boozerlyzer.db.personalInfo.maxHeight_m;
+		}else{
+			min = Ti.App.boozerlyzer.db.personalInfo.minHeight_in;
+			max = Ti.App.boozerlyzer.db.personalInfo.maxHeight_in;
+		}
+		newval = Math.max(min,newval);
+		newval = Math.min(max,newval);
+		newval = Ti.App.boozerlyzer.db.personalInfo.roundToStepSize(newval,heightUnit.text);		
+		heightField.value = '' + newval;
+		if (heightUnit.text ==='m'){
+			persInfo.Height = newval;		
+		}else{//store value converted into kilo
+			persInfo.Height = Ti.App.boozerlyzer.db.personalInfo.convertIntoNewUnits(newval,'m');
+		}
+	}
+	
+	function isNumber(n) {
+	  return !isNaN(parseFloat(n)) && isFinite(n);
+	}
+
+	function validateWeight(){
+		Titanium.API.debug('validateweight 1');
+		var newval,min,max;
+		if (isNumber(weightField.value)){
+			newval = 1*weightField.value;
+		}else{
+			weightField.value = '';
+			persInfo.Weight = null;
+			return;
+		}
+		if (weightUnit.text ==='kg'){
+			min = Ti.App.boozerlyzer.db.personalInfo.minWeight_kg;
+			max = Ti.App.boozerlyzer.db.personalInfo.maxWeight_kg;
+		}else{
+			min = Ti.App.boozerlyzer.db.personalInfo.minWeight_lb;
+			max = Ti.App.boozerlyzer.db.personalInfo.maxWeight_lb;
+		}
+		newval = Math.max(min,newval);
+		newval = Math.min(max,newval);
+		Titanium.API.debug('validateweight 2');
+		newval = Ti.App.boozerlyzer.db.personalInfo.roundToStepSize(newval,weightUnit.text);	
+		weightField.value = '' + newval;
+		if (weightUnit.text ==='kg'){
+			persInfo.Weight = newval;		
+		}else{
+			//store value converted into kilo
+			persInfo.Weight = Ti.App.boozerlyzer.db.personalInfo.convertIntoNewUnits(newval,'kg');
+		}
+		Titanium.API.debug('validateweight 3');
+	}
+	
+	validateHeight();
+	validateWeight();
+	
 	
 	// SAVE BUTTON	
 	var save = Ti.UI.createButton({
@@ -274,7 +328,7 @@
 	
 	save.addEventListener('click',function()
 	{
-		Ti.App.boozerlyzer.data.personalInfo.setData(persInfo);
+		Ti.App.boozerlyzer.db.personalInfo.setData(persInfo);
 		win.close();
 	});	
 	// CANCEL BUTTON	

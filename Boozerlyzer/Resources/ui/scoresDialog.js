@@ -33,6 +33,10 @@ var scoresDialog = (function(){
 			width:'90%',
 			zIndex:9
 		});
+		containerView.addEventListener('click', function(){
+			//e.cancel = true;
+			api.close();
+		});		
 		
 		coverView = Ti.UI.createView({
 			top:'5%',
@@ -54,7 +58,7 @@ var scoresDialog = (function(){
 
 		// game results
 		gameNameLabel = Ti.UI.createLabel({
-			top:0,
+			top:2,
 			width:'auto',
 			text:'Score',
 			font:{fontSize:28,fontFamily:'Marker Felt',fontWeight:'bold'},
@@ -62,7 +66,7 @@ var scoresDialog = (function(){
 			color:'#911'
 		});
 		scoreLabel = Ti.UI.createLabel({
-			top:36,
+			top:40,
 			width:'auto',
 			text:'Score    -   00000 points',
 			font:{fontSize:24,fontFamily:'Marker Felt',fontWeight:'bold'},
@@ -70,7 +74,7 @@ var scoresDialog = (function(){
 			color:'#191'
 		});
 		speedBonusLabel = Ti.UI.createLabel({
-			top:60,
+			top:80,
 			width:'auto',
 			text:'Speed Bonus    -      000 points',
 			font:{fontSize:18,fontFamily:'Marker Felt',fontWeight:'bold'},
@@ -78,7 +82,7 @@ var scoresDialog = (function(){
 			color:'#119'
 		});
 		coordBonusLabel = Ti.UI.createLabel({
-			top:84,
+			top:120,
 			width:'auto',
 			text:'Coord Bonus    -      000 points',
 			font:{fontSize:18,fontFamily:'Marker Felt',fontWeight:'bold'},
@@ -86,7 +90,7 @@ var scoresDialog = (function(){
 			color:'#119'
 		});
 		inhibitBonusLabel = Ti.UI.createLabel({
-			top:108,
+			top:160,
 			width:'auto',
 			text:'Control Bonus    -      000 points',
 			font:{fontSize:18,fontFamily:'Marker Felt',fontWeight:'bold'},
@@ -94,7 +98,7 @@ var scoresDialog = (function(){
 			color:'#119'
 		});
 		messageLabel = Ti.UI.createLabel({
-			top:150,
+			top:200,
 			width:'auto',
 			text:'Well played!',
 			font:{fontSize:18,fontFamily:'Helvetic Neue',fontWeight:'italic'},
@@ -102,7 +106,7 @@ var scoresDialog = (function(){
 			color:'#000'		
 		});
 		labPointsLabel = Ti.UI.createLabel({
-			bottom:'6%',
+			bottom:'7%',
 			right:'45%',
 			width:'auto',
 			text:'0\n Lab Points',
@@ -146,10 +150,12 @@ var scoresDialog = (function(){
 	api.open = function(){	
 		coverView.animate(coverViewOpenAnimation);
 		containerView.animate(containerViewOpenAnimation);
+		containerView.visible = true;
 	};
 	api.close = function(){
 		coverView.animate(coverViewCloseAnimation);
 		containerView.animate(containerViewCloseAnimation);
+		containerView.visible = false;
 		if (callbackOnClose){
 			callbackOnClose(e);
 		}

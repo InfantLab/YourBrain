@@ -17,41 +17,33 @@
 	
 	//Create the main application window
 	Ti.App.boozerlyzer.win.main.createApplicationWindow = function(_args) {
+		//include the menu choices	
+		Ti.include('/ui/menu.js');
+		var menu = menus;
+		//need to give it specific help for this screen
+		menu.setHelpMessage("Click on the icons to add new drinks, launch games, etc.");
+		
+		//reset the MateMode flag.
+		Titanium.App.Properties.setBool('MateMode',false) 
 		//the start screen for the YBOB boozerlyzer
 		var homeWin = Titanium.UI.createWindow({
 			exitOnClose: true,
 			title:'YBOB Boozerlyzer',
 			backgroundImage:'/images/smallcornercup.png'
-			//backgroundImage:'/images/smallcornercup.png'
 		});
 			
 		homeWin.orientationModes = [
 		    Titanium.UI.LANDSCAPE_LEFT,
 		    Titanium.UI.LANDSCAPE_RIGHT
 		];
-//		Titanium.UI.orientation = Titanium.UI.LANDSCAPE_RIGHT;
-//		Ti.UI.orientation = Titanium.UI.LANDSCAPE_RIGHT;
-				
+		// Titanium.UI.orientation = Titanium.UI.LANDSCAPE_LEFT;
+		
 		var loadedonce = false;
 		
 		// layout variables
-		var bigIcons = 76;
-		var leftAppName = 20;
-		var	leftNewDrinks = leftAppName;
-		var leftEmotion = 100;
-		var leftTripReport = 180;
-		var leftGame = 240;
-		var topNewDrinks = 80;
-		var topEmotion = 80;
-		var topTripReport = 80;
-		var topGame = 80;
-		var topHighScores = 160
-		var leftHighScores = 100;
-		var topLabPoints = 160
-		var leftLabPoints =20;
-		var topResults = 80;
-		var leftResults = 340;
-		var optionsLeft = 320;
+		var bigIcons = 76, leftAppName = 20, leftNewDrinks = 20, leftEmotion = 100, leftTripReport = 180, leftGame = 240;
+		var topNewDrinks = 80, topEmotion = 80, topTripReport = 80, topGame = 80, topHighScores = 160, leftHighScores = 100, topLabPoints = 160
+		var leftLabPoints =20, topResults = 80, leftResults = 340, optionsLeft = 320;
 		
 		
 		//
@@ -62,19 +54,6 @@
 					cancel:1,
 					title:'Please click on the Safe to enter your personal details'
 				});
-		var enteredData = Titanium.App.Properties.getBool('EnteredPersonalData',false);
-		if (!enteredData){
-			var nagtime = Titanium.App.Properties.getInt('NagTime', 0);
-			if (nagtime > 0) {
-				Titanium.App.Properties.setInt('NagTime', nagtime - 1);
-			}else {
-				//alert('Please click on the Safe to enter your personal details');
-				//Titanium.App.Properties.setInt('NagTime', 7);
-				newSessionDialog.show();
-			}
-		}
-		Ti.API.debug('homeWin 1');
-
 		// add event listener
 		newSessionDialog.addEventListener('click',function(e)
 		{
@@ -84,6 +63,17 @@
 				Titanium.App.Properties.setInt('NagTime', 7);
 			}
 		});
+		var enteredData = Titanium.App.Properties.getBool('EnteredPersonalData',false);
+		if (!enteredData){
+			var nagtime = Titanium.App.Properties.getInt('NagTime', 0);
+			if (nagtime > 0) {
+				Titanium.App.Properties.setInt('NagTime', nagtime - 1);
+			}else {
+				newSessionDialog.show();
+			}
+		}
+		Ti.API.debug('homeWin 1');
+
 		
 		var label1 = Titanium.UI.createLabel({
 			color:'#911',
@@ -97,11 +87,11 @@
 		homeWin.add(label1);
 		
 		var labelVers = Titanium.UI.createLabel({
-			color:'#999',
+			color:'#888',
 			text:'Version: '+ Titanium.App.getVersion(),
 			font:{fontSize:12,fontFamily:'Helvetica Neue'},
 			textAlign:'center',
-			top:52,
+			top:53,
 			left:leftAppName
 		});
 		homeWin.add(labelVers);
@@ -126,16 +116,7 @@
 			left:optionsLeft
 		});
 		personalinfo.addEventListener('click',function(){
-			var winpers = Titanium.UI.createWindow({ 
-				exitOnClose: false,
-				modal:true,
-				url:'/win/win_mydata.js',
-				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT],  //Landscape mode only
-				title:'Personal and Privacy',
-				backgroundImage:'/images/smallcornercup.png'
-			});
-			winpers.home = homeWin; //reference to home
-			winpers.open();
+			menu.showSettingsScreen();
 		});
 		homeWin.add(personalinfo);
 		var labelMateMode = Titanium.UI.createLabel({
@@ -150,35 +131,49 @@
 			height:48,
 			width:48,
 			top:20,
-//			opacity:0.5,
 			left:optionsLeft + 52
 		});
+		//matemode.opacity = 0.5;
+			
 		//if we click this icon toggle between normal use
 		//and mate mode where scores don't count towards your own total.
 		matemode.addEventListener('click', function(){
-			if (Titanium.App.Properties.getBool('inMateMode',false)){
-				//set to false
-				Titanium.App.Properties.setBool('inMateMode', false);
-				var shrink = Ti.UI.create2DMatrix();
-				shrink.scale(0.5);
-				mateModeOffAnimation = Ti.UI.createAnimation({transform:shrink, opacity:.5});
-				matemode.animate(mateModeOffAnimation);
-				labelMateMode.visible = false;
-			}else{
-				//set to true
-				Titanium.App.Properties.setBool('inMateMode', true);
-				var grow = Ti.UI.create2DMatrix();
-				grow.scale(2);
-				mateModeOnAnimation = Ti.UI.createAnimation({transform:grow, opacity:1});
-				matemode.animate(mateModeOnAnimation);
-				//matemode.opacity = 1;
-				labelMateMode.visible = true;
-			}
-			
+			swapMateMode();		
 		});
-		
 		homeWin.add(matemode);
 		
+		function swapMateMode(){
+			if (Titanium.App.Properties.getBool('MateMode',false)){
+				//switch back into regular mode
+				Ti.App.boozerlyzer.data.session = Ti.App.boozerlyzer.db.sessions.getLatestData(0);
+				//retrieve current session
+				Titanium.App.Properties.setBool('MateMode', false);			//set to false
+				Titanium.App.Properties.setInt('SessionID', session[0].ID);
+				Titanium.App.Properties.setInt('UserID', session[0].UserID);				
+				Ti.API.debug("Switch out of mate mode - session info:" + JSON.stringify(session));
+				var shrink = Ti.UI.create2DMatrix();
+				shrink.scale(0.5);
+				mateModeOffAnimation = Ti.UI.createAnimation({transform:shrink, opacity:0.5});
+				matemode.animate(mateModeOffAnimation);
+				labelMateMode.visible = false;
+				homeWin.backgroundImage = '/images/smallcornercup.png';
+			}else{
+				//switch into mate mode.. create a new session.
+				Ti.App.boozerlyzer.data.session = Ti.App.boozerlyzer.db.sessions.createNewSession(true);
+				//set properties
+				Titanium.App.Properties.setBool('MateMode', true);
+				Titanium.App.Properties.setInt('SessionID', session[0].ID);
+				Titanium.App.Properties.setInt('UserID', session[0].UserID);
+				Ti.API.debug("Switch into mate mode - session info:" + JSON.stringify(session));
+				var grow = Ti.UI.create2DMatrix();
+				grow.scale(2);
+				mateModeOnAnimation = Ti.UI.createAnimation({transform:grow, opacity:0.99});
+				matemode.animate(mateModeOnAnimation);
+				//matemode.opacity = 1;
+				homeWin.backgroundImage = '/images/smallcornercup.matemode.png';
+				labelMateMode.visible = true;
+			}	
+		}
 		
 		var debug = Titanium.UI.createImageView({
 			image:'/icons/Misc.png',
@@ -189,20 +184,15 @@
 		});
 		debug.addEventListener('click',function(){
 		
-			//reinstall the database - gets new structure but wipes ALL data.
-			var db0 = Titanium.Database.install('/ybob.db','ybob');
-			db0.remove();
-			Titanium.API.debug('Removed old YBOB database')
-			db0.close();
-			
-			var db = Titanium.Database.install('/ybob.db','ybob');
-			Titanium.API.debug('Installed new YBOB database')
-			db.close();
-			
+			// //reinstall the database - gets new structure but wipes ALL data.
+			// var db0 = Titanium.Database.install('/ybob.db','ybob');
+			// db0.remove();
+			// Titanium.API.debug('Removed old YBOB database')
+			// db0.close();
+
 			// var db = Titanium.Database.install('/ybob.db','ybob');
-			// // db.execute('CREATE TABLE "main"."NumberStroopSummary" (Errors_GO NUMERIC, Errors_NOGO NUMERIC, GameDuration NUMERIC, GameFinish NUMERIC, GameStart NUMERIC, Hits_GO NUMERIC, Hits_NOGO NUMERIC, ID INTEGER PRIMARY KEY, Level NUMERIC, ReactionTimeGO NUMERIC, ReactionTimeNOGO NUMERIC, TotalScore NUMERIC)');
-			// // db.execute('INSERT INTO "main"."NumberStroopSummary" SELECT * FROM "main"."StatLearnSummary"');/
-			// db.execute('CREATE TABLE "GameScores" ("ID" INTEGER PRIMARY KEY  NOT NULL ,"GAME" TEXT,"GAMEVERSION" TEXT,"PLAYSTART" DATETIME,"PLAYEND" DATETIME,"TOTALSCORE" DOUBLE,"SPEED_GO" DOUBLE,"COORD_GO" DOUBLE,"INHIBITIONSCORE" DOUBLE,"LEVEL" INTEGER,"FEEDBACK" TEXT,"CHOICES" TEXT,"MEMORYSCORE" DOUBLE,"SPEED_NOGO" DOUBLE, "COORD_NOGO" DOUBLE, "SessionID" INTEGER)');?
+			// Titanium.API.debug('Installed new YBOB database')
+			// db.close();
 		});
 		//homeWin.add(debug);
 			
@@ -408,27 +398,31 @@
 		newSessionDialog.addEventListener('click',function(e)
 		{
 			if (e.index === 0) {
-				session = Ti.App.boozerlyzer.data.sessions.createNewSession(false);
+				Ti.App.boozerlyzer.data.session = Ti.App.boozerlyzer.db.sessions.createNewSession(false);
 				rewriteUpdateLabel();
-				labelCurrentSession.text = 'Session Started\n' + Ti.App.boozerlyzer.dateTimeHelpers.formatDayPlusTime(session[0].StartTime,true);
+				labelCurrentSession.text = 'Session Started\n' + Ti.App.boozerlyzer.dateTimeHelpers.formatDayPlusTime(Ti.App.boozerlyzer.data.session[0].StartTime,true);
 			}
 		});
 		
 		
-		var session = Ti.App.boozerlyzer.data.sessions.getLatestData(0);
-		if (session === null || session === false){
-			session = Ti.App.boozerlyzer.data.sessions.createNewSession(false);
+		if (Ti.App.boozerlyzer.data.session === undefined){
+			Ti.App.boozerlyzer.data.session = Ti.App.boozerlyzer.db.sessions.getLatestData(0);
+			if (Ti.App.boozerlyzer.data.session === null 
+			|| Ti.App.boozerlyzer.data.session === false){
+				Ti.App.boozerlyzer.data.session = Ti.App.boozerlyzer.db.sessions.createNewSession(false);
+			}
+				
 		}
-		var timeSinceUpdate = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(session[0].LastUpdate);
+		var timeSinceUpdate = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(Ti.App.boozerlyzer.data.session[0].LastUpdate);
 		function rewriteUpdateLabel(){
-			timeSinceUpdate = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(session[0].LastUpdate);
+			timeSinceUpdate = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(Ti.App.boozerlyzer.data.session[0].LastUpdate);
 			labelLastUpdate.text = 'Last activity\n' + timeSinceUpdate;
 		
 		}
 		Ti.API.debug('homeWin 3');
 
 		function rewriteLabPoints(){
-			var labPoints = Ti.App.boozerlyzer.data.gameScores.TotalPoints(); 
+			var labPoints = Ti.App.boozerlyzer.db.gameScores.TotalPoints(); 
 			// if (isNaN(labPoints[0].Total)){
 				// labelLabPoints.text = 'Err';
 			// }
@@ -443,28 +437,27 @@
 		rewriteLabPoints();
 		Ti.API.debug('homeWin 5');
 
-		Titanium.API.debug("session info: " + JSON.stringify(session));
-		Titanium.API.debug("session lastupdate: " + session[0].LastUpdate);
+		Titanium.API.debug("session info: " + JSON.stringify(Ti.App.boozerlyzer.data.session));
 		var now = parseInt((new Date()).getTime()/1000);
-		if (now - session[0].LastUpdate  <43200){ //12hours
-		}else if (now - session[0].LastUpdate < 129600){ //36 hours
+		if (now - Ti.App.boozerlyzer.data.session[0].LastUpdate  <43200){ //12hours
+		}else if (now - Ti.App.boozerlyzer.data.session[0].LastUpdate < 129600){ //36 hours
 			newSessionDialog.title = 'Last update ' + timeSinceUpdate + '\nStart a new session?';
 			newSessionDialog.show();
 		}else{
 			//>36 hours since last update, don't ask just start new
-			session = Ti.App.boozerlyzer.data.sessions.createNewSession(false);
+			Ti.App.boozerlyzer.data.session = Ti.App.boozerlyzer.db.sessions.createNewSession(false);
 		} 
 		Ti.API.debug('homeWin 6');
 		rewriteUpdateLabel();
-		labelCurrentSession.text = 'Session Started\n' + Ti.App.boozerlyzer.dateTimeHelpers.formatDayPlusTime(session[0].StartTime,true);
-		Ti.API.debug('Session ID - ' + session[0].ID);
-		Titanium.App.Properties.setInt('SessionID', session[0].ID);
-		Titanium.App.Properties.setInt('SessionStart',session[0].StartTime/1000);
-		Titanium.App.Properties.setInt('SessionChanged',session[0].LastUpdate/1000);
+		labelCurrentSession.text = 'Session Started\n' + Ti.App.boozerlyzer.dateTimeHelpers.formatDayPlusTime(Ti.App.boozerlyzer.data.session[0].StartTime,true);
+		Ti.API.debug('Session ID - ' + Ti.App.boozerlyzer.data.session[0].ID);
+		Titanium.App.Properties.setInt('SessionID', Ti.App.boozerlyzer.data.session[0].ID);
+		Titanium.App.Properties.setInt('SessionStart',Ti.App.boozerlyzer.data.session[0].StartTime/1000);
+		Titanium.App.Properties.setInt('SessionChanged',Ti.App.boozerlyzer.data.session[0].LastUpdate/1000);
 		
 		loadedonce = true;
 		Ti.API.debug('homeWin 7');
-		
+
 		
 		//TODO - find a nice way to synchronise data
 		var sync = Ti.UI.createButton({
@@ -477,6 +470,19 @@
 		});
 		sync.addEventListener('click',function()
 		{
+			// Ti.API.debug("Get total drinks");
+			// var now = parseInt((new Date()).getTime()/1000);
+			// var monthago = now - 31*3600*24;
+			// var totalDrinks	=Ti.App.boozerlyzer.db.doseageLog.drinksinTimePeriod(monthago, now);
+// 			
+			// var len = totalDrinks.length;
+			// var drinksList = '';
+			// for (i=0;i<len;i++){
+				// //drinksList += totalDrinks[i].DrugVariety + ': ' + (totalDrinks[i].TotalUnits / stdDrinks[0].MillilitresPerUnit).toFixed(1) + ' U\n';
+				// drinksList += totalDrinks[i].DrugVariety + ': ' + (totalDrinks[i].TotalUnits / 10).toFixed(1) + ' U\n';
+			// }
+			// Ti.API.debug(drinksList);
+			// alert("Total alcohol consumed this month\n\n" + drinksList);
 			Ti.App.boozerlyzer.comm.sendGameData.sync();
 		});	
 		homeWin.add(sync);
@@ -487,7 +493,7 @@
 				//this code only runs when we reload this page
 			    rewriteUpdateLabel();		
 				rewriteLabPoints();
-				
+		
 			}
 		});
 		Ti.API.debug('homeWin 0');

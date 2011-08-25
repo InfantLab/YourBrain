@@ -71,9 +71,9 @@
 	/////////////////////////////////////
 	// Plot some data
 	
-	sessionData = 	Ti.App.boozerlyzer.data.sessions.getLatestData(0);
-	drinkData = 	Ti.App.boozerlyzer.data.doseageLog.getAllSessionData(sessionData.ID);
-	emotionData = 	Ti.App.boozerlyzer.data.selfAssessment.getAllSessionData(sessionData.ID);
+	sessionData = 	Ti.App.boozerlyzer.db.sessions.getLatestData(0);
+	drinkData = 	Ti.App.boozerlyzer.db.doseageLog.getAllSessionData(sessionData.ID);
+	emotionData = 	Ti.App.boozerlyzer.db.selfAssessment.getAllSessionData(sessionData.ID);
 	
 	var sessionLength = sessionData.LastUpdate - sessionData.StartTime; 
 	var totalDrunk = numUnits(drinkData);

@@ -119,8 +119,8 @@
     };  
       
     var createReq = Titanium.Network.createHTTPClient();  
-    createReq.onload = function()  
-    {  
+    createReq.onload = function(){  
+    	Ti.API.debug("Registration request loaded.");
         if (this.responseText == "Insert failed" || this.responseText == "That username or email already exists")  
         {  
             createBtn.enabled = true;  
@@ -128,7 +128,7 @@
             alert(this.responseText);  
         }  
         else  
-        {  
+         {  
             var alertDialog = Titanium.UI.createAlertDialog({  
                 title: 'Alert',  
                 message: this.responseText,  
@@ -137,10 +137,11 @@
             alertDialog.show();  
             alertDialog.addEventListener('click',function(e)  
             {  
-                win.tabGroup.setActiveTab(0);  
+                //win.tabGroup.setActiveTab(0); 
+                win.close(); 
             });  
         }  
-    };  
+    };
       
     createBtn.addEventListener('click',function(e)  
     {  
@@ -175,28 +176,6 @@
         {  
             alert("All fields are required");  
         }  
-    });  
-    
-    createReq.onload = function(){  
-        if (this.responseText == "Insert failed" || this.responseText == "That username or email already exists")  
-        {  
-            win.remove(overlay);  
-            alert(this.responseText);  
-        }  
-        else  
-        {  
-            var alertDialog = Titanium.UI.createAlertDialog({  
-                title: 'Alert',  
-                message: this.responseText,  
-                buttonNames: ['OK']  
-            });  
-            alertDialog.show();  
-            alertDialog.addEventListener('click',function(e)  
-            {  
-                win.tabGroup.setActiveTab(0);  
-            });  
-        }  
-    };  
-    
+    });      
     
 })();

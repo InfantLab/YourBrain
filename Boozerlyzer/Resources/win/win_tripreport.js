@@ -9,21 +9,21 @@
 (function() {
 	
 	var win = Titanium.UI.currentWindow;
-	
+	//include the menu choices	
+	Ti.include('/ui/menu.js');
+	var menu = menus;
+	//need to give it specific help for this screen
+	menu.setHelpMessage("Simply record how you are feeling right now. Thanks :-)");
 	
 	//layout variables
-	var topHeading = 5;
-	var topContent = 50;
-	var topChangedLabel = 200;
-	
-	
+	var topHeading = 5, topContent = 50, topChangedLabel = 200;
 	//current session ID
 	var SessionID = Titanium.App.Properties.getInt('SessionID');
 	
 	//most recent emotion values for this session
-	var currentTripReport = Ti.App.boozerlyzer.data.tripReports.getLatestData(SessionID);
+	var currentTripReport = Ti.App.boozerlyzer.db.tripReports.getLatestData(SessionID);
 	if (currentTripReport === null || currentTripReport === false){
-		currentTripReport = Ti.App.boozerlyzer.data.tripReports.newReport();
+		currentTripReport = Ti.App.boozerlyzer.db.tripReports.newReport();
 	}
 	Titanium.API.debug(JSON.stringify(currentTripReport));
 	
@@ -77,8 +77,8 @@
 	
 	save.addEventListener('click',function()
 	{
-		Ti.App.boozerlyzer.data.sessions.Updated(SessionID);
-		Ti.App.boozerlyzer.data.tripReports.setData(currentTripReport);
+		Ti.App.boozerlyzer.db.sessions.Updated(SessionID);
+		Ti.App.boozerlyzer.db.tripReports.setData(currentTripReport);
 		win.close();
 	});	
 	// CANCEL BUTTON	
@@ -117,7 +117,7 @@
 	});
 	newdrinks.addEventListener('click',function(){
 		var newdosewin = Titanium.UI.createWindow({ modal:true,
-			url:'/win/win_dosage.js',
+			url:'/win/win_drinks.js',
 			title:'What have you had to drink?',
 			backgroundImage:'/images/smallcornercup.png'
 		});

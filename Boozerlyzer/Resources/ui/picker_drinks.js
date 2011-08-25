@@ -51,10 +51,14 @@ var optionPickerDialog = (function(){
 	function createControls(){
 		if (isControlsCreated) {return;}
 
+		colVolumeLabel = Ti.UI.createLabel({text:'%',top:28,left:120,color:'blue',font: {fontSize: "16"}});
+		colDescriptionLabel = Ti.UI.createLabel({text:'Amount',top:28,left:210,color:'blue',font: {fontSize: "16"}});
+		colCountLabel = Ti.UI.createLabel({text:'Num',top:28,left:330,color:'blue',font: {fontSize: "16"}});
+
 		picker = Ti.UI.createPicker({		
 			useSpinner: true, visibleItems: 4,
 			type : Ti.UI.PICKER_TYPE_PLAIN,
-			top: 40, height: 160,
+			top: 36, height: 160,
 			font: {fontSize: "14"}
 		});
 		
@@ -102,7 +106,7 @@ var optionPickerDialog = (function(){
 			top:40,
 			left:40,
 			height:280,
-			width:360,
+			width:400,
 			backgroundColor:'#000',
 			opacity:1,
 			borderRadius:4,
@@ -111,6 +115,9 @@ var optionPickerDialog = (function(){
 		Ti.UI.currentWindow.add(coverView);
 
 		containerView = Ti.UI.createView({height:251, bottom:-251, zIndex:9});
+		containerView.add(colVolumeLabel);
+		containerView.add(colDescriptionLabel);
+		containerView.add(colCountLabel);
 		containerView.add(picker);
 		containerView.add(doneButton);
 		containerView.add(cancelButton);
@@ -168,7 +175,7 @@ var optionPickerDialog = (function(){
 
 		Ti.API.debug('picker_drinks set data 3');		
 		//Retrieve the strengths for this DrugType
-		strengths = Ti.App.boozerlyzer.data.drugDoses.getStrengths(DrinkType);
+		strengths = Ti.App.boozerlyzer.db.drugDoses.getStrengths(DrinkType);
 		//Fill the appropriate column	
 		var columnStrength = Ti.UI.createPickerColumn();
 		for (i=0;i<strengths.length;i++){
@@ -181,7 +188,7 @@ var optionPickerDialog = (function(){
 		}
 
 		//Retrieve the strengths for this DrugType
-		sizes = Ti.App.boozerlyzer.data.drugDoses.getSizes(DrinkType);
+		sizes = Ti.App.boozerlyzer.db.drugDoses.getSizes(DrinkType);
 		//Fill the appropriate column	
 		var columnSize = Ti.UI.createPickerColumn();
 		// Loop with each data instance to create picker rows

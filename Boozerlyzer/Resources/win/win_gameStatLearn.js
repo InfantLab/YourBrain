@@ -21,81 +21,164 @@
 (function() {
 
 	var win = Titanium.UI.currentWindow;
+	if (Titanium.App.Properties.getBool('MateMode',false)){
+		win.backgroundImage = '/images/smallcornercup.matemode.png';
+	}else{
+		win.backgroundImage = '/images/smallcornercup.png';
+	}
+	Ti.include('/ui/scoresDialog.js');
+	Ti.include('/ui/menu.js'); 	//include the menu choices	
+	var menu = menus;
+	//need to give it specific help for this screen
+	menu.setHelpMessage("Tap on the animals as fast as they appear. But if animal is upside down, tap as far away from it as possible. Points are awarded for speed, coordination & avoiding errors.");
+
 	win.idx = -1;
 	
-	var startTime = 0;
-	var	stepStartTime = 0;
-	var gameStarted = false;
-	var currentObj = 0;
-	var points = 0;
-	var coordbonus = 0;
-	var speedbonus = 0;
-	var inhibitbonus = 0;
-	var count = 0;
-	var missCount = 0;
-	var falseAlarmCount = 0;
-	var inverted = false;
-	var shrinkTime = 5000; // how long does this blob stay visible?
-	var clicked = false;
+	var currentObj = 0, startTime = 0,stepStartTime = 0;
+	var gameStarted = false, clicked = false, inverted = false, dialogOpen = false, shrinkTime = 5000; // how long does this blob stay visible?
+	var points = 0, coordbonus = 0, speedbonus = 0, inhibitbonus = 0;
+	var count_GO, miss_GO, count_NOGO, miss_NOGO;
+	var speed_GO, speed_NOGO, coord_GO, coord_NOGO, inhibit;
 	var imgtop = [40,40,40,160,160,160];
 	var imgleft = [60,180,300,60,180,300];
 	var stopAnim  = Titanium.UI.createAnimation();
-	
-	//
+	var missTimeOut;
+
 	// a set of virtual objects that must be clicked quickly when made visible
-	//
 	var loc = [];
+	
 	var whatClicked = function (e) {
-		if (currentObj < 0){ 
+		if (currentObj < 0 || clicked){ 
 			//don't fire more than once
 			return;
 		}
-
 		clicked = true;
-		Titanium.API.debug("whatClicked x,y " + e.x + ", " + e.y  );
-		 for(x in e)
-			 Ti.API.debug(JSON.stringify(x));	
-		Ti.API.debug('source ' + JSON.stringify(e.source));
-		var cen = e.source.center;
-		Ti.API.debug('source cen' + JSON.stringify(cen));
-
+		
+		
 		var idx = parseInt(e.source.idx);
 		Ti.API.debug('idx:' + idx);
+		var cen = e.source.center;
+		//need the click in global coordinates
+		var globalCoords = {x:0,y:0}; 
+		if (idx < 0 ){
+			globalCoords.x = e.x;
+			globalCoords.y = e.y;
+		}else{
+			globalCoords.x = e.x + imgleft[idx];
+			globalCoords.y = e.y + imgtop[idx];
+		}
+		Ti.API.debug("whatClicked x,y " + e.x + ", " + e.y  );
+		Ti.API.debug("global x,y " + globalCoords.x + ", " + globalCoords.y  );
+		Ti.API.debug('source cen' + JSON.stringify(cen));
+		loc[currentObj].animate(stopAnim);			//cancel remaining animation 
+		loc[currentObj].visible = false;	//and hide the object
 		if (idx === currentObj && !inverted){ //clicked correct one
 			currentObj = -1;
 			points += 10;
-//			Titanium.API.debug("e.globalPoint.x, e.globalPoint.y " + e.globalPoint.x +"," + e.globalPoint.y);
-			coordbonus += calcCoordinationBonus(cen,e);
-			speedbonus += calcSpeedBonus(stepStartTime, new Date().getTime());
-			loc[idx].animate(stopAnim);			//cancel remaining animation 
-			loc[idx].visible = false;	//and hide the object
-			count++;
-			gameStep(count);			
+			calcCoordinationBonus("GO",cen,globalCoords);
+			calcSpeedBonus("GO",stepStartTime, new Date().getTime());
 		}else if (idx === currentObj && inverted){ // accidently clicked inverted
-			falseAlarmCount++;
+			miss_NOGO++;
 			labelGameMessage.text = 'Keep away!';
 			clear(labelGameMessage);
-			count++;
-			gameStep(count);
 			inhibitbonus -= 10;
 		}else if (inverted){ //correctly clicked away 
 			points += 10;
-			loc[currentObj].animate(stopAnim);			//cancel remaining animation 
-			loc[currentObj].visible = false;	//and hide the object
 			inhibitbonus += 5;
-			coordbonus += calcCoordinationBonus(cen,e);
-			speedbonus += calcSpeedBonus(stepStartTime, new Date().getTime());
-			count++;
+			calcCoordinationBonus("NOGO",cen,globalCoords);
+			calcSpeedBonus("NOGO",stepStartTime, new Date().getTime());
 			currentObj = -1;
-			gameStep(count);			
-		}
-		else{ //missed
-			missCount++;
+		}else{ //missed
+			miss_GO++;
 			labelGameMessage.text = 'Oops!'
 			clear(labelGameMessage);
-		}	
+		}
+		gameStep();				
 	};
-	
+
+	var stepTimedOut = function(){
+		Ti.API.debug('stepTimedOut TIMEOUT ' + JSON.stringify(missTimeOut));
+		//missed because of time out
+		// missCount++;
+		// labelGameMessage.text = 'Too slow!'
+		// clear(labelGameMessage);
+		// gameStep();
+		gameOver();
+	}
+
+
+	/**
+	 * The main game loop all the clever stuff happens in here
+	 */
+	function gameStep(){
+		// if (stepcount !== count){
+			// Ti.API.debug('Game count != Stepcount: ' + count + '!=' + stepcount);
+	 		// return;
+		// }
+	 	if (missTimeOut >=0){
+	 		//clear the previous timeOut counter
+			Ti.API.debug('gameStep CLEAR TIMEOUT ' +missTimeOut );
+		 	clearTimeout(missTimeOut);  		
+	 	}
+	 	stepStartTime = new Date().getTime();
+		clicked = false;
+		if (miss_GO + miss_NOGO > 4){			
+			gameOver();
+			return;
+		}
+		currentObj = Math.floor(6*Math.random());
+		inverted = (Math.random()<0.15);
+		if (inverted){		
+			loc[currentObj].image = '/icons/inverted_teddy_bear_toy_' + currentObj + '.png';
+			count_NOGO++; //another nogo trial
+		}else{
+			loc[currentObj].image = '/icons/teddy_bear_toy_' + currentObj + '.png';
+			count_GO++;			
+		}
+		Ti.API.debug('Game Step ' + (count_GO+count_NOGO));
+		shrinkTime *= .97; //shrink quicker each step
+		//only show currentObj
+		for(i=0;i<6;i++){
+			loc[i].visible = (i===currentObj);			
+		}
+		var shrink = Ti.UI.create2DMatrix();
+		shrink = shrink.scale(0.001);
+		anchor={
+			x:loc[currentObj].center.x,
+			y:loc[currentObj].center.y
+		};
+		loc[currentObj].animate({transform:shrink,anchor:anchor,duration:shrinkTime});
+		updateScore();	
+		//set a timeout in case user doesn't press anything
+		//Ti.API.debug('old missTimeOut -' + missTimeOut);
+		missTimeOut = setTimeout(stepTimedOut, Math.round(3*shrinkTime));
+		//Ti.API.debug('new missTimeOut -' + missTimeOut);
+	}
+	function gameOver(){
+		// labelGameMessage.visible = true;
+		// labelGameMessage.text = 'Final Score: ' + Math.floor(points+inhibitbonus+coordbonus+speedbonus) + '\nGame Over';
+		gameEndSaveScores();
+		gameStarted = false;
+		dialogOpen = true;
+		scoresDialog.setScores( 'Raccoon Hunt', 
+						Math.floor(points+inhibitbonus+coordbonus+speedbonus),
+						speedbonus, 
+						coordbonus,
+						inhibitbonus,
+						5,
+						"",
+						'/icons/teddy_bears.png' )
+		scoresDialog.open();
+
+	}
+	scoresDialog.addEventListener('close', function(e){
+		setTimeout(function(){
+			dialogOpen = false;
+			labelGameMessage.visible = true;
+			labelGameMessage.text = 'Double click to start game';
+		}, 1000);
+	});
+
 	function setUpOnce(){	
 		for(var img=0;img<6;img++){
 			Titanium.API.debug('/icons/teddy_bear_toy_' + img + '.png');
@@ -173,12 +256,25 @@
 	});
 	win.add(labelGameMessage);
 	
+	//label for how many  misses we have
+	var missCountLabel = Ti.UI.createLabel({
+		color:'blue',
+		font:{fontSize:18,fontWeight:'bold',fontFamily:'Helvetica Neue'},
+		top:2,
+		right:2,
+		textAlign:'right',
+		text:'0 Missed',
+		width:100
+	});
+	win.add(missCountLabel);
+
 	function updateScore(){
-		score.text = points;
+		score.text = '' + Math.round(points);
+		missCountLabel.text = (miss_GO + miss_NOGO === 0 ? '' : miss_GO + miss_NOGO + " missed");
+		
 		//round the bonus points
 		bonus.text = Math.round(speedbonus) + ' speed\t' + Math.round(coordbonus) + ' coord\t' + Math.round(inhibitbonus) + ' oops';
 	}
-	
 	// new game function
 	function newGame(){
 		//ultimately this should log stuff
@@ -190,9 +286,14 @@
 		coordbonus = 0;
 		speedbonus = 0;
 		inhibitbonus = 0;
-		count = 0;
-		missCount = 0;
-		falseAlarmCount = 0;
+		count_GO = 0;
+		count_NOGO = 0;
+		miss_GO= 0;
+		miss_NOGO = 0;
+		speed_GO = 0;
+		speed_NOGO = 0;
+		coord_GO = 0;
+		coord_NOGO = 0;
 		inverted = false;
 		shrinkTime = 5000; // how long does this blob stay visible?
 	
@@ -202,83 +303,34 @@
 		gameStep(0);
 	}
 	
-	/**
-	 * The main game loop all the clever stuff happens in here
-	 */
-	function gameStep(stepcount){
-	 	Ti.API.debug('Game Step ' + stepcount);
-	 	stepStartTime = new Date().getTime();
-		clicked = false;
-		if (missCount > 3){
-			
-			labelGameMessage.visible = true;
-			labelGameMessage.text = 'Final Score: ' + Math.floor(points+inhibitbonus+coordbonus+speedbonus) + '\nGame Over';
-			count = 0;
-			missCount = 0;
-			gameStarted = false;
-			gameEndSaveScores();
-			setTimeout(function()
-			{// do something 
-				labelGameMessage.text = 'Double click to start game';
-				gameStarted = false;
-			},6000);
-			return;
-		}
-		shrinkTime *= .97; //shrink quicker each step
-		currentObj = Math.floor(6*Math.random());
-		inverted = (Math.random()<0.1);
-		if (inverted){		
-	//		var flip = Ti.UI.create2DMatrix();
-	//		flip = flip.rotate(180);
-	//		var a1 = Titanium.UI.createAnimation();
-	//		a1.transform = flip;
-	//		a1.duration = 10;
-	//		loc[currentObj].animate(a1);
-			//loc[currentObj].animate({transform:flip,duration:10});
-			//loc[currentObj].transform = Ti.UI.create2DMatrix().rotate(180);
-			loc[currentObj].image = '/icons/inverted_teddy_bear_toy_' + currentObj + '.png';
-		}else{
-			loc[currentObj].image = '/icons/teddy_bear_toy_' + currentObj + '.png';			
-		}
-		//only show currentObj
-		for(i=0;i<6;i++){
-			loc[i].visible = (i===currentObj);			
-		}
-		var shrink = Ti.UI.create2DMatrix();
-		shrink = shrink.scale(0.001);
-//		var a2 = Titanium.UI.createAnimation();
-//		a2.transform = shrink;
-		//a2.opacity = 0;
-//		a2.duration = shrinkTime;
-		// anchor = loc[currentObj].center;
-		// Ti.API.debug('object center -' + JSON.stringify(anchor));
-		//yes this next bit looks crazy but it just might work
-		anchor={
-			x:loc[currentObj].center.x,
-			y:loc[currentObj].center.y
-		};
-		loc[currentObj].animate({transform:shrink,center:anchor,duration:shrinkTime});
-		updateScore();	
-	}
 	
-	function calcSpeedBonus(stepStart,clickTime){
-		//TODO - the reaction time bonus
-		//Ti.API.debug('calcSpeedBonus - stepStart' + stepStart);
-		//Ti.API.debug('calcSpeedBonus - clickTime' + clickTime);
-		var timediff = 10 - (clickTime -stepStart) /100;
+	function calcSpeedBonus(trialType,stepStart,clickTime){
+		var timediff = clickTime -stepStart;
 		Ti.API.debug('calcSpeedBonus - timediff' + timediff);
-		return Math.max(0, timediff);
+		if(trialType === "GO"){
+			speed_GO += timediff;
+		}else{
+			speed_NOGO += timediff;
+		}
+		speedbonus += Math.max(0, 10 - (timediff) /100);
 	}
 	
-	function calcCoordinationBonus(centObj,centTouch){
+	function calcCoordinationBonus(trialType,centObj,centTouch){
 		// a simple linear bonus of between 0 & 10 points for being
 		// between 50 and 0 units from the object center
 		var distx = centObj.x - centTouch.x; 
 		var disty = centObj.y - centTouch.y;
 		var dist = Math.sqrt(distx*distx + disty*disty);
 		Ti.API.debug('calcCoordinationBonus - dist' + dist);
-		var bonusdist = Math.min(dist,50);
-		return 10*(50-bonusdist)/50;
+		if(trialType === "GO"){
+			coord_GO += dist;
+			//more bonus for closer
+			coordbonus += Math.max(0, 5*(50-dist)/50);
+		}else{
+			coord_NOGO += dist;
+			//more bonus for further away
+			coordbonus +=  dist/50;
+		}
 	}
 	function clear(o){
 		var t  = o.text;
@@ -293,7 +345,9 @@
 	
 	win.addEventListener('click',function(ev)
 	{
-		if (!gameStarted){
+		if (dialogOpen){
+			
+		}else if (!gameStarted){
 		 	Ti.API.debug('Game Start');
 			gameStarted = true;
 			newGame();
@@ -326,15 +380,22 @@
 	setUpOnce();
 	
 	function gameEndSaveScores(){
+		Ti.API.debug('save game scores USERID' + Titanium.App.Properties.getInt('UserID'));
+		//have to be careful of dividing by zero as NaN upset the database 
+		var AvSpeed_GO = (count_GO-miss_GO===0 ? null :speed_GO/(count_GO-miss_GO) )
+		var AvSpeed_NOGO = (count_NOGO-miss_NOGO===0 ? null :speed_NOGO/(count_NOGO-miss_NOGO) )
+		var AvCoord_GO = (count_GO-miss_GO===0 ? null :coord_GO/(count_GO-miss_GO) )
+		var AvCoord_NOGO = (count_NOGO-miss_NOGO===0 ? null :coord_NOGO/(count_NOGO-miss_NOGO) )
 		var gameSaveData = [{Game: 'StatLearning',
 							GameVersion:1,
 							PlayStart: startTime/1000 ,
 							PlayEnd: parseInt((new Date()).getTime()/1000),
-							TotalScore:points,
-							Speed_GO:speedbonus,
-							Speed_NOGO:0,
-							Coord_GO:coordbonus,
-							Coord_NOGO:0,
+							TotalScore:points + speedbonus + coordbonus + inhibitbonus,
+							GameSteps:count_GO + count_NOGO,
+							Speed_GO:speed_GO/(count_GO-miss_GO),  //average speed
+							Speed_NOGO:speed_NOGO/(count_NOGO-miss_NOGO), //average speed
+							Coord_GO:coord_GO/(count_GO-miss_GO), 	//average distance from target
+							Coord_NOGO:coord_NOGO/(count_NOGO-miss_NOGO), //average distance from target
 							Level:0,
 							Inhibition:inhibitbonus,
 							Feedback:'',
@@ -343,7 +404,7 @@
 							UserID:Titanium.App.Properties.getInt('UserID'),
 							LabPoints:5		
 						}];
-		Ti.App.boozerlyzer.data.gameScores.Result(gameSaveData);
+		Ti.App.boozerlyzer.db.gameScores.Result(gameSaveData);
 	}
 	
 	//

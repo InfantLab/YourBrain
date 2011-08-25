@@ -17,22 +17,23 @@
 Ti.API.debug('app main 0');
 //application namespace
 Ti.App.boozerlyzer = {};
-Ti.App.boozerlyzer.win = {};
-Ti.App.boozerlyzer.data ={};
-Ti.App.boozerlyzer.comm = {};
+Ti.App.boozerlyzer.win = {};	//windows
+Ti.App.boozerlyzer.db ={};		//database access functions
+Ti.App.boozerlyzer.data ={};	//cached data objects
+Ti.App.boozerlyzer.comm = {};	//network communication functions
 
 //all of the data handling routines.
-Ti.include('/data/sessions.js');
-Ti.include('/data/doseageLog.js');
-Ti.include('/data/alcoholStandardUnits.js');
-Ti.include('/data/drugDoses.js');
-Ti.include('/data/emotionWords.js');
-Ti.include('/data/gameScores.js');
-Ti.include('/data/personalInfo.js');
-Ti.include('/data/pissonyms.js');
-Ti.include('/data/selfAssessment.js');
-Ti.include('/data/tripReports.js');
-Ti.include('/data/weFeelFine.js');
+Ti.include('/db/sessions.js');
+Ti.include('/db/doseageLog.js');
+Ti.include('/db/alcoholStandardUnits.js');
+Ti.include('/db/drugDoses.js');
+Ti.include('/db/emotionWords.js');
+Ti.include('/db/gameScores.js');
+Ti.include('/db/personalInfo.js');
+Ti.include('/db/pissonyms.js');
+Ti.include('/db/selfAssessment.js');
+Ti.include('/db/tripReports.js');
+Ti.include('/db/weFeelFine.js');
 //helper functions
 Ti.include('/js/dateTimeHelpers.js');
 //the scripts that communicate with server

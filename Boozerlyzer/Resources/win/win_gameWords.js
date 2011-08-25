@@ -21,27 +21,27 @@
 (function() {
 				
 	var win = Titanium.UI.currentWindow;
+	if (Titanium.App.Properties.getBool('MateMode',false)){
+		win.backgroundImage = '/images/smallcornercup.matemode.png';
+	}else{
+		win.backgroundImage = '/images/smallcornercup.png';
+	}
+
 	var winHome = win.Home;
-	var suggest;
-	var labelGameMessage;
-	var labelGameMessage;
+	//include the menu choices	
+	Ti.include('/ui/menu.js');
+	var menu = menus;
+	//need to give it specific help for this screen
+	menu.setHelpMessage("Simply pick which ever words you like best. There are no right answers.");
+
+	var suggest, labelGameMessage;
 	var winopened = parseInt((new Date()).getTime()/1000);
-	var gameStarted = false;
-	var	initialised = false;
-	var loc = [];
-	var wordChoices = [];
-	var wordList = '';
-	var answers = [];  		//array to store the selected answers.
+	var gameStarted = false, initialised = false;
+	var wordList = '', loc = [], wordChoices = [], answers = [];  		//array to store the selected answers.
 	var numRounds = Titanium.UI.currentWindow.numRounds;
 	var MgameType = Titanium.UI.currentWindow.gameType;
-	var imageXyAxes;
-	var imageYAxisUp;
-	var imageYAxisDown;
-	var imageXAxisLeft;
-	var imageXAxisRight;
-	var imageMisc;
-	var arousal = 0;
-	var	valence = 0;	
+	var imageXyAxes, imageYAxisUp, imageYAxisDown, imageXAxisLeft, imageXAxisRight;
+	var imageMisc, arousal = 0,	valence = 0;	
 		
 	Ti.API.debug('wordgame - numRounds ' + numRounds);
 	Ti.API.debug('wordgame - gameType ' + MgameType);
@@ -231,13 +231,13 @@
 		Ti.API.debug('MgameType' + MgameType);
 		switch (MgameType) {	
 			case 'Pissonyms':
-				Ti.App.boozerlyzer.data.pissonyms.Chosen(choice);
+				Ti.App.boozerlyzer.db.pissonyms.Chosen(choice);
 				break;
 			case 'Emotions':
-				Ti.App.boozerlyzer.data.emotionWords.Chosen(choice);
+				Ti.App.boozerlyzer.db.emotionWords.Chosen(choice);
 				break;
 			case 'WeFeelFine':
-				Ti.App.boozerlyzer.data.weFeelFine.Chosen(choice);
+				Ti.App.boozerlyzer.db.weFeelFine.Chosen(choice);
 				break;
 			default:
 			//do nothing	
@@ -274,7 +274,7 @@
 							UserID:Titanium.App.Properties.getInt('UserID'),
 							LabPoints:2		
 						}];
-		Ti.App.boozerlyzer.data.gameScores.Result(gameSaveData);
+		Ti.App.boozerlyzer.db.gameScores.Result(gameSaveData);
 	}
 	/**
 	 * Here we display list of chosen words and 
@@ -347,17 +347,17 @@
 		
 		wordChoices = [];
 		if (MgameType === 'Emotions') {
-			var emotionwords = Ti.App.boozerlyzer.data.emotionWords.selectNRandomRows(6);
+			var emotionwords = Ti.App.boozerlyzer.db.emotionWords.selectNRandomRows(6);
 			for (var i = 0; i < 6; i++) {
 				wordChoices[i] = emotionwords[i].EmotionalWord;
 			}
 		} else if (MgameType === 'WeFeelFine') {
-			var wefeelfinewords = Ti.App.boozerlyzer.data.weFeelFine.selectNRandomRows(6);
+			var wefeelfinewords = Ti.App.boozerlyzer.db.weFeelFine.selectNRandomRows(6);
 			for (var i = 0; i < 6; i++) {
 				wordChoices[i] = wefeelfinewords[i].Feeling;
 			}
 		} else if (MgameType === 'Pissonyms') {
-			var pissonymList = Ti.App.boozerlyzer.data.pissonyms.selectNRandomRows(6);
+			var pissonymList = Ti.App.boozerlyzer.db.pissonyms.selectNRandomRows(6);
 			for (var i = 0; i < 6; i++) {
 				wordChoices[i] = pissonymList[i].Pissonym;
 			}
@@ -389,7 +389,7 @@
 		var arousal = 0;
 		var valence = 0;
 		for (var i =0; i< answers.length; i++){
-			var info = Ti.App.boozerlyzer.data.emotionWords.getWordInfo(answers[i]);
+			var info = Ti.App.boozerlyzer.db.emotionWords.getWordInfo(answers[i]);
 			Ti.API.debug('emotion word info ' + JSON.stringify(info));
 			if (info!==null){
 				arousal += info[0].ArousalMean;
@@ -419,7 +419,7 @@
 		var coordscore = 0;
 		var speedscore = 0;
 		for (var i =0; i< answers.length; i++){
-			var info = Ti.App.boozerlyzer.data.pissonyms.getWordInfo(answers[i]);
+			var info = Ti.App.boozerlyzer.db.pissonyms.getWordInfo(answers[i]);
 			Ti.API.debug('pissonym  info ' + JSON.stringify(info));
 			if (info!==null){
 				drunkscore += info[0].DrunkFactor;
@@ -433,18 +433,25 @@
 		//then use these to plot the x and y coords of the spot
 	    //TODO use layout variables instead of hard coding these values
 	    imageMisc.left = 60 + Math.floor(320*drunk)-15;
-	    imageMisc.top = Math.floor(320*0)-15;
+	    imageMisc.top = Math.floor(320*0.5)-15;
 	    imageMisc.visible = true;
-		showAxis(true,'pissonyms');
+		showAxis(true,'Pissonyms');
 	}
 	
 	
 	function showAxis(visibleFlag, gameType){
+		imageXyAxes.visible = visibleFlag;
+		imageYAxisUp.visible = visibleFlag;
+		imageYAxisDown.visible = visibleFlag;
+		imageXAxisLeft.visible = visibleFlag;
+		imageXAxisRight.visible = visibleFlag;
 		
 		switch (gameType){
 		case 'Pissonyms':
 			imageXAxisLeft.image = '/icons/sober.png';
 			imageXAxisRight.image = '/icons/drunk.png';			
+			imageYAxisUp.visible = false;
+			imageYAxisDown.visible = false;
 			break;
 		case 'Emotions':
 			imageXAxisLeft.image = '/icons/Sad.png';
@@ -454,11 +461,6 @@
 		default:
 			//TODO what should we do here? Not sure
 		}
-		imageXyAxes.visible = visibleFlag;
-		imageYAxisUp.visible = visibleFlag;
-		imageYAxisDown.visible = visibleFlag;
-		imageXAxisLeft.visible = visibleFlag;
-		imageXAxisRight.visible = visibleFlag;
 	}
 	
 	setUpOnce();
