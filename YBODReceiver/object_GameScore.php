@@ -38,10 +38,13 @@ class GameScore extends BaseObject {
     'Coord_GO' => array('type' => 'int'), 
     'Coord_NOGO' => array('type' => 'int'),
     'Level' => array('type' => 'int'),
-    'Inhibition' => array('type' => 'int'),
+    'InhibitionScore' => array('type' => 'int'),
     'Feedback' => array('type' => 'text'),
     'Choices' => array('type' => 'text'), // maybe make a special 'jsonstring' type to deal with nested/specific data for each game type
     'LabPoints' => array('type' => 'int'),
+    'GameSteps' => array('type' => 'int'),
+    'Alcohol_ml' => array('type' => 'double'),
+    'BloodAlcoholConc' => array('type' => 'double'),
   );
 
 }
