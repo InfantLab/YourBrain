@@ -4,13 +4,29 @@ class GameScore extends BaseObject {
   function getTableName () {
     return 'receive_GameScore';
   }
-  var $fields = array (
-	'CreatedByUserID' => array('type' => 'int'),
+/*
+            [SessionID] => 2
+            [PlayEnd] => 1310079664
+            [Game] => StatLearning
+            [Choices] => ""
+            [TotalScore] => 10
+            [GameScoreID] => 1
+            [Coord_NOGO] => 0
+            [GameVersion] => 1.0
+            [data_type] => GameScore
+            [PlayStart] => 1.31007966328E+12
+            [Level] => 0
+            [Feedback] => 
+            [LabPoints] => 5
+            [Coord_GO] => 0*/
 
-    'GameScoreID' => array('type' => 'primarykey'),
-    'remote_id' => array('type' => 'int'),
-    'remote_session_id' => array('type' => 'int'),
-    'remote_user_id' => array('type' => 'int'),
+  var $fields = array (
+    'ID' => array('type' => 'primarykey'),
+    'GameScoreID' => array('type' => 'int'),
+
+    'CreatedByUserID' => array('type' => 'int'),
+
+    'SessionID' => array('type' => 'int'),
 
     'Game' => array('type' => 'string'),
     'GameVersion' => array('type' => 'string'),

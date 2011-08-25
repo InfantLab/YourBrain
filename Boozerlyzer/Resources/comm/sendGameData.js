@@ -85,7 +85,7 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		   data: Titanium.JSON.stringify(dataToSend)
 		 }//)
 		);
-		alert( dataToSend.length + ' items sent.');
+		Ti.API.debug( dataToSend.length + ' items sent.');
 		
 	};
 

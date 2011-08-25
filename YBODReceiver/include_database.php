@@ -22,7 +22,9 @@ if (!$DB_DISABLE) {
     global $DBUSER;
     global $DBPASS;
     global $DBDB;
-    return mysql_connect($DBHOST, $DBDB, $DBUSER, $DBPASS);
+    $conn = mysql_connect($DBHOST, $DBUSER, $DBPASS);
+    mysql_select_db($DBDB);
+    return $conn;
   }
 } else {
   function db_query($sql) {
