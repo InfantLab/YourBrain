@@ -7,6 +7,10 @@ class UserAccount extends BaseObject {
   var $adminlevel = 0;
   var $encryptedPassword;
 
+  function getTableName() {
+    return 'UserAccount';
+  }
+
   var $fields = array (
     'id' => array('type' => 'primarykey'),
     'username' => array('type' => 'string'),
