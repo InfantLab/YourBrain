@@ -49,13 +49,13 @@
 		//
 		// Some properties for this application
 		//
-		var newSessionDialog = Titanium.UI.createAlertDialog({
+		var personalDetailsDialog = Titanium.UI.createAlertDialog({
 					buttonNames:['OK', 'Cancel'],
 					cancel:1,
 					title:'Please click on the Safe to enter your personal details'
 				});
 		// add event listener
-		newSessionDialog.addEventListener('click',function(e)
+		personalDetailsDialog.addEventListener('click',function(e)
 		{
 			if (e.index === 0) {
 				personalinfo.fireEvent('click');
@@ -69,7 +69,7 @@
 			if (nagtime > 0) {
 				Titanium.App.Properties.setInt('NagTime', nagtime - 1);
 			}else {
-				newSessionDialog.show();
+				personalDetailsDialog.show();
 			}
 		}
 		Ti.API.debug('homeWin 1');
@@ -175,25 +175,25 @@
 			}	
 		}
 		
-		var debug = Titanium.UI.createImageView({
-			image:'/icons/Misc.png',
-			height:48,
-			width:48,
-			top:80,
-			right:10
-		});
-		debug.addEventListener('click',function(){
-		
-			// //reinstall the database - gets new structure but wipes ALL data.
-			// var db0 = Titanium.Database.install('/ybob.db','ybob');
-			// db0.remove();
-			// Titanium.API.debug('Removed old YBOB database')
-			// db0.close();
-
-			// var db = Titanium.Database.install('/ybob.db','ybob');
-			// Titanium.API.debug('Installed new YBOB database')
-			// db.close();
-		});
+		// var debug = Titanium.UI.createImageView({
+			// image:'/icons/Misc.png',
+			// height:48,
+			// width:48,
+			// top:80,
+			// right:10
+		// });
+		// debug.addEventListener('click',function(){
+// 		
+			// // //reinstall the database - gets new structure but wipes ALL data.
+			// // var db0 = Titanium.Database.install('/ybob.db','ybob');
+			// // db0.remove();
+			// // Titanium.API.debug('Removed old YBOB database')
+			// // db0.close();
+// 
+			// // var db = Titanium.Database.install('/ybob.db','ybob');
+			// // Titanium.API.debug('Installed new YBOB database')
+			// // db.close();
+		// });
 		//homeWin.add(debug);
 			
 		var report = Titanium.UI.createImageView({

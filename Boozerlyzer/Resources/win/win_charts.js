@@ -330,11 +330,11 @@
 	 // And then my swipe function:
 	function swipe(e) {
 	    if (e.direction == 'down') {
-	    	Ti.API.debug('charts swipe down');
+	    	Ti.API.debug("charts swipe down");
 	       webView.animate(webViewSwipeDownAnimation);
 	       webView.show();
 	    } else { 
-	    	Ti.API.debug('charts swipe up');
+	    	Ti.API.debug("charts swipe up");
 	       webView.animate(webViewSwipeUpAnimation);
 	    }
 	}

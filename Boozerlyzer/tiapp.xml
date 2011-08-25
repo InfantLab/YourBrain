@@ -7,11 +7,11 @@
         <target device="ipad">false</target>
         <target device="android">true</target>
     </deployment-targets>
-    <id>net.yourbrainondrugs.ybob</id>
+    <id>net.boozerlyzer</id>
     <name>Boozerlyzer</name>
-    <version>0.22</version>
-    <publisher>YourBrainonDrugs.net</publisher>
-    <url>http://yourbrainondrugs.net</url>
+    <version>0.24</version>
+    <publisher>boozerlyzer.net</publisher>
+    <url>http://boozerlyzer.net</url>
     <description>An app to track alcohol consumption.</description>
     <copyright>2011 by Caspar Addyman</copyright>
     <icon>ybob-logo2-sml.png</icon>

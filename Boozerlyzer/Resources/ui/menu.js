@@ -1,11 +1,11 @@
 /**
  * A little bit of script to add the context dependent menus
+ * to the current active window
  * @author caspar
  */
 
 var menus = (function(){	
-
-
+	
 //add the menu.
 var activity = Ti.Android.currentActivity;
 var helpMessage;
@@ -19,10 +19,10 @@ activity.onCreateOptionsMenu = function( event ) {
 	 
 		//About the app.
 		menuAbout.addEventListener( 'click', function( event ) {
-			  Ti.API.debug( 'About menu item Touched' )
-		  	  if(Ti.Network.online){
-		        //    Titanium.Platform.openURL('www.appcelerator.com');
-				  	Titanium.Platform.openURL('http://www.yourbrainondrugs.net/FAQ');
+			Ti.API.debug( 'About menu item Touched' );
+			if(Ti.Network.online){
+		        //Titanium.Platform.openURL('www.appcelerator.com');
+				Titanium.Platform.openURL('http://www.yourbrainondrugs.net/FAQ');
 		        } else {
 		            var alertDialog = Titanium.UI.createAlertDialog({
 		              title: Titanium.App.name,
@@ -53,7 +53,7 @@ activity.onCreateOptionsMenu = function( event ) {
 		menuSettings.addEventListener( 'click', function( event ) {
 		    api.showSettingsScreen();
 		  });		  
-	}
+	};
 
 	/**
 	 * Public API
@@ -73,6 +73,6 @@ activity.onCreateOptionsMenu = function( event ) {
 		});
 		winpers.home = Ti.UI.CurrentWindow; //reference to home
 		winpers.open();
-	}
+	};
 	return api;
 }());

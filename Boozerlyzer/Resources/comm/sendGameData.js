@@ -1,7 +1,7 @@
 /**
  * @author Caspar Addyman
  * 
- * functions for sending gameScores to the website 
+ * functions for exporting gameScores to a csv file on the phone.  
  */
 
 (function(){
@@ -39,7 +39,7 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		
 		
 		//what is the last row id from this dataset?
-		if (!dataToSend || dataToSend.length==0) {
+		if (!dataToSend || dataToSend.length===0) {
 			Ti.API.error('sendGameData: no data to send; play some games first!');
 			return;
 		}
@@ -55,10 +55,11 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		//what do we get back?
 		xhrPost.onload = function() {
 				var rc = Titanium.JSON.parse(this.responseText);
-				if (rc['status'] == 'success') {
-					alert('Game scores saved.');
+				if (rc.status == 'success') {
+					var complete = Ti.UI.createAlertDialog('Game scores saved.');
+					complete.show();
 					Ti.API.info('Game scores saved.');
-					Titanium.App.Properties.setInt('LastSentID', rc['LastReceivedID']/*newLastID*/);
+					Titanium.App.Properties.setInt('LastSentID', rc.LastReceivedID/*newLastID*/);
 				} else {
 					Ti.API.error('Cloud Error: try again (' + this.responseText + ')');
 				}

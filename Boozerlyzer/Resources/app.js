@@ -22,6 +22,7 @@ Ti.App.boozerlyzer.db ={};		//database access functions
 Ti.App.boozerlyzer.data ={};	//cached data objects
 Ti.App.boozerlyzer.comm = {};	//network communication functions
 
+
 //all of the data handling routines.
 Ti.include('/db/sessions.js');
 Ti.include('/db/doseageLog.js');
@@ -39,6 +40,8 @@ Ti.include('/js/dateTimeHelpers.js');
 //the scripts that communicate with server
 Ti.include('/comm/ybodnet.js');
 Ti.include('/comm/sendGameData.js');
+Ti.include('/comm/exportGameData.js');
+	
 	
 Ti.include('/win/win_main.js'); //construct main screen UI
 	
