@@ -42,9 +42,12 @@
 		}else{
 			querystr += idstr;
 		}
-		//querystr += ' ORDER BY gameType'
+		querystr += ' ORDER BY ID';
+		//alert('got query string ' + querystr);
 		var rows = conn.execute(querystr);
+		//alert('got num results ' + rows.rowCount);
 		var retdata = fillDataObject(rows);
+		//alert('got retdata of length ' + retdata);
 		rows.close();
 		return retdata;
 	};

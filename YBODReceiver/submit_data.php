@@ -1,8 +1,14 @@
 <? //submit_data.php
   require_once('include_setup.php');
 
+ if (isset($HTTP_RAW_POST_DATA)) {
+    $_REQUEST = json_decode(file_get_contents('php://input'));
+  }
+
+
   // some debug info
   print_rp($_REQUEST, 'Request is:', true);
+
 
   $accepted_types = array('GameScore'); // which row types to accept for entry to the database
 
@@ -32,11 +38,13 @@
   $RowsToSave = array ();
 
   foreach ($decoded as $key => $data) {
+    print_rp($data, 'Got row:');
 	if (in_array($data->data_type, $accepted_types))
-  	  $RowsToSave[] = new $data->data_type ( $data->data );
+  	  $RowsToSave[] = new $data->data_type ( $data );
   }
 
   foreach ($RowsToSave as $RowToSave) {
+    print_rp($RowToSave, 'Saving row:');
 	$RowToSave->save();
   }
 

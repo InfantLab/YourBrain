@@ -444,7 +444,7 @@
 									  
 		var gameSaveData = [{Game: 'DualNBack',
 							GameVersion:1,
-							PlayStart:startTime ,
+							PlayStart: startTime/1000 ,
 							PlayEnd: now,
 							TotalScore:points,
 							GameSteps:count,
