@@ -75,6 +75,7 @@ class BaseObject {
     return $value;
   }
   function initialiseData($data) {
+    print_rp($data, 'initialiseData for ' . get_class($this) . ' passed data:');
     foreach ($this->getFields() as $FieldName => $FieldOptions) {
       $this->setValue($FieldName, $data->$FieldName);
       if ($FieldOptions['type']=='primarykey') {
@@ -104,7 +105,7 @@ class BaseObject {
         $sql.= $FieldName . "='" . $this->getDBValue($FieldName) . "', ";
       }
       $sql = substr($sql,0,-2);
-      $sql.= ' WHERE ' . $this->primarykeyfield . '="' . escape($this->getPrimaryKey()) . "'";
+      $sql.= ' WHERE ' . $this->primarykeyfield . '="' . escape($this->getPrimaryKey()) . '" ';
     }
 
     //print 'save() produced sql :' . $sql;

@@ -3,7 +3,7 @@
 function debug ($text) {
   global $debug_file;
   if (!$debug_file) $debug_file = fopen('debug.log','a');
-  fwrite ($debug_file, $text . "\n");
+  fwrite ($debug_file, date(DATE_RFC822) . ':' . $text . "\n");
 }
 
 function print_rp($var, $message = '', $log = true) {
