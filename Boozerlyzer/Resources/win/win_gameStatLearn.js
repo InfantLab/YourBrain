@@ -388,7 +388,7 @@
 		var AvCoord_NOGO = (count_NOGO-miss_NOGO===0 ? null :coord_NOGO/(count_NOGO-miss_NOGO) )
 		var gameSaveData = [{Game: 'StatLearning',
 							GameVersion:1,
-							PlayStart:startTime ,
+							PlayStart: startTime/1000 ,
 							PlayEnd: parseInt((new Date()).getTime()/1000),
 							TotalScore:points + speedbonus + coordbonus + inhibitbonus,
 							GameSteps:count_GO + count_NOGO,

@@ -78,3 +78,19 @@ Got decoded JSON data::stdClass Object
 
 )
 
+:Array
+(
+    [0] => Array
+        (
+            [file] => /Users/doctea/Documents/Brain/YBODReceiver/create_table.php
+            [line] => 7
+            [function] => finisherror
+            [args] => Array
+                (
+                    [0] => No Model set.
+                )
+
+        )
+
+)
+

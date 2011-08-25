@@ -2,7 +2,35 @@
 
 class BaseObject {
 
-  function __construct($data) {
+  function get_create_table_sql () {
+    $fields = $this->getFields();
+    $sql = 'CREATE TABLE '.$this->getTableName().' (';
+    foreach ($fields as $FieldName => $FieldOptions) {
+      $sql.= $FieldName . ' ';
+      switch($FieldOptions['type']) {
+        case 'int':
+          $sql.= 'INTEGER '; break;
+        case 'primarykey':
+          $sql.= 'INTEGER AUTO_INCREMENT PRIMARY KEY '; break;
+        case 'string':
+          $sql.= 'VARCHAR(255) '; break;
+        case 'datetime':
+          $sql.= 'DATETIME '; break;
+        case 'text':
+          $sql.= 'TEXT '; break;
+        default: 
+          echo 'unknown datatype ' . $FieldOptions['type'] . ' for ' . $FieldName . '!';
+      }
+      $sql.= ', ';
+    }
+    $sql = substr($sql,0,-2);
+
+    $sql.= ')';
+
+    return $sql;
+  }
+
+  function __construct($data = Array()) {
     $this->initialiseData($data);
   }
 
@@ -11,6 +39,10 @@ class BaseObject {
   }
   function getFieldNames() {
 	return array_keys($this->fields);
+  }
+
+  function getField($FieldName) {
+    return $this->fields[$FieldName];
   }
 
   function getPrimaryKey () {
@@ -32,6 +64,16 @@ class BaseObject {
   function getValue ($FieldName) {
     return $this->values[$FieldName];
   }
+  function getDBValue ($FieldName) {
+    $f = $this->getField($FieldName);
+    $value = $this->getValue($FieldName);
+
+    if ($f['type']=='datetime') $value = Date('Y-m-d H:m:s', $value);
+
+    $value = escape($value);
+
+    return $value;
+  }
   function initialiseData($data) {
     foreach ($this->getFields() as $FieldName => $FieldOptions) {
       $this->setValue($FieldName, $data->$FieldName);
@@ -51,7 +93,7 @@ class BaseObject {
       $sql = 'INSERT INTO ' . $this->getTableName() . ' ';
       foreach ($this->getFields() as $FieldName => $FieldOptions) {
         $sql_fields.= $FieldName . ', ';
-        $sql_values.= "'" . escape($this->getValue($FieldName)) . "', ";
+        $sql_values.= "'" . $this->getDBValue($FieldName) . "', ";
       }
       $sql_fields = substr($sql_fields,0,-2);
       $sql_values = substr($sql_values,0,-2);
@@ -59,15 +101,17 @@ class BaseObject {
     } else {
       $sql = 'UPDATE ' . $this->getTableName() . ' SET ';
       foreach ($this->getFields() as $FieldName => $FieldOptions) {
-        $sql.= $FieldName . "='" . escape($this->getValue($FieldName)) . "', ";
+        $sql.= $FieldName . "='" . $this->getDBValue($FieldName) . "', ";
       }
       $sql = substr($sql,0,-2);
       $sql.= ' WHERE ' . $this->primarykeyfield . '="' . escape($this->getPrimaryKey()) . "'";
     }
 
     //print 'save() produced sql :' . $sql;
+    debug("save() produced sql :" . $sql);
     
-    return db_query($sql); 
+    $result = db_query($sql) or finisherror ('SQL error running ' . $sql . ', :' . db_error()); 
+    return $result;
   }
 
   static function load($id) {
