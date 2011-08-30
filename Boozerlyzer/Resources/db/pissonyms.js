@@ -14,14 +14,16 @@
 	Ti.App.boozerlyzer.db.pissonyms = {};
 	
 	//maintain a database connection we can use
-	var conn = Titanium.Database.install('ybob.db','ybob');
+	if (!Ti.App.boozerlyzer.db.conn){
+		Ti.App.boozerlyzer.db.conn = Titanium.Database.install('ybob.db','ybob');
+	}
 
 	//get data for the maximum row id 
 	Ti.App.boozerlyzer.db.pissonyms.selectNRandomRows = function (numRows, frequencyRange){
 		var returnData = [];
 		var nRows = parseInt(numRows);
 		//TODO Filter by frequency range
-		var rows = conn.execute('SELECT * FROM pissonyms ORDER BY RANDOM() LIMIT ?', nRows);
+		var rows =Ti.App.boozerlyzer.db.conn.execute('SELECT * FROM pissonyms ORDER BY RANDOM() LIMIT ?', nRows);
 		if (rows !== null ) {
 			while(rows.isValidRow()){
 				returnData.push({
@@ -43,7 +45,7 @@
 	Ti.App.boozerlyzer.db.pissonyms.getWordInfo = function (word){
 		var returnData = [];
 		//TODO Filter by frequency range
-		var rows = conn.execute('SELECT * FROM pissonyms WHERE Pissonym = ?', word);
+		var rows =Ti.App.boozerlyzer.db.conn.execute('SELECT * FROM pissonyms WHERE Pissonym = ?', word);
 		if (rows !== null ) {
 			while(rows.isValidRow()){
 				returnData.push({
@@ -70,16 +72,16 @@
 		Titanium.API.debug('chosen Pissonym ' + JSON.stringify(choiceData));
 		var sessionID = Titanium.App.Properties.getInt('SessionID');
 		for (var i=0; i<choiceData.length; i++){
-			var insertstr = 'INSERT INTO WordChoices (SessionID,WordType,chosenWord,WordList,ChoiceStart,ChoiceFinish,) VALUES(?,?,?,?,?,?)';
-			conn.execute(insertstr,sessionID, 'Pissonym',choiceData[i].ChosenWord, choiceData[i].WordList, choiceData[i].StartTime,choiceData[i].EndTime);
-			Titanium.API.debug('Emotional Word choices, rowsAffected = ' + conn.rowsAffected);
-			Titanium.API.debug('Emotional Word choices, lastInsertRowId = ' + conn.lastInsertRowId);	
+			var insertstr = 'INSERT INTO WordChoices (SessionID,WordType,chosenWord,WordList,ChoiceStart,ChoiceFinish) VALUES(?,?,?,?,?,?)';
+			Ti.App.boozerlyzer.db.conn.execute(insertstr,sessionID, 'Pissonym',choiceData[i].ChosenWord, choiceData[i].WordList, choiceData[i].StartTime,choiceData[i].EndTime);
+			Titanium.API.debug('Emotional Word choices, rowsAffected = ' +Ti.App.boozerlyzer.db.conn.rowsAffected);
+			Titanium.API.debug('Emotional Word choices, lastInsertRowId = ' +Ti.App.boozerlyzer.db.conn.lastInsertRowId);	
 		}
 	};
 	
 	Ti.App.boozerlyzer.db.pissonyms.PlayCount = function (){
 		var selectStr = 'SELECT COUNT(*) from WORDCHOICES  where WordType = ?';
-		var rows = conn.execute(selectStr, 'Pissonym');
+		var rows =Ti.App.boozerlyzer.db.conn.execute(selectStr, 'Pissonym');
 		if (rows !== null) {
 			var retval = parseInt(rows.field(0))
 			rows.close();
@@ -90,7 +92,7 @@
 	};
 	Ti.App.boozerlyzer.db.pissonyms.LastPlayed = function(){
 		var selectStr = 'SELECT max(ChoiceFinish) from WORDCHOICES  where WordType = ?';
-		var rows = conn.execute(selectStr, 'Pissonym');
+		var rows =Ti.App.boozerlyzer.db.conn.execute(selectStr, 'Pissonym');
 		if (rows !== null) {
 			var retval = parseInt(rows.field(0))
 			rows.close();
@@ -107,14 +109,14 @@
 //		Titanium.API.debug('addUserPissonym');
 //		
 //		//first check that suggestion is actually new.
-//		var rows = conn.execute('SELECT COUNT(*) From pissonymns where pissonym = ?', pissonym)
+//		var rows =Ti.App.boozerlyzer.db.conn.execute('SELECT COUNT(*) From pissonymns where pissonym = ?', pissonym)
 //		if (rows !== null){
 //			select 
 //			var insertstr = 'INSERT INTO TripReports (ReportStarted,ReportChanged,SessionID,Content)';
 //			insertstr += 'VALUES(?,?,?,?)';
-//			conn.execute(insertstr,newData.ReportStarted,newData.ReportChanged,newData.SessionID,newData.Content);
-//			Titanium.API.debug('TripReports updated, rowsAffected = ' + conn.rowsAffected);
-//			Titanium.API.debug('TripReports, lastInsertRowId = ' + conn.lastInsertRowId);
+//			Ti.App.boozerlyzer.db.conn.execute(insertstr,newData.ReportStarted,newData.ReportChanged,newData.SessionID,newData.Content);
+//			Titanium.API.debug('TripReports updated, rowsAffected = ' +Ti.App.boozerlyzer.db.conn.rowsAffected);
+//			Titanium.API.debug('TripReports, lastInsertRowId = ' +Ti.App.boozerlyzer.db.conn.lastInsertRowId);
 //		}
 //		//also an entry to the tripreport table about this 
 //	};

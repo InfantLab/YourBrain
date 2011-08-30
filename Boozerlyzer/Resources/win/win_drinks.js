@@ -9,7 +9,7 @@
  */
 
 (function() {
-	
+
 		var win = Ti.UI.currentWindow;
 		if (Titanium.App.Properties.getBool('MateMode',false)){
 			win.backgroundImage = '/images/smallcornercup.matemode.png';
@@ -22,9 +22,9 @@
 		//need to give it specific help for this screen
 		menu.setHelpMessage("Click on the icons to add new drinks. Double click on drinks list to edit or delete an entry.");
 
-		var winOpened = parseInt((new Date()).getTime()/1000);
+		var winOpened = parseInt((new Date()).getTime()/1000,10);
 		var loadedonce = false;
-		
+		var totalvolAlcohol, currentBloodAlcohol;
 		var howLong = ['this session', '1 week', '4 weeks', 'a year'];
 		var howLongDays = [1, 7, 28, 365];
 		var drinkNames = ['Beer','Wine','Spirits','NULL'];
@@ -33,12 +33,16 @@
 		// //Ti.include('/js/datetimehelpers.js');
 		// Include component in page
 		Ti.include('/ui/picker_drinks.js');
-		Ti.include('/js/bloodalcohol.js');
 		
-		var persInfo = Ti.App.boozerlyzer.db.personalInfo.getData();
-		var stdDrinks = Ti.App.boozerlyzer.db.alcoholStandardDrinks.get(persInfo.Country);
-		var millsPerStandardUnits = stdDrinks[0].MillilitresPerUnit;
-		Ti.API.debug('stdDrinks ' + JSON.stringify(stdDrinks));
+		if (!Ti.App.boozerlyzer.data.personalInfo || Ti.App.boozerlyzer.data.personalInfo === null || Ti.App.boozerlyzer.data.personalInfo === 'undefined'){
+			Ti.App.boozerlyzer.data.personalInfo = Ti.App.boozerlyzer.db.personalInfo.getData();
+		}
+		Ti.API.debug('Ti.App.boozerlyzer.data.standardDrinks ' + Ti.App.boozerlyzer.data.standardDrinks );
+		if (!Ti.App.boozerlyzer.data.standardDrinks || Ti.App.boozerlyzer.data.standardDrinks === null || Ti.App.boozerlyzer.data.standardDrinks ==='undefined'){
+			Ti.App.boozerlyzer.data.standardDrinks = Ti.App.boozerlyzer.db.alcoholStandardDrinks.get(Ti.App.boozerlyzer.data.personalInfo.Country);
+		}
+		var millsPerStandardUnits = Ti.App.boozerlyzer.data.standardDrinks[0].MillilitresPerUnit;
+		Ti.API.debug('Ti.App.boozerlyzer.data.standardDrinks ' + JSON.stringify(Ti.App.boozerlyzer.data.standardDrinks));
 		
 		
 		// the Dosesage database object
@@ -46,47 +50,50 @@
 		var SessionID = Titanium.App.Properties.getInt('SessionID');
 		
 		//All dose data for this session
-		var AllDrinks = Ti.App.boozerlyzer.db.doseageLog.getAllSessionData(SessionID);
-		if (AllDrinks === null || AllDrinks === false){
-			AllDrinks = Ti.App.boozerlyzer.db.doseageLog.newDrink();
+		Ti.API.debug('Ti.App.boozerlyzer.data.AllDrinks '+ Ti.App.boozerlyzer.data.AllDrinks);
+		if (!Ti.App.boozerlyzer.data.AllDrinks || Ti.App.boozerlyzer.data.AllDrinks === null || Ti.App.boozerlyzer.data.AllDrinks === false){
+			Ti.App.boozerlyzer.data.AllDrinks = Ti.App.boozerlyzer.db.doseageLog.getAllSessionData(SessionID);
+		}
+		if (!Ti.App.boozerlyzer.data.AllDrinks || Ti.App.boozerlyzer.data.AllDrinks.length === 0){
+			Ti.App.boozerlyzer.data.AllDrinks = Ti.App.boozerlyzer.db.doseageLog.newDrink();
 			Ti.App.boozerlyzer.db.sessions.Updated(SessionID);
 		}
-		Titanium.API.debug(JSON.stringify(AllDrinks));
+		Ti.API.debug('Ti.App.boozerlyzer.data.AllDrinks '+ Ti.App.boozerlyzer.data.AllDrinks);
 		var sessionData = Ti.App.boozerlyzer.db.sessions.getSession(SessionID);
 //		Titanium.API.debug('sessionData -' + JSON.stringify(sessionData));
 		//find the last row 
-		var lastIndex = AllDrinks.length - 1;
+		var lastIndex = Ti.App.boozerlyzer.data.AllDrinks.length - 1;
 		//we will use these to keep count of drinks..
-		AllDrinks[lastIndex].DoseageStart = winOpened;
+		Ti.App.boozerlyzer.data.AllDrinks[lastIndex].DoseageStart = winOpened;
 		
 		
 		// Respond when selection made and dialog closed
 		optionPickerDialog.addEventListener('close', function(e){
-		    if (e.done==true && e.selectedRow){
+		    if (e.done===true && e.selectedRow){
 		        Ti.API.debug('e.drugVariety '+ e.drugVariety );
 		        Ti.API.debug('e.doseSize '+ e.doseSize );
 		        Ti.API.debug('e.strength '+ e.strength );
 		        Ti.API.debug('e.NumDoses' + e.NumDoses);
-		   		newDrinks = Ti.App.boozerlyzer.db.doseageLog.newDrink();
-		   		newDrinks[0].DoseDescription = e.doseDescription;
-		   		newDrinks[0].DrugVariety = e.drugVariety;
-		   		newDrinks[0].Volume = e.doseSize;
-		   		newDrinks[0].Strength = e.strength;
-		   		newDrinks[0].NumDoses = e.NumDoses;
-		   		newDrinks[0].DrugType = 'Alcohol';
-		   		Ti.API.debug('Total units' +  1000 * e.doseSize * e.strength * e.NumDoses / (100) );
-		   		newDrinks[0].TotalUnits = 1000*e.doseSize * e.strength * e.NumDoses / (100);
-		   		if (isNaN(stdDrinks[0].MillilitresPerUnit) || stdDrinks[0].MillilitresPerUnit <= 0){
-		   			newDrinks[0].StandardUnits = 0;
-		   		}else{
-			   		newDrinks[0].StandardUnits = newDrinks[0].TotalUnits / stdDrinks[0].MillilitresPerUnit;
-		   		}
-		   		newDrinks[0].Changed = true;
-		   		Ti.API.debug('std units ' + newDrinks[0].StandardUnits );
-		   		Ti.App.boozerlyzer.db.doseageLog.setData(newDrinks);
+				var newDrinks = Ti.App.boozerlyzer.db.doseageLog.newDrink();
+				newDrinks[0].DoseDescription = e.doseDescription;
+				newDrinks[0].DrugVariety = e.drugVariety;
+				newDrinks[0].Volume = e.doseSize;
+				newDrinks[0].Strength = e.strength;
+				newDrinks[0].NumDoses = e.NumDoses;
+				newDrinks[0].DrugType = 'Alcohol';
+				Ti.API.debug('Total units' +  1000 * e.doseSize * e.strength * e.NumDoses / (100) );
+				newDrinks[0].TotalUnits = 1000*e.doseSize * e.strength * e.NumDoses / (100);
+				if (isNaN(Ti.App.boozerlyzer.data.standardDrinks[0].MillilitresPerUnit) || Ti.App.boozerlyzer.data.standardDrinks[0].MillilitresPerUnit <= 0){
+					newDrinks[0].StandardUnits = 0;
+				}else{
+					newDrinks[0].StandardUnits = newDrinks[0].TotalUnits / Ti.App.boozerlyzer.data.standardDrinks[0].MillilitresPerUnit;
+				}
+				newDrinks[0].Changed = true;
+				Ti.API.debug('std units ' + newDrinks[0].StandardUnits );
+				Ti.App.boozerlyzer.db.doseageLog.setData(newDrinks);
 				tv.appendRow(formatTableRow(newDrinks[0]));
-				AllDrinks.push(newDrinks[0]);	
-				tv.scrollToIndex(AllDrinks.length -1);
+				Ti.App.boozerlyzer.data.AllDrinks.push(newDrinks[0]);	
+				tv.scrollToIndex(Ti.App.boozerlyzer.data.AllDrinks.length -1);
 				totalizeDrinks();
 		    }
 		});
@@ -114,7 +121,7 @@
 		win.add(sessionView);
 		
 		//TODO - find a nice way to show this data
-		var grandTotalDrinksButton = Ti.UI.createButton({
+		var calendarTotalDrinksButton = Ti.UI.createButton({
 			title:'Total Drinks in last ' + Ti.App.Properties.getString('GrandTotal','4 weeks'),
 			width:136,
 			height:36,
@@ -123,26 +130,25 @@
 			backgroundColor:'gray',
 			borderRadius:4
 		});
-		grandTotalDrinksButton.addEventListener('click',function()
-		{
-			howLongDialog.show();
-		});	
-		win.add(grandTotalDrinksButton);
-
 		var howLongDialog = Titanium.UI.createOptionDialog({
 			options:howLong,
 			destructive:2,
 			cancel:1,
 			title:'Count drinks over what time period?'
 		});
-		// add event listener
+				// add event listener
 		howLongDialog.addEventListener('click',function(e)
 		{
 			Ti.App.Properties.setString('GrandTotal',howLong[e.index]);
 			howLongDialog.title = 'Total Drinks in last ' + Ti.App.Properties.setString('GrandTotal','4 weeks'),
-			grandTotalDrinks();
+			calendarTotalDrinks();
 		});
-		
+		calendarTotalDrinksButton.addEventListener('click',function()
+		{
+			howLongDialog.show();
+		});	
+		win.add(calendarTotalDrinksButton);
+
 		
 		var beeradd = Titanium.UI.createImageView({
 			image:'/icons/beer-full.png',
@@ -291,7 +297,7 @@
 		    //convert DrinkData obj into text, etc.
 		    Titanium.API.debug('DrinkData.DoseageStart '+ DrinkData.DoseageStart);
 		    var addedTime = Ti.App.boozerlyzer.dateTimeHelpers.formatTime(DrinkData.DoseageStart,true);
-			var numUnits = DrinkData.TotalUnits / stdDrinks[0].MillilitresPerUnit;
+		    var numUnits = DrinkData.TotalUnits / Ti.App.boozerlyzer.data.standardDrinks[0].MillilitresPerUnit;
 			//calorie calculation = 7kCals per gram of alcohol , 0.79 grams per millilitre
 			var numkCals = DrinkData.TotalUnits * 0.79 * 7;
 			var thisDrinkUnits = '', thisDrinkkCals = '';
@@ -367,24 +373,24 @@
 		}
 		
 		function totalizeDrinks(){
-			var len = AllDrinks.length;
-			var totalvolAlcohol = 0;
+			var len = Ti.App.boozerlyzer.data.AllDrinks.length;
+			totalvolAlcohol = 0;
 			for (var idx =0;idx<len;idx++){
-				totalvolAlcohol += AllDrinks[idx].TotalUnits; 
+				totalvolAlcohol += Ti.App.boozerlyzer.data.AllDrinks[idx].TotalUnits; 
 			}
-			if (stdDrinks[0].MillilitresPerUnit > 0){
-				footerUnits.text = (totalvolAlcohol / stdDrinks[0].MillilitresPerUnit).toFixed(1) +'u';
+			if (Ti.App.boozerlyzer.data.standardDrinks[0].MillilitresPerUnit > 0){
+				footerUnits.text = (totalvolAlcohol / Ti.App.boozerlyzer.data.standardDrinks[0].MillilitresPerUnit).toFixed(1) +'u';
 				//calorie calculation = 7kCals per gram of alcohol , 0.79 grams per millilitre
 				footerkCals.text = (totalvolAlcohol * 0.79 * 7).toFixed(0) + 'kCal'; 
 			} 
-			grandTotalDrinks();
+			calendarTotalDrinks();
   		 	calcDisplayBloodAlcohol();
 		}
-		function grandTotalDrinks(){
+		function calendarTotalDrinks(){
 			var now = parseInt((new Date()).getTime()/1000);
 			var howLongAgo;
 			var idx = howLong.indexOf(Titanium.App.Properties.getString('GrandTotal','1 week'));
-			Ti.API.debug('grandTotalDrinks idx, N' + idx + '  ' + howLongDays[idx]);
+			Ti.API.debug('calendarTotalDrinks idx, N' + idx + '  ' + howLongDays[idx]);
 			if (idx === 0){
 				howLongAgo = sessionData[0].StartTime;
 			}else{
@@ -396,17 +402,19 @@
 			for (d=-0;d<lenType;d++){				
 				for (i=0;i<len;i++){
 					if (drinkNames[d] === totalDrinks[i].DrugVariety){
-						drinkCountLabels[d].text = (totalDrinks[i].TotalUnits / stdDrinks[0].MillilitresPerUnit).toFixed(1) + ' U ' + drinkNames[d];
-					}
+						drinkCountLabels[d].text = (totalDrinks[i].TotalUnits / Ti.App.boozerlyzer.data.standardDrinks[0].MillilitresPerUnit).toFixed(1) + ' U ' + drinkNames[d];
+					
+					} 
 				}
 			}
+		
 		}
 		
 		function calcDisplayBloodAlcohol(){
 			var now = parseInt((new Date()).getTime()/1000);
-			var BAC = BACalculate(now, AllDrinks.slice(lastIndex),persInfo);
-			BloodAlcohol.text = 'Blood Alcohol ' + BAC.toFixed(4) + '%';
-			var baLevel = BALevels(BAC);
+			currentBloodAlcohol = Ti.App.boozerlyzer.analysis.BAC.calculate(now, Ti.App.boozerlyzer.data.AllDrinks.slice(lastIndex),Ti.App.boozerlyzer.data.personalInfo);
+			BloodAlcohol.text = 'Blood Alcohol ' + currentBloodAlcohol.toFixed(4) + '%';
+			var baLevel = Ti.App.boozerlyzer.analysis.BAC.levels(currentBloodAlcohol);
 			BloodAlcohol.color = baLevel.color;
 			footerUnits.color = baLevel.color;	
 		}
@@ -470,9 +478,9 @@
 		});
 		
 		//initial population of drink list.
-		var len = AllDrinks.length;
+		var len = Ti.App.boozerlyzer.data.AllDrinks.length;
 		for(var idx=0;idx<len; idx++){
-			tv.appendRow(formatTableRow(AllDrinks[idx]));	
+			tv.appendRow(formatTableRow(Ti.App.boozerlyzer.data.AllDrinks[idx]));	
 		}
 		sessionView.add(tv);
 		
@@ -536,7 +544,7 @@
 		newgame.addEventListener('click',function(){
 			var winplay = Titanium.UI.createWindow({ modal:true,
 				url:'/win/win_gameMenu.js',
-				title:'YBOB Game ',
+				title:'YBOB Game',
 				backgroundImage:'/images/smallcornercup.png',
 				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 			});
@@ -563,28 +571,46 @@
 		});
 		
 		//log data to the activity tracker
-		// record the total units at the moemnt
+		// record the total units at the moment
 		// and give user 2 lab points for using this screen
 		function gameEndSaveScores(){
 			Ti.API.debug('Drinks gameEndSaveScores');
-		var gameSaveData = [{Game: 'DoseageLog',
-							GameVersion:1,
-							PlayStart:winOpened ,
-							PlayEnd: parseInt((new Date()).getTime()/1000),
-							TotalScore:parseFloat(footerUnits.text),
-							GameSteps:0,
-							Speed_GO:0,
-							Speed_NOGO:0,
-							Coord_GO:0,
-							Coord_NOGO:0,
-							Level:0,
-							Inhibition:0,
-							Feedback:'',
-							Choices:'',
-							SessionID:Titanium.App.Properties.getInt('SessionID'),
-							UserID:Titanium.App.Properties.getInt('UserID'),
-							LabPoints:2		
-						}];
+			// first get the total drinks this session
+			var now = parseInt((new Date()).getTime()/1000,10);
+			var	howLongAgo = sessionData[0].StartTime;
+			var totalDrinks	=Ti.App.boozerlyzer.db.doseageLog.drinksinTimePeriod(howLongAgo, now);			
+			var lenType = drinkNames.length -1;
+			var len = totalDrinks.length;
+			for (d=-0;d<lenType;d++){				
+				for (i=0;i<len;i++){
+					if (drinkNames[d] === totalDrinks[i].DrugVariety){
+						drinkCountLabels[d].text = (totalDrinks[i].TotalUnits / Ti.App.boozerlyzer.data.standardDrinks[0].MillilitresPerUnit).toFixed(1) + ' U ' + drinkNames[d];
+					
+					} 
+				}
+			}
+			
+			
+			var gameSaveData = [{Game: 'Drink Logging',
+								GameVersion:1,
+								PlayStart:winOpened ,
+								PlayEnd: parseInt((new Date()).getTime()/1000),
+								TotalScore:parseFloat(footerUnits.text),
+								GameSteps:0,
+								Speed_GO:0,
+								Speed_NOGO:0,
+								Coord_GO:0,
+								Coord_NOGO:0,
+								Level:0,
+								Inhibition:0,
+								Feedback:'',
+								Choices:'',
+								Alcohol_ml:totalvolAlcohol,
+								BloodAlcoholConc:currentBloodAlcohol.toFixed(4),
+								SessionID:Titanium.App.Properties.getInt('SessionID'),
+								UserID:Titanium.App.Properties.getInt('UserID'),
+								LabPoints:2		
+							}];
 			Ti.App.boozerlyzer.db.gameScores.Result(gameSaveData);
 		}
 

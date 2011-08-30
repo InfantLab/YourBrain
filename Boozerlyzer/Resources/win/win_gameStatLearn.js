@@ -55,7 +55,7 @@
 		clicked = true;
 		
 		
-		var idx = parseInt(e.source.idx);
+		var idx = parseInt(e.source.idx,10);
 		Ti.API.debug('idx:' + idx);
 		var cen = e.source.center;
 		//need the click in global coordinates
@@ -167,7 +167,7 @@
 						inhibitbonus,
 						5,
 						"",
-						'/icons/teddy_bears.png' )
+						'/icons/teddy_bears.png' );
 		scoresDialog.open();
 
 	}
@@ -381,15 +381,28 @@
 	
 	function gameEndSaveScores(){
 		Ti.API.debug('save game scores USERID' + Titanium.App.Properties.getInt('UserID'));
+		
+		var now = parseInt((new Date()).getTime()/1000,10);
+		var SessionID = Titanium.App.Properties.getInt('SessionID');
+		//load up the drink data so we can work out current blood alcohol
+		if (!Ti.App.boozerlyzer.data.AllDrinks || Ti.App.boozerlyzer.data.AllDrinks === null || Ti.App.boozerlyzer.data.AllDrinks === 'undefined'){
+			Ti.App.boozerlyzer.data.AllDrinks = Ti.App.boozerlyzer.db.doseageLog.getAllSessionData(SessionID);
+		}
+		if (!Ti.App.boozerlyzer.data.personalInfo || Ti.App.boozerlyzer.data.personalInfo === null || Ti.App.boozerlyzer.data.personalInfo === 'undefined'){
+			Ti.App.boozerlyzer.data.personalInfo = Ti.App.boozerlyzer.db.personalInfo.getData();
+		}
+		var drinkVolume_ml = Ti.App.boozerlyzer.db.doseageLog.totalDrinkVolume(Ti.App.boozerlyzer.data.AllDrinks); 
+		var currentBloodAlcohol = Ti.App.boozerlyzer.analysis.BAC.calculate(now, Ti.App.boozerlyzer.data.AllDrinks,Ti.App.boozerlyzer.data.personalInfo);
+
 		//have to be careful of dividing by zero as NaN upset the database 
-		var AvSpeed_GO = (count_GO-miss_GO===0 ? null :speed_GO/(count_GO-miss_GO) )
-		var AvSpeed_NOGO = (count_NOGO-miss_NOGO===0 ? null :speed_NOGO/(count_NOGO-miss_NOGO) )
-		var AvCoord_GO = (count_GO-miss_GO===0 ? null :coord_GO/(count_GO-miss_GO) )
-		var AvCoord_NOGO = (count_NOGO-miss_NOGO===0 ? null :coord_NOGO/(count_NOGO-miss_NOGO) )
+		var AvSpeed_GO = (count_GO-miss_GO===0 ? null :speed_GO/(count_GO-miss_GO) );
+		var AvSpeed_NOGO = (count_NOGO-miss_NOGO===0 ? null :speed_NOGO/(count_NOGO-miss_NOGO) );
+		var AvCoord_GO = (count_GO-miss_GO===0 ? null :coord_GO/(count_GO-miss_GO) );
+		var AvCoord_NOGO = (count_NOGO-miss_NOGO===0 ? null :coord_NOGO/(count_NOGO-miss_NOGO) );
 		var gameSaveData = [{Game: 'StatLearning',
 							GameVersion:1,
 							PlayStart: startTime/1000 ,
-							PlayEnd: parseInt((new Date()).getTime()/1000),
+							PlayEnd: now,
 							TotalScore:points + speedbonus + coordbonus + inhibitbonus,
 							GameSteps:count_GO + count_NOGO,
 							Speed_GO:speed_GO/(count_GO-miss_GO),  //average speed
@@ -402,7 +415,10 @@
 							Choices:'',
 							SessionID:Titanium.App.Properties.getInt('SessionID'),
 							UserID:Titanium.App.Properties.getInt('UserID'),
-							LabPoints:5		
+							LabPoints:5	,
+							Alcohol_ml:drinkVolume_ml.toFixed(5),
+							BloodAlcoholConc:currentBloodAlcohol.toFixed(5)
+	
 						}];
 		Ti.App.boozerlyzer.db.gameScores.Result(gameSaveData);
 	}

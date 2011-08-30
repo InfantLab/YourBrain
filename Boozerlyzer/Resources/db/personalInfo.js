@@ -74,16 +74,18 @@
 	}
 	
 	//maintain a database connection we can use
-  	var conn = Titanium.Database.install('ybob.db','ybob');
+	if (!Ti.App.boozerlyzer.db.conn){
+		Ti.App.boozerlyzer.db.conn = Titanium.Database.install('ybob.db','ybob');
+	}
 
 	
 	Ti.App.boozerlyzer.db.personalInfo.getData = function (){
 		var mostRecentData = [];
-		var rows = conn.execute('SELECT max(ID) FROM PERSONALINFO');
+		var rows =Ti.App.boozerlyzer.db.conn.execute('SELECT max(ID) FROM PERSONALINFO');
 		if ((rows !== null) && (rows.isValidRow())) {
 			var maxid = rows.field(0);
 			rows.close();
-			rows = conn.execute('SELECT * FROM PERSONALINFO WHERE ID = ?', maxid);
+			rows =Ti.App.boozerlyzer.db.conn.execute('SELECT * FROM PERSONALINFO WHERE ID = ?', maxid);
 			if ((rows !== null) && (rows.isValidRow())) {
 				mostRecentData = {
 					Changed: false,
@@ -103,7 +105,8 @@
 			}
 		}
 		//something didn't work
-		return false;
+		rows.close();
+		return null;
 	};
 	
 	Ti.App.boozerlyzer.db.personalInfo.setData = function (newData){
@@ -114,9 +117,9 @@
 			var insertstr = 'INSERT INTO PersonalInfo (UpdateTime,BirthMonth,BirthYear,Gender,Height,Weight,NickName, Country)';
 			insertstr += 'VALUES(?,?,?,?,?,?,?,?)';
 			var now = new Date().getTime();
-			conn.execute(insertstr,now,newData.BirthMonth,newData.BirthYear,newData.Gender,newData.Height,newData.Weight,newData.Nickname,newData.Country);
-			Titanium.API.debug('PersonalInfo updated, rowsAffected = ' + conn.rowsAffected);
-			Titanium.API.debug('PersonalInfo, lastInsertRowId = ' + conn.lastInsertRowId);
+			Ti.App.boozerlyzer.db.conn.execute(insertstr,now,newData.BirthMonth,newData.BirthYear,newData.Gender,newData.Height,newData.Weight,newData.Nickname,newData.Country);
+			Titanium.API.debug('PersonalInfo updated, rowsAffected = ' +Ti.App.boozerlyzer.db.conn.rowsAffected);
+			Titanium.API.debug('PersonalInfo, lastInsertRowId = ' +Ti.App.boozerlyzer.db.conn.lastInsertRowId);
 			Titanium.App.Properties.setBool('EnteredPersonalData',true);			
 		}
 	};

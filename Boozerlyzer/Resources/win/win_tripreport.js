@@ -9,11 +9,39 @@
 (function() {
 	
 	var win = Titanium.UI.currentWindow;
+	var winOpened = parseInt((new Date()).getTime()/1000,10);
 	//include the menu choices	
 	Ti.include('/ui/menu.js');
 	var menu = menus;
 	//need to give it specific help for this screen
 	menu.setHelpMessage("Simply record how you are feeling right now. Thanks :-)");
+
+	//log data to the activity tracker
+	// record the total units at the moment
+	// and give user 2 lab points for using this screen
+	function gameEndSaveScores(){
+		Ti.API.debug('Trip Report gameEndSaveScores');
+		var gameSaveData = [{Game: 'TripReport',
+							GameVersion:1,
+							PlayStart:winOpened ,
+							PlayEnd: parseInt((new Date()).getTime()/1000, 10),
+							TotalScore:0,
+							GameSteps:0,
+							Speed_GO:0,
+							Speed_NOGO:0,
+							Coord_GO:0,
+							Coord_NOGO:0,
+							Level:0,
+							Inhibition:0,
+							Feedback:tripContent.value,
+							Choices:'',
+							SessionID:Titanium.App.Properties.getInt('SessionID'),
+							UserID:Titanium.App.Properties.getInt('UserID'),
+							LabPoints:2		
+						}];
+		Ti.App.boozerlyzer.db.gameScores.Result(gameSaveData);
+	}
+
 	
 	//layout variables
 	var topHeading = 5, topContent = 50, topChangedLabel = 200;
@@ -121,7 +149,6 @@
 			title:'What have you had to drink?',
 			backgroundImage:'/images/smallcornercup.png'
 		});
-		newdosewin.home =  winHome;
 		win.close();
 		newdosewin.open();
 	});
@@ -135,7 +162,7 @@
 		left:leftSecond
 	});
 	newmood.addEventListener('click',function(){
-		var newmoodwin = Titanium.UI.createWindow({ modal:true,
+		var newmoodwin = Titanium.UI.createWindow({
 			modal:true,
 			url:'/win/win_emotion.js',
 			title:'How are you feeling?',
@@ -154,10 +181,10 @@
 		left:leftThird
 	});
 	newgame.addEventListener('click',function(){
-		var winplay = Titanium.UI.createWindow({ modal:true,
+		var winplay = Titanium.UI.createWindow({ 
 			modal:true,
-			url:'/win/win_game1.js',
-			title:'YBOB Game 1 - Level 1',
+			url:'/win/win_gameMenu.js',
+			title:'Boozerlyzer Games',
 			backgroundImage:'/images/smallcornercup.png'
 		});
 		winplay.open();
@@ -168,14 +195,13 @@
 	//
 	// Cleanup and return home
 	win.addEventListener('android:back', function(e) {
-		if (Ti.App.boozerlyzer.winHome === undefined 
-			 || Ti.App.boozerlyzer.winHome === null) {
+		if (Ti.App.boozerlyzer.winHome === undefined || Ti.App.boozerlyzer.winHome === null) {
 			Ti.App.boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
 				url: '/app.js',
 				title: 'Boozerlyzer',
 				backgroundImage: '/images/smallcornercup.png',
 				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
-			})
+			});
 		}
 		win.close();
 		Ti.App.boozerlyzer.winHome.open();

@@ -17,8 +17,10 @@
 	Ti.App.boozerlyzer.db.sessions = {};
 	
 	//maintain a database connection we can use
-	var conn = Titanium.Database.install('ybob.db','ybob');
-  
+	if (!Ti.App.boozerlyzer.db.conn){
+		Ti.App.boozerlyzer.db.conn = Titanium.Database.install('ybob.db','ybob');
+	}
+ 
 	/***
 	 * Tell us the most recent session (before timestamp)
 	 * get data for the maximum row id for this userID
@@ -30,14 +32,14 @@
 		var mostRecentData = [];
 		var uid = parseInt(userID);
 		//this line probably unnecessary but i had some paranoia that max(id) didn't work properly
-		var rows = conn.execute('SELECT count(*) FROM Sessions WHERE userID = ?', uid);
+		var rows =Ti.App.boozerlyzer.db.conn.execute('SELECT count(*) FROM Sessions WHERE userID = ?', uid);
 		if (rows !== null && rows.isValidRow() && rows.field(0) > 0) {
 			rows.close();
 			if (timeStamp !== null && timeStamp !== undefined ){
-				rows = conn.execute('SELECT max(ID) FROM Sessions where userID = ?', uid);
+				rows =Ti.App.boozerlyzer.db.conn.execute('SELECT max(ID) FROM Sessions where userID = ?', uid);
 			}else{
 				//include time restriction
-				rows = conn.execute('SELECT max(ID) FROM Sessions where userID = ? and Created < ?', uid, timeStamp);
+				rows =Ti.App.boozerlyzer.db.conn.execute('SELECT max(ID) FROM Sessions where userID = ? and Created < ?', uid, timeStamp);
 			}
 			if ((rows !== null) && (rows.isValidRow())) {
 				var maxid = 1;
@@ -48,7 +50,7 @@
 					return false;
 				}
 				rows.close();
-				rows = conn.execute('SELECT * FROM Sessions WHERE ID = ?', maxid);
+				rows =Ti.App.boozerlyzer.db.conn.execute('SELECT * FROM Sessions WHERE ID = ?', maxid);
 				if ((rows !== null) && (rows.isValidRow())) {
 					mostRecentData.push({
 						Created: parseInt(rows.fieldByName('Created')),
@@ -73,10 +75,10 @@
 		Titanium.API.debug('session changeStartTime');
 		var now  = parseInt((new Date()).getTime()/1000);		
 		var updatestr = 'Update Sessions set StartTime = ?, LastUpdate = ? where ID = ?';
-		conn.execute(updatestr,startTime, now, sessionID);
+		Ti.App.boozerlyzer.db.conn.execute(updatestr,startTime, now, sessionID);
 		Titanium.App.Properties.setInt('SessionStart',now);
 		Titanium.App.Properties.setInt('SessionChanged',now);
-		Titanium.API.debug('selfAssessment updated, rowsAffected = ' + conn.rowsAffected);
+		Titanium.API.debug('selfAssessment updated, rowsAffected = ' +Ti.App.boozerlyzer.db.conn.rowsAffected);
 	};
 	
 	//Something has changed during this session update the timestamp
@@ -85,9 +87,9 @@
 		var now  = parseInt((new Date().getTime())/1000);		
 		var sessID = parseInt(sessionID);
 		var updatestr = 'Update Sessions set LastUpdate = ? where ID = ?';
-		conn.execute(updatestr, now, sessID);
+		Ti.App.boozerlyzer.db.conn.execute(updatestr, now, sessID);
 		Titanium.App.Properties.setInt('SessionChanged',now);
-		Titanium.API.debug('selfAssessment updated, rowsAffected = ' + conn.rowsAffected);
+		Titanium.API.debug('selfAssessment updated, rowsAffected = ' +Ti.App.boozerlyzer.db.conn.rowsAffected);
 	};
 
 	//get a Session by ID (id is unique) 
@@ -95,7 +97,7 @@
 		var allSessionData = [];
 		var rows = null;
 		var id = parseInt(SessionID);
-		rows = conn.execute('SELECT * FROM Sessions WHERE ID = ?', id);
+		rows =Ti.App.boozerlyzer.db.conn.execute('SELECT * FROM Sessions WHERE ID = ?', id);
 		if ((rows !== null) && (rows.isValidRow())) {
 			while(rows.isValidRow()){
 				allSessionData.push({
@@ -122,15 +124,15 @@
 		var rows = null;
 		if (userID === null) {
 			//get all data
-			rows = conn.execute('SELECT * FROM Sessions ORDER BY ID ASC');
+			rows =Ti.App.boozerlyzer.db.conn.execute('SELECT * FROM Sessions ORDER BY ID ASC');
 		}else{
 			var uid = parseInt(userID);
-			rows = conn.execute('SELECT * FROM Sessions WHERE UserID = ?, ORDER BY ID ASC', uid);
+			rows =Ti.App.boozerlyzer.db.conn.execute('SELECT * FROM Sessions WHERE UserID = ?, ORDER BY ID ASC', uid);
 		}
 		if ((rows !== null) && (rows.isValidRow())) {
 			var maxid = parseInt(rows.field(0));
 			rows.close();
-			rows = conn.execute('SELECT * FROM Sessions WHERE ID = ?', maxid);
+			rows =Ti.App.boozerlyzer.db.conn.execute('SELECT * FROM Sessions WHERE ID = ?', maxid);
 			if ((rows !== null) && (rows.isValidRow())) {
 				while(row.isValidRow()){
 					allSessionData.push({
@@ -161,7 +163,7 @@
 			userID = 0;
 		}else{
 			//get a new user id
-			rows = conn.execute('SELECT max(UserID) from Sessions');	
+			rows =Ti.App.boozerlyzer.db.conn.execute('SELECT max(UserID) from Sessions');	
 			if (rows!==null){
 				userID += parseInt(rows.field(0));
 			}else{
@@ -171,8 +173,8 @@
 			rows.close();
 		}
 		var now = parseInt((new Date()).getTime()/1000);
-		conn.execute(insertstr, now, Titanium.App.getVersion(),userID,now, now) 
-		sessionID = conn.lastInsertRowId;
+		Ti.App.boozerlyzer.db.conn.execute(insertstr, now, Titanium.App.getVersion(),userID,now, now) 
+		sessionID =Ti.App.boozerlyzer.db.conn.lastInsertRowId;
 		Titanium.App.Properties.setInt('SessionID', sessionID);
 		Titanium.App.Properties.setInt('SessionStart',now);
 		Titanium.App.Properties.setInt('SessionChanged',now);
@@ -198,7 +200,7 @@
 			//just main user sessions
 			selectStr = 'SELECT COUNT(*) from sessions where UserID = 0'
 		}		
-		var rows = conn.execute(selectStr);
+		var rows =Ti.App.boozerlyzer.db.conn.execute(selectStr);
 		if (rows !== null) {
 			var count = rows.field(0);
 			rows.close();

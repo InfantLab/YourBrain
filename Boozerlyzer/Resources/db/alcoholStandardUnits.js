@@ -17,8 +17,10 @@
 
 	
 	//maintain a database connection we can use
-  	var conn = Titanium.Database.install('ybob.db','ybob');
-	
+  	if (!Ti.App.boozerlyzer.db.conn){
+		Ti.App.boozerlyzer.db.conn = Titanium.Database.install('ybob.db','ybob');
+	}
+
 		
 	//get standard drinks either for a single country
 	//or for all of them!
@@ -26,10 +28,10 @@
 		var rows, returnData = [];
 		var selectStr = 'SELECT * FROM AlcoholStandardDrinks ';
 		if (typeof(Country)=="undefined" || Country === null){
-			rows = conn.execute(selectStr);	 
+			rows =Ti.App.boozerlyzer.db.conn.execute(selectStr);	 
 		}else {
 			selectStr += 'WHERE Country = ?';
-			rows = conn.execute(selectStr, Country);
+			rows =Ti.App.boozerlyzer.db.conn.execute(selectStr, Country);
 		}
 		if ((rows !== null) && (rows.isValidRow())) {
 			while(rows.isValidRow()){

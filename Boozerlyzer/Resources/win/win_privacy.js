@@ -76,12 +76,12 @@
 		// db.close();
 
 		// //quick fix		
-		// var conn = Titanium.Database.install('ybob.db','ybob');
-		// // conn.execute('UPDATE GameScores set UserID = 0 ');
-		// // conn.execute('ALTER TABLE "main"."GameScores" ADD COLUMN "GameSteps" INTEGER');
-		// conn.execute('ALTER TABLE "main"."GameScores" ADD COLUMN "Alcohol_ml" NUMERIC');
-		// conn.execute('ALTER TABLE "main"."GameScores" ADD COLUMN "BloodAlcoholConc" NUMERIC');
-		// conn.close();
+		// varTi.App.boozerlyzer.db.conn = Titanium.Database.install('ybob.db','ybob');
+		// //Ti.App.boozerlyzer.db.conn.execute('UPDATE GameScores set UserID = 0 ');
+		// //Ti.App.boozerlyzer.db.conn.execute('ALTER TABLE "main"."GameScores" ADD COLUMN "GameSteps" INTEGER');
+		//Ti.App.boozerlyzer.db.conn.execute('ALTER TABLE "main"."GameScores" ADD COLUMN "Alcohol_ml" NUMERIC');
+		//Ti.App.boozerlyzer.db.conn.execute('ALTER TABLE "main"."GameScores" ADD COLUMN "BloodAlcoholConc" NUMERIC');
+		//Ti.App.boozerlyzer.db.conn.close();
 	});
 	win.add(debug);
 	
@@ -113,7 +113,7 @@
 		});
 		exportData.addEventListener('click',function()
 		{
-			Ti.App.boozerlyzer.comm.exportGameData.exportCSV();
+			Ti.App.boozerlyzer.comm.exportData.exportTabFile();
 		});	
 		win.add(exportData);
 		

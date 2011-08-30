@@ -19,10 +19,17 @@ Ti.API.debug('app main 0');
 Ti.App.boozerlyzer = {};
 Ti.App.boozerlyzer.win = {};	//windows
 Ti.App.boozerlyzer.db ={};		//database access functions
-Ti.App.boozerlyzer.data ={};	//cached data objects
 Ti.App.boozerlyzer.comm = {};	//network communication functions
+Ti.App.boozerlyzer.analysis = {};//functions that calculate stuff
 
+//cached data objects
+Ti.App.boozerlyzer.data ={};	
+Ti.App.boozerlyzer.data.AllDrinks = null;//array of drinks
+Ti.App.boozerlyzer.data.personalInfo = null;//demographic info for this participant
+Ti.App.boozerlyzer.data.standardDrinks = null; //standard drink sizes per country
 
+Ti.include('/analysis/bloodalcohol.js');
+Ti.include('/analysis/maths.js');
 //all of the data handling routines.
 Ti.include('/db/sessions.js');
 Ti.include('/db/doseageLog.js');
@@ -39,8 +46,8 @@ Ti.include('/db/weFeelFine.js');
 Ti.include('/js/dateTimeHelpers.js');
 //the scripts that communicate with server
 Ti.include('/comm/ybodnet.js');
-Ti.include('/comm/sendGameData.js');
-Ti.include('/comm/exportGameData.js');
+Ti.include('/comm/sendData.js');
+Ti.include('/comm/exportData.js');
 	
 	
 Ti.include('/win/win_main.js'); //construct main screen UI

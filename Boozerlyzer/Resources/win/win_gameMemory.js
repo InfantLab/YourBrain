@@ -12,8 +12,8 @@
  */
 
 (function() {
+	Ti.API.debug('gameMemory 1');
 	var win = Titanium.UI.currentWindow;
-
 	Ti.include('/ui/scoresDialog.js');
 	//include the menu choices	
 	Ti.include('/ui/menu.js');
@@ -22,6 +22,7 @@
 	menu.setHelpMessage("Press the buttons to advance the images. If two IMAGES are the same press the lower LEFT button. If the LOCATION is the same press the lower RIGHT button. Otherwise press either NO MATCH button. Points are awarded for speed & coordination.");
 
 	var stimulus, grid;
+	var labelScore, score, labelBonus, bonus, countLabel,nBackLabel,missCountLabel, labelGameMessage;
 	var currentObj = 0, points = 0, coordbonus = 0, speedbonus = 0,  inhibitbonus = 0;
 	var startTime = 0, stepStartTime = 0, count = 0, missCount = 0, falseAlarmCount = 0;
 	var gameStarted = false, gameAllowRestart = true, clicked = false,dialogOpen  = false;
@@ -30,7 +31,7 @@
 	var imgleft = [2,96,190,2,96,190,2,96,190];
 	
 	var fruitprefix = '/images/fruit/';
-	var fruits = ['apple.png','banana.png','cherry.png','grapefruit.png','kiwi.png','lemon.png','lime.png','strawberry.png','watermelon.png','starfruit.png']
+	var fruits = ['apple.png','banana.png','cherry.png','grapefruit.png','kiwi.png','lemon.png','lime.png','strawberry.png','watermelon.png','starfruit.png'];
 	
 	//	track what object is shown and its location for each step
 	var stepImage = [],stepLocation = [];
@@ -90,7 +91,7 @@
 				missCount++;
 			}else{
 				Ti.API.debug('no match');
-				score += 2;
+				points += 2;
 			}			
 		}	
 		gameStep();			
@@ -128,6 +129,7 @@
 		
 		gameStep();
 	}
+	Ti.API.debug('gameMemory 2');
 	
 	/**
 	 * The main game loop all the clever stuff happens in here
@@ -189,6 +191,7 @@
 		}, 1000);
 	});
 
+	Ti.API.debug('gameMemory 3');
 
 	function calcSpeedBonus(stepStart,clickTime){
 		//TODO - the reaction time bonus
@@ -221,7 +224,7 @@
 	}
 	
 	function setUpOnce(){	
-	
+		Ti.API.debug('win_gameMemory - setup once');
 		var leftNOButton = Ti.UI.createButton({
 			title:'No match',
 			width:'20%',
@@ -238,6 +241,8 @@
 			whatClicked(events);
 		});	
 		win.add(leftNOButton);
+		Ti.API.debug('win_gameMemory - setup once 2');
+
 		var leftYESButton = Ti.UI.createButton({
 			title:'Shape matched item 1 step before',
 			width:'20%',
@@ -288,122 +293,134 @@
 			whatClicked(events);
 		});	
 		win.add(rightYESButton);
-	
+
+		Ti.API.debug('win_gameMemory - setup once 3');	
 		grid = Ti.UI.createView({
-			backgroundImage:'/images/grid3x3.png',
+			//TODO 
+			//The grid image is commented out because of a bug in SDK 1.7.2
+			//check back periodically to see if the bug has been fixed.
+			// http://developer.appcelerator.com/question/40711/unable-to-load-bitmap-not-enough-memory-bitmap-size-exceeds-vm-budget#81151
+			//backgroundImage:'/images/grid3x3.png',
 			height:282,
 			width:282,
 			top:20,
 			left:100
 		});
-//		grid.visible = false;
+		Ti.API.debug('win_gameMemory - setup once 4');			
+//		grid.visible = false; 
+		Ti.API.debug('win_gameMemory - setup once 5');			
 		win.add(grid);
+		Ti.API.debug('win_gameMemory - setup once 6');
 		stimulus = Ti.UI.createImageView({
 				width:iconSize,height:iconSize,
 				top:imgtop[0],
 				left:imgleft[0],
 				image:fruitprefix + fruits[0]
 			});	
+		Ti.API.debug('win_gameMemory - setup once 7');
 		stimulus.visible = false;
 		grid.add(stimulus);
+		Ti.API.debug('win_gameMemory - setup once 8');
 
+		//
+		//	The labels for the scores. 
+		//
+		labelScore = Ti.UI.createLabel({
+			color:'white',
+			font:{fontSize:14,fontFamily:'Helvetica Neue'},
+			top:2,
+			left:2,
+			textAlign:'left',
+			text:'Score:',
+			height:'auto',
+			width:40
+		});
+		
+		score = Ti.UI.createLabel({
+			color:'green',
+			font:{fontSize:14,fontWeight:'bold',fontFamily:'Helvetica Neue'},
+			top:2,
+			left:40,
+			textAlign:'right',
+			text:'      0',
+			height:'auto',
+			width:80
+		});
+		labelBonus = Ti.UI.createLabel({
+			color:'white',
+			font:{fontSize:12,fontFamily:'Helvetica Neue'},
+			top:2,
+			left:140,
+			textAlign:'left',
+			text:'Bonus',
+			height:'auto',
+			width:46
+		});
+		bonus = Ti.UI.createLabel({
+			color:'red',
+			font:{fontSize:12,fontWeight:'bold',fontFamily:'Helvetica Neue'},
+			top:2,
+			left:190,
+			textAlign:'right',
+			text:'  0 speed,   0 coord,   0 oops',
+			height:'auto',
+			width:'auto'
+		});
+	
+		//label for how many steps back we are currently counting
+		countLabel = Ti.UI.createLabel({
+			color:'black',
+			font:{fontSize:18,fontWeight:'bold',fontFamily:'Helvetica Neue'},
+			bottom:2,
+			right:70,
+			textAlign:'right',
+			text:'0',
+			width:100
+		});
+		
+		//label for how many steps back we are currently counting
+		nBackLabel = Ti.UI.createLabel({
+			color:'blue',
+			font:{fontSize:18,fontWeight:'bold',fontFamily:'Helvetica Neue'},
+			bottom:2,
+			right:2,
+			textAlign:'right',
+			text:'1 Back',
+			width:100
+		});
+	
+		//label for how many location or shape misses we have
+		missCountLabel = Ti.UI.createLabel({
+			color:'blue',
+			font:{fontSize:18,fontWeight:'bold',fontFamily:'Helvetica Neue'},
+			top:2,
+			right:2,
+			textAlign:'right',
+			text:'0 Missed',
+			width:100
+		});
+		
+		// label across centre of screen for pause, start etc
+		labelGameMessage = Ti.UI.createLabel({
+			color:'purple',
+			font:{fontSize:18,fontWeight:'bold',fontFamily:'Helvetica Neue'},
+			textAlign:'center',
+			text:'Tap to start'
+		});
+		win.add(labelScore);
+		win.add(score);
+		win.add(labelBonus);
+		win.add(bonus);
+		win.add(countLabel);
+		win.add(nBackLabel);
+		win.add(missCountLabel);
+		win.add(labelGameMessage);
+
+		Ti.API.debug('win_gameMemory - setup done');
 	}
-	
-	
-	//
-	//	The labels for the scores. 
-	//
-	var labelScore = Ti.UI.createLabel({
-		color:'white',
-		font:{fontSize:14,fontFamily:'Helvetica Neue'},
-		top:2,
-		left:2,
-		textAlign:'left',
-		text:'Score:',
-		height:'auto',
-		width:40
-	});
-	
-	var score = Ti.UI.createLabel({
-		color:'green',
-		font:{fontSize:14,fontWeight:'bold',fontFamily:'Helvetica Neue'},
-		top:2,
-		left:40,
-		textAlign:'right',
-		text:'      0',
-		height:'auto',
-		width:80
-	});
-	var labelBonus = Ti.UI.createLabel({
-		color:'white',
-		font:{fontSize:12,fontFamily:'Helvetica Neue'},
-		top:2,
-		left:140,
-		textAlign:'left',
-		text:'Bonus',
-		height:'auto',
-		width:46
-	});
-	var bonus = Ti.UI.createLabel({
-		color:'red',
-		font:{fontSize:12,fontWeight:'bold',fontFamily:'Helvetica Neue'},
-		top:2,
-		left:190,
-		textAlign:'right',
-		text:'  0 speed,   0 coord,   0 oops',
-		height:'auto',
-		width:'auto'
-	});
-	win.add(labelScore);
-	win.add(score);
-	win.add(labelBonus);
-	win.add(bonus);
 
-	//label for how many steps back we are currently counting
-	var countLabel = Ti.UI.createLabel({
-		color:'black',
-		font:{fontSize:18,fontWeight:'bold',fontFamily:'Helvetica Neue'},
-		bottom:2,
-		right:70,
-		textAlign:'right',
-		text:'0',
-		width:100
-	});
-	win.add(countLabel);
-	
-	//label for how many steps back we are currently counting
-	var nBackLabel = Ti.UI.createLabel({
-		color:'blue',
-		font:{fontSize:18,fontWeight:'bold',fontFamily:'Helvetica Neue'},
-		bottom:2,
-		right:2,
-		textAlign:'right',
-		text:'1 Back',
-		width:100
-	});
-	win.add(nBackLabel);
+	Ti.API.debug('gameMemory 4');
 
-	//label for how many location or shape misses we have
-	var missCountLabel = Ti.UI.createLabel({
-		color:'blue',
-		font:{fontSize:18,fontWeight:'bold',fontFamily:'Helvetica Neue'},
-		top:2,
-		right:2,
-		textAlign:'right',
-		text:'0 Missed',
-		width:100
-	});
-	win.add(missCountLabel);
-	
-	// label across centre of screen for pause, start etc
-	var labelGameMessage = Ti.UI.createLabel({
-		color:'purple',
-		font:{fontSize:18,fontWeight:'bold',fontFamily:'Helvetica Neue'},
-		textAlign:'center',
-		text:'Tap to start'
-	});
-	win.add(labelGameMessage);
-	
 	win.addEventListener('click',function(ev)
 	{
 		if (!gameStarted && gameAllowRestart && !dialogOpen){
@@ -433,6 +450,7 @@
 	});
 	
 	setUpOnce();
+	Ti.API.debug('gameMemory 5');
 	
 	function gameEndSaveScores(){
 		var now = parseInt((new Date()).getTime()/1000);
@@ -469,13 +487,13 @@
 	// Cleanup and return home
 	win.addEventListener('android:back', function(e) {
 		if (Ti.App.boozerlyzer.winHome === undefined 
-			 || Ti.App.boozerlyzer.winHome === null) {
+		 || Ti.App.boozerlyzer.winHome === null) {
 			Ti.App.boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
 				url: '/app.js',
 				title: 'Boozerlyzer',
 				backgroundImage: '/images/smallcornercup.png',
 				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
-			})
+			});
 		}
 		win.close();
 		Ti.App.boozerlyzer.winHome.open();

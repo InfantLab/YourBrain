@@ -23,8 +23,9 @@
 		//need to give it specific help for this screen
 		menu.setHelpMessage("Click on the icons to add new drinks, launch games, etc.");
 		
-		//reset the MateMode flag.
-		Titanium.App.Properties.setBool('MateMode',false) 
+		//reset to main user and MateMode flag.
+		Titanium.App.Properties.setInt('UserID',0);
+		Titanium.App.Properties.setBool('MateMode',false); 
 		//the start screen for the YBOB boozerlyzer
 		var homeWin = Titanium.UI.createWindow({
 			exitOnClose: true,
@@ -42,7 +43,7 @@
 		
 		// layout variables
 		var bigIcons = 76, leftAppName = 20, leftNewDrinks = 20, leftEmotion = 100, leftTripReport = 180, leftGame = 240;
-		var topNewDrinks = 80, topEmotion = 80, topTripReport = 80, topGame = 80, topHighScores = 160, leftHighScores = 100, topLabPoints = 160
+		var topNewDrinks = 80, topEmotion = 80, topTripReport = 80, topGame = 80, topHighScores = 160, leftHighScores = 100, topLabPoints = 160;
 		var leftLabPoints =20, topResults = 80, leftResults = 340, optionsLeft = 320;
 		
 		
@@ -474,7 +475,6 @@
 			// var now = parseInt((new Date()).getTime()/1000);
 			// var monthago = now - 31*3600*24;
 			// var totalDrinks	=Ti.App.boozerlyzer.db.doseageLog.drinksinTimePeriod(monthago, now);
-// 			
 			// var len = totalDrinks.length;
 			// var drinksList = '';
 			// for (i=0;i<len;i++){
@@ -483,7 +483,7 @@
 			// }
 			// Ti.API.debug(drinksList);
 			// alert("Total alcohol consumed this month\n\n" + drinksList);
-			Ti.App.boozerlyzer.comm.sendGameData.sync();
+			Ti.App.boozerlyzer.comm.sendData.sync();
 		});	
 		homeWin.add(sync);
 

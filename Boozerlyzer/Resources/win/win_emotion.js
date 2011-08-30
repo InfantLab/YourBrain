@@ -17,7 +17,7 @@
 			win.backgroundImage = '/images/smallcornercup.png';
 		}
 		var winHome = win.home;
-		var winOpened = parseInt((new Date()).getTime()/1000);
+		var winOpened = parseInt((new Date()).getTime()/1000, 10);
 		var tic = new Date(); //used for counting blur times.
 
 		//include the menu choices	
@@ -49,19 +49,13 @@
 		currentEmotion[0].EnergyBlur = 0;
 		
 		//layout variables
-		var sizeIcon = 48;
-		var leftLowIcon = 48;
+		var sizeIcon = 48, leftLowIcon = 48;
 		var leftSlider = leftLowIcon+sizeIcon;
 		var leftLabels = leftSlider;
-		var widthSlider = 240
+		var widthSlider = 240;
 		var leftHighIcon = leftSlider + widthSlider + 5;
-		var topHappiness = 24;
-		var topEnergy = 100;
-		var topDrunk = 176;
-		var topLastEvent = 220;
-		//var leftPlayGame = 300;
-		var rightNewDrinks = 70;
-		var rightPlayGame = 10;
+		var topHappiness = 24, topEnergy = 100, topDrunk = 176, topLastEvent = 220;
+		var rightNewDrinks = 70, rightPlayGame = 10;
 		
 		//
 		// HAPPINESS SLIDER
@@ -240,6 +234,29 @@
 		win.add(lastchangedLabel);
 		
 		
+		// record activity data for right now
+		// and give user 2 lab points for using this screen
+		function gameEndSaveScores(){
+		var gameSaveData = [{Game: 'TrackMood',
+							GameVersion:1,
+							PlayStart:winOpened ,
+							PlayEnd: parseInt((new Date()).getTime()/1000,10),
+							TotalScore:happiness.value,
+							Speed_GO:energy.value,
+							Speed_NOGO:0,
+							Coord_GO:drunkeness.value,
+							Coord_NOGO:0,
+							Level:0,
+							Inhibition:0,
+							Feedback:'',
+							Choices:'H:' +happiness.value + ', E:' + energy.value + ', D:' + drunkeness.value,
+							SessionID:Titanium.App.Properties.getInt('SessionID'),
+							UserID:Titanium.App.Properties.getInt('UserID'),
+							LabPoints:2		
+						}];
+			Ti.App.boozerlyzer.db.gameScores.Result(gameSaveData);
+		}
+		
 		// SAVE BUTTON	
 		var save = Ti.UI.createButton({
 			title:'Save',
@@ -267,6 +284,7 @@
 			currentEmotion[0].DrunkBlur = 0;
 			currentEmotion[0].HappyBlur = 0;
 			currentEmotion[0].EnergyBlur = 0;
+			gameEndSaveScores();
 			win.close();
 		});	
 		// CANCEL BUTTON	
@@ -379,28 +397,7 @@
 			Ti.App.boozerlyzer.winHome.open();
 	});
 		
-		// record activity data for right now
-		// and give user 2 lab points for using this screen
-		function gameEndSaveScores(){
-		var gameSaveData = [{Game: 'Emotion',
-							GameVersion:1,
-							PlayStart:winopened ,
-							PlayEnd: parseInt((new Date()).getTime()/1000),
-							TotalScore:happiness.value,
-							Speed_GO:energy.value,
-							Speed_NOGO:0,
-							Coord_GO:drunkeness.value,
-							Coord_NOGO:0,
-							Level:0,
-							Inhibition:0,
-							Feedback:'',
-							Choices:'',
-							SessionID:Titanium.App.Properties.getInt('SessionID'),
-							UserID:Titanium.App.Properties.getInt('UserID'),
-							LabPoints:2		
-						}];
-			Ti.App.boozerlyzer.db.gameScores.Result(gameSaveData);
-		}
+		
 
 				
 		win.addEventListener('close', function(){

@@ -16,8 +16,10 @@
 	Ti.App.boozerlyzer.db.drugDoses= {};
 	
 	//maintain a database connection we can use
-  	var conn = Titanium.Database.install('ybob.db','ybob');
-	
+	if (!Ti.App.boozerlyzer.db.conn){
+		Ti.App.boozerlyzer.db.conn = Titanium.Database.install('ybob.db','ybob');
+	}
+
 		
 	//get standard drinks either for a single country
 	//or for all of them!
@@ -25,7 +27,7 @@
 		var returnData = [];
 		var rows;
 		var selectStr = 'SELECT DOSESTRENGTH FROM DrugDoses Where DOSESTRENGTH Is NOT NULL and  DrugName = ?';
-		rows = conn.execute(selectStr, DrugName);
+		rows =Ti.App.boozerlyzer.db.conn.execute(selectStr, DrugName);
 		if ((rows !== null) && (rows.isValidRow())) {
 			while(rows.isValidRow()){
 				returnData.push({
@@ -47,7 +49,7 @@
 		var returnData = [];
 		var rows;
 		var selectStr = 'SELECT DOSESIZE, DOSEDESCRIPTION FROM DrugDoses Where DOSESIZE Is NOT NULL and DrugName = ?';
-		rows = conn.execute(selectStr, DrugName);
+		rows =Ti.App.boozerlyzer.db.conn.execute(selectStr, DrugName);
 		if ((rows !== null) && (rows.isValidRow())) {
 			while(rows.isValidRow()){
 				returnData.push({
