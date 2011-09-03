@@ -27,6 +27,7 @@ Ti.App.boozerlyzer.data ={};
 Ti.App.boozerlyzer.data.AllDrinks = null;//array of drinks
 Ti.App.boozerlyzer.data.personalInfo = null;//demographic info for this participant
 Ti.App.boozerlyzer.data.standardDrinks = null; //standard drink sizes per country
+Ti.App.boozerlyzer.data.currentEmotions = null; //what are current levels of happiness/energy/drunkeness 
 
 Ti.include('/analysis/bloodalcohol.js');
 Ti.include('/analysis/maths.js');

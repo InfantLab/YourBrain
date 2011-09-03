@@ -480,7 +480,7 @@
 							//Alcohol_ml:drinkSteps[0].millsAlcohol,
 							//BloodAlcoholConc:drinkSteps[0].bloodAlcohol		
 						}];
-		Ti.App.boozerlyzer.db.gameScores.Result(gameSaveData);
+		Ti.App.boozerlyzer.db.gameScores.SaveResult(gameSaveData);
 	}
 	
 	//

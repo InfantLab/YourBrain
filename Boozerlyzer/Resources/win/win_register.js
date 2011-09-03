@@ -4,13 +4,15 @@
  * The data privacy settinhs screen 
  * 
  * Copyright yourbrainondrugs.net 2011
+ * But based on demo code by Ronnie Swietek
+ *
+ * http://mobile.tutsplus.com/tutorials/appcelerator/titanium-user-authentication-part-1/
  */
 
 (function() {
 	
 	
     var win = Titanium.UI.currentWindow;  
-	var winHome = win.home;
       
     /* 
     * Interface 
@@ -65,18 +67,6 @@
     });  
     scrollView.add(password2);  
       
-    var names = Titanium.UI.createTextField({  
-        color:'#336699',  
-        top:160,  
-        left:10,  
-        width:300,  
-        height:40,  
-        hintText:'Name',  
-        keyboardType:Titanium.UI.KEYBOARD_DEFAULT,  
-        returnKeyType:Titanium.UI.RETURNKEY_DEFAULT,  
-        borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED  
-    });  
-    scrollView.add(names);  
       
     var email = Titanium.UI.createTextField({  
         color:'#336699',  
@@ -121,23 +111,31 @@
     var createReq = Titanium.Network.createHTTPClient();  
     createReq.onload = function(){  
     	Ti.API.debug("Registration request loaded.");
-        if (this.responseText == "Insert failed" || this.responseText == "That username or email already exists")  
+    	var json = this.responseText;  
+	    Ti.API.debug('login post_auth response '+ json);  
+	    var response = JSON.parse(json);
+	    if (response.success === false)  
         {  
             createBtn.enabled = true;  
             createBtn.opacity = 1;  
-            alert(this.responseText);  
+            alert(response.message);  
         }  
         else  
-         {  
+         { //probably succeeded :-) 
+			Ti.App.Properties.setString('username',username.value );
+			Ti.App.Properties.setString('password',password1.value );
+			Ti.App.Properties.setString('email',email.value );
+			Ti.App.Properties.setString('UUID', response.UUID);
+			Ti.App.Properties.setBool('Registered', true);
             var alertDialog = Titanium.UI.createAlertDialog({  
-                title: 'Alert',  
-                message: this.responseText,  
+                title: 'Registration complete',  
+                message: response.message,  
                 buttonNames: ['OK']  
             });  
             alertDialog.show();  
             alertDialog.addEventListener('click',function(e)  
             {  
-                //win.tabGroup.setActiveTab(0); 
+                Ti.App.boozerlyzer.winHome.open();
                 win.close(); 
             });  
         }  
@@ -145,7 +143,7 @@
       
     createBtn.addEventListener('click',function(e)  
     {  
-        if (username.value != '' && password1.value != '' && password2.value != '' && names.value != '' && email.value != '')  
+        if (username.value != '' && password1.value != '' && password2.value != '' && email.value != '')  
         {  
             if (password1.value != password2.value)  
             {  
@@ -165,7 +163,6 @@
 	                var params = {  
 	                    username: username.value,  
 	                    password: Ti.Utils.md5HexDigest(password1.value),  
-	                    names: names.value,  
 	                    email: email.value  
 	                };  
 	                createReq.send(params);  

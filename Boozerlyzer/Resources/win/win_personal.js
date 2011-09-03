@@ -330,6 +330,7 @@
 	{
 		Ti.App.boozerlyzer.db.personalInfo.setData(persInfo);
 		win.close();
+		Ti.App.boozerlyzer.winHome.show();
 	});	
 	// CANCEL BUTTON	
 	var cancel = Ti.UI.createButton({
@@ -345,6 +346,7 @@
 	cancel.addEventListener('click',function()
 	{
 		win.close();
+		Ti.App.boozerlyzer.winHome.show();
 	});	
 	
 	updateDateOfBirth();

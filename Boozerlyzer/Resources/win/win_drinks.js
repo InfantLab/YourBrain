@@ -577,18 +577,6 @@
 			Ti.API.debug('Drinks gameEndSaveScores');
 			// first get the total drinks this session
 			var now = parseInt((new Date()).getTime()/1000,10);
-			var	howLongAgo = sessionData[0].StartTime;
-			var totalDrinks	=Ti.App.boozerlyzer.db.doseageLog.drinksinTimePeriod(howLongAgo, now);			
-			var lenType = drinkNames.length -1;
-			var len = totalDrinks.length;
-			for (d=-0;d<lenType;d++){				
-				for (i=0;i<len;i++){
-					if (drinkNames[d] === totalDrinks[i].DrugVariety){
-						drinkCountLabels[d].text = (totalDrinks[i].TotalUnits / Ti.App.boozerlyzer.data.standardDrinks[0].MillilitresPerUnit).toFixed(1) + ' U ' + drinkNames[d];
-					
-					} 
-				}
-			}
 			
 			
 			var gameSaveData = [{Game: 'Drink Logging',
@@ -605,13 +593,11 @@
 								Inhibition:0,
 								Feedback:'',
 								Choices:'',
-								Alcohol_ml:totalvolAlcohol,
-								BloodAlcoholConc:currentBloodAlcohol.toFixed(4),
 								SessionID:Titanium.App.Properties.getInt('SessionID'),
 								UserID:Titanium.App.Properties.getInt('UserID'),
-								LabPoints:2		
+								LabPoints:2
 							}];
-			Ti.App.boozerlyzer.db.gameScores.Result(gameSaveData);
+			Ti.App.boozerlyzer.db.gameScores.SaveResult(gameSaveData);
 		}
 
 				

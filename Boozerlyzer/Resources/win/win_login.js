@@ -10,8 +10,6 @@
 	
 	
     var win = Titanium.UI.currentWindow;  
-	var winHome = win.home;
-      
       
 	var username = Titanium.UI.createTextField({  
 	    color:'#336699',  
@@ -22,7 +20,8 @@
 	    hintText:'Username',  
 	    keyboardType:Titanium.UI.KEYBOARD_DEFAULT,  
 	    returnKeyType:Titanium.UI.RETURNKEY_DEFAULT,  
-	    borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED  
+	    borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
+	    value:Ti.App.Properties.getString('username','' )
 	});  
 	win.add(username);  
 	  
@@ -36,7 +35,8 @@
 	    passwordMask:true,  
 	    keyboardType:Titanium.UI.KEYBOARD_DEFAULT,  
 	    returnKeyType:Titanium.UI.RETURNKEY_DEFAULT,  
-	    borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED  
+	    borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,  
+	    value:Ti.App.Properties.getString('password','' )
 	});  
 	win.add(password);  
 	  
@@ -50,7 +50,7 @@
 	});  
 	win.add(loginBtn);  
     
-        var loginReq = Titanium.Network.createHTTPClient();  
+    var loginReq = Titanium.Network.createHTTPClient();  
       
     loginBtn.addEventListener('click',function(e)  
     {  
@@ -67,6 +67,27 @@
         {  
             alert("Username/Password are required");  
         }  
-    });  
+    }); 
+    loginReq.onload = function()  
+	{  
+	    var json = this.responseText;  
+	    Ti.API.debug('login post_auth response '+ json);  
+	    var response = JSON.parse(json);
+	    if (response.logged == true)  
+	    {  
+	        username.blur();  
+	        password.blur();  
+	        Ti.App.fireEvent('grantEntrance', {  
+	            username:response.username,  
+	            email:response.email,
+	            UUID:response.UUID  
+	        });  
+	        win.close();  
+	    }  
+	    else  
+	    {  
+	        alert(response.message);  
+	    }  
+	}; 
     
 })();

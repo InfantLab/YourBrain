@@ -35,18 +35,20 @@
 		Ti.API.debug('win_emotion retrieved SessionID property - ' + SessionID);
 		
 		//most recent emotion values for this session
-		var currentEmotion = Ti.App.boozerlyzer.db.selfAssessment.getLatestData(SessionID);
-		if (currentEmotion === null || currentEmotion === false){
-			Titanium.API.trace('Boozerlyzer - currentEmotion could not be retrieved');
-			currentEmotion = Ti.App.boozerlyzer.db.selfAssessment.newEmotion(false);
+		if (!Ti.App.boozerlyzer.data.currentEmotions || Ti.App.boozerlyzer.data.currentEmotions === null || Ti.App.boozerlyzer.data.currentEmotions === 'undefined'){
+			Ti.App.boozerlyzer.data.currentEmotions = Ti.App.boozerlyzer.db.selfAssessment.getLatestData(SessionID);
 		}
-		Titanium.API.debug(JSON.stringify(currentEmotion));
-		currentEmotion[0].SelfAssessmentStart = winOpened;
-		currentEmotion[0].SessionID = SessionID;
+		if (Ti.App.boozerlyzer.data.currentEmotions === null || Ti.App.boozerlyzer.data.currentEmotions === false){
+			Titanium.API.trace('Boozerlyzer - currentEmotion could not be retrieved');
+			Ti.App.boozerlyzer.data.currentEmotions= Ti.App.boozerlyzer.db.selfAssessment.newEmotion(false);
+		}
+		Titanium.API.debug(JSON.stringify(Ti.App.boozerlyzer.data.currentEmotions));
+		Ti.App.boozerlyzer.data.currentEmotions[0].SelfAssessmentStart = winOpened;
+		Ti.App.boozerlyzer.data.currentEmotions[0].SessionID = SessionID;
 		//clear the blur values as we start those afresh
-		currentEmotion[0].DrunkBlur = 0;
-		currentEmotion[0].HappyBlur = 0;
-		currentEmotion[0].EnergyBlur = 0;
+		Ti.App.boozerlyzer.data.currentEmotions[0].DrunkBlur = 0;
+		Ti.App.boozerlyzer.data.currentEmotions[0].HappyBlur = 0;
+		Ti.App.boozerlyzer.data.currentEmotions[0].EnergyBlur = 0;
 		
 		//layout variables
 		var sizeIcon = 48, leftLowIcon = 48;
@@ -97,9 +99,9 @@
 		
 		happiness.addEventListener('change',function(e)
 		{
-			currentEmotion[0].Changed = true;
-			currentEmotion[0].Happiness =Math.round(e.value);
-			Ti.API.debug('HappyBlur: '+currentEmotion[0].HappyBlur);
+			Ti.App.boozerlyzer.data.currentEmotions[0].Changed = true;
+			Ti.App.boozerlyzer.data.currentEmotions[0].Happiness =Math.round(e.value);
+			Ti.API.debug('HappyBlur: '+Ti.App.boozerlyzer.data.currentEmotions[0].HappyBlur);
 		});
 		happiness.addEventListener('touchstart', function(e)
 		{
@@ -107,7 +109,7 @@
 		});
 		happiness.addEventListener('touchend', function(e)
 		{
-			currentEmotion[0].HappyBlur += (new Date().getTime()-tic);
+			Ti.App.boozerlyzer.data.currentEmotions[0].HappyBlur += (new Date().getTime()-tic);
 		});
 		
 		//
@@ -149,9 +151,9 @@
 		
 		energy.addEventListener('change',function(e)
 		{
-			currentEmotion[0].Changed = true;
-			currentEmotion[0].Energy =Math.round(e.value);
-			Ti.API.debug('EnergyBlur: '+currentEmotion[0].EnergyBlur);
+			Ti.App.boozerlyzer.data.currentEmotions[0].Changed = true;
+			Ti.App.boozerlyzer.data.currentEmotions[0].Energy =Math.round(e.value);
+			Ti.API.debug('EnergyBlur: '+Ti.App.boozerlyzer.data.currentEmotions[0].EnergyBlur);
 		});
 		// For #806
 		energy.addEventListener('touchstart', function(e)
@@ -160,7 +162,7 @@
 		});
 		energy.addEventListener('touchend', function(e)
 		{
-			currentEmotion[0].EnergyBlur += (new Date().getTime()-tic);
+			Ti.App.boozerlyzer.data.currentEmotions[0].EnergyBlur += (new Date().getTime()-tic);
 		});
 		
 		//
@@ -200,8 +202,8 @@
 		
 		drunkeness.addEventListener('change',function(e)
 		{
-			currentEmotion[0].Changed = true;
-			currentEmotion[0].Drunkeness =Math.round(e.value);
+			Ti.App.boozerlyzer.data.currentEmotions[0].Changed = true;
+			Ti.App.boozerlyzer.data.currentEmotions[0].Drunkeness =Math.round(e.value);
 		});
 		drunkeness.addEventListener('touchstart', function(e)
 		{
@@ -209,8 +211,8 @@
 		});
 		drunkeness.addEventListener('touchend', function(e)
 		{
-			currentEmotion[0].DrunkBlur += (new Date().getTime()-tic);
-			Ti.API.debug('DrunkBlur: '+currentEmotion[0].DrunkBlur);
+			Ti.App.boozerlyzer.data.currentEmotions[0].DrunkBlur += (new Date().getTime()-tic);
+			Ti.API.debug('DrunkBlur: '+Ti.App.boozerlyzer.data.currentEmotions[0].DrunkBlur);
 		});
 		
 		win.add(drunkenessLabel);
@@ -219,11 +221,11 @@
 		win.add(drunkDrunk);
 		
 		//set the old values
-		drunkeness.value = currentEmotion[0].Drunkeness;
-		energy.value = currentEmotion[0].Energy;
-		happiness.value = currentEmotion[0].Happiness;
+		drunkeness.value = Ti.App.boozerlyzer.data.currentEmotions[0].Drunkeness;
+		energy.value = Ti.App.boozerlyzer.data.currentEmotions[0].Energy;
+		happiness.value = Ti.App.boozerlyzer.data.currentEmotions[0].Happiness;
 		
-		var updated = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(currentEmotion[0].SelfAssessmentStart);
+		var updated = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(Ti.App.boozerlyzer.data.currentEmotions[0].SelfAssessmentStart);
 		var lastchangedLabel = Ti.UI.createLabel({
 			text:'Last Updated  ' + updated,
 			top:topLastEvent,
@@ -241,20 +243,20 @@
 							GameVersion:1,
 							PlayStart:winOpened ,
 							PlayEnd: parseInt((new Date()).getTime()/1000,10),
-							TotalScore:happiness.value,
-							Speed_GO:energy.value,
+							TotalScore:0,
+							Speed_GO:0,
 							Speed_NOGO:0,
-							Coord_GO:drunkeness.value,
+							Coord_GO:0,
 							Coord_NOGO:0,
 							Level:0,
 							Inhibition:0,
 							Feedback:'',
-							Choices:'H:' +happiness.value + ', E:' + energy.value + ', D:' + drunkeness.value,
+							Choices:'',
 							SessionID:Titanium.App.Properties.getInt('SessionID'),
 							UserID:Titanium.App.Properties.getInt('UserID'),
-							LabPoints:2		
+							LabPoints:2	
 						}];
-			Ti.App.boozerlyzer.db.gameScores.Result(gameSaveData);
+			Ti.App.boozerlyzer.db.gameScores.SaveResult(gameSaveData);
 		}
 		
 		// SAVE BUTTON	
@@ -272,18 +274,18 @@
 		{
 			//shouldn't have to copy these values in again
 			//but do it anyway, don't trust the change events
-			currentEmotion[0].Changed = true;
-			currentEmotion[0].Happiness = happiness.value;
-			currentEmotion[0].Drunkeness = drunkeness.value;
-			currentEmotion[0].Energy = energy.value;
-			currentEmotion[0].SessionID = SessionID;
-			Ti.App.boozerlyzer.db.selfAssessment.setData(currentEmotion);
+			Ti.App.boozerlyzer.data.currentEmotions[0].Changed = true;
+			Ti.App.boozerlyzer.data.currentEmotions[0].Happiness = happiness.value;
+			Ti.App.boozerlyzer.data.currentEmotions[0].Drunkeness = drunkeness.value;
+			Ti.App.boozerlyzer.data.currentEmotions[0].Energy = energy.value;
+			Ti.App.boozerlyzer.data.currentEmotions[0].SessionID = SessionID;
+			Ti.App.boozerlyzer.db.selfAssessment.setData(Ti.App.boozerlyzer.data.currentEmotions);
 			Ti.App.boozerlyzer.db.sessions.Updated(SessionID);
-			updated = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(currentEmotion[0].SelfAssessmentStart);
+			updated = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(Ti.App.boozerlyzer.data.currentEmotions[0].SelfAssessmentStart);
 			lastchangedLabel.text = 'Last Updated  ' + updated;
-			currentEmotion[0].DrunkBlur = 0;
-			currentEmotion[0].HappyBlur = 0;
-			currentEmotion[0].EnergyBlur = 0;
+			Ti.App.boozerlyzer.data.currentEmotions[0].DrunkBlur = 0;
+			Ti.App.boozerlyzer.data.currentEmotions[0].HappyBlur = 0;
+			Ti.App.boozerlyzer.data.currentEmotions[0].EnergyBlur = 0;
 			gameEndSaveScores();
 			win.close();
 		});	
@@ -323,7 +325,7 @@
 			left:leftFirst
 		});
 		newdrinks.addEventListener('click',function(){
-			var newdosewin = Titanium.UI.createWindow({ modal:true,
+			var newdosewin = Titanium.UI.createWindow({ 
 				modal:true,
 				url:'/win/win_drinks.js',
 				title:'What have you had to drink?',
@@ -338,8 +340,8 @@
 		
 		var newtripreport = Titanium.UI.createImageView({
 			image:'/icons/tripreport.png',
-			height:bigIcons * .8,
-			width:bigIcons * .8,
+			height:bigIcons * 0.8,
+			width:bigIcons * 0.8,
 			bottom:bottomButtons,
 			left:leftSecond
 		});
@@ -365,7 +367,7 @@
 			left:leftThird
 		});
 		newgame.addEventListener('click',function(){
-			var winplay = Titanium.UI.createWindow({ modal:true,
+			var winplay = Titanium.UI.createWindow({
 				modal:true,
 				url:'/win/win_gameMenu.js',
 				title:'YBOBGame',
@@ -381,31 +383,28 @@
 		//
 		// Cleanup and return home
 		win.addEventListener('android:back', function(e) {
-			Ti.App.boozerlyzer.db.selfAssessment.setData(currentEmotion);
+			Ti.App.boozerlyzer.db.selfAssessment.setData(Ti.App.boozerlyzer.data.currentEmotions);
 			Ti.App.boozerlyzer.db.sessions.Updated(SessionID);
-			if (Ti.App.boozerlyzer.winHome === undefined 
-			 || Ti.App.boozerlyzer.winHome === null) {
+			if (Ti.App.boozerlyzer.winHome === undefined || Ti.App.boozerlyzer.winHome === null) {
 				Ti.App.boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
 					url: '/app.js',
 					title: 'Boozerlyzer',
 					backgroundImage: '/images/smallcornercup.png',
 					orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
-				})
+				});
 			}
 			gameEndSaveScores();
 			win.close();
 			Ti.App.boozerlyzer.winHome.open();
 	});
 		
-		
-
-				
-		win.addEventListener('close', function(){
-			if (loadedonce){
-				//this code only runs when we reload this page
-				gameEndSaveScores();			
-				}
-		});
-		
+			
+	win.addEventListener('close', function(){
+		if (loadedonce){
+			//this code only runs when we reload this page
+			gameEndSaveScores();			
+		}
+	});
+	
 		
 })();

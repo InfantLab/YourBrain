@@ -45,7 +45,19 @@
 			}
 		}
 		//something didn't work
-		return false;
+		mostRecentData.push({
+			Changed: false,
+			SesssionID:sessionID,
+			DrunkBlur: -1,
+			Drunkeness: -1,
+			Energy: -1,
+			EnergyBlur: -1,
+			Happiness: -1,
+			HappyBlur: -1,
+			SelfAssessmentStart: -1,
+			SelfAssessmentChanged: -1
+		});
+		return mostRecentData;
 	};
 	
 	Ti.App.boozerlyzer.db.selfAssessment.newEmotion = function (insertFlag){

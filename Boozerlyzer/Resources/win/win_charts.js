@@ -22,9 +22,14 @@
 	var  sizeAxisIcon = 48, reloadData;
 	
 	var SessionID = Titanium.App.Properties.getInt('SessionID');
-	var personalInfo = Ti.App.boozerlyzer.db.personalInfo.getData();
-	var stdDrinks = Ti.App.boozerlyzer.db.alcoholStandardDrinks.get(personalInfo.Country);
-	var millsPerStandardUnits = stdDrinks[0].MillilitresPerUnit;
+	if (!Ti.App.boozerlyzer.data.personalInfo || Ti.App.boozerlyzer.data.personalInfo === null || Ti.App.boozerlyzer.data.personalInfo === 'undefined'){
+		Ti.App.boozerlyzer.data.personalInfo = Ti.App.boozerlyzer.db.personalInfo.getData();
+	}
+	if (!Ti.App.boozerlyzer.data.standardDrinks || Ti.App.boozerlyzer.data.standardDrinks === null || Ti.App.boozerlyzer.data.standardDrinks ==='undefined'){
+		Ti.App.boozerlyzer.data.standardDrinks = Ti.App.boozerlyzer.db.alcoholStandardDrinks.get(Ti.App.boozerlyzer.data.personalInfo.Country);
+	}
+	
+	var millsPerStandardUnits = Ti.App.boozerlyzer.data.standardDrinks[0].MillilitresPerUnit;
 
 	//data variables
 	var startTime, nTimeSteps, allDrinks, selfAssess;
@@ -171,7 +176,7 @@
 		
 	
 		//Ti.API.debug('redrawGraph -allDrinks ' + JSON.stringify(allDrinks));
-		var drinkSteps = drinksByTime(timeSteps,allDrinks,personalInfo, millsPerStandardUnits);
+		var drinkSteps = drinksByTime(timeSteps,allDrinks,Ti.App.boozerlyzer.data.personalInfo, millsPerStandardUnits);
 		Ti.API.debug('redrawGraph -selfAssess ' + JSON.stringify(selfAssess));
 		var emotionSteps = emotionsByTime(timeSteps,selfAssess);
 		//var stroopSteps = gameByTime(timeSteps,gameData);
@@ -284,21 +289,6 @@
 	});
 	win.add(switchDrunk);
 
-	//TODO find a nice way to include games on here?	
-	// var switchStroop = Ti.UI.createSwitch({
-		// style : Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
-		// title: 'Stroop score',
-		// font:{fontSize:12,fontWeight:'bold'},
-		// bottom : 10,
-		// left: 320,
-		// value:true,
-		// color:'magenta'
-	// });
-	// switchStroop.addEventListener('change', function(){
-		// redrawGraph();
-	// });
-	//win.add(switchStroop);
-	
 	var labelMenu = Ti.UI.createLabel({
 		color:'white',
 		font:{fontSize:14,fontFamily:'Helvetica Neue'},
@@ -316,6 +306,17 @@
 	var	webViewSwipeUpAnimation = Ti.UI.createAnimation({bottom:400,duration:500});
 	var	webViewSwipeDownAnimation = Ti.UI.createAnimation({bottom:60,duration:500});
 	var y_start;
+	 // And then my swipe function:
+	function swipe(e) {
+	    if (e.direction == 'down') {
+			Ti.API.debug("charts swipe down");
+			webView.animate(webViewSwipeDownAnimation);
+			webView.show();
+	    } else { 
+			Ti.API.debug("charts swipe up");
+			webView.animate(webViewSwipeUpAnimation);
+	    }
+	}
 	win.addEventListener('touchstart', function (e) {
 	    y_start = e.y;
 	});
@@ -327,29 +328,17 @@
 	    }
 	});
 	 
-	 // And then my swipe function:
-	function swipe(e) {
-	    if (e.direction == 'down') {
-	    	Ti.API.debug("charts swipe down");
-	       webView.animate(webViewSwipeDownAnimation);
-	       webView.show();
-	    } else { 
-	    	Ti.API.debug("charts swipe up");
-	       webView.animate(webViewSwipeUpAnimation);
-	    }
-	}
-	
+
 	
 	// Cleanup and return home
 	win.addEventListener('android:back', function(e) {
-		if (Ti.App.boozerlyzer.winHome === undefined 
-			 || Ti.App.boozerlyzer.winHome === null) {
+		if (Ti.App.boozerlyzer.winHome === 'undefined' || Ti.App.boozerlyzer.winHome === null) {
 			Ti.App.boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
 				url: '/app.js',
 				title: 'Boozerlyzer',
 				backgroundImage: '/images/smallcornercup.png',
 				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
-			})
+			});
 		}
 		win.close();
 		Ti.App.boozerlyzer.winHome.open();

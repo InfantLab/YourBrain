@@ -39,7 +39,7 @@
 							UserID:Titanium.App.Properties.getInt('UserID'),
 							LabPoints:2		
 						}];
-		Ti.App.boozerlyzer.db.gameScores.Result(gameSaveData);
+		Ti.App.boozerlyzer.db.gameScores.SaveResult(gameSaveData);
 	}
 
 	
