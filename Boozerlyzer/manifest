@@ -1,8 +1,8 @@
 #appname:Boozerlyzer
-#publisher:YourBrainonDrugs.net
-#url:http://yourbrainondrugs.net
+#publisher:boozerlyzer.net
+#url:http://boozerlyzer.net
 #image:appicon.png
-#appid:net.yourbrainondrugs.ybob
-#desc:An app to track alcohol comsumption and its effects.
+#appid:net.boozerlyzer
+#desc:An app to track alcohol consumption.
 #type:mobile
 #guid:c096909e-b9b0-453b-a6d6-6650def51385

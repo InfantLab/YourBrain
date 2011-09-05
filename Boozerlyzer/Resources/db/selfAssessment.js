@@ -14,7 +14,9 @@
 	Ti.App.boozerlyzer.db.selfAssessment = {};
 	
 	//maintain a database connection we can use
-	var conn = Titanium.Database.install('ybob.db','ybob');
+	if (!Ti.App.boozerlyzer.db.conn){
+		Ti.App.boozerlyzer.db.conn = Titanium.Database.install('ybob.db','ybob');
+	}
 
   
 	//get data for the maximum row id 
@@ -24,26 +26,38 @@
 		//and a cast cos sessionID sometimes treated as string
 		var sessID = parseInt(sessionID);
 		Titanium.API.trace('selfAssessment sessID:' + sessID );
-		var rows = conn.execute('SELECT count(*) FROM SelfAssessment WHERE SESSIONID = ?', sessID);
+		var rows =Ti.App.boozerlyzer.db.conn.execute('SELECT count(*) FROM SelfAssessment WHERE SESSIONID = ?', sessID);
 		Titanium.API.trace('selfAssessment count executed');
 		if (rows !== null && rows.isValidRow() && parseInt(rows.field(0)) > 0 ){		
 			Titanium.API.trace('selfAssessment count > 0');
 			rows.close();
-			rows = conn.execute('SELECT max(ID) FROM SelfAssessment WHERE SESSIONID = ?', sessID);
+			rows =Ti.App.boozerlyzer.db.conn.execute('SELECT max(ID) FROM SelfAssessment WHERE SESSIONID = ?', sessID);
 			Ti.API.trace('selfAssessment max exectue');
 			if (rows !== null && rows.isValidRow()) {
 				Ti.API.trace('selfAssessment maxid pre' );
 				var maxid = parseInt(rows.field(0));
 				Ti.API.trace('selfAssessment maxid - ' + maxid);
 				rows.close();
-				rows = conn.execute('SELECT * FROM SelfAssessment WHERE ID = ?', maxid);
+				rows =Ti.App.boozerlyzer.db.conn.execute('SELECT * FROM SelfAssessment WHERE ID = ?', maxid);
 				var returnData = fillDataObject(rows);
 				rows.close();
 				return returnData;
 			}
 		}
 		//something didn't work
-		return false;
+		mostRecentData.push({
+			Changed: false,
+			SesssionID:sessionID,
+			DrunkBlur: -1,
+			Drunkeness: -1,
+			Energy: -1,
+			EnergyBlur: -1,
+			Happiness: -1,
+			HappyBlur: -1,
+			SelfAssessmentStart: -1,
+			SelfAssessmentChanged: -1
+		});
+		return mostRecentData;
 	};
 	
 	Ti.App.boozerlyzer.db.selfAssessment.newEmotion = function (insertFlag){
@@ -53,9 +67,9 @@
 		if (insertFlag){ //then we also insert this blank row into database
 			var insertstr = 'INSERT INTO SelfAssessment (SessionID, DrunkBlur,Drunkeness,Energy,EnergyBlur,Happiness,HappyBlur,SelfAssessmentStart,SelfAssessmentChanged)';
 			insertstr += 'VALUES(?,?,?,?,?,?,?,?,?)';
-			conn.execute(insertstr,sessionID,0,0,50,0,50,0,now,now);
-			Titanium.API.debug('SelfAssessment NEW, rowsAffected = ' + conn.rowsAffected);
-			Titanium.API.debug('SelfAssessment, lastInsertRowId = ' + conn.lastInsertRowId);
+			Ti.App.boozerlyzer.db.conn.execute(insertstr,sessionID,0,0,50,0,50,0,now,now);
+			Titanium.API.debug('SelfAssessment NEW, rowsAffected = ' +Ti.App.boozerlyzer.db.conn.rowsAffected);
+			Titanium.API.debug('SelfAssessment, lastInsertRowId = ' +Ti.App.boozerlyzer.db.conn.lastInsertRowId);
 		}
 		result.push({
 			Changed: false,
@@ -78,9 +92,9 @@
 			var now = parseInt((new Date()).getTime()/1000);
 			var insertstr = 'INSERT INTO SelfAssessment (SessionID, DrunkBlur,Drunkeness,Energy,EnergyBlur,Happiness,HappyBlur,SelfAssessmentStart,SelfAssessmentChanged)';
 			insertstr += 'VALUES(?,?,?,?,?,?,?,?,?)';
-			conn.execute(insertstr,newData[0].SessionID,newData[0].DrunkBlur,newData[0].Drunkeness,newData[0].Energy,newData[0].EnergyBlur,newData[0].Happiness,newData[0].HappyBlur,newData[0].SelfAssessmentStart,now);
-			Titanium.API.debug('selfAssessment updated, rowsAffected = ' + conn.rowsAffected);
-			Titanium.API.debug('selfAssessment, lastInsertRowId = ' + conn.lastInsertRowId);
+			Ti.App.boozerlyzer.db.conn.execute(insertstr,newData[0].SessionID,newData[0].DrunkBlur,newData[0].Drunkeness,newData[0].Energy,newData[0].EnergyBlur,newData[0].Happiness,newData[0].HappyBlur,newData[0].SelfAssessmentStart,now);
+			Titanium.API.debug('selfAssessment updated, rowsAffected = ' +Ti.App.boozerlyzer.db.conn.rowsAffected);
+			Titanium.API.debug('selfAssessment, lastInsertRowId = ' +Ti.App.boozerlyzer.db.conn.lastInsertRowId);
 			Titanium.API.debug('selfAssessment, lastInsertRowId = ' + newData[0].SessionID);
 		}
 	};
@@ -92,9 +106,9 @@
 	Ti.App.boozerlyzer.db.selfAssessment.getTimeRangeData = function (minTime, maxTime){
 		var rows
 		if (maxTime !== null){
-			rows = conn.execute('SELECT * FROM SelfAssessment WHERE SelfAssessmentChanged > ? and SelfAssessmentChanged < ? ORDER BY SelfAssessmentChanged ASC', minTime, maxTime);
+			rows =Ti.App.boozerlyzer.db.conn.execute('SELECT * FROM SelfAssessment WHERE SelfAssessmentChanged > ? and SelfAssessmentChanged < ? ORDER BY SelfAssessmentChanged ASC', minTime, maxTime);
 		}else{
-			rows = conn.execute('SELECT * FROM DoseageLog WHERE SelfAssessmentChanged > ? ORDER BY SelfAssessmentChanged ASC', minTime);
+			rows =Ti.App.boozerlyzer.db.conn.execute('SELECT * FROM DoseageLog WHERE SelfAssessmentChanged > ? ORDER BY SelfAssessmentChanged ASC', minTime);
 		}
 		var returnData = fillDataObject(rows);
 		rows.close();
@@ -106,7 +120,7 @@
 		var mostRecentData = [];
 		//cast cos sessionID sometimes treated as string
 		var sessID = parseInt(sessionID);
-		var rows = conn.execute('SELECT * FROM SelfAssessment WHERE SessionID = ? ORDER BY SelfAssessmentChanged ASC', sessID);
+		var rows =Ti.App.boozerlyzer.db.conn.execute('SELECT * FROM SelfAssessment WHERE SessionID = ? ORDER BY SelfAssessmentChanged ASC', sessID);
 		var returnData = fillDataObject(rows);
 		rows.close();
 		return returnData;

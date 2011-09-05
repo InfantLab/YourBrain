@@ -1,12 +1,12 @@
 /**
  * @author Caspar Addyman
  * 
- * functions for sending gameScores to the website 
+ * functions for exporting gameScores to a csv file on the phone.  
  */
 
 (function(){
 
-	Ti.App.boozerlyzer.comm.sendGameData = {};
+	Ti.App.boozerlyzer.comm.sendData = {};
 
 /*
  queries the database and returns a JSON object that looks something like this:
@@ -27,20 +27,20 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 	/*
 	 * function to send the gameScores  table entries to the ybodnet web database
 	 */
-	Ti.App.boozerlyzer.comm.sendGameData.sync = function(){
+	Ti.App.boozerlyzer.comm.sendData.sync = function(){
 		//find the ID of the last data sent to website
 		//based on a persistent app property
 		//TODO retrieve this from server.
 		var lastSentID = Titanium.App.Properties.getInt('LastSentID', 0);
 		
-		Ti.API.debug('sendGameData - lastSentID ' + lastSentID);
+		Ti.API.debug('sendData - lastSentID ' + lastSentID);
 		// build an object containing the data that we should send
 		var dataToSend = Ti.App.boozerlyzer.db.gameScores.GamePlaySummaryforWebserver(null,null,lastSentID);
 		
 		
 		//what is the last row id from this dataset?
-		if (!dataToSend || dataToSend.length==0) {
-			Ti.API.error('sendGameData: no data to send; play some games first!');
+		if (!dataToSend || dataToSend.length===0) {
+			Ti.API.error('sendData: no data to send; play some games first!');
 			return;
 		}
 		
@@ -55,10 +55,11 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		//what do we get back?
 		xhrPost.onload = function() {
 				var rc = Titanium.JSON.parse(this.responseText);
-				if (rc['status'] == 'success') {
-					alert('Game scores saved.');
+				if (rc.status == 'success') {
+					var complete = Ti.UI.createAlertDialog('Game scores saved.');
+					complete.show();
 					Ti.API.info('Game scores saved.');
-					Titanium.App.Properties.setInt('LastSentID', rc['LastReceivedID']/*newLastID*/);
+					Titanium.App.Properties.setInt('LastSentID', rc.LastReceivedID/*newLastID*/);
 				} else {
 					Ti.API.error('Cloud Error: try again (' + this.responseText + ')');
 				}
@@ -88,7 +89,7 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		
 	};
 
-	Ti.App.boozerlyzer.comm.sendGameData.getLastServerRowID = function(){
+	Ti.App.boozerlyzer.comm.sendData.getLastServerRowID = function(){
 		
 		var xhrPost = Ti.Network.createHTTPClient();
 	

@@ -75,13 +75,13 @@
 		// Titanium.API.debug('Installed new YBOB database')
 		// db.close();
 
-		//quick fix		
-		var conn = Titanium.Database.install('ybob.db','ybob');
-		// conn.execute('UPDATE GameScores set UserID = 0 ');
-		// conn.execute('ALTER TABLE "main"."GameScores" ADD COLUMN "GameSteps" INTEGER');
-		conn.execute('ALTER TABLE "main"."GameScores" ADD COLUMN "Alcohol_ml" NUMERIC');
-		conn.execute('ALTER TABLE "main"."GameScores" ADD COLUMN "BloodAlcoholConc" NUMERIC');
-		conn.close();
+		// //quick fix		
+		// varTi.App.boozerlyzer.db.conn = Titanium.Database.install('ybob.db','ybob');
+		// //Ti.App.boozerlyzer.db.conn.execute('UPDATE GameScores set UserID = 0 ');
+		// //Ti.App.boozerlyzer.db.conn.execute('ALTER TABLE "main"."GameScores" ADD COLUMN "GameSteps" INTEGER');
+		//Ti.App.boozerlyzer.db.conn.execute('ALTER TABLE "main"."GameScores" ADD COLUMN "Alcohol_ml" NUMERIC');
+		//Ti.App.boozerlyzer.db.conn.execute('ALTER TABLE "main"."GameScores" ADD COLUMN "BloodAlcoholConc" NUMERIC');
+		//Ti.App.boozerlyzer.db.conn.close();
 	});
 	win.add(debug);
 	
@@ -96,34 +96,37 @@
 		var newchart = Titanium.UI.createWindow({ modal:true,
 			url:'/win/win_results2.js',
 			title:'How are you feeling?',
-			backgroundImage:'/images/smallcornercup.png',
-			modal:true		
+			backgroundImage:'/images/smallcornercup.png'
 		});
 		win.close();
 		newchart.open();
 	});
 	win.add(charttest);
 
-	// //what username does this user connect to ybodnet with 
-	// var userName = 
-// 	
-	// //label to let us know if we are connected 
-	// var connectionStatus = Titanium.UI.createLabel({
-// 		
-	// })
- 	
- 	
+		var exportData = Ti.UI.createButton({
+			title:'Save to SD Card',
+			width:200,
+			height:28,
+			bottom:30,
+			right:10,
+			backgroundColor:'gray'
+		});
+		exportData.addEventListener('click',function()
+		{
+			Ti.App.boozerlyzer.comm.exportData.exportTabFile();
+		});	
+		win.add(exportData);
+		
 	//
 	// Cleanup and return home
 	win.addEventListener('android:back', function(e) {
-		if (Ti.App.boozerlyzer.winHome === undefined 
-			 || Ti.App.boozerlyzer.winHome === null) {
+		if (Ti.App.boozerlyzer.winHome === undefined  || Ti.App.boozerlyzer.winHome === null) {
 			Ti.App.boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
 				url: '/app.js',
 				title: 'Boozerlyzer',
 				backgroundImage: '/images/smallcornercup.png',
 				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
-			})
+			});
 		}
 		win.close();
 		Ti.App.boozerlyzer.winHome.open();

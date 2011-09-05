@@ -15,20 +15,22 @@
 	Ti.App.boozerlyzer.db.tripReports = {};
 	
 	//maintain a database connection we can use
-  	var conn = Titanium.Database.install('ybob.db','ybob');
+	if (!Ti.App.boozerlyzer.db.conn){
+		Ti.App.boozerlyzer.db.conn = Titanium.Database.install('ybob.db','ybob');
+	}
 
 	//get data for the maximum row id 
 	Ti.App.boozerlyzer.db.tripReports.getLatestData = function (){
 		var mostRecentData = [];
 		var sessionID = Titanium.App.Properties.getInt('SessionID',1);
 		//have to do count first because max on empty set seems to behave badly
-		var rows = conn.execute('SELECT count(*) FROM TripReports WHERE SESSIONID = ?', sessionID);
+		var rows =Ti.App.boozerlyzer.db.conn.execute('SELECT count(*) FROM TripReports WHERE SESSIONID = ?', sessionID);
 		if (rows !== null && rows.isValidRow() && rows.field(0) > 0 ){		
 			rows.close();
-			var rows = conn.execute('SELECT max(ID) FROM TripReports WHERE SESSIONID = ?', sessionID);
+			var rows =Ti.App.boozerlyzer.db.conn.execute('SELECT max(ID) FROM TripReports WHERE SESSIONID = ?', sessionID);
 			if (rows !== null && (rows.isValidRow())) {
 				var maxid = rows.field(0);
-				rows = conn.execute('SELECT * FROM TripReports WHERE ID = ?', maxid);
+				rows =Ti.App.boozerlyzer.db.conn.execute('SELECT * FROM TripReports WHERE ID = ?', maxid);
 				if ((rows !== null) && (rows.isValidRow())) {
 					mostRecentData.push({
 						Changed: false,
@@ -54,9 +56,9 @@
 			if (newData[i].Changed){
 				var insertstr = 'INSERT INTO TripReports (ReportStarted,ReportChanged,SessionID,Content)';
 				insertstr += 'VALUES(?,?,?,?)';
-				conn.execute(insertstr,newData[i].ReportStarted,newData[i].ReportChanged,newData[i].SessionID,newData[i].Content);
-				Titanium.API.debug('TripReports updated, rowsAffected = ' + conn.rowsAffected);
-				Titanium.API.debug('TripReports, lastInsertRowId = ' + conn.lastInsertRowId);
+				Ti.App.boozerlyzer.db.conn.execute(insertstr,newData[i].ReportStarted,newData[i].ReportChanged,newData[i].SessionID,newData[i].Content);
+				Titanium.API.debug('TripReports updated, rowsAffected = ' +Ti.App.boozerlyzer.db.conn.rowsAffected);
+				Titanium.API.debug('TripReports, lastInsertRowId = ' +Ti.App.boozerlyzer.db.conn.lastInsertRowId);
 			}
 			
 		}
@@ -68,9 +70,9 @@
 		var insertstr = 'INSERT INTO TripReports (ReportStarted,ReportChanged,SessionID,Content)';
 		insertstr += 'VALUES(?,?,?,?)';
 		var now = parseInt((new Date()).getTime()/1000);
-		conn.execute(insertstr,now,now,sessionID,'');
-		Titanium.API.debug('TripReports updated, rowsAffected = ' + conn.rowsAffected);
-		Titanium.API.debug('TripReports, lastInsertRowId = ' + conn.lastInsertRowId);
+		Ti.App.boozerlyzer.db.conn.execute(insertstr,now,now,sessionID,'');
+		Titanium.API.debug('TripReports updated, rowsAffected = ' +Ti.App.boozerlyzer.db.conn.rowsAffected);
+		Titanium.API.debug('TripReports, lastInsertRowId = ' +Ti.App.boozerlyzer.db.conn.lastInsertRowId);
 		result.push({
 			Changed: false,
 			ReportStarted: now,
@@ -85,7 +87,7 @@
 	Ti.App.boozerlyzer.db.tripReports.getAllSessionData = function (sessionID){
 		var mostRecentData = [];
 		var sessID = parseInt(sessionID);
-		var rows = conn.execute('SELECT * FROM TripReports WHERE SESSIONID = ? ORDER BY DoseageStart ASC', sessionID);
+		var rows =Ti.App.boozerlyzer.db.conn.execute('SELECT * FROM TripReports WHERE SESSIONID = ? ORDER BY DoseageStart ASC', sessionID);
 		if ((rows !== null) && (rows.isValidRow())) {
 			while(rows.isValidRow()){
 				mostRecentData.push({
@@ -107,7 +109,7 @@
 	
 	Ti.App.boozerlyzer.db.tripReports.PlayCount = function (){
 		var selectStr = 'SELECT COUNT(*) from TripReports';
-		var rows = conn.execute(selectStr);
+		var rows =Ti.App.boozerlyzer.db.conn.execute(selectStr);
 		if (rows !== null) {
 			var count = rows.field(0);
 			rows.close();

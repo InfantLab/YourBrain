@@ -14,15 +14,17 @@
 	//create an object which will be our public API
 	Ti.App.boozerlyzer.db.weFeelFine = {};
 	
-	//maintain a database connection we can use
-  	var conn = Titanium.Database.install('ybob.db','ybob');
+		//maintain a database connection we can use
+	if (!Ti.App.boozerlyzer.db.conn){
+		Ti.App.boozerlyzer.db.conn = Titanium.Database.install('ybob.db','ybob');
+	}
 
 	//get data for the maximum row id 
 	Ti.App.boozerlyzer.db.weFeelFine.selectNRandomRows = function (numRows, frequencyRange){
 		var returnData = [];
 		var nRows = parseInt(numRows);
 		//TODO Filter by frequency range
-		var rows = conn.execute('SELECT * FROM WeFeelFineList ORDER BY RANDOM() LIMIT ?', nRows);
+		var rows =Ti.App.boozerlyzer.db.conn.execute('SELECT * FROM WeFeelFineList ORDER BY RANDOM() LIMIT ?', nRows);
 		if (rows !== null ) {
 			while(rows.isValidRow()){
 				returnData.push({
@@ -42,7 +44,7 @@
 	Ti.App.boozerlyzer.db.weFeelFine.getWordInfo = function (word){
 		var returnData = [];
 		//TODO Filter by frequency range
-		var rows = conn.execute('SELECT * FROM weFeelFineLists WHERE Feeling = ?', word);
+		var rows =Ti.App.boozerlyzer.db.conn.execute('SELECT * FROM weFeelFineLists WHERE Feeling = ?', word);
 		if (rows !== null ) {
 			while(rows.isValidRow()){
 				returnData.push({
@@ -67,16 +69,16 @@
 		Titanium.API.debug('chosen weFeelFine word ' + JSON.stringify(choiceData));
 		var sessionID = Titanium.App.Properties.getInt('SessionID');
 		for (var i=0; i<choiceData.length; i++){
-			var insertstr = 'INSERT INTO WordChoices (SessionID,WordType,chosenWord,WordList,ChoiceStart,ChoiceFinish,) VALUES(?,?,?,?,?,?)';
-			conn.execute(insertstr,sessionID, 'WeFeelFine',choiceData[i].ChosenWord, choiceData[i].WordList, choiceData[i].StartTime,choiceData[i].EndTime);
-			Titanium.API.debug('Emotional Word choices, rowsAffected = ' + conn.rowsAffected);
-			Titanium.API.debug('Emotional Word choices, lastInsertRowId = ' + conn.lastInsertRowId);	
+			var insertstr = 'INSERT INTO WordChoices (SessionID,WordType,chosenWord,WordList,ChoiceStart,ChoiceFinish) VALUES(?,?,?,?,?,?)';
+			Ti.App.boozerlyzer.db.conn.execute(insertstr,sessionID, 'WeFeelFine',choiceData[i].ChosenWord, choiceData[i].WordList, choiceData[i].StartTime,choiceData[i].EndTime);
+			Titanium.API.debug('Emotional Word choices, rowsAffected = ' +Ti.App.boozerlyzer.db.conn.rowsAffected);
+			Titanium.API.debug('Emotional Word choices, lastInsertRowId = ' +Ti.App.boozerlyzer.db.conn.lastInsertRowId);	
 		}	
 	};	
 	
 	Ti.App.boozerlyzer.db.weFeelFine.PlayCount = function (){
 		var selectStr = 'SELECT COUNT(*) from WORDCHOICES  where WordType = ?';
-		var rows = conn.execute(selectStr, 'WeFeelFine');
+		var rows =Ti.App.boozerlyzer.db.conn.execute(selectStr, 'WeFeelFine');
 		if (rows !== null) {
 			return rows.field(0);
 		}else{

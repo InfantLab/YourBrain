@@ -14,9 +14,11 @@
 var scoresDialog = (function(){
 	var e, callbackOnClose, isControlsCreated = false;
 	var containerViewOpenAnimation, containerViewCloseAnimation;
+	var coverViewOpenAnimation, coverViewCloseAnimation;
 	var containerView, coverView;
 	var gameNameLabel,scoreLabel,speedBonusLabel,coordBonusLabel,inhibitBonusLabel,labPointsLabel;
 	var messageLabel, gameIcon, labPointsIcon, iconSize = 78;
+	var api = {};
 	
 	function createControls(){
 		if (isControlsCreated) {return;}
@@ -118,8 +120,8 @@ var scoresDialog = (function(){
 			bottom:'6%',
 			right:'25%',
 			image:'/icons/hamsterwheel.png',
-			height:iconSize *.8,
-			width:iconSize *.8
+			height:iconSize * 0.8,
+			width:iconSize * 0.8
 		});
 		gameIcon = Ti.UI.createImageView({
 			top:'1%',
@@ -146,7 +148,6 @@ var scoresDialog = (function(){
 	/**
 	 * Public API
 	 */
-	var api = {};
 	api.open = function(){	
 		coverView.animate(coverViewOpenAnimation);
 		containerView.animate(containerViewOpenAnimation);

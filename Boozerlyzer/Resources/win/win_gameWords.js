@@ -10,7 +10,7 @@
  * 
  * Can also pass in a counter to tell how many times we ask the question
  * 
- * @param {object} Home      	//reference to homescreen
+ * @param {object} Home			//reference to homescreen
  * @param {integer} numRounds	//how many more cycles through this screen
  * @param {String} gameType		//what type of words to show
  * 
@@ -28,6 +28,7 @@
 	}
 
 	var winHome = win.Home;
+	Ti.include('/analysis/maths.js');
 	//include the menu choices	
 	Ti.include('/ui/menu.js');
 	var menu = menus;
@@ -35,23 +36,30 @@
 	menu.setHelpMessage("Simply pick which ever words you like best. There are no right answers.");
 
 	var suggest, labelGameMessage;
-	var winopened = parseInt((new Date()).getTime()/1000);
-	var gameStarted = false, initialised = false;
-	var wordList = '', loc = [], wordChoices = [], answers = [];  		//array to store the selected answers.
+	var choiceTime, roundStarted;
+	var winopened = parseInt((new Date()).getTime()/1000,10);
+	var gameStarted = false, initialised = false, paused = false;
+	var wordList = '', loc = [], wordChoices = [], answers = [];	//array to store the selected answers.
+	var answersChoiceTime = [], answersCoordination = [];
 	var numRounds = Titanium.UI.currentWindow.numRounds;
 	var MgameType = Titanium.UI.currentWindow.gameType;
+	var labelChosenWords;
 	var imageXyAxes, imageYAxisUp, imageYAxisDown, imageXAxisLeft, imageXAxisRight;
 	var imageMisc, arousal = 0,	valence = 0;	
+	var imgtop = [60,60,60,180,180,180];
+	var imgleft = [60,190,320,60,190,320];
 		
 	Ti.API.debug('wordgame - numRounds ' + numRounds);
 	Ti.API.debug('wordgame - gameType ' + MgameType);
 	
 	//this code just needs to be called once for this window
 	function setUpOnce(){
-		if (initialised) return;
+		if (initialised){return;}
 		Ti.API.debug('wordgames setUpOnce started');
 	
 		answers.length = 0; //empty the array.
+		answersChoiceTime.length = 0;
+		answersCoordination.length = 0;
 		// label across centre of screen for pause, start etc
 		labelGameMessage = Ti.UI.createLabel({
 			color:'purple',
@@ -61,15 +69,14 @@
 		});
 		win.add(labelGameMessage);
 		
-		
-		
 		// Button to allow user to suggest new
 		suggest = Ti.UI.createButton({
 			title:'Suggest new..',
-			width:100,
+			width:110,
 			height:28,
 			bottom:4,
 			right:4,
+			visible:false,
 			backgroundColor:'green'
 		});
 		win.add(suggest);
@@ -82,6 +89,7 @@
 				win.close();
 			},2000);
 		});	
+		//suggest.visible = false;
 	
 		labelChosenWords = Ti.UI.createLabel({
 			color:'black',
@@ -105,14 +113,13 @@
 			bgColor = 'orange';
 		}
 		
-		
 		// the six possible locations that the words may appear
-		loc[0] = Ti.UI.createLabel({idx:0,anchorPoint:{x:0.5,y:0.5},backgroundColor:bgColor,color:'black',width:100,height:80,top:60,left:60,text:'',textAlign:'center',font:{fontSize:13,fontFamily:'Helvetica Neue',fontWeight:'bold'}});
-		loc[1] = Ti.UI.createLabel({idx:1,anchorPoint:{x:0.5,y:0.5},backgroundColor:bgColor,color:'black',width:100,height:80,top:60,left:180,text:'',textAlign:'center',font:{fontSize:13,fontFamily:'Helvetica Neue',fontWeight:'bold'}});
-		loc[2] = Ti.UI.createLabel({idx:2,anchorPoint:{x:0.5,y:0.5},backgroundColor:bgColor,color:'black',width:100,height:80,top:60,left:300,text:'',textAlign:'center',font:{fontSize:13,fontFamily:'Helvetica Neue',fontWeight:'bold'}});
-		loc[3] = Ti.UI.createLabel({idx:3,anchorPoint:{x:0.5,y:0.5},backgroundColor:bgColor,color:'black',width:100,height:80,top:180,left:60,text:'',textAlign:'center',font:{fontSize:13,fontFamily:'Helvetica Neue',fontWeight:'bold'}});
-		loc[4] = Ti.UI.createLabel({idx:4,anchorPoint:{x:0.5,y:0.5},backgroundColor:bgColor,color:'black',width:100,height:80,top:180,left:180  ,text:'',textAlign:'center',font:{fontSize:13,fontFamily:'Helvetica Neue',fontWeight:'bold'}});
-		loc[5] = Ti.UI.createLabel({idx:5,anchorPoint:{x:0.5,y:0.5},backgroundColor:bgColor,color:'black',width:100,height:80,top:180,left:300,text:'',textAlign:'center',font:{fontSize:13,fontFamily:'Helvetica Neue',fontWeight:'bold'}});
+		loc[0] = Ti.UI.createLabel({idx:0,anchorPoint:{x:0.5,y:0.5},backgroundColor:bgColor,color:'black',width:110,height:80,top:imgtop[0],left:imgleft[0],text:'',textAlign:'center',font:{fontSize:13,fontFamily:'Helvetica Neue',fontWeight:'bold'}});
+		loc[1] = Ti.UI.createLabel({idx:1,anchorPoint:{x:0.5,y:0.5},backgroundColor:bgColor,color:'black',width:110,height:80,top:imgtop[1],left:imgleft[1],text:'',textAlign:'center',font:{fontSize:13,fontFamily:'Helvetica Neue',fontWeight:'bold'}});
+		loc[2] = Ti.UI.createLabel({idx:2,anchorPoint:{x:0.5,y:0.5},backgroundColor:bgColor,color:'black',width:110,height:80,top:imgtop[2],left:imgleft[2],text:'',textAlign:'center',font:{fontSize:13,fontFamily:'Helvetica Neue',fontWeight:'bold'}});
+		loc[3] = Ti.UI.createLabel({idx:3,anchorPoint:{x:0.5,y:0.5},backgroundColor:bgColor,color:'black',width:110,height:80,top:imgtop[3],left:imgleft[3],text:'',textAlign:'center',font:{fontSize:13,fontFamily:'Helvetica Neue',fontWeight:'bold'}});
+		loc[4] = Ti.UI.createLabel({idx:4,anchorPoint:{x:0.5,y:0.5},backgroundColor:bgColor,color:'black',width:110,height:80,top:imgtop[4],left:imgleft[4],text:'',textAlign:'center',font:{fontSize:13,fontFamily:'Helvetica Neue',fontWeight:'bold'}});
+		loc[5] = Ti.UI.createLabel({idx:5,anchorPoint:{x:0.5,y:0.5},backgroundColor:bgColor,color:'black',width:110,height:80,top:imgtop[5],left:imgleft[5],text:'',textAlign:'center',font:{fontSize:13,fontFamily:'Helvetica Neue',fontWeight:'bold'}});
 	
 		for (var i = 0; i < 6; i++) {
 			win.add(loc[i]);
@@ -120,14 +127,13 @@
 				// for (t in ev)
 					// Ti.API.debug(t);
 				// Ti.API.debug('Clicked ' + ev.source );
-				var choiceTime = parseInt((new Date()).getTime() / 1000);
-				buttonClicked(choiceTime, ev);
+				buttonClicked(ev);
 			});
 			loc[i].visible = false;
 		}
 		win.addEventListener('dblclick',function(ev)
 		{
-		 	Ti.API.debug('Game Start');
+			Ti.API.debug('Game Start');
 			if (!gameStarted){
 				gameStarted = true;
 				setUpThisRound();
@@ -136,15 +142,15 @@
 		Titanium.App.addEventListener('pause',function(e)
 		{
 			paused = true;
-			label.text = "App has been paused";
+			labelGameMessage.text = "App has been paused";
 		});
 		
 		Titanium.App.addEventListener('resume',function(e)
 		{
 			if (paused)	{
-				label.text = "App has resumed";
+				labelGameMessage.text = "App has resumed";
 			} else {
-				label.text = "App has resumed (w/o pause)";
+				labelGameMessage.text = "App has resumed (w/o pause)";
 			}
 		});
 		
@@ -152,14 +158,13 @@
 		//
 		// Cleanup and return home
 		win.addEventListener('android:back', function(e) {
-			if (Ti.App.boozerlyzer.winHome === undefined 
-				 || Ti.App.boozerlyzer.winHome === null) {
+			if (Ti.App.boozerlyzer.winHome === undefined || Ti.App.boozerlyzer.winHome === null) {
 				Ti.App.boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
 					url: '/app.js',
 					title: 'Boozerlyzer',
 					backgroundImage: '/images/smallcornercup.png',
 					orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
-				})
+				});
 			}
 			win.close();
 			Ti.App.boozerlyzer.winHome.open();
@@ -174,7 +179,7 @@
 								height:320,
 								width:320,
 								top:0,left:60});
-	   	win.add(imageXyAxes);
+		win.add(imageXyAxes);
 		imageXAxisLeft = Ti.UI.createImageView({
 								visible:false,
 								image:'/icons/Sad.png',
@@ -208,18 +213,35 @@
 		initialised = true;	
 	}
 	
-	function buttonClicked(choiceTime,events){
-		Ti.API.debug('game2 button clicked time' + choiceTime );
-		answers.push(events.source.text);	
-		var idx = parseInt(events.source.idx);
-		var choice = {
+	function buttonClicked(events){
+		choiceTime = (new Date()).getTime() / 1000;
+		Ti.API.debug('word game button clicked time' + choiceTime );
+		answers.push(events.source.text);
+		answersChoiceTime.push(choiceTime-roundStarted);	
+		var idx = parseInt(events.source.idx,10);
+		Ti.API.debug('idx:' + idx);
+		var cen = events.source.center;
+		//need the click in global coordinates
+		var globalCoords = {x:0,y:0}; 
+		if (idx < 0 ){
+			globalCoords.x = events.x;
+			globalCoords.y = events.y;
+		}else{
+			globalCoords.x = events.x + imgleft[idx];
+			globalCoords.y = events.y + imgtop[idx];
+		}
+		Ti.API.debug("whatClicked x,y " + events.x + ", " + events.y  );
+		Ti.API.debug("global x,y " + globalCoords.x + ", " + globalCoords.y  );
+		Ti.API.debug('source cen' + JSON.stringify(cen));
+		var coord =	calcCoordination(cen,globalCoords);
+		answersCoordination.push(coord);
+		var choice = [{
 			ChosenWord: events.source.text,
 			WordList: wordList,
-			ChoiceStart: winopened,
+			ChoiceStart: roundStarted,
 			ChoiceFinish: choiceTime,
-			Coordination: -1
-		};
-		
+			Coordination: coord
+		}];
 		
 		//clear all other words so it's obvious they have picked this one
 		for (var j = 0; j < 6; j++) {
@@ -254,27 +276,37 @@
 				gameEndFeedback();				
 			}
 		}, 1700);
-	
+	}
+	function calcCoordination(centObj,centTouch){
+		var distx = centObj.x - centTouch.x; 
+		var disty = centObj.y - centTouch.y;
+		var dist = Math.sqrt(distx*distx + disty*disty);
+		Ti.API.debug('calcCoordination - dist' + dist);
+		return dist;
 	}
 	
 	function gameEndSaveScores(){
+		var now = parseInt((new Date()).getTime()/1000,10);
+		var speed =  answersChoiceTime.sum() /answersChoiceTime.length;
+		var coord = answersCoordination.sum() /answersCoordination.length;
+		var SessionID = Titanium.App.Properties.getInt('SessionID');
 		var gameSaveData = [{Game: MgameType,
 							GameVersion:1,
 							PlayStart:winopened ,
-							PlayEnd: parseInt((new Date()).getTime()/1000),
+							PlayEnd: parseInt((new Date()).getTime()/1000,10),
 							TotalScore:valence,
-							Speed_GO:0,
+							Speed_GO:speed.toFixed(5),
 							Speed_NOGO:0,
-							Coord_GO:0,
+							Coord_GO:coord.toFixed(5),
 							Coord_NOGO:0,
 							Level:arousal,
 							Feedback:'',
 							Choices:answers,
-							SessionID:Titanium.App.Properties.getInt('SessionID'),
+							SessionID:SessionID,
 							UserID:Titanium.App.Properties.getInt('UserID'),
-							LabPoints:2		
+							LabPoints:5	
 						}];
-		Ti.App.boozerlyzer.db.gameScores.Result(gameSaveData);
+		Ti.App.boozerlyzer.db.gameScores.SaveResult(gameSaveData);
 	}
 	/**
 	 * Here we display list of chosen words and 
@@ -282,7 +314,6 @@
 	 * for this selected set. 
 	 */
 	function gameEndFeedback(){
-		feedbackState = true;
 		for (var i = 0; i < 6; i++) {
 			loc[i].text = '';
 			loc[i].visible = false;
@@ -318,9 +349,10 @@
 		
 		// note we only make this visible for the pissonyms.	
 		suggest.visible = false;
-		
 	    imageMisc.visible = false;
 		showAxis(false);
+		//start a timer
+		roundStarted = (new Date()).getTime() / 1000;
 		
 		//get the number of rounds we still have to go.
 		if (numRounds === undefined) {
@@ -361,7 +393,9 @@
 			for (var i = 0; i < 6; i++) {
 				wordChoices[i] = pissonymList[i].Pissonym;
 			}
-			suggest.visible = true;
+			//TODO
+			//make a suggest new dialog
+			//suggest.visible = true;
 		}
 		wordList = '';
 		for (var i = 0; i < 6; i++) {
@@ -376,7 +410,7 @@
 			var word = wordChoices[i];
 			loc[i].addEventListener('touchstart', function(event){
 				var l = i;
-				var choiceTime = parseInt((new Date()).getTime() / 1000);
+				choiceTime = parseInt((new Date()).getTime() / 1000,10);
 			});
 		}
 	}
@@ -410,35 +444,6 @@
 		showAxis(true,'pissonyms');
 	}
 	
-		/**
-	 * here we find the mean arousal and valence for all the words chosen
-	 * and plot these on xy-axis
-	 */ 
-	function pissonymFeedback(){
-		var drunkscore = 0;
-		var coordscore = 0;
-		var speedscore = 0;
-		for (var i =0; i< answers.length; i++){
-			var info = Ti.App.boozerlyzer.db.pissonyms.getWordInfo(answers[i]);
-			Ti.API.debug('pissonym  info ' + JSON.stringify(info));
-			if (info!==null){
-				drunkscore += info[0].DrunkFactor;
-			}
-		}
-		Ti.API.debug('DrunkScore - ' + drunkscore/answers.length);
-//		Ti.API.debug('ValenceMean - ' + valence/answers.length);
-		
-		//convert this scores into values between 0 & 1
-		var drunk = (drunkscore/answers.length - 1)/(7-1);
-		//then use these to plot the x and y coords of the spot
-	    //TODO use layout variables instead of hard coding these values
-	    imageMisc.left = 60 + Math.floor(320*drunk)-15;
-	    imageMisc.top = Math.floor(320*0.5)-15;
-	    imageMisc.visible = true;
-		showAxis(true,'Pissonyms');
-	}
-	
-	
 	function showAxis(visibleFlag, gameType){
 		imageXyAxes.visible = visibleFlag;
 		imageYAxisUp.visible = visibleFlag;
@@ -450,6 +455,7 @@
 		case 'Pissonyms':
 			imageXAxisLeft.image = '/icons/sober.png';
 			imageXAxisRight.image = '/icons/drunk.png';			
+			imageXyAxes.visible = false;
 			imageYAxisUp.visible = false;
 			imageYAxisDown.visible = false;
 			break;
@@ -462,8 +468,35 @@
 			//TODO what should we do here? Not sure
 		}
 	}
+	/**
+	 * here we find the mean arousal and valence for all the words chosen
+	 * and plot these on xy-axis
+	 */ 
+	function pissonymFeedback(){
+		var drunkscore = 0, coordscore = 0, speedscore = 0, count = 0;
+		for (var i =0; i< answers.length; i++){
+			var info = Ti.App.boozerlyzer.db.pissonyms.getWordInfo(answers[i]);
+			Ti.API.debug('pissonym  info ' + JSON.stringify(info));
+			if (info!==null && info.length===1){
+				count++;
+				drunkscore += info[0].DrunkFactor;
+			}
+		}
+		if (count>0){
+			Ti.API.debug('DrunkScore - ' + drunkscore/count);
+
+			//convert this scores into values between 0 & 1
+			var drunk = (drunkscore/count - 1)/(7-1);
+			//then use these to plot the x and y coords of the spot
+		    //TODO use layout variables instead of hard coding these values
+		    imageMisc.left = 60 + Math.floor(320*drunk)-15;
+		    imageMisc.top = Math.floor(320*0.5)-15;
+		    imageMisc.visible = true;
+			showAxis(true,'Pissonyms');			
+		}
+	}
 	
 	setUpOnce();
-	var paused = false;
+	paused = false;
 
 })();

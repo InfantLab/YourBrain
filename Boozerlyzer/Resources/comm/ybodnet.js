@@ -1,7 +1,7 @@
 /**
  * @author Caspar Addyman
  * 
- * helper functions for connecting to the yourbrainondrugs.net site
+ * helper functions forTi.App.boozerlyzer.db.connecting to the yourbrainondrugs.net site
  * 
  */
 

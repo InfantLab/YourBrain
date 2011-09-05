@@ -9,9 +9,6 @@
 
 //(function() {
 
-Ti.include('/js/bloodalcohol.js');	
-
-	
 	/***
 	 * passed an array of timepoints and set of drink data.
 	 * returns the cumulative number of drinks between start time 
@@ -33,7 +30,7 @@ Ti.include('/js/bloodalcohol.js');
 					lastDrinkIdx = d; 
 				}
 			}
-			bac = BACalculate(timePoints[t],drinkData.slice(0,lastDrinkIdx+1),personalInfo);
+			var bac = Ti.App.boozerlyzer.analysis.BAC.calculate(timePoints[t],drinkData.slice(0,lastDrinkIdx+1),personalInfo);
 			returnData.push({
 				time:timePoints[t],
 				millsAlcohol:totalUnits,
@@ -71,7 +68,7 @@ Ti.include('/js/bloodalcohol.js');
 					Energy: emotionData[latestDataIdx].Energy,
 					EnergyBlur: emotionData[latestDataIdx].EnergyBlur,
 					Happiness: emotionData[latestDataIdx].Happiness,
-					HappyBlur: emotionData[latestDataIdx].HappyBlur,
+					HappyBlur: emotionData[latestDataIdx].HappyBlur
 				});
 			}else{
 				//default values
@@ -82,7 +79,7 @@ Ti.include('/js/bloodalcohol.js');
 					Energy: 50,
 					EnergyBlur: 0,
 					Happiness: 50,
-					HappyBlur: 0,
+					HappyBlur: 0
 				});
 			}
 		}//end time loop
