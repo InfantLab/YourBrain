@@ -22,6 +22,7 @@ class GameScore extends BaseObject {
 
   var $fields = array (
     'ID' => array('type' => 'primarykey'),
+    'UUID' => array('type' => 'string'),
     'GameScoreID' => array('type' => 'int'),
 
     'CreatedByUserID' => array('type' => 'int'),
@@ -45,6 +46,9 @@ class GameScore extends BaseObject {
     'GameSteps' => array('type' => 'int'),
     'Alcohol_ml' => array('type' => 'double'),
     'BloodAlcoholConc' => array('type' => 'double'),
+    'Happiness' => array('type' => 'int'),
+    'Energy' => array('type' => 'int'),
+    'Drunkeness' => array('type' => 'int')
   );
 
 }

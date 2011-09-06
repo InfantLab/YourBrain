@@ -39,8 +39,8 @@
 
   foreach ($decoded as $key => $data) {
     print_rp($data, 'Got row:');
-	if (in_array($data->data_type, $accepted_types))
-  	  $RowsToSave[] = new $data->data_type ( $data );
+    if (in_array($data->data_type, $accepted_types))
+      $RowsToSave[] = new $data->data_type ( $data->data );
   }
 
   foreach ($RowsToSave as $RowToSave) {
