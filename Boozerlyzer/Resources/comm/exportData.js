@@ -45,7 +45,7 @@
 		// } else {
 			// Ti.App.boozerlyzer.comm.exportData.writeCSV(outfile);
 		// }
-		Ti.App.boozerlyzer.comm.exportData.writeGameScores(boozerlyzerDir;)
+		Ti.App.boozerlyzer.comm.exportData.writeGameScores(boozerlyzerDir);
 		Ti.App.boozerlyzer.comm.exportData.writeAllDrinks(boozerlyzerDir);
 	
 	};

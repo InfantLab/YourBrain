@@ -1,35 +1,34 @@
-    <?php  
+<?php
     require_once ('include_setup.php');
-      
-    $db = mysql_select_db('test');  
-    if (!$db)  
-    {  
-        echo "Failed to select db.";  
-        exit;  
-    }  
-      
-    $username   = $_POST['username'];  
-    $password   = $_POST['password'];  
-    $names      = $_POST['names'];  
-    $email      = $_POST['email'];  
-      
-    $sql        = "SELECT username,email FROM users WHERE username = '" . $username . "' OR email = '" . $email . "'";  
-    $query      = mysql_query($sql);  
-    if (mysql_num_rows($query) > 0)  
-    {  
-        echo "That username or email already exists";  
-    }  
-    else  
-    {  
-        $insert = "INSERT INTO users (username,password,name,email) VALUES ('" . $username . "','" . $password . "','" . $names . "','" . $email . "')";  
-        $query  = mysql_query($insert);  
-        if ($query)  
-        {  
-            echo "Thanks for registering. You may now login.";  
-        }  
-        else  
-        {  
-            echo "Insert failed";  
-        }  
-    }  
-    ?>  
+
+// $_POST['username'] and $_POST['password'] are the param names we sent in our click event in login.js
+$username = $_POST['username'];
+$password = $_POST['password'];
+
+// Select eveything from the users table where username field == the username we posted and password field == the password we posted
+$sql = "SELECT * FROM users WHERE username = '" . $username . "' AND password = '" . $password . "'";
+$query = mysql_query($sql);
+
+// If we find a match, create an array of data, json_encode it and echo it out
+if (mysql_num_rows($query) > 0)
+{
+	$row = mysql_fetch_array($query);
+	$response = array(
+		'logged' => true,
+		'username' => $row['username'],
+		'UUID' => $row['UUID'],
+		'email' => $row['email']
+	);
+	echo json_encode($response);
+}
+else
+{
+	// Else the username and/or password was invalid! Create an array, json_encode it and echo it out
+	$response = array(
+		'logged' => false,
+		'message' => 'Invalid Username and/or Password'
+	);
+	echo json_encode($response);
+}
+?>
+  
