@@ -29,12 +29,14 @@
             if (db_num_rows($subquery) > 0)
             {
 	        $row = db_fetch_array($subquery);
+                $AuthToken = auth_set_AuthToken($row['id']);
 	        $response = array(
 	        	'success' => true,
 	        	'message' => 'Successfully registered with Boozerlyzer.net',
 	        	'username' => $row['username'],
 	        	'UUID' => $row['UUID'],
-	        	'email' => $row['email']
+	        	'email' => $row['email'],
+                        'AuthToken' => $AuthToken
 		);
 		echo json_encode($response);
 	    }

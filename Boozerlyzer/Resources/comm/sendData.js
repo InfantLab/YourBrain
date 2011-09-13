@@ -54,6 +54,7 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 
 		//what do we get back?
 		xhrPost.onload = function() {
+		  alert ('data sending onload');
 				var rc = Titanium.JSON.parse(this.responseText);
 				if (rc.status == 'success') {
 					var complete = Ti.UI.createAlertDialog('Game scores saved.');
@@ -69,6 +70,7 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		}
 		
 
+        alert('About to send data');
 		// send the data to the server
 		xhrPost.open('POST', 'http://yourbrainondrugs.net/boozerlyzer/submit_data.php');
 		xhrPost.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -77,7 +79,7 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		Ti.API.debug('about to send data for ' + dataToSend.length + ' items');
 		xhrPost.send(
 		 /*JSON.stringify(*/{
-		   User: Ti.App.boozerlyzer.comm.ybodnet.getUserID(),  // our user ID, username, email etc - unique identifier of the submitter
+		   UUID: Ti.App.boozerlyzer.comm.ybodnet.getUUID(),  // our user ID, username, email etc - unique identifier of the submitter
 		   AuthToken: Ti.App.boozerlyzer.comm.ybodnet.getAuthToken(), // some kind of magic key that the client-server has previously negotiated to determine authenticity
 		   ClientVersion: Ti.App.boozerlyzer.comm.ybodnet.getClientVersion(), // software version of the client
 		   ProtocolVersion: Ti.App.boozerlyzer.comm.ybodnet.getProtocolVersion(), // protocol version to use
@@ -93,19 +95,9 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		
 		var xhrPost = Ti.Network.createHTTPClient();
 	
-		xhrPost.open('POST', 'http://yourbrainondrugs.net/boozerlyzer/req_GamesScoresLastID.php');
+		xhrPost.open('POST', 'http://yourbrainondrugs.net/boozerlyzer/req_GameScoresLastID.php');
 		xhrPost.setRequestHeader('Content-type','application/json');
 		xhrPost.setRequestHeader('Accept','application/json');
-		xhrPost.send(
-	     JSON.stringify(
-		 {
-		   User: Ti.App.boozerlyzer.comm.ybodnet.getUserID(),  // our user ID, username, email etc - unique identifier of the submitter
-		   AuthToken: Ti.App.boozerlyzer.comm.ybodnet.getAuthToken(), // some kind of magic key that the client-server has previously negotiated to determine authenticity
-		   ClientVersion: Ti.App.boozerlyzer.comm.ybodnet.getClientVersion(), // software version of the client
-		   ProtocolVersion: Ti.App.boozerlyzer.comm.ybodnet.getProtocolVersion(), // protocol version to use
-		 }
-		 )
-		);
 		
 		//what do we get back?
 		xhrPost.onload = function() {
@@ -118,7 +110,19 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 					alert('Cloud Error: try again (' + this.responseText + ')');
 				}
 			};
-	
+			
+		xhrPost.send(
+	     JSON.stringify(
+		 {
+		   UUID: Ti.App.boozerlyzer.comm.ybodnet.getUUID(),  // our user ID, username, email etc - unique identifier of the submitter
+		   AuthToken: Ti.App.boozerlyzer.comm.ybodnet.getAuthToken(), // some kind of magic key that the client-server has previously negotiated to determine authenticity
+		   ClientVersion: Ti.App.boozerlyzer.comm.ybodnet.getClientVersion(), // software version of the client
+		   ProtocolVersion: Ti.App.boozerlyzer.comm.ybodnet.getProtocolVersion(), // protocol version to use
+		 }
+		 )
+		);
+		
+
 	};
 	
 	

@@ -126,18 +126,19 @@
 			Ti.App.Properties.setString('password',password1.value );
 			Ti.App.Properties.setString('email',email.value );
 			Ti.App.Properties.setString('UUID', response.UUID);
+			Ti.App.Properties.setString('AuthToken', response.AuthToken);
 			Ti.App.Properties.setBool('Registered', true);
             var alertDialog = Titanium.UI.createAlertDialog({  
                 title: 'Registration complete',  
                 message: response.message,  
                 buttonNames: ['OK']  
-            });  
-            alertDialog.show();  
+            });
             alertDialog.addEventListener('click',function(e)  
             {  
                 Ti.App.boozerlyzer.winHome.open();
                 win.close(); 
-            });  
+            });    
+            alertDialog.show();  
         }  
     };
       

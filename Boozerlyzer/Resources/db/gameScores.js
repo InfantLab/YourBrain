@@ -72,19 +72,25 @@
 	Ti.App.boozerlyzer.db.gameScores.LabelRows = function (scoreData){
 		Ti.API.debug('db.gameScores.LabelRows num rows' + scoreData.length );
 		if (!Ti.App.Properties.getBool('Registered')){
-			alert('Please click on the Safe and register with Boozerlyzer.net');
+			alert('Please click on the Safe and register or login with Boozerlyzer.net');
 			return;
 		}
 		var UUID = Ti.App.Properties.getString('UUID');
-		var jsonout = "{",rowcount = 0, retdata = [];
+		var rowcount = 0, retdata = [];
+		var jsonout = "{";
 		for(row in scoreData){
+			if (rowcount!=0) jsonout += ','; // add delimiting comma if not first row
 			//r = (rowcount++).toString();
 			//this line is a bit of mess to get right format
 			var thisrow =  '"'+ (rowcount++) + '":{ "data_type":"GameScore","data":' + Titanium.JSON.stringify(scoreData[row]) +'}'; 
 			Ti.API.debug('scoreData[row] ' + thisrow);
-			jsonout += thisrow + ',';
+			jsonout += thisrow;
 		}
-		return Titanium.JSON.parse(jsonout.substring(0, jsonout.length-1) + '}');
+		jsonout += '}';
+		//return Titanium.JSON.parse(jsonout.substring(0, jsonout.length-1) + '}');
+		// ^^ why does this line chop off the last character (usually a }) and then add another one?! 
+		// ^^ causes a crash when no scores are available.
+		return Titanium.JSON.parse(jsonout);  
 	};
 	
 	Ti.App.boozerlyzer.db.gameScores.PlayCount = function (gameNames){
@@ -288,7 +294,7 @@
 			var returnData = [];
 			while(rows.isValidRow()){
 			returnData.push({
-					ID:				parseInt(rows.fieldByName('ID'),10),
+					GameScoreID:	parseInt(rows.fieldByName('ID'),10), // Local 'ID' field becomes 'GameScoreID' on remote system
 					Game:			(rows.fieldByName('Game')==='undefined'?null:rows.fieldByName('Game')),
 					GameVersion:	(rows.fieldByName('GameVersion')==='undefined'?null:rows.fieldByName('GameVersion')),
 					PlayStart:		(rows.fieldByName('PlayStart')==='undefined'?null:parseInt(rows.fieldByName('PlayStart'),10)),

@@ -13,11 +13,20 @@
   $accepted_types = array('GameScore'); // which row types to accept for entry to the database
 
   // get the authorisation credentials
-  $UserID = $_REQUEST['UserID'];
+  $UUID = $_REQUEST['UUID'];
   $AuthToken = $_REQUEST['AuthToken'];
+
+  //print_rp("submit_data.php: got UUID '$UUID' and AuthToken '$AuthToken'");
+  print_rp($_REQUEST, 'Got REQUEST:');
+
   // if we weren't just a simple test app, we should check those against our database and do something appropriate if they're not correct.
 
-  setUserID ($UserID);
+  if (check_auth($UUID,$AuthToken)) {
+    $UserID = getUserIDForUUID($UUID);
+    setUserID ($UserID);
+  } else {
+    finisherror ('Authentication failed!');
+  }
 
   // get the version that the client claims to be.  enables us to handle old buggy clients and catch silly errors during development.
   $ClientVersion = $_REQUEST['ClientVersion'];
@@ -40,7 +49,9 @@
   foreach ($decoded as $key => $data) {
     print_rp($data, 'Got row:');
     if (in_array($data->data_type, $accepted_types))
-      $RowsToSave[] = new $data->data_type ( $data->data );
+      $newObject = new $data->data_type ($data->data);
+      $newObject->setValue('UUID',$UUID);
+      $RowsToSave[] = $newObject;
   }
 
   foreach ($RowsToSave as $RowToSave) {
