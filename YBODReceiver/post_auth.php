@@ -6,13 +6,13 @@ $username = $_POST['username'];
 $password = $_POST['password'];
 
 // Select eveything from the users table where username field == the username we posted and password field == the password we posted
-$sql = "SELECT * FROM users WHERE username = '" . $username . "' AND password = '" . $password . "'";
-$query = mysql_query($sql);
+$sql = "SELECT * FROM users WHERE username = '" . escape($username) . "' AND password = PASSWORD('" . escape($password) . "')";
+$query = db_query($sql);
 
 // If we find a match, create an array of data, json_encode it and echo it out
-if (mysql_num_rows($query) > 0)
+if (db_num_rows($query) > 0)
 {
-	$row = mysql_fetch_array($query);
+	$row = db_fetch_array($query);
 	$response = array(
 		'logged' => true,
 		'username' => $row['username'],

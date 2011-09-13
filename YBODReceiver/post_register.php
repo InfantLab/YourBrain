@@ -6,9 +6,9 @@
     $names      = $_POST['names'];  
     $email      = $_POST['email'];  
       
-    $sql        = "SELECT username,email FROM users WHERE username = '" . $username . "' OR email = '" . $email . "'";  
-    $query      = mysql_query($sql);  
-    if (mysql_num_rows($query) > 0)  
+    $sql        = "SELECT username,email FROM users WHERE username = '" . escape($username) . "' OR email = '" . escape($email) . "'";  
+    $query      = db_query($sql) or finisherror('SQL error doing already-exists check:' . db_error();
+    if (db_num_rows($query) > 0)  
     {  
 	$response = array(
 		'success' => false,
@@ -18,17 +18,17 @@
     }  
     else  
     {  
-        $insert = "INSERT INTO users (UUID,username,password,email) VALUES (UUID(),'" . $username . "','" . $password . "','" . $email . "')";  
-        $query  = mysql_query($insert);  
+        $insert = "INSERT INTO users (UUID,username,password,email) VALUES (UUID(),'" . escape($username) . "',PASSWORD('" . escape($password) . "'),'" . escape($email) . "')";  
+        $query  = db_query($insert);  
         if ($query)  
         {  
             // Select eveything from the users table where username field == the username we posted and password field == the password we posted so we can send back the newly created UUID
-            $sql = "SELECT * FROM users WHERE username = '" . $username . "' AND password = '" . $password . "'";
-            $subquery = mysql_query($sql);
+            $sql = "SELECT * FROM users WHERE username = '" . escape($username) . "' AND password = '" . escaepe($password) . "'";
+            $subquery = db_query($sql);
             // If we find a match, create an array of data, json_encode it and echo it out
-            if (mysql_num_rows($subquery) > 0)
+            if (db_num_rows($subquery) > 0)
             {
-	        $row = mysql_fetch_array($subquery);
+	        $row = db_fetch_array($subquery);
 	        $response = array(
 	        	'success' => true,
 	        	'message' => 'Successfully registered with Boozerlyzer.net',
