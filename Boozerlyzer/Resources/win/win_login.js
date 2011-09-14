@@ -81,13 +81,21 @@
 	            username:response.username,  
 	            email:response.email,
 	            UUID:response.UUID  
-	        });  
-	        win.close();  
+	        });
+			Ti.App.Properties.setBool('Registered', true);
+			//Ti.App.Properties.setInt('UserID', response.UserID);
+			Ti.App.Properties.setString('UUID', response.UUID);
+			Ti.App.Properties.setString('AuthToken', response.AuthToken);
+			alert('Logged in, response was ' + response.toString());
+	        alert('Logged in successfully!');
+	        //win.close();  
 	    }  
 	    else  
 	    {  
-	        alert(response.message);  
+	        alert('Login failed:' + response.message);  
+	        //alert('Response was: ' + response.toString());
 	    }  
 	}; 
+    //loginReq.
     
 })();

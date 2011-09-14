@@ -9,4 +9,4 @@ if (!db_connect()) finisherror ('Error connecting to database.');
 
 require_once 'include_base.php';
 
-
+require_once 'include_authentication.php';

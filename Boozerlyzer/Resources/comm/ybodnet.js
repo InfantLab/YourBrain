@@ -16,13 +16,21 @@
 	// our user ID, username, email etc - unique identifier of the submitter
 	Ti.App.boozerlyzer.comm.ybodnet.getUserID = function (){
 		//TODO make this function do something real!
-		return 'test';
+		//return 'test';
+		return Titanium.App.Properties.getInt('UserID');
 	};
+	
+	Ti.App.boozerlyzer.comm.ybodnet.getUUID = function() {
+		var ret = Titanium.App.Properties.getString('UUID');
+		alert('got UUID ' + ret);
+		return ret;
+	}
 	
 	// some kind of magic key that the client-server has previously negotiated to determine authenticity
 	Ti.App.boozerlyzer.comm.ybodnet.getAuthToken = function (){
 		//TODO make this function do something real!
-		return 'test';
+		//return 'test';
+		return Titanium.App.Properties.getString('AuthToken');
 	};
 	
 	// software version of the client
@@ -40,12 +48,12 @@
 
 	//register a new user
 	Ti.App.boozerlyzer.comm.ybodnet.register = function (){
-
+      Ti.API.info('Called register in ybodnet.js');
 	};
 	
 	//login
 	Ti.App.boozerlyzer.comm.ybodnet.login = function (){
-
+      Ti.API.info('Called login in ybodnet.js');
 	};
 	
 	
