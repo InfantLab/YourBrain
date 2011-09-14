@@ -5,6 +5,10 @@ if (!$DB_DISABLE) {
     return mysql_query($sql);
   }
 
+  function db_fetch_array($resultset) {
+    return mysql_fetch_array($resultset);
+  }
+
   function db_fetch_object($resultset) {
     return mysql_fetch_object($resultset);
   }

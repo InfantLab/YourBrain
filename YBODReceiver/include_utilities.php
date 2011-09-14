@@ -42,4 +42,13 @@ function setUserID ($n) {
 	$_USERID = $n;
 }
 
+function getUUID () {
+  global $_USERID;
+  return $_USERID;
+}
+function setUUID ($uuid) {
+  global $_UUID;
+  $_UUID = $uuid;
+}
+
 ?>

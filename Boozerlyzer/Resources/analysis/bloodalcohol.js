@@ -28,6 +28,8 @@
 		Ti.API.debug('BACCalculate personalInfo -' + JSON.stringify(personalInfo));
 		
 		
+		if (doseageData==null) return 0; // added by doctea so that no drinks is interpreted as BAC of 0 - avoids crash
+		
 		var gotValidData = ValidateDoseageData(doseageData);
 		if (gotValidData !== true){
 			return {Success:false,Text:gotValidData};	
