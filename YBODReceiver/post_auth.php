@@ -18,7 +18,8 @@ if (db_num_rows($query) > 0)
 		'username' => $row['username'],
 		'UUID' => $row['UUID'],
 		'email' => $row['email'],
-                'AuthToken' => auth_set_AuthToken($row['id'])
+                'AuthToken' => auth_set_AuthToken($row['id']),
+                'LastID' => getLastGameScoreIDForUUID($row['UUID']),
 	);
 	echo json_encode($response);
 }
