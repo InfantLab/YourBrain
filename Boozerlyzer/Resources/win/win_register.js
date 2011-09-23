@@ -127,6 +127,7 @@
 			Ti.App.Properties.setString('email',email.value );
 			Ti.App.Properties.setString('UUID', response.UUID);
 			Ti.App.Properties.setString('AuthToken', response.AuthToken);
+			Ti.App.Properties.setInt('LastSentID', response.LastID);
 			Ti.App.Properties.setBool('Registered', true);
             var alertDialog = Titanium.UI.createAlertDialog({  
                 title: 'Registration complete',  

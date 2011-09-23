@@ -10,6 +10,8 @@
   $loggedin = check_auth($UUID, $AuthToken);
 
   if ($loggedin) {
+    $LastID = getLastGameScoreIDForUUID($UUID);
+
     $response = array(
       'status' => 'success',
       'Last' => $LastID,

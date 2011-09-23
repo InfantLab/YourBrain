@@ -75,7 +75,7 @@ class BaseObject {
     return $value;
   }
   function initialiseData($data) {
-    print_rp($data, 'initialiseData for ' . get_class($this) . ' passed data:');
+    //print_rp($data, 'initialiseData for ' . get_class($this) . ' passed data:');
     foreach ($this->getFields() as $FieldName => $FieldOptions) {
       $this->setValue($FieldName, $data->$FieldName);
       if ($FieldOptions['type']=='primarykey') {
@@ -83,7 +83,7 @@ class BaseObject {
       }
     }
 	if ($this->hasField('CreatedByUserID') && !$this->getValue('CreatedByUserID')) {
-		print 'setting UserID to ' . getUserID() . '<br>';
+		//print 'setting UserID to ' . getUserID() . '<br>';
 		$this->setValue('CreatedByUserID', getUserID());
 	}
   }

@@ -86,6 +86,7 @@
 			//Ti.App.Properties.setInt('UserID', response.UserID);
 			Ti.App.Properties.setString('UUID', response.UUID);
 			Ti.App.Properties.setString('AuthToken', response.AuthToken);
+			Ti.App.Properties.setInt('LastSentID', response.LastID);
 			alert('Logged in, response was ' + response.toString());
 	        alert('Logged in successfully!');
 	        //win.close();  

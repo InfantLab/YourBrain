@@ -36,7 +36,8 @@
 	        	'username' => $row['username'],
 	        	'UUID' => $row['UUID'],
 	        	'email' => $row['email'],
-                        'AuthToken' => $AuthToken
+                        'AuthToken' => $AuthToken,
+                        'LastID' => 0
 		);
 		echo json_encode($response);
 	    }

@@ -7,9 +7,11 @@ function debug ($text) {
 }
 
 function print_rp($var, $message = '', $log = true) {
-  print "\n\n$message: <pre>";
-  print_r($var);
-  print "</pre>\n\n";
+  if (!$log) {
+    print "\n\n$message: <pre>";
+    print_r($var);
+    print "</pre>\n\n";
+  }
   if ($log) debug($message . ':' . print_r($var, true));
 }
 
@@ -49,6 +51,15 @@ function getUUID () {
 function setUUID ($uuid) {
   global $_UUID;
   $_UUID = $uuid;
+}
+
+
+function getLastGameScoreIDForUUID ($UUID) {
+  $sql = "SELECT MAX(GameScoreID) AS LastID FROM receive_GameScore WHERE UUID='${UUID}'";
+  $result = db_query($sql) or finisherror ("SQL error getting LastGameScoreIDForUUID '$sql': " . db_error());
+
+  $result = db_fetch_object($result);
+  return $result->LastID;
 }
 
 ?>

@@ -32,6 +32,7 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		//based on a persistent app property
 		//TODO retrieve this from server.
 		var lastSentID = Titanium.App.Properties.getInt('LastSentID', 0);
+		alert('Got lastSentID ' + lastSentID);
 		
 		Ti.API.debug('sendData - lastSentID ' + lastSentID);
 		// build an object containing the data that we should send
@@ -60,9 +61,10 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 					var complete = Ti.UI.createAlertDialog('Game scores saved.');
 					complete.show();
 					Ti.API.info('Game scores saved.');
+					alert(rc.SavedCount.toString() + ' Game Scores saved - last ID was ' + rc.LastReceivedID.toString());
 					Titanium.App.Properties.setInt('LastSentID', rc.LastReceivedID/*newLastID*/);
 				} else {
-					Ti.API.error('Cloud Error: try again (' + this.responseText + ')');
+					alert('Cloud Error: try again (' + this.responseText + ')');
 				}
 			};
 		xhrPost.onerror = function(e) {
