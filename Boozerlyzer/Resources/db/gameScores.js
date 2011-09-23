@@ -202,6 +202,29 @@
 		return false;
 	};
 
+    Ti.App.boozerlyzer.db.gameScores.setupStartSequence = function () {
+    	var LastSentID = Titanium.App.Properties.getInt('LastSentID',0);
+    	
+    	var checkHighestSQL = 'select MAX(ID) as maxID FROM GameScores';
+    	// do database
+    	var rows = Ti.App.boozerlyzer.db.conn.execute(checkHighestSQL);
+    	if (rows.isValidRow()) {
+    		var checked_highest = rows.field(0);
+    	
+	    	if (LastSentID>checked_highest) {
+	    		// first insert should be LastSentID+1
+	    		alert('got next StartInsertID ' + (LastSentID+1));
+	    		Titanium.App.Properties.setInt('StartInsertID', LastSentID+1);
+	    		//Ti.App.boozerlyzer.db.conn.execute('update sqlite_sequence SET seq=' + (LastSentID+1) +' WHERE name="GameScores"');
+	    	} else {
+	    		Titanium.App.Properties.setInt('StartInsertID', 0);
+	    	}
+	    } else {
+	    	Titanium.App.Properties.setInt('StartInsertID',0);
+	    }
+    	
+    }
+
 	/**
 	 * Participant has completed a game, enter their data
 	 * @param {Object} scoreData
@@ -226,14 +249,18 @@
 		var drinkVolume_ml = Ti.App.boozerlyzer.db.doseageLog.totalDrinkVolume(Ti.App.boozerlyzer.data.AllDrinks); 
 		var currentBloodAlcohol = Ti.App.boozerlyzer.analysis.BAC.calculate(now, Ti.App.boozerlyzer.data.AllDrinks,Ti.App.boozerlyzer.data.personalInfo);
 
+		Ti.App.boozerlyzer.db.gameScores.setupStartSequence();
+
 		var sessionID = Titanium.App.Properties.getInt('SessionID');
 		for (var i=0; i<scoreData.length; i++){
+			
 			var insertstr = 'INSERT INTO GameScores ';
 			insertstr += '(SessionID,Game,GameVersion,PlayStart,PlayEnd,TotalScore,GameSteps,';
 			insertstr += 'Speed_GO,Speed_NOGO,Coord_GO,Coord_NOGO,InhibitionScore,MemoryScore, ';
 			insertstr += 'Level, Feedback,Choices,LabPoints,UserID,Alcohol_ml,BloodAlcoholConc,Happiness,Energy,Drunkeness)';
 			insertstr += 'VALUES(?,?,?,?,?,?,?, ?,?,?,?,?,?, ?,?,?,?,?,?, ?,?,?,?)';
-			Ti.App.boozerlyzer.db.conn.execute(insertstr,sessionID,
+			Ti.App.boozerlyzer.db.conn.execute(insertstr,
+								   sessionID,
 								   scoreData[i].Game, 
 								   scoreData[i].GameVersion, 
 								   scoreData[i].PlayStart,
@@ -261,6 +288,14 @@
 								   Ti.App.boozerlyzer.data.currentEmotions[0].Drunkeness );
 			Titanium.API.debug('gameScores result, rowsAffected = ' +Ti.App.boozerlyzer.db.conn.rowsAffected);
 			Titanium.API.debug('gameScores result, lastInsertRowId = ' +Ti.App.boozerlyzer.db.conn.lastInsertRowId);	
+			
+			///dirty hack to set the primary key to that which is expected next by the server
+			if (Titanium.App.Properties.getInt('StartInsertID')>0) {
+				Titanium.App.boozerlyzer.db.conn.execute('update GameScores SET ID=' + Titanium.App.Properties.getInt('StartInsertID') 
+				  + ' WHERE ID=' + Ti.App.boozerlyzer.db.conn.lastInsertRowId
+				);
+				Titanium.App.Properties.setInt('StartInsertID', -1);
+			}
 		}
 	};
 	
