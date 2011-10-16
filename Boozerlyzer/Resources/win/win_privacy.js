@@ -19,42 +19,81 @@
 	var netprivacy = ['Never send my data', 'Send totally anonymous data', 'Send data with anonymous key', 'Send data with nickname'];
 	var phoneprivacy = ['Never store data', 'Store games scores but not drinking data', 'Store all data'];
 	
-	var rows1 = [];
-	for (var i = 0; i < netprivacy.length; i++) {
-		rows1.push(Ti.UI.createPickerRow({title: netprivacy[i]}));
-	}
-	var column1 = Ti.UI.createPickerColumn({rows: rows1});
 	
-	var netpicker = Ti.UI.createPicker({
-		useSpinner: true, visibleItems: 4,
-		type : Ti.UI.PICKER_TYPE_PLAIN,
-		top: 10, height: 90,
-		columns:column1, 
-		font: {fontSize: "12"}
+	var netPrivacyLabel = Ti.UI.createLabel({
+			text:'Network Privacy',
+			top: 120,
+			left:20,
+			width:100,
+			height:24,
+			textAlign:'center',
+			color:'black'	
 	});
-	netpicker.addEventListener('change', function(e) {
-		Ti.API.debug("you chose " + e.selectedValue[0]);
-	});
-	win.add(netpicker);
+	win.add(netPrivacyLabel);
 	
-	var rows2 = [];
-	for (var i = 0; i < phoneprivacy.length; i++) {
-		rows2.push(Ti.UI.createPickerRow({title: phoneprivacy[i]}));
-	}
-	var column2 = Ti.UI.createPickerColumn({rows:rows2});
-	
-	var phonepicker = Ti.UI.createPicker({
-		useSpinner: true, visibleItems: 4,
-		type : Ti.UI.PICKER_TYPE_PLAIN,
-		top: 120, height: 90,
-		columns:column2, 
-		font: {fontSize: "12"}
+	var netPrivacyDialog = Titanium.UI.createOptionDialog({
+		options:netprivacy,
+		destructive:2,
+		cancel:1,
+		title:'Set communications privacy.'
 	});
-	phonepicker.addEventListener('change', function(e) {
-		Ti.API.debug("you chose " + e.selectedValue[0]);
-	});
-	win.add(phonepicker);
+	// add event listener
+	netPrivacyDialog.addEventListener('click',function(e)
+	{
 	
+		netPrivacyBtn.text = netprivacy[e.index];
+		//TODO
+		//need to actually do something about this!
+	});
+		var netPrivacyBtn= Ti.UI.createButton({
+	    title:netprivacy[0],  
+	    top:120,  
+	    width:180,  
+	    height:35,  
+	    borderRadius:2,  
+	    font:{fontFamily:'Arial',fontWeight:'bold',fontSize:14} 
+	});
+	win.add(netPrivacyBtn);
+	netPrivacyBtn.addEventListener('click', function(e) {
+		netPrivacyDialog.show();
+	});
+
+	var phonePrivacyLabel = Ti.UI.createLabel({
+			text:'Handset Privacy',
+			top: 20,
+			left:20,
+			width:100,
+			height:24,
+			textAlign:'center',
+			color:'black'	
+	});
+	win.add(netPrivacyLabel);
+	
+	var phonePrivacyDialog = Titanium.UI.createOptionDialog({
+		options:phoneprivacy,
+		destructive:2,
+		cancel:1,
+		title:'Data stored on phone'
+	});
+	// add event listener
+	phonePrivacyDialog.addEventListener('click',function(e)
+	{
+		phonePrivacyBtn.text = phoneprivacy[e.index];
+		//TODO
+		//need to actually do something about this!
+	});
+	var phonePrivacyBtn= Ti.UI.createButton({
+	    title:phoneprivacy[0],  
+	    top:20,  
+	    width:180,  
+	    height:35,  
+	    borderRadius:2,  
+	    font:{fontFamily:'Arial',fontWeight:'bold',fontSize:14} 
+	});
+	win.add(phonePrivacyBtn);
+	phonePrivacyBtn.addEventListener('click', function(e) {
+		phonePrivacyDialog.show();
+	});
 	
 	var debug = Titanium.UI.createImageView({
 		image:'/icons/Misc.png',
@@ -70,7 +109,7 @@
 		// db0.remove();
 		// Titanium.API.debug('Removed old YBOB database')
 		// db0.close();
-// 		
+
 		// var db = Titanium.Database.install('/ybob.db','ybob');
 		// Titanium.API.debug('Installed new YBOB database')
 		// db.close();

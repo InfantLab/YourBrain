@@ -1,0 +1,41 @@
+@font-face {
+	font-family: 'AvantGardeBkBTBook';
+	src: url('../../font/avgardn-webfont.eot');
+	src: local('☺'), url('../../font/avgardn-webfont.woff') format('woff'), url('../../font/avgardn-webfont.ttf') format('truetype'), url('../../font/avgardn-webfont.svg#webfontediOcVn3') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'TwCenMTCondensedBold';
+	src: url('../../font/tccb___-webfont.eot');
+	src: local('☺'), url('../../font/tccb___-webfont.woff') format('woff'), url('../../font/tccb___-webfont.ttf') format('truetype'), url('../../font/tccb___-webfont.svg#webfontO9RsVYGs') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'ContextCondensedSSiCondensed';
+	src: url('../../font/context_condensed_ssi_condensed-webfont.eot');
+	src: local('☺'), url('../../font/context_condensed_ssi_condensed-webfont.woff') format('woff'), url('../../font/context_condensed_ssi_condensed-webfont.ttf') format('truetype'), url('../../font/context_condensed_ssi_condensed-webfont.svg#webfontwZYGOku3') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'CambriaItalic';
+	src: url('../../font/cambriai-webfont.eot');
+	src: local('☺'), url('../../font/cambriai-webfont.woff') format('woff'), url('../../font/cambriai-webfont.ttf') format('truetype'), url('../../font/cambriai-webfont.svg#webfontjTrZmxBp') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+.countdown_amount { text-shadow: 1px 1px #333;}
+#advert-text h1 {text-shadow: -1px -1px #fff;}
+#advert-text p {text-shadow: -1px -1px #fff;}
+.button-one {text-shadow: 1px 1px #1d577c;}
+.button-one:hover {text-shadow: 1px 1px #4eafed;}
+.button-two {text-shadow: 1px 1px #7a2525;}
+.button-two:hover {text-shadow: 1px 1px #e65757;}
+#newsletter h1 {text-shadow: 1px 1px #e75858;}
+

@@ -38,7 +38,7 @@
 		if (!Ti.App.boozerlyzer.data.currentEmotions || Ti.App.boozerlyzer.data.currentEmotions === null || Ti.App.boozerlyzer.data.currentEmotions === 'undefined'){
 			Ti.App.boozerlyzer.data.currentEmotions = Ti.App.boozerlyzer.db.selfAssessment.getLatestData(SessionID);
 		}
-		if (Ti.App.boozerlyzer.data.currentEmotions === null || Ti.App.boozerlyzer.data.currentEmotions === false){
+		if (Ti.App.boozerlyzer.data.currentEmotions === null || Ti.App.boozerlyzer.data.currentEmotions[0].Happinessnow < 0 ){
 			Titanium.API.trace('Boozerlyzer - currentEmotion could not be retrieved');
 			Ti.App.boozerlyzer.data.currentEmotions= Ti.App.boozerlyzer.db.selfAssessment.newEmotion(false);
 		}

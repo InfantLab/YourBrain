@@ -149,9 +149,9 @@
 				Ti.App.boozerlyzer.data.session = Ti.App.boozerlyzer.db.sessions.getLatestData(0);
 				//retrieve current session
 				Titanium.App.Properties.setBool('MateMode', false);			//set to false
-				Titanium.App.Properties.setInt('SessionID', session[0].ID);
-				Titanium.App.Properties.setInt('UserID', session[0].UserID);				
-				Ti.API.debug("Switch out of mate mode - session info:" + JSON.stringify(session));
+				Titanium.App.Properties.setInt('SessionID',Ti.App.boozerlyzer.data.session[0].ID);
+				Titanium.App.Properties.setInt('UserID', Ti.App.boozerlyzer.data.session[0].UserID);				
+				Ti.API.debug("Switch out of mate mode - session info:" + JSON.stringify(Ti.App.boozerlyzer.data.session));
 				var shrink = Ti.UI.create2DMatrix();
 				shrink.scale(0.5);
 				mateModeOffAnimation = Ti.UI.createAnimation({transform:shrink, opacity:0.5});
@@ -159,13 +159,13 @@
 				labelMateMode.visible = false;
 				homeWin.backgroundImage = '/images/smallcornercup.png';
 			}else{
-				//switch into mate mode.. create a new session.
-				Ti.App.boozerlyzer.data.session = Ti.App.boozerlyzer.db.sessions.createNewSession(true);
 				//set properties
 				Titanium.App.Properties.setBool('MateMode', true);
-				Titanium.App.Properties.setInt('SessionID', session[0].ID);
-				Titanium.App.Properties.setInt('UserID', session[0].UserID);
-				Ti.API.debug("Switch into mate mode - session info:" + JSON.stringify(session));
+				//switch into mate mode.. create a new session.
+				Ti.App.boozerlyzer.data.session = Ti.App.boozerlyzer.db.sessions.createNewSession(Titanium.App.Properties.getBool('MateMode',false));
+				Titanium.App.Properties.setInt('SessionID', Ti.App.boozerlyzer.data.session[0].ID);
+				Titanium.App.Properties.setInt('UserID', Ti.App.boozerlyzer.data.session[0].UserID);
+				Ti.API.debug("Switch into mate mode - session info:" + JSON.stringify(Ti.App.boozerlyzer.data.session));
 				var grow = Ti.UI.create2DMatrix();
 				grow.scale(2);
 				mateModeOnAnimation = Ti.UI.createAnimation({transform:grow, opacity:0.99});
@@ -460,33 +460,6 @@
 		Ti.API.debug('homeWin 7');
 
 		
-		//TODO - find a nice way to synchronise data
-		var sync = Ti.UI.createButton({
-			title:'Send Data',
-			width:90,
-			height:28,
-			bottom:30,
-			right:10,
-			backgroundColor:'gray'
-		});
-		sync.addEventListener('click',function()
-		{
-			// Ti.API.debug("Get total drinks");
-			// var now = parseInt((new Date()).getTime()/1000);
-			// var monthago = now - 31*3600*24;
-			// var totalDrinks	=Ti.App.boozerlyzer.db.doseageLog.drinksinTimePeriod(monthago, now);
-			// var len = totalDrinks.length;
-			// var drinksList = '';
-			// for (i=0;i<len;i++){
-				// //drinksList += totalDrinks[i].DrugVariety + ': ' + (totalDrinks[i].TotalUnits / stdDrinks[0].MillilitresPerUnit).toFixed(1) + ' U\n';
-				// drinksList += totalDrinks[i].DrugVariety + ': ' + (totalDrinks[i].TotalUnits / 10).toFixed(1) + ' U\n';
-			// }
-			// Ti.API.debug(drinksList);
-			// alert("Total alcohol consumed this month\n\n" + drinksList);
-			Ti.App.boozerlyzer.comm.sendData.sync();
-		});	
-		homeWin.add(sync);
-
 		homeWin.addEventListener('focus', function(){
 			Ti.API.debug('homeWin got focus');
 			if (loadedonce){

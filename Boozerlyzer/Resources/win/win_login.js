@@ -56,7 +56,7 @@
     {  
         if (username.value != '' && password.value != '')  
         {  
-            loginReq.open("POST","http://yourbrainondrugs.net/boozerlyzer/post_auth.php");  
+            loginReq.open("POST","http:/boozerlyzer.net/receive/post_auth.php");  
             var params = {  
                 username: username.value,  
                 password: Ti.Utils.md5HexDigest(password.value)  

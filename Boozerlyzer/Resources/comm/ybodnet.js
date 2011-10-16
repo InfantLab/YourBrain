@@ -22,7 +22,7 @@
 	
 	Ti.App.boozerlyzer.comm.ybodnet.getUUID = function() {
 		var ret = Titanium.App.Properties.getString('UUID');
-		alert('got UUID ' + ret);
+		Ti.API.debug('got UUID ' + ret);
 		return ret;
 	}
 	
@@ -36,7 +36,8 @@
 	// software version of the client
 	Ti.App.boozerlyzer.comm.ybodnet.getClientVersion = function (){
 		//TODO make this function do something real!
-		return 'test';
+		Ti.API.debug('Ti.App.Version '+ Ti.App.version);
+		return Ti.App.version;
 	};
 	 
 	// protocol version to use

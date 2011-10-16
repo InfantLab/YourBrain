@@ -7,7 +7,7 @@
         <target device="ipad">false</target>
         <target device="android">true</target>
     </deployment-targets>
-    <id>net.boozerlyzer</id>
+    <id>net.boozerlyzer.app</id>
     <name>Boozerlyzer</name>
     <version>0.24</version>
     <publisher>boozerlyzer.net</publisher>

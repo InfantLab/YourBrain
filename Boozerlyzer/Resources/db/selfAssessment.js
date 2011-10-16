@@ -24,18 +24,18 @@
 		var mostRecentData = [];
 		//have to do count first because max on empty set behaves badly
 		//and a cast cos sessionID sometimes treated as string
-		var sessID = parseInt(sessionID);
+		var sessID = parseInt(sessionID,10);
 		Titanium.API.trace('selfAssessment sessID:' + sessID );
 		var rows =Ti.App.boozerlyzer.db.conn.execute('SELECT count(*) FROM SelfAssessment WHERE SESSIONID = ?', sessID);
 		Titanium.API.trace('selfAssessment count executed');
-		if (rows !== null && rows.isValidRow() && parseInt(rows.field(0)) > 0 ){		
+		if (rows !== null && rows.isValidRow() && parseInt(rows.field(0),10) > 0 ){		
 			Titanium.API.trace('selfAssessment count > 0');
 			rows.close();
 			rows =Ti.App.boozerlyzer.db.conn.execute('SELECT max(ID) FROM SelfAssessment WHERE SESSIONID = ?', sessID);
 			Ti.API.trace('selfAssessment max exectue');
 			if (rows !== null && rows.isValidRow()) {
 				Ti.API.trace('selfAssessment maxid pre' );
-				var maxid = parseInt(rows.field(0));
+				var maxid = parseInt(rows.field(0),10);
 				Ti.API.trace('selfAssessment maxid - ' + maxid);
 				rows.close();
 				rows =Ti.App.boozerlyzer.db.conn.execute('SELECT * FROM SelfAssessment WHERE ID = ?', maxid);
@@ -63,7 +63,7 @@
 	Ti.App.boozerlyzer.db.selfAssessment.newEmotion = function (insertFlag){
 		var result = [];
 		var sessionID = Titanium.App.Properties.getInt('SessionID', 0);
-		var now = parseInt((new Date()).getTime()/1000);
+		var now = parseInt((new Date()).getTime()/1000,10);
 		if (insertFlag){ //then we also insert this blank row into database
 			var insertstr = 'INSERT INTO SelfAssessment (SessionID, DrunkBlur,Drunkeness,Energy,EnergyBlur,Happiness,HappyBlur,SelfAssessmentStart,SelfAssessmentChanged)';
 			insertstr += 'VALUES(?,?,?,?,?,?,?,?,?)';
@@ -104,7 +104,7 @@
 	 * return all the relevant rows from a given time range.
 	 */
 	Ti.App.boozerlyzer.db.selfAssessment.getTimeRangeData = function (minTime, maxTime){
-		var rows
+		var rows;
 		if (maxTime !== null){
 			rows =Ti.App.boozerlyzer.db.conn.execute('SELECT * FROM SelfAssessment WHERE SelfAssessmentChanged > ? and SelfAssessmentChanged < ? ORDER BY SelfAssessmentChanged ASC', minTime, maxTime);
 		}else{
@@ -119,7 +119,7 @@
 	Ti.App.boozerlyzer.db.selfAssessment.getAllSessionData = function (sessionID){
 		var mostRecentData = [];
 		//cast cos sessionID sometimes treated as string
-		var sessID = parseInt(sessionID);
+		var sessID = parseInt(sessionID,10);
 		var rows =Ti.App.boozerlyzer.db.conn.execute('SELECT * FROM SelfAssessment WHERE SessionID = ? ORDER BY SelfAssessmentChanged ASC', sessID);
 		var returnData = fillDataObject(rows);
 		rows.close();
@@ -134,15 +134,15 @@
 			var returnData = [];
 			while(rows.isValidRow()){
 				returnData.push({
-					SessionID:			parseInt(rows.fieldByName('SessionID')),
-					DrunkBlur: 			parseFloat(rows.fieldByName('DrunkBlur')),
-					Drunkeness: 		parseInt(rows.fieldByName('Drunkeness')),
-					Energy: 			parseInt(rows.fieldByName('Energy')),
-					EnergyBlur: 		parseFloat(rows.fieldByName('EnergyBlur')),
-					Happiness: 			parseInt(rows.fieldByName('Happiness')),
-					HappyBlur: 			parseInt(rows.fieldByName('HappyBlur')),
-					SelfAssessmentStart:parseInt(rows.fieldByName('SelfAssessmentStart')),
-					SelfAssessmentChanged: parseInt(rows.fieldByName('SelfAssessmentChanged'))
+					SessionID:			parseInt(rows.fieldByName('SessionID'),10),
+					DrunkBlur:			parseFloat(rows.fieldByName('DrunkBlur')),
+					Drunkeness:			parseInt(rows.fieldByName('Drunkeness'),10),
+					Energy:				parseInt(rows.fieldByName('Energy'),10),
+					EnergyBlur:			parseFloat(rows.fieldByName('EnergyBlur')),
+					Happiness:			parseInt(rows.fieldByName('Happiness'),10),
+					HappyBlur:			parseInt(rows.fieldByName('HappyBlur'),10),
+					SelfAssessmentStart:parseInt(rows.fieldByName('SelfAssessmentStart'),10),
+					SelfAssessmentChanged: parseInt(rows.fieldByName('SelfAssessmentChanged'),10)
 				});
 				rows.next();				
 			}
@@ -150,8 +150,7 @@
 			return returnData;	
 		}
 		//something didn't work
-		return false;
-		
-	};
+		return false;	
+	}
 
 }());

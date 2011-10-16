@@ -164,7 +164,7 @@
 		 result.push('\t');
 		 result.push(data[i].DoseageChanged);	//time we closed it
 		 result.push('\t');
- 		 result.push(data[i].ExitCode);			//how did we close it (not used)
+		 result.push(data[i].ExitCode);			//how did we close it (not used)
 		 result.push('\t');
 		 result.push(data[i].SessionID);		//current session id
 		 result.push('\t');

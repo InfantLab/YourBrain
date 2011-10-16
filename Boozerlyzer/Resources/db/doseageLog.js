@@ -209,6 +209,7 @@
 			return mostRecentData;
 		}
 		//something didn't work
+		rows.close();
 		return null;
 	}
 }());

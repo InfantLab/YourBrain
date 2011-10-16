@@ -22,6 +22,9 @@
 		//need to give it specific help for this screen
 		menu.setHelpMessage("Click on the icons to add new drinks. Double click on drinks list to edit or delete an entry.");
 
+		// Include drinks picker component 
+		Ti.include('/ui/picker_drinks.js');
+		
 		var winOpened = parseInt((new Date()).getTime()/1000,10);
 		var loadedonce = false;
 		var totalvolAlcohol, currentBloodAlcohol;
@@ -30,9 +33,6 @@
 		var drinkNames = ['Beer','Wine','Spirits','NULL'];
 		var drinkImgs = ['/icons/beer-full.png','/icons/wine.png','/icons/whiskey.png','/icons/whiskey-empty.png'];
 		
-		// //Ti.include('/js/datetimehelpers.js');
-		// Include component in page
-		Ti.include('/ui/picker_drinks.js');
 		
 		if (!Ti.App.boozerlyzer.data.personalInfo || Ti.App.boozerlyzer.data.personalInfo === null || Ti.App.boozerlyzer.data.personalInfo === 'undefined'){
 			Ti.App.boozerlyzer.data.personalInfo = Ti.App.boozerlyzer.db.personalInfo.getData();
@@ -89,7 +89,7 @@
 					newDrinks[0].StandardUnits = newDrinks[0].TotalUnits / Ti.App.boozerlyzer.data.standardDrinks[0].MillilitresPerUnit;
 				}
 				newDrinks[0].Changed = true;
-				Ti.API.debug('std units ' + newDrinks[0].StandardUnits );
+		 		Ti.API.debug('std units ' + newDrinks[0].StandardUnits );
 				Ti.App.boozerlyzer.db.doseageLog.setData(newDrinks);
 				tv.appendRow(formatTableRow(newDrinks[0]));
 				Ti.App.boozerlyzer.data.AllDrinks.push(newDrinks[0]);	
@@ -122,7 +122,7 @@
 		
 		//TODO - find a nice way to show this data
 		var calendarTotalDrinksButton = Ti.UI.createButton({
-			title:'Total Drinks in last ' + Ti.App.Properties.getString('GrandTotal','4 weeks'),
+			title:'Total Drinks in last ' + Ti.App.Properties.getString('GrandTotal','1 week'),
 			width:136,
 			height:36,
 			top:3,
@@ -140,7 +140,7 @@
 		howLongDialog.addEventListener('click',function(e)
 		{
 			Ti.App.Properties.setString('GrandTotal',howLong[e.index]);
-			howLongDialog.title = 'Total Drinks in last ' + Ti.App.Properties.setString('GrandTotal','4 weeks'),
+			howLongDialog.title = 'Total Drinks in last ' + Ti.App.Properties.getString('GrandTotal','1 weeks');
 			calendarTotalDrinks();
 		});
 		calendarTotalDrinksButton.addEventListener('click',function()
@@ -177,7 +177,6 @@
 			// Set data in picker and open as a modal
 			optionPickerDialog.setDrinkType('Beer',[2,0,0]);
 			optionPickerDialog.open();
-
 		});
 
 		var drinkCountLabels = [];
@@ -303,7 +302,7 @@
 			var thisDrinkUnits = '', thisDrinkkCals = '';
 			if (!isNaN(numUnits) && numUnits > 0){
 				thisDrinkUnits = numUnits.toFixed(1) + ' u';
-				thisDrinkkCals = numkCals.toFixed(0) + 'kCal'
+				thisDrinkkCals = numkCals.toFixed(0) + 'kCal';
 			}
 			var whatDrink;
 			whatDrink = (DrinkData.DrugVariety !== null  ? DrinkData.DrugVariety : '');
@@ -311,9 +310,9 @@
 			doseDesc = (DrinkData.DoseDescription  !== null ? DrinkData.DoseDescription :'');
 			var drinkDesc;
 		    if (DrinkData.NumDoses === null || DrinkData.NumDoses ===1){
-		    	drinkDesc = doseDesc;
+				drinkDesc = doseDesc;
 		    }else{
-		    	drinkDesc = DrinkData.NumDoses +  ' x ' + doseDesc;
+				drinkDesc = DrinkData.NumDoses +  ' x ' + doseDesc;
 		    }
 			var drinkIDX = drinkNames.indexOf(DrinkData.DrugVariety);
 		    //if image is missing show empty class
@@ -327,7 +326,7 @@
 					        });
 		    row.add(imgView);
 		    var drinkDescriptionLabel = Ti.UI.createLabel({
-												    	text:drinkDesc,
+														text:drinkDesc,
 														top:0,
 														left:32,
 														textAlign:'left',
@@ -338,7 +337,7 @@
 			
 			//label to display time and percentage strength
 		    var drinkDetailsLabel = Ti.UI.createLabel({
-												    	text:addedTime + '  (' +DrinkData.Strength + '% )',
+														text:addedTime + '  (' +DrinkData.Strength + '% )',
 														top:16,
 														left:32,
 														textAlign:'left',
@@ -348,7 +347,7 @@
 			row.add(drinkDetailsLabel);
 		    //label to display number of standard drinks/units for this entry
 		    var drinkUnitsLabel = Ti.UI.createLabel({
-												    	text: thisDrinkUnits,
+														text: thisDrinkUnits,
 														bottom:2,
 														right:4,
 														textAlign:'right',
@@ -357,7 +356,7 @@
 													});
 			row.add(drinkUnitsLabel);
 		    var drinkkCalsLabel = Ti.UI.createLabel({
-												    	text: thisDrinkkCals,
+														text: thisDrinkkCals,
 														top:2,
 														right:66,
 														textAlign:'right',
@@ -399,8 +398,8 @@
 			var totalDrinks	=Ti.App.boozerlyzer.db.doseageLog.drinksinTimePeriod(howLongAgo, now);			
 			var lenType = drinkNames.length -1;
 			var len = totalDrinks.length;
-			for (d=-0;d<lenType;d++){				
-				for (i=0;i<len;i++){
+			for (var d=-0;d<lenType;d++){				
+				for (var i=0;i<len;i++){
 					if (drinkNames[d] === totalDrinks[i].DrugVariety){
 						drinkCountLabels[d].text = (totalDrinks[i].TotalUnits / Ti.App.boozerlyzer.data.standardDrinks[0].MillilitresPerUnit).toFixed(1) + ' U ' + drinkNames[d];
 					
@@ -411,7 +410,7 @@
 		}
 		
 		function calcDisplayBloodAlcohol(){
-			var now = parseInt((new Date()).getTime()/1000);
+			var now = parseInt((new Date()).getTime()/1000,10);
 			currentBloodAlcohol = Ti.App.boozerlyzer.analysis.BAC.calculate(now, Ti.App.boozerlyzer.data.AllDrinks.slice(lastIndex),Ti.App.boozerlyzer.data.personalInfo);
 			BloodAlcohol.text = 'Blood Alcohol ' + currentBloodAlcohol.toFixed(4) + '%';
 			var baLevel = Ti.App.boozerlyzer.analysis.BAC.levels(currentBloodAlcohol);
@@ -516,8 +515,8 @@
 		
 		var newtripreport = Titanium.UI.createImageView({
 			image:'/icons/tripreport.png',
-			height:bigIcons * .8,
-			width:bigIcons * .8,
+			height:bigIcons * 0.8,
+			width:bigIcons * 0.8,
 			bottom:bottomButtons,
 			left:leftSecond
 		});
@@ -583,7 +582,7 @@
 								GameVersion:1,
 								PlayStart:winOpened ,
 								PlayEnd: parseInt((new Date()).getTime()/1000),
-								TotalScore:parseFloat(footerUnits.text),
+								TotalScore:parseFloat(footerUnits.text,10),
 								GameSteps:0,
 								Speed_GO:0,
 								Speed_NOGO:0,

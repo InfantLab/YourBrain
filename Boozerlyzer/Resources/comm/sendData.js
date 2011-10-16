@@ -74,7 +74,7 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 
         alert('About to send data');
 		// send the data to the server
-		xhrPost.open('POST', 'http://yourbrainondrugs.net/boozerlyzer/submit_data.php');
+		xhrPost.open('POST', 'http://boozerlyzer.net/receive/submit_data.php');
 		xhrPost.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		//xhrPost.setRequestHeader('Content-type','application/json');
 		//xhrPost.setRequestHeader('Accept','application/json');
@@ -97,7 +97,7 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		
 		var xhrPost = Ti.Network.createHTTPClient();
 	
-		xhrPost.open('POST', 'http://yourbrainondrugs.net/boozerlyzer/req_GameScoresLastID.php');
+		xhrPost.open('POST', 'http://boozerlyzer.net/receive/req_GameScoresLastID.php');
 		xhrPost.setRequestHeader('Content-type','application/json');
 		xhrPost.setRequestHeader('Accept','application/json');
 		
@@ -109,7 +109,7 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 					alert('Got last ID ' + newLastID);
 					Titanium.App.Properties.setInt('LastSentID', newLastID);
 				} else {
-					alert('Cloud Error: try again (' + this.responseText + ')');
+					alert('Network Error: try again (' + this.responseText + ')');
 				}
 			};
 			
@@ -119,7 +119,7 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		   UUID: Ti.App.boozerlyzer.comm.ybodnet.getUUID(),  // our user ID, username, email etc - unique identifier of the submitter
 		   AuthToken: Ti.App.boozerlyzer.comm.ybodnet.getAuthToken(), // some kind of magic key that the client-server has previously negotiated to determine authenticity
 		   ClientVersion: Ti.App.boozerlyzer.comm.ybodnet.getClientVersion(), // software version of the client
-		   ProtocolVersion: Ti.App.boozerlyzer.comm.ybodnet.getProtocolVersion(), // protocol version to use
+		   ProtocolVersion: Ti.App.boozerlyzer.comm.ybodnet.getProtocolVersion() // protocol version to use
 		 }
 		 )
 		);

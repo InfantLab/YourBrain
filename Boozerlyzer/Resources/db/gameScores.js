@@ -64,7 +64,8 @@
 	 	var retdata = Ti.App.boozerlyzer.db.gameScores.GamePlaySummary(gameNames, userId, greaterthanID);
 		Ti.API.debug('webformatted string - ' + retdata);
 		return Ti.App.boozerlyzer.db.gameScores.LabelRows(retdata);
-	}
+	};
+	
 	/**
 	 * Create a new data object labelling each row of data with an id
 	 * This is the format the webserver requires the data to be passed in. 
@@ -76,10 +77,8 @@
 			return;
 		}
 		var UUID = Ti.App.Properties.getString('UUID');
-		var rowcount = 0, retdata = [];
-		var jsonout = "{";
-		for(row in scoreData){
-			if (rowcount!=0) jsonout += ','; // add delimiting comma if not first row
+		var jsonout = "{",rowcount = 0, retdata = [];
+		for(var row in scoreData){
 			//r = (rowcount++).toString();
 			//this line is a bit of mess to get right format
 			var thisrow =  '"'+ (rowcount++) + '":{ "data_type":"GameScore","data":' + Titanium.JSON.stringify(scoreData[row]) +'}'; 
@@ -112,7 +111,7 @@
 					PlayCount: parseInt(rows.field(1))
 				});
 				rows.next();
-			};
+			}
 			rows.close();
 			return returnData;
 		}
@@ -148,8 +147,8 @@
 	 */
 	Ti.App.boozerlyzer.db.gameScores.TotalPoints = function (column, gameNames){
 		var returnData = [];
-		var rows;
-		var col = 'LabPoints'
+		var rows, queryStr;
+		var col = 'LabPoints';
 		if (column !== null && column !== undefined){
 			col = column;
 		}
@@ -160,39 +159,38 @@
 			// var queryStr = 'SELECT Total (?) FROM gameScores';
 			// var rows =Ti.App.boozerlyzer.db.conn.execute(queryStr, col);
 			//note having to hard code this for now 
-			var queryStr = 'SELECT Total (LabPoints) FROM gameScores';
+			queryStr = 'SELECT Total (LabPoints) FROM gameScores';
 			rows =Ti.App.boozerlyzer.db.conn.execute(queryStr);
 			if (rows !== null && rows.isValidRow() ) {
 				while(rows.isValidRow()){
-					Ti.API.debug('Total points' + parseInt(rows.field(0)));
+					Ti.API.debug('Total points' + parseInt(rows.field(0),10));
 					returnData.push({
-						Total: parseInt(rows.field(0)),
+						Total: parseInt(rows.field(0),10),
 						Column: col,
 						Game: 'All'
 					});
 					rows.next();
-				};
+				}
 				rows.close();
 				return returnData;
 			}
 		}else{
-			var queryStr;
 			if (gameNames.length === 1) {
 				//shouldn't have to do this but something seems to go wrong with a group of one.
 				queryStr = 'SELECT total (?), game FROM gameScores where game = ' + gameNames[0]; 
 			}else{
 				queryStr = 'SELECT total (?), game FROM gameScores where game in (' + ArrayToQuotedString(gameNames) + ') group by game' ;
 			}
-			var rows =Ti.App.boozerlyzer.db.conn.execute(queryStr, col);
+			rows =Ti.App.boozerlyzer.db.conn.execute(queryStr, col);
 			if (rows !== null && rows.isValidRow() ) {
 				while(rows.isValidRow()){
 					returnData.push({
-						Total: parseInt(rows.field(0)),
+						Total: parseInt(rows.field(0),10),
 						Column: col,
-						Game: rows.field(1),
+						Game: rows.field(1)
 					});
 					rows.next();
-				};
+				}
 				rows.close();
 				return returnData;
 			}
@@ -308,10 +306,10 @@
 			while(rows.isValidRow()){
 				returnData.push({
 					TotalScore: rows.field(0),
-					PlayEnd: parseInt(rows.field(1))
+					PlayEnd: parseInt(rows.field(1),10)
 				});
 				rows.next();
-			};
+			}
 			rows.close();
 			return returnData;
 		}
@@ -355,13 +353,13 @@
 					Drunkeness:		(rows.fieldByName('Drunkeness')==='undefined'?null:parseFloat(rows.fieldByName('Drunkeness')))
 				});
 				rows.next();
-			};
+			}
 			rows.close();
 			return returnData;	
 		}
 		//something didn't work
 		return false;
-	};
+	}
 	
 	/***
 	 * helper function turns a 1d array into a quoted stings
