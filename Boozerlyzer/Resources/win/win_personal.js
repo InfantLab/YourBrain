@@ -23,7 +23,10 @@
 
 	
 	Ti.include('/ui/picker_monthyear.js');
-
+	//sometimes the boozerlyzer object isn't recognised - not sure why.
+	if (Ti.App.boozerlyzer.db){
+		//
+	}
 	var Countries = Ti.App.boozerlyzer.db.alcoholStandardDrinks.get();
 	Titanium.API.debug('win_personal - Countries' + Countries.length);
 	

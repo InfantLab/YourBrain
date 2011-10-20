@@ -14,11 +14,13 @@
 (function(){
 	
 	//create an object which will be our public API
-	Ti.App.boozerlyzer.db.sessions = {};
+	//Note we need to use an alias of db variable (for some reason that i don't fully understand)
+	var dbAlias = Ti.App.boozerlyzer.db;
+	dbAlias.sessions = {};
 	
 	//maintain a database connection we can use
-	if (!Ti.App.boozerlyzer.db.conn){
-		Ti.App.boozerlyzer.db.conn = Titanium.Database.install('ybob.db','ybob');
+	if (!dbAlias.conn){
+		dbAlias.conn = Titanium.Database.install('ybob.db','ybob');
 	}
  
 	/***
@@ -28,18 +30,18 @@
 	 * if an optional timestamp is included we get the maximum
 	 * session id BEFORE that time.
 	 */
-	Ti.App.boozerlyzer.db.sessions.getLatestData = function (userID, timeStamp){
+	dbAlias.sessions.getLatestData = function (userID, timeStamp){
 		var mostRecentData = [];
-		var uid = parseInt(userID);
+		var uid = parseInt(userID,10);
 		//this line probably unnecessary but i had some paranoia that max(id) didn't work properly
-		var rows =Ti.App.boozerlyzer.db.conn.execute('SELECT count(*) FROM Sessions WHERE userID = ?', uid);
+		var rows =dbAlias.conn.execute('SELECT count(*) FROM Sessions WHERE userID = ?', uid);
 		if (rows !== null && rows.isValidRow() && rows.field(0) > 0) {
 			rows.close();
 			if (timeStamp !== null && timeStamp !== undefined ){
-				rows =Ti.App.boozerlyzer.db.conn.execute('SELECT max(ID) FROM Sessions where userID = ?', uid);
+				rows =dbAlias.conn.execute('SELECT max(ID) FROM Sessions where userID = ?', uid);
 			}else{
 				//include time restriction
-				rows =Ti.App.boozerlyzer.db.conn.execute('SELECT max(ID) FROM Sessions where userID = ? and Created < ?', uid, timeStamp);
+				rows =dbAlias.conn.execute('SELECT max(ID) FROM Sessions where userID = ? and Created < ?', uid, timeStamp);
 			}
 			if ((rows !== null) && (rows.isValidRow())) {
 				var maxid = 1;
@@ -50,7 +52,7 @@
 					return false;
 				}
 				rows.close();
-				rows =Ti.App.boozerlyzer.db.conn.execute('SELECT * FROM Sessions WHERE ID = ?', maxid);
+				rows =dbAlias.conn.execute('SELECT * FROM Sessions WHERE ID = ?', maxid);
 				if ((rows !== null) && (rows.isValidRow())) {
 					mostRecentData.push({
 						Created: parseInt(rows.fieldByName('Created')),
@@ -71,33 +73,33 @@
 	};
 
 	//user adjusting the start time for this session	
-	Ti.App.boozerlyzer.db.sessions.changeStartTime = function (sessionID, startTime){
+	dbAlias.sessions.changeStartTime = function (sessionID, startTime){
 		Titanium.API.debug('session changeStartTime');
 		var now  = parseInt((new Date()).getTime()/1000);		
 		var updatestr = 'Update Sessions set StartTime = ?, LastUpdate = ? where ID = ?';
-		Ti.App.boozerlyzer.db.conn.execute(updatestr,startTime, now, sessionID);
+		dbAlias.conn.execute(updatestr,startTime, now, sessionID);
 		Titanium.App.Properties.setInt('SessionStart',now);
 		Titanium.App.Properties.setInt('SessionChanged',now);
-		Titanium.API.debug('selfAssessment updated, rowsAffected = ' +Ti.App.boozerlyzer.db.conn.rowsAffected);
+		Titanium.API.debug('selfAssessment updated, rowsAffected = ' +dbAlias.conn.rowsAffected);
 	};
 	
 	//Something has changed during this session update the timestamp
-	Ti.App.boozerlyzer.db.sessions.Updated = function (sessionID){
+	dbAlias.sessions.Updated = function (sessionID){
 		Titanium.API.debug('session update');
 		var now  = parseInt((new Date().getTime())/1000);		
 		var sessID = parseInt(sessionID);
 		var updatestr = 'Update Sessions set LastUpdate = ? where ID = ?';
-		Ti.App.boozerlyzer.db.conn.execute(updatestr, now, sessID);
+		dbAlias.conn.execute(updatestr, now, sessID);
 		Titanium.App.Properties.setInt('SessionChanged',now);
-		Titanium.API.debug('selfAssessment updated, rowsAffected = ' +Ti.App.boozerlyzer.db.conn.rowsAffected);
+		Titanium.API.debug('selfAssessment updated, rowsAffected = ' +dbAlias.conn.rowsAffected);
 	};
 
 	//get a Session by ID (id is unique) 
-	Ti.App.boozerlyzer.db.sessions.getSession = function (SessionID){
+	dbAlias.sessions.getSession = function (SessionID){
 		var allSessionData = [];
 		var rows = null;
 		var id = parseInt(SessionID);
-		rows =Ti.App.boozerlyzer.db.conn.execute('SELECT * FROM Sessions WHERE ID = ?', id);
+		rows =dbAlias.conn.execute('SELECT * FROM Sessions WHERE ID = ?', id);
 		if ((rows !== null) && (rows.isValidRow())) {
 			while(rows.isValidRow()){
 				allSessionData.push({
@@ -119,20 +121,20 @@
 	};
 		
 	//get all Sessions for this user ID 
-	Ti.App.boozerlyzer.db.sessions.getAllSessions = function (userID){
+	dbAlias.sessions.getAllSessions = function (userID){
 		var allSessionData = [];
 		var rows = null;
 		if (userID === null) {
 			//get all data
-			rows =Ti.App.boozerlyzer.db.conn.execute('SELECT * FROM Sessions ORDER BY ID ASC');
+			rows =dbAlias.conn.execute('SELECT * FROM Sessions ORDER BY ID ASC');
 		}else{
 			var uid = parseInt(userID);
-			rows =Ti.App.boozerlyzer.db.conn.execute('SELECT * FROM Sessions WHERE UserID = ?, ORDER BY ID ASC', uid);
+			rows =dbAlias.conn.execute('SELECT * FROM Sessions WHERE UserID = ?, ORDER BY ID ASC', uid);
 		}
 		if ((rows !== null) && (rows.isValidRow())) {
 			var maxid = parseInt(rows.field(0));
 			rows.close();
-			rows =Ti.App.boozerlyzer.db.conn.execute('SELECT * FROM Sessions WHERE ID = ?', maxid);
+			rows =dbAlias.conn.execute('SELECT * FROM Sessions WHERE ID = ?', maxid);
 			if ((rows !== null) && (rows.isValidRow())) {
 				while(row.isValidRow()){
 					allSessionData.push({
@@ -153,7 +155,7 @@
 		return false;
 	};
 	
-	Ti.App.boozerlyzer.db.sessions.createNewSession = function (matemode){
+	dbAlias.sessions.createNewSession = function (matemode){
 		var sessionID = null;
 		var insertstr = 'insert into Sessions (Created, AppVersion, UserID,StartTime,LastUpdate) Values(?,?,?,?,?)'; 
 		var userID = -1;
@@ -163,7 +165,7 @@
 			userID = 0;
 		}else{
 			//get a new user id
-			rows =Ti.App.boozerlyzer.db.conn.execute('SELECT max(UserID) from Sessions');	
+			rows =dbAlias.conn.execute('SELECT max(UserID) from Sessions');	
 			if (rows!==null){
 				userID += parseInt(rows.field(0));
 			}else{
@@ -173,8 +175,8 @@
 			rows.close();
 		}
 		var now = parseInt((new Date()).getTime()/1000);
-		Ti.App.boozerlyzer.db.conn.execute(insertstr, now, Titanium.App.getVersion(),userID,now, now) 
-		sessionID =Ti.App.boozerlyzer.db.conn.lastInsertRowId;
+		dbAlias.conn.execute(insertstr, now, Titanium.App.getVersion(),userID,now, now) 
+		sessionID =dbAlias.conn.lastInsertRowId;
 		Titanium.App.Properties.setInt('SessionID', sessionID);
 		Titanium.App.Properties.setInt('SessionStart',now);
 		Titanium.App.Properties.setInt('SessionChanged',now);
@@ -188,7 +190,7 @@
 		}];
 	};
 
-	Ti.App.boozerlyzer.db.sessions.SessionCount = function (mateInclude){
+	dbAlias.sessions.SessionCount = function (mateInclude){
 		var selectStr;
 		if (mateInclude === 1){
 			//include friends sessions
@@ -200,7 +202,7 @@
 			//just main user sessions
 			selectStr = 'SELECT COUNT(*) from sessions where UserID = 0'
 		}		
-		var rows =Ti.App.boozerlyzer.db.conn.execute(selectStr);
+		var rows =dbAlias.conn.execute(selectStr);
 		if (rows !== null) {
 			var count = rows.field(0);
 			rows.close();

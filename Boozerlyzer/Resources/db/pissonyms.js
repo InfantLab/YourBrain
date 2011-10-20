@@ -11,19 +11,21 @@
 (function(){
 	
 	//create an object which will be our public API
-	Ti.App.boozerlyzer.db.pissonyms = {};
+	//Note we need to use an alias of db variable (for some reason that i don't fully understand)
+	var dbAlias = Ti.App.boozerlyzer.db;
+	dbAlias.pissonyms = {};
 	
 	//maintain a database connection we can use
-	if (!Ti.App.boozerlyzer.db.conn){
-		Ti.App.boozerlyzer.db.conn = Titanium.Database.install('ybob.db','ybob');
+	if (!dbAlias.conn){
+		dbAlias.conn = Titanium.Database.install('ybob.db','ybob');
 	}
 
 	//get data for the maximum row id 
-	Ti.App.boozerlyzer.db.pissonyms.selectNRandomRows = function (numRows, frequencyRange){
+	dbAlias.pissonyms.selectNRandomRows = function (numRows, frequencyRange){
 		var returnData = [];
 		var nRows = parseInt(numRows);
 		//TODO Filter by frequency range
-		var rows =Ti.App.boozerlyzer.db.conn.execute('SELECT * FROM pissonyms ORDER BY RANDOM() LIMIT ?', nRows);
+		var rows =dbAlias.conn.execute('SELECT * FROM pissonyms ORDER BY RANDOM() LIMIT ?', nRows);
 		if (rows !== null ) {
 			while(rows.isValidRow()){
 				returnData.push({
@@ -42,10 +44,10 @@
 		return false;
 	};
 	
-	Ti.App.boozerlyzer.db.pissonyms.getWordInfo = function (word){
+	dbAlias.pissonyms.getWordInfo = function (word){
 		var returnData = [];
 		//TODO Filter by frequency range
-		var rows =Ti.App.boozerlyzer.db.conn.execute('SELECT * FROM pissonyms WHERE Pissonym = ?', word);
+		var rows =dbAlias.conn.execute('SELECT * FROM pissonyms WHERE Pissonym = ?', word);
 		if (rows !== null ) {
 			while(rows.isValidRow()){
 				returnData.push({
@@ -68,20 +70,20 @@
 	 * Participant has chosen a pissonym - record their choice
 	 * @param {Object} choiceData
 	 */
-	Ti.App.boozerlyzer.db.pissonyms.Chosen = function (choiceData){
+	dbAlias.pissonyms.Chosen = function (choiceData){
 		Titanium.API.debug('chosen Pissonym ' + JSON.stringify(choiceData));
 		var sessionID = Titanium.App.Properties.getInt('SessionID');
 		for (var i=0; i<choiceData.length; i++){
 			var insertstr = 'INSERT INTO WordChoices (SessionID,WordType,chosenWord,WordList,ChoiceStart,ChoiceFinish) VALUES(?,?,?,?,?,?)';
-			Ti.App.boozerlyzer.db.conn.execute(insertstr,sessionID, 'Pissonym',choiceData[i].ChosenWord, choiceData[i].WordList, choiceData[i].StartTime,choiceData[i].EndTime);
-			Titanium.API.debug('Emotional Word choices, rowsAffected = ' +Ti.App.boozerlyzer.db.conn.rowsAffected);
-			Titanium.API.debug('Emotional Word choices, lastInsertRowId = ' +Ti.App.boozerlyzer.db.conn.lastInsertRowId);	
+			dbAlias.conn.execute(insertstr,sessionID, 'Pissonym',choiceData[i].ChosenWord, choiceData[i].WordList, choiceData[i].StartTime,choiceData[i].EndTime);
+			Titanium.API.debug('Emotional Word choices, rowsAffected = ' +dbAlias.conn.rowsAffected);
+			Titanium.API.debug('Emotional Word choices, lastInsertRowId = ' +dbAlias.conn.lastInsertRowId);	
 		}
 	};
 	
-	Ti.App.boozerlyzer.db.pissonyms.PlayCount = function (){
+	dbAlias.pissonyms.PlayCount = function (){
 		var selectStr = 'SELECT COUNT(*) from WORDCHOICES  where WordType = ?';
-		var rows =Ti.App.boozerlyzer.db.conn.execute(selectStr, 'Pissonym');
+		var rows =dbAlias.conn.execute(selectStr, 'Pissonym');
 		if (rows !== null) {
 			var retval = parseInt(rows.field(0))
 			rows.close();
@@ -90,9 +92,9 @@
 			return 0;
 		}
 	};
-	Ti.App.boozerlyzer.db.pissonyms.LastPlayed = function(){
+	dbAlias.pissonyms.LastPlayed = function(){
 		var selectStr = 'SELECT max(ChoiceFinish) from WORDCHOICES  where WordType = ?';
-		var rows =Ti.App.boozerlyzer.db.conn.execute(selectStr, 'Pissonym');
+		var rows =dbAlias.conn.execute(selectStr, 'Pissonym');
 		if (rows !== null) {
 			var retval = parseInt(rows.field(0))
 			rows.close();
@@ -105,18 +107,18 @@
 	/** 
 	 * Participant has suggested new pissonym. Let's add it to the list
 	 */
-//	Ti.App.boozerlyzer.db.pissonyms.addUserPissonym = function (pissonym){
+//	dbAlias.pissonyms.addUserPissonym = function (pissonym){
 //		Titanium.API.debug('addUserPissonym');
 //		
 //		//first check that suggestion is actually new.
-//		var rows =Ti.App.boozerlyzer.db.conn.execute('SELECT COUNT(*) From pissonymns where pissonym = ?', pissonym)
+//		var rows =dbAlias.conn.execute('SELECT COUNT(*) From pissonymns where pissonym = ?', pissonym)
 //		if (rows !== null){
 //			select 
 //			var insertstr = 'INSERT INTO TripReports (ReportStarted,ReportChanged,SessionID,Content)';
 //			insertstr += 'VALUES(?,?,?,?)';
-//			Ti.App.boozerlyzer.db.conn.execute(insertstr,newData.ReportStarted,newData.ReportChanged,newData.SessionID,newData.Content);
-//			Titanium.API.debug('TripReports updated, rowsAffected = ' +Ti.App.boozerlyzer.db.conn.rowsAffected);
-//			Titanium.API.debug('TripReports, lastInsertRowId = ' +Ti.App.boozerlyzer.db.conn.lastInsertRowId);
+//			dbAlias.conn.execute(insertstr,newData.ReportStarted,newData.ReportChanged,newData.SessionID,newData.Content);
+//			Titanium.API.debug('TripReports updated, rowsAffected = ' +dbAlias.conn.rowsAffected);
+//			Titanium.API.debug('TripReports, lastInsertRowId = ' +dbAlias.conn.lastInsertRowId);
 //		}
 //		//also an entry to the tripreport table about this 
 //	};

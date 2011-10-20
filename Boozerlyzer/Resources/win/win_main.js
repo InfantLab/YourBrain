@@ -176,26 +176,25 @@
 			}	
 		}
 		
-		// var debug = Titanium.UI.createImageView({
-			// image:'/icons/Misc.png',
-			// height:48,
-			// width:48,
-			// top:80,
-			// right:10
-		// });
-		// debug.addEventListener('click',function(){
-// 		
-			// // //reinstall the database - gets new structure but wipes ALL data.
-			// // var db0 = Titanium.Database.install('/ybob.db','ybob');
-			// // db0.remove();
-			// // Titanium.API.debug('Removed old YBOB database')
-			// // db0.close();
-// 
-			// // var db = Titanium.Database.install('/ybob.db','ybob');
-			// // Titanium.API.debug('Installed new YBOB database')
-			// // db.close();
-		// });
-		//homeWin.add(debug);
+		var newbugreport = Titanium.UI.createImageView({
+			image:'/icons/add_bug.png',
+			height:48,
+			width:48,
+			top:20,
+			left:optionsLeft + 100
+		});
+		newbugreport.addEventListener('click',function(){
+			var newtripwin = Titanium.UI.createWindow({ modal:true,
+				url:'/win/win_tripreport.js',
+				title:'How are you feeling?',
+				backgroundImage:'/images/smallcornercup.png',
+				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT],  //Landscape mode only
+				type: 'BUG' //need this because same code used for trip report screen
+				});
+			newtripwin.home = homeWin; //reference to home
+			newtripwin.open();
+		});
+		homeWin.add(newbugreport);	
 			
 		var report = Titanium.UI.createImageView({
 			image:'/icons/ybob-logo2-sml.png',
@@ -259,8 +258,8 @@
 		
 		var newtripreport = Titanium.UI.createImageView({
 			image:'/icons/tripreport.png',
-			height:bigIcons * .8,
-			width:bigIcons * .8,
+			height:bigIcons * 0.8,
+			width:bigIcons * 0.8,
 			top:topNewDrinks,
 			left:leftTripReport
 		});
@@ -269,7 +268,9 @@
 				url:'/win/win_tripreport.js',
 				title:'How are you feeling?',
 				backgroundImage:'/images/smallcornercup.png',
-				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
+				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT],  //Landscape mode only
+				type: 'TripReport' //need this because same code used for bug report screen
+
 				});
 			newtripwin.home = homeWin; //reference to home
 			newtripwin.open();

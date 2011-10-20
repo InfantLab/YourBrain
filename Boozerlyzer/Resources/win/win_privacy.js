@@ -16,8 +16,8 @@
 	//need to give it specific help for this screen
 	menu.setHelpMessage("Please indicate your preferred level of privacy.");
 
-	var netprivacy = ['Never send my data', 'Send totally anonymous data', 'Send data with anonymous key', 'Send data with nickname'];
-	var phoneprivacy = ['Never store data', 'Store games scores but not drinking data', 'Store all data'];
+	var netprivacy = ['Send data with nickname', 'Send data with anonymous key','Send totally anonymous data' ,'Never send my data'];
+	var phoneprivacy = ['Store all data', 'Store games scores but not drinking data', 'Never store data'];
 	
 	
 	var netPrivacyLabel = Ti.UI.createLabel({
@@ -26,11 +26,21 @@
 			left:20,
 			width:100,
 			height:24,
+			font:{fontSize:14},
 			textAlign:'center',
 			color:'black'	
 	});
 	win.add(netPrivacyLabel);
 	
+	var netPrivacyBtn= Ti.UI.createButton({
+	    title:netprivacy[Titanium.App.Properties.getInt('NetPrivacy',0)],  
+	    top:120,  
+	    width:180,  
+	    height:35,  
+	    borderRadius:2,  
+	    font:{fontFamily:'Arial',fontWeight:'bold',fontSize:14} 
+	});
+	win.add(netPrivacyBtn);
 	var netPrivacyDialog = Titanium.UI.createOptionDialog({
 		options:netprivacy,
 		destructive:2,
@@ -42,18 +52,10 @@
 	{
 	
 		netPrivacyBtn.text = netprivacy[e.index];
+		Titanium.App.Properties.setInt('NetPrivacy',e.index);
 		//TODO
-		//need to actually do something about this!
+		//ought to delete data, etc when privacy levels change.
 	});
-		var netPrivacyBtn= Ti.UI.createButton({
-	    title:netprivacy[0],  
-	    top:120,  
-	    width:180,  
-	    height:35,  
-	    borderRadius:2,  
-	    font:{fontFamily:'Arial',fontWeight:'bold',fontSize:14} 
-	});
-	win.add(netPrivacyBtn);
 	netPrivacyBtn.addEventListener('click', function(e) {
 		netPrivacyDialog.show();
 	});
@@ -64,6 +66,7 @@
 			left:20,
 			width:100,
 			height:24,
+			font:{fontSize:14},
 			textAlign:'center',
 			color:'black'	
 	});
@@ -75,15 +78,8 @@
 		cancel:1,
 		title:'Data stored on phone'
 	});
-	// add event listener
-	phonePrivacyDialog.addEventListener('click',function(e)
-	{
-		phonePrivacyBtn.text = phoneprivacy[e.index];
-		//TODO
-		//need to actually do something about this!
-	});
 	var phonePrivacyBtn= Ti.UI.createButton({
-	    title:phoneprivacy[0],  
+	    title:phoneprivacy[Titanium.App.Properties.getInt('PhonePrivacy',0)],  
 	    top:20,  
 	    width:180,  
 	    height:35,  
@@ -91,6 +87,14 @@
 	    font:{fontFamily:'Arial',fontWeight:'bold',fontSize:14} 
 	});
 	win.add(phonePrivacyBtn);
+	// add event listener
+	phonePrivacyDialog.addEventListener('click',function(e)
+	{
+		phonePrivacyBtn.text = phoneprivacy[e.index];
+		Titanium.App.Properties.setInt('PhonePrivacy',e.index);
+		//TODO
+		//need to actually do something about this!
+	});
 	phonePrivacyBtn.addEventListener('click', function(e) {
 		phonePrivacyDialog.show();
 	});

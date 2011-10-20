@@ -12,19 +12,21 @@
 (function(){
 	
 	//create an object which will be our public API
-	Ti.App.boozerlyzer.db.emotionWords = {};
+	//Note we need to use an alias of db variable (for some reason that i don't fully understand)
+	var dbAlias = Ti.App.boozerlyzer.db;
+	dbAlias.emotionWords = {};
 		
 	//maintain a database connection we can use
-	if (!Ti.App.boozerlyzer.db.conn){
-		Ti.App.boozerlyzer.db.conn = Titanium.Database.install('ybob.db','ybob');
+	if (!dbAlias.conn){
+		dbAlias.conn = Titanium.Database.install('ybob.db','ybob');
 	}
 
 	//get data for the maximum row id 
-	Ti.App.boozerlyzer.db.emotionWords.selectNRandomRows = function (numRows, frequencyRange){
+	dbAlias.emotionWords.selectNRandomRows = function (numRows, frequencyRange){
 		var returnData = [];
 		var nRows = parseInt(numRows);
 		//TODO Filter by frequency range
-		var rows =Ti.App.boozerlyzer.db.conn.execute('SELECT * FROM EmotionalWordLists ORDER BY RANDOM() LIMIT ?', nRows);
+		var rows =dbAlias.conn.execute('SELECT * FROM EmotionalWordLists ORDER BY RANDOM() LIMIT ?', nRows);
 		var returnData = fillDataObject(rows);
 		rows.close();
 		return returnData;
@@ -59,11 +61,11 @@
 		return false;
 	};
 	
-	Ti.App.boozerlyzer.db.emotionWords.getWordInfo = function (word){
+	dbAlias.emotionWords.getWordInfo = function (word){
 		Ti.API.debug('emotionWords getWordInfo for ' + word);
 		var returnData = [];
 		//TODO Filter by frequency range
-		var rows =Ti.App.boozerlyzer.db.conn.execute('SELECT * FROM EmotionalWordLists WHERE Word = ?', word);
+		var rows =dbAlias.conn.execute('SELECT * FROM EmotionalWordLists WHERE Word = ?', word);
 		var returnData = fillDataObject(rows);
 		rows.close();
 		return returnData;
@@ -73,20 +75,20 @@
 	 * Participant has chosen a pissonym - record their choice
 	 * @param {Object} choiceData
 	 */
-	Ti.App.boozerlyzer.db.emotionWords.Chosen = function (choiceData){
+	dbAlias.emotionWords.Chosen = function (choiceData){
 		Titanium.API.debug('chosen emotionWords ' + JSON.stringify(choiceData));
 		var sessionID = Titanium.App.Properties.getInt('SessionID');
 		for (var i=0; i<choiceData.length; i++){
 			var insertstr = 'INSERT INTO WordChoices (SessionID,WordType,chosenWord,WordList,ChoiceStart,ChoiceFinish) VALUES(?,?,?,?,?,?)';
-			Ti.App.boozerlyzer.db.conn.execute(insertstr,sessionID, 'EmotionalWords',choiceData[i].ChosenWord, choiceData[i].WordList, choiceData[i].StartTime,choiceData[i].EndTime);
-			Titanium.API.debug('Emotional Word choices, rowsAffected = ' +Ti.App.boozerlyzer.db.conn.rowsAffected);
-			Titanium.API.debug('Emotional Word choices, lastInsertRowId = ' +Ti.App.boozerlyzer.db.conn.lastInsertRowId);	
+			dbAlias.conn.execute(insertstr,sessionID, 'EmotionalWords',choiceData[i].ChosenWord, choiceData[i].WordList, choiceData[i].StartTime,choiceData[i].EndTime);
+			Titanium.API.debug('Emotional Word choices, rowsAffected = ' +dbAlias.conn.rowsAffected);
+			Titanium.API.debug('Emotional Word choices, lastInsertRowId = ' +dbAlias.conn.lastInsertRowId);	
 		}	
 	};
 
-	Ti.App.boozerlyzer.db.emotionWords.PlayCount = function (){
+	dbAlias.emotionWords.PlayCount = function (){
 		var selectStr = 'SELECT COUNT(*) from WORDCHOICES  where WordType = ?';
-		var rows =Ti.App.boozerlyzer.db.conn.execute(selectStr, 'EmotionalWords');
+		var rows =dbAlias.conn.execute(selectStr, 'EmotionalWords');
 		if (rows !== null) {
 			var retval = parseInt(rows.field(0))
 			rows.close();
@@ -95,9 +97,9 @@
 			return 0;
 		}
 	};
-	Ti.App.boozerlyzer.db.emotionWords.LastPlayed = function(){
+	dbAlias.emotionWords.LastPlayed = function(){
 		var selectStr = 'SELECT max(ChoiceFinish) from WORDCHOICES  where WordType = ?';
-		var rows =Ti.App.boozerlyzer.db.conn.execute(selectStr, 'EmotionalWords');
+		var rows =dbAlias.conn.execute(selectStr, 'EmotionalWords');
 		if (rows !== null) {
 			var retval = parseInt(rows.field(0))
 			rows.close();

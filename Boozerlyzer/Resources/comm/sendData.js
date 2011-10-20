@@ -6,7 +6,9 @@
 
 (function(){
 
-	Ti.App.boozerlyzer.comm.sendData = {};
+	//Note we need to use an alias of comm variable (for some reason that i don't fully understand)
+	var commAlias = Ti.App.boozerlyzer.comm;
+	commAlias.sendData = {};
 
 /*
  queries the database and returns a JSON object that looks something like this:
@@ -27,7 +29,7 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 	/*
 	 * function to send the gameScores  table entries to the ybodnet web database
 	 */
-	Ti.App.boozerlyzer.comm.sendData.sync = function(){
+	commAlias.sendData.sync = function(){
 		//find the ID of the last data sent to website
 		//based on a persistent app property
 		//TODO retrieve this from server.
@@ -81,10 +83,10 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		Ti.API.debug('about to send data for ' + dataToSend.length + ' items');
 		xhrPost.send(
 		 /*JSON.stringify(*/{
-		   UUID: Ti.App.boozerlyzer.comm.ybodnet.getUUID(),  // our user ID, username, email etc - unique identifier of the submitter
-		   AuthToken: Ti.App.boozerlyzer.comm.ybodnet.getAuthToken(), // some kind of magic key that the client-server has previously negotiated to determine authenticity
-		   ClientVersion: Ti.App.boozerlyzer.comm.ybodnet.getClientVersion(), // software version of the client
-		   ProtocolVersion: Ti.App.boozerlyzer.comm.ybodnet.getProtocolVersion(), // protocol version to use
+		   UUID: commAlias.ybodnet.getUUID(),  // our user ID, username, email etc - unique identifier of the submitter
+		   AuthToken: commAlias.ybodnet.getAuthToken(), // some kind of magic key that the client-server has previously negotiated to determine authenticity
+		   ClientVersion: commAlias.ybodnet.getClientVersion(), // software version of the client
+		   ProtocolVersion: commAlias.ybodnet.getProtocolVersion(), // protocol version to use
 		   //data: dataToSend.to_json(),
 		   data: Titanium.JSON.stringify(dataToSend)
 		 }//)
@@ -93,7 +95,7 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		
 	};
 
-	Ti.App.boozerlyzer.comm.sendData.getLastServerRowID = function(){
+	commAlias.sendData.getLastServerRowID = function(){
 		
 		var xhrPost = Ti.Network.createHTTPClient();
 	
@@ -116,10 +118,10 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		xhrPost.send(
 	     JSON.stringify(
 		 {
-		   UUID: Ti.App.boozerlyzer.comm.ybodnet.getUUID(),  // our user ID, username, email etc - unique identifier of the submitter
-		   AuthToken: Ti.App.boozerlyzer.comm.ybodnet.getAuthToken(), // some kind of magic key that the client-server has previously negotiated to determine authenticity
-		   ClientVersion: Ti.App.boozerlyzer.comm.ybodnet.getClientVersion(), // software version of the client
-		   ProtocolVersion: Ti.App.boozerlyzer.comm.ybodnet.getProtocolVersion() // protocol version to use
+		   UUID: commAlias.ybodnet.getUUID(),  // our user ID, username, email etc - unique identifier of the submitter
+		   AuthToken: commAlias.ybodnet.getAuthToken(), // some kind of magic key that the client-server has previously negotiated to determine authenticity
+		   ClientVersion: commAlias.ybodnet.getClientVersion(), // software version of the client
+		   ProtocolVersion: commAlias.ybodnet.getProtocolVersion() // protocol version to use
 		 }
 		 )
 		);

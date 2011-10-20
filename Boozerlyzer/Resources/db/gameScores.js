@@ -8,11 +8,13 @@
 (function(){
 	
 	//create an object which will be our public API
-	Ti.App.boozerlyzer.db.gameScores = {};
+	//Note we need to use an alias of db variable (for some reason that i don't fully understand)
+	var dbAlias = Ti.App.boozerlyzer.db;
+	dbAlias.gameScores = {};
 		
 	//maintain a database connection we can use
-	if (!Ti.App.boozerlyzer.db.conn){
-		Ti.App.boozerlyzer.db.conn = Titanium.Database.install('ybob.db','ybob');
+	if (!dbAlias.conn){
+		dbAlias.conn = Titanium.Database.install('ybob.db','ybob');
 	}
 	
 	/***
@@ -21,7 +23,7 @@
 	 * Lab Rat point accumulated, maybe other stuff. 
 	 * Either for a single instance or for all games
 	 */
-	Ti.App.boozerlyzer.db.gameScores.GamePlaySummary = function (gameNames, userId, greaterthanID){
+	dbAlias.gameScores.GamePlaySummary = function (gameNames, userId, greaterthanID){
 		//This gets a bit of a mess as we build the query!
 		var querystr = 'SELECT * FROM gameScores WHERE ';
 		var gamestr = '', userstr = '', idstr = '', rowcount=0;
@@ -46,7 +48,7 @@
 		}
 		querystr += ' ORDER BY ID';
 		//alert('got query string ' + querystr);
-		var rows =Ti.App.boozerlyzer.db.conn.execute(querystr);
+		var rows =dbAlias.conn.execute(querystr);
 		//alert('got num results ' + rows.rowCount);
 		var retdata = fillDataObject(rows);
 		//alert('got retdata of length ' + retdata);
@@ -60,17 +62,17 @@
 	 * see
 	 * http://yourbrainondrugs.net/boozerlyzer/submit.php
 	 */
-	Ti.App.boozerlyzer.db.gameScores.GamePlaySummaryforWebserver = function (gameNames, userId, greaterthanID){
-	 	var retdata = Ti.App.boozerlyzer.db.gameScores.GamePlaySummary(gameNames, userId, greaterthanID);
+	dbAlias.gameScores.GamePlaySummaryforWebserver = function (gameNames, userId, greaterthanID){
+	 	var retdata = dbAlias.gameScores.GamePlaySummary(gameNames, userId, greaterthanID);
 		Ti.API.debug('webformatted string - ' + retdata);
-		return Ti.App.boozerlyzer.db.gameScores.LabelRows(retdata);
+		return dbAlias.gameScores.LabelRows(retdata);
 	};
 	
 	/**
 	 * Create a new data object labelling each row of data with an id
 	 * This is the format the webserver requires the data to be passed in. 
 	*/
-	Ti.App.boozerlyzer.db.gameScores.LabelRows = function (scoreData){
+	dbAlias.gameScores.LabelRows = function (scoreData){
 		Ti.API.debug('db.gameScores.LabelRows num rows' + scoreData.length );
 		if (!Ti.App.Properties.getBool('Registered')){
 			alert('Please click on the Safe and register or login with Boozerlyzer.net');
@@ -92,7 +94,7 @@
 		return Titanium.JSON.parse(jsonout);  
 	};
 	
-	Ti.App.boozerlyzer.db.gameScores.PlayCount = function (gameNames){
+	dbAlias.gameScores.PlayCount = function (gameNames){
 		var returnData = [];
 		var queryStr;
 		Ti.API.debug('gameNames -' + JSON.stringify(gameNames)); 
@@ -103,7 +105,7 @@
 			queryStr = 'SELECT game, count(*) FROM gameScores where game in (' + ArrayToQuotedString(gameNames) + ') group by game' ;
 		}
 
-		var rows =Ti.App.boozerlyzer.db.conn.execute(queryStr);
+		var rows =dbAlias.conn.execute(queryStr);
 		if (rows !== null  && rows.isValidRow() ) {
 			while(rows.isValidRow()){
 				returnData.push({
@@ -120,10 +122,10 @@
 		return false;
 	};
 
-	Ti.App.boozerlyzer.db.gameScores.LastPlayed = function (gameNames){
+	dbAlias.gameScores.LastPlayed = function (gameNames){
 		var returnData = [];
 		var queryStr = 'SELECT game, max(PlayEnd) FROM gameScores where game in (' + ArrayToQuotedString(gameNames) + ') group by game' ;
-		var rows =Ti.App.boozerlyzer.db.conn.execute(queryStr);
+		var rows =dbAlias.conn.execute(queryStr);
 		if (rows !== null && rows.isValidRow() ) {
 			while(rows.isValidRow()){
 				returnData.push({
@@ -145,7 +147,7 @@
 	 * @param object [column] - if absent return LabRatPoints
 	 * @param object [gameNames] - if absent return grand total
 	 */
-	Ti.App.boozerlyzer.db.gameScores.TotalPoints = function (column, gameNames){
+	dbAlias.gameScores.TotalPoints = function (column, gameNames){
 		var returnData = [];
 		var rows, queryStr;
 		var col = 'LabPoints';
@@ -157,10 +159,10 @@
 			Ti.API.debug('Total points');
 			//TODO - figure out why commented out code doesn't work
 			// var queryStr = 'SELECT Total (?) FROM gameScores';
-			// var rows =Ti.App.boozerlyzer.db.conn.execute(queryStr, col);
+			// var rows =dbAlias.conn.execute(queryStr, col);
 			//note having to hard code this for now 
 			queryStr = 'SELECT Total (LabPoints) FROM gameScores';
-			rows =Ti.App.boozerlyzer.db.conn.execute(queryStr);
+			rows =dbAlias.conn.execute(queryStr);
 			if (rows !== null && rows.isValidRow() ) {
 				while(rows.isValidRow()){
 					Ti.API.debug('Total points' + parseInt(rows.field(0),10));
@@ -181,7 +183,7 @@
 			}else{
 				queryStr = 'SELECT total (?), game FROM gameScores where game in (' + ArrayToQuotedString(gameNames) + ') group by game' ;
 			}
-			rows =Ti.App.boozerlyzer.db.conn.execute(queryStr, col);
+			rows =dbAlias.conn.execute(queryStr, col);
 			if (rows !== null && rows.isValidRow() ) {
 				while(rows.isValidRow()){
 					returnData.push({
@@ -200,34 +202,33 @@
 		return false;
 	};
 
-    Ti.App.boozerlyzer.db.gameScores.setupStartSequence = function () {
-    	var LastSentID = Titanium.App.Properties.getInt('LastSentID',0);
-    	
-    	var checkHighestSQL = 'select MAX(ID) as maxID FROM GameScores';
-    	// do database
-    	var rows = Ti.App.boozerlyzer.db.conn.execute(checkHighestSQL);
-    	if (rows.isValidRow()) {
-    		var checked_highest = rows.field(0);
-    	
-	    	if (LastSentID>checked_highest) {
-	    		// first insert should be LastSentID+1
-	    		alert('got next StartInsertID ' + (LastSentID+1));
-	    		Titanium.App.Properties.setInt('StartInsertID', LastSentID+1);
-	    		//Ti.App.boozerlyzer.db.conn.execute('update sqlite_sequence SET seq=' + (LastSentID+1) +' WHERE name="GameScores"');
-	    	} else {
-	    		Titanium.App.Properties.setInt('StartInsertID', 0);
-	    	}
-	    } else {
-	    	Titanium.App.Properties.setInt('StartInsertID',0);
-	    }
-    	
-    }
+    dbAlias.gameScores.setupStartSequence = function () {
+		var LastSentID = Titanium.App.Properties.getInt('LastSentID',0);
+		
+		var checkHighestSQL = 'select MAX(ID) as maxID FROM GameScores';
+		// do database
+		var rows = dbAlias.conn.execute(checkHighestSQL);
+		if (rows.isValidRow()) {
+			var checked_highest = rows.field(0);
+		
+			if (LastSentID>checked_highest) {
+				// first insert should be LastSentID+1
+				alert('got next StartInsertID ' + (LastSentID+1));
+				Titanium.App.Properties.setInt('StartInsertID', LastSentID+1);
+				//dbAlias.conn.execute('update sqlite_sequence SET seq=' + (LastSentID+1) +' WHERE name="GameScores"');
+			} else {
+				Titanium.App.Properties.setInt('StartInsertID', 0);
+			}
+		} else {
+			Titanium.App.Properties.setInt('StartInsertID',0);
+		}
+	};
 
 	/**
 	 * Participant has completed a game, enter their data
 	 * @param {Object} scoreData
 	 */
-	Ti.App.boozerlyzer.db.gameScores.SaveResult = function (scoreData){
+	dbAlias.gameScores.SaveResult = function (scoreData){
 		Titanium.API.debug('Game' + JSON.stringify(scoreData));
 		
 		//No matter what data we are given we will add the current booze and emotions..	
@@ -236,18 +237,18 @@
 		var SessionID = Titanium.App.Properties.getInt('SessionID');
 		//load up the drink data so we can work out current blood alcohol
 		if (!Ti.App.boozerlyzer.data.AllDrinks || Ti.App.boozerlyzer.data.AllDrinks === null || Ti.App.boozerlyzer.data.AllDrinks === 'undefined'){
-			Ti.App.boozerlyzer.data.AllDrinks = Ti.App.boozerlyzer.db.doseageLog.getAllSessionData(SessionID);
+			Ti.App.boozerlyzer.data.AllDrinks = dbAlias.doseageLog.getAllSessionData(SessionID);
 		}
 		if (!Ti.App.boozerlyzer.data.personalInfo || Ti.App.boozerlyzer.data.personalInfo === null || Ti.App.boozerlyzer.data.personalInfo === 'undefined'){
-			Ti.App.boozerlyzer.data.personalInfo = Ti.App.boozerlyzer.db.personalInfo.getData();
+			Ti.App.boozerlyzer.data.personalInfo = dbAlias.personalInfo.getData();
 		}
 		if (!Ti.App.boozerlyzer.data.currentEmotions || Ti.App.boozerlyzer.data.currentEmotions === null || Ti.App.boozerlyzer.data.currentEmotions === 'undefined'){
-			Ti.App.boozerlyzer.data.currentEmotions = Ti.App.boozerlyzer.db.selfAssessment.getLatestData(Titanium.App.Properties.getInt('SessionID'));
+			Ti.App.boozerlyzer.data.currentEmotions = dbAlias.selfAssessment.getLatestData(Titanium.App.Properties.getInt('SessionID'));
 		}
-		var drinkVolume_ml = Ti.App.boozerlyzer.db.doseageLog.totalDrinkVolume(Ti.App.boozerlyzer.data.AllDrinks); 
+		var drinkVolume_ml = dbAlias.doseageLog.totalDrinkVolume(Ti.App.boozerlyzer.data.AllDrinks); 
 		var currentBloodAlcohol = Ti.App.boozerlyzer.analysis.BAC.calculate(now, Ti.App.boozerlyzer.data.AllDrinks,Ti.App.boozerlyzer.data.personalInfo);
 
-		Ti.App.boozerlyzer.db.gameScores.setupStartSequence();
+		dbAlias.gameScores.setupStartSequence();
 
 		var sessionID = Titanium.App.Properties.getInt('SessionID');
 		for (var i=0; i<scoreData.length; i++){
@@ -257,7 +258,7 @@
 			insertstr += 'Speed_GO,Speed_NOGO,Coord_GO,Coord_NOGO,InhibitionScore,MemoryScore, ';
 			insertstr += 'Level, Feedback,Choices,LabPoints,UserID,Alcohol_ml,BloodAlcoholConc,Happiness,Energy,Drunkeness)';
 			insertstr += 'VALUES(?,?,?,?,?,?,?, ?,?,?,?,?,?, ?,?,?,?,?,?, ?,?,?,?)';
-			Ti.App.boozerlyzer.db.conn.execute(insertstr,
+			dbAlias.conn.execute(insertstr,
 								   sessionID,
 								   scoreData[i].Game, 
 								   scoreData[i].GameVersion, 
@@ -284,13 +285,13 @@
 								   Ti.App.boozerlyzer.data.currentEmotions[0].Happiness,
 								   Ti.App.boozerlyzer.data.currentEmotions[0].Energy,
 								   Ti.App.boozerlyzer.data.currentEmotions[0].Drunkeness );
-			Titanium.API.debug('gameScores result, rowsAffected = ' +Ti.App.boozerlyzer.db.conn.rowsAffected);
-			Titanium.API.debug('gameScores result, lastInsertRowId = ' +Ti.App.boozerlyzer.db.conn.lastInsertRowId);	
+			Titanium.API.debug('gameScores result, rowsAffected = ' +dbAlias.conn.rowsAffected);
+			Titanium.API.debug('gameScores result, lastInsertRowId = ' +dbAlias.conn.lastInsertRowId);	
 			
 			///dirty hack to set the primary key to that which is expected next by the server
 			if (Titanium.App.Properties.getInt('StartInsertID')>0) {
 				Titanium.App.boozerlyzer.db.conn.execute('update GameScores SET ID=' + Titanium.App.Properties.getInt('StartInsertID') 
-				  + ' WHERE ID=' + Ti.App.boozerlyzer.db.conn.lastInsertRowId
+				  + ' WHERE ID=' + dbAlias.conn.lastInsertRowId
 				);
 				Titanium.App.Properties.setInt('StartInsertID', -1);
 			}
@@ -298,10 +299,10 @@
 	};
 	
 	
-	Ti.App.boozerlyzer.db.gameScores.HighScores = function (Game, HowMany){
+	dbAlias.gameScores.HighScores = function (Game, HowMany){
 		var returnData = [];
 		var selectStr = 'SELECT TotalScore, PlayEnd from GameScores where Game = ? order by totalscore desc Limit 0, ?' ;
-		var rows =Ti.App.boozerlyzer.db.conn.execute(selectStr, Game, HowMany);
+		var rows =dbAlias.conn.execute(selectStr, Game, HowMany);
 		if (rows !== null  && rows.isValidRow()) {
 			while(rows.isValidRow()){
 				returnData.push({

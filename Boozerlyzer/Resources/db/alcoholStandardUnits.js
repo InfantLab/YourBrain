@@ -13,25 +13,26 @@
 (function(){
 	
 	//create an object which will be our public API
-	Ti.App.boozerlyzer.db.alcoholStandardDrinks = {};
-
+	//need an alias for some reason i don't understand
+	var dbAlias = Ti.App.boozerlyzer.db;
+	dbAlias.alcoholStandardDrinks = {};
 	
 	//maintain a database connection we can use
-  	if (!Ti.App.boozerlyzer.db.conn){
-		Ti.App.boozerlyzer.db.conn = Titanium.Database.install('ybob.db','ybob');
+  	if (!dbAlias.conn){
+		dbAlias.conn = Titanium.Database.install('ybob.db','ybob');
 	}
 
 		
 	//get standard drinks either for a single country
 	//or for all of them!
-	Ti.App.boozerlyzer.db.alcoholStandardDrinks.get = function (Country){
+	dbAlias.alcoholStandardDrinks.get = function (Country){
 		var rows, returnData = [];
 		var selectStr = 'SELECT * FROM AlcoholStandardDrinks ';
 		if (typeof(Country)=="undefined" || Country === null){
-			rows =Ti.App.boozerlyzer.db.conn.execute(selectStr);	 
+			rows =dbAlias.conn.execute(selectStr);	 
 		}else {
 			selectStr += 'WHERE Country = ?';
-			rows =Ti.App.boozerlyzer.db.conn.execute(selectStr, Country);
+			rows =dbAlias.conn.execute(selectStr, Country);
 		}
 		if ((rows !== null) && (rows.isValidRow())) {
 			while(rows.isValidRow()){

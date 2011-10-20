@@ -13,21 +13,23 @@
 (function(){
 	
 	//create an object which will be our public API
-	Ti.App.boozerlyzer.db.drugDoses= {};
+	//Note we need to use an alias of db variable (for some reason that i don't fully understand)
+	var dbAlias = Ti.App.boozerlyzer.db;
+	dbAlias.drugDoses= {};
 	
 	//maintain a database connection we can use
-	if (!Ti.App.boozerlyzer.db.conn){
-		Ti.App.boozerlyzer.db.conn = Titanium.Database.install('ybob.db','ybob');
+	if (!dbAlias.conn){
+		dbAlias.conn = Titanium.Database.install('ybob.db','ybob');
 	}
 
 		
 	//get standard drinks either for a single country
 	//or for all of them!
-	Ti.App.boozerlyzer.db.drugDoses.getStrengths = function (DrugName){
+	dbAlias.drugDoses.getStrengths = function (DrugName){
 		var returnData = [];
 		var rows;
 		var selectStr = 'SELECT DOSESTRENGTH FROM DrugDoses Where DOSESTRENGTH Is NOT NULL and  DrugName = ?';
-		rows =Ti.App.boozerlyzer.db.conn.execute(selectStr, DrugName);
+		rows =dbAlias.conn.execute(selectStr, DrugName);
 		if ((rows !== null) && (rows.isValidRow())) {
 			while(rows.isValidRow()){
 				returnData.push({
@@ -45,11 +47,11 @@
 	
 	//get standard drinks either for a single country
 	//or for all of them!
-	Ti.App.boozerlyzer.db.drugDoses.getSizes = function (DrugName){
+	dbAlias.drugDoses.getSizes = function (DrugName){
 		var returnData = [];
 		var rows;
 		var selectStr = 'SELECT DOSESIZE, DOSEDESCRIPTION FROM DrugDoses Where DOSESIZE Is NOT NULL and DrugName = ?';
-		rows =Ti.App.boozerlyzer.db.conn.execute(selectStr, DrugName);
+		rows =dbAlias.conn.execute(selectStr, DrugName);
 		if ((rows !== null) && (rows.isValidRow())) {
 			while(rows.isValidRow()){
 				returnData.push({
