@@ -23,13 +23,14 @@
 	//get data for the maximum row id 
 	dbAlias.pissonyms.selectNRandomRows = function (numRows, frequencyRange){
 		var returnData = [];
-		var nRows = parseInt(numRows);
+		var nRows = parseInt(numRows, 10);
 		//TODO Filter by frequency range
-		var rows =dbAlias.conn.execute('SELECT * FROM pissonyms ORDER BY RANDOM() LIMIT ?', nRows);
+		//ROW 0 is entry for Sober so skip that 
+		var rows =dbAlias.conn.execute('SELECT * FROM pissonyms WHERE ID > 0 ORDER BY RANDOM() LIMIT ?', nRows);
 		if (rows !== null ) {
 			while(rows.isValidRow()){
 				returnData.push({
-					ID: parseInt(rows.fieldByName('ID')),
+					ID: parseInt(rows.fieldByName('ID'),10),
 					Pissonym: rows.fieldByName('Pissonym'),
 					DrunkFactor:parseFloat(rows.fieldByName('DrunkFactor')),
 					DrunkListID: parseInt(rows.fieldByName('DrunkListID')),

@@ -483,6 +483,10 @@
 		Ti.App.boozerlyzer.db.gameScores.SaveResult(gameSaveData);
 	}
 	
+	//KLUDGE
+	//to make parent window focus event fire when you press back button
+	labelScore.focus();
+	
 	//
 	// Cleanup and return home
 	win.addEventListener('android:back', function(e) {

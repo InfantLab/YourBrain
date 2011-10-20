@@ -46,6 +46,7 @@
 				return returnData;
 			}
 		}
+		rows.close();
 		//something didn't work
 		mostRecentData.push({
 			Changed: false,

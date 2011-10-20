@@ -183,19 +183,32 @@
 	
 	
 	
-	//
-	// Cleanup and return home
-	win.addEventListener('android:back', function(e) {
-		if (Ti.App.boozerlyzer.winHome === undefined 
-			 || Ti.App.boozerlyzer.winHome === null) {
+	//TODO
+	//There ought to be a simple way of wrapping this up as a UI element rather than repeating code in 
+	//every win_.js file but i tried it a few ways and i never got it to work.
+	function goHome(){
+		if (Ti.App.boozerlyzer.winHome === undefined || Ti.App.boozerlyzer.winHome === null) {
 			Ti.App.boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
 				url: '/app.js',
 				title: 'Boozerlyzer',
 				backgroundImage: '/images/smallcornercup.png',
 				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
-			})
+			});
 		}
 		win.close();
 		Ti.App.boozerlyzer.winHome.open();
-	});
+		Ti.App.boozerlyzer.winHome.refresh();
+	}
+	//invisible button to return home over the cup
+	var homeButton = Titanium.UI.createView({
+								image:'/icons/transparenticon.png',
+								bottom:0,
+							    left:0,
+							    width:30,
+							    height:60
+						    });
+	win.add(homeButton);
+	homeButton.addEventListener('click',goHome);
+	// Cleanup and return home
+	win.addEventListener('android:back', goHome);
 })();

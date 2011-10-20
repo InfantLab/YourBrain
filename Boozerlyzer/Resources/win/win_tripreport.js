@@ -244,7 +244,7 @@
 		menu.setHelpMessage("Simply record what went wrong. Thanks.");
 		tripContent.hintText = 'What caused the error?';
 		label.text = 'Tell us what went wrong';
-		addbug.visble = true;
+		addbug.visible = true;
 		choiceLabel.visible = true;
 		lastchangedLabel.visible = false;
 		choiceDialog();	
@@ -253,7 +253,7 @@
 		menu.setHelpMessage("Simply record how you are feeling right now. Thanks :-)");
 		tripContent.hintText = 'I feel..';
 		label.text = 'How are you?';
-		addbug.visble = false;
+		addbug.visible = false;
 		choiceLabel.visible = false;
 		lastchangedLabel.visible = true;
 	}
@@ -272,5 +272,6 @@
 		}
 		win.close();
 		Ti.App.boozerlyzer.winHome.open();
+		Ti.App.boozerlyzer.winHome.refresh();
 	});
 })();

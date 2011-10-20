@@ -108,7 +108,7 @@
 		}
 		//something didn't work
 		rows.close();
-		return null;
+		return dbAlias.personalInfo.setDefaults();
 	};
 	
 	dbAlias.personalInfo.setData = function (newData){

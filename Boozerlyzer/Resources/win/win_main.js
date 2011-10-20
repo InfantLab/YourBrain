@@ -14,6 +14,8 @@
 
 	//Create sub-namespace
 	Ti.App.boozerlyzer.win.main = {};
+	var dbAlias = Ti.App.boozerlyzer.db;
+	var dataAlias = Ti.App.boozerlyzer.data;
 	
 	//Create the main application window
 	Ti.App.boozerlyzer.win.main.createApplicationWindow = function(_args) {
@@ -47,32 +49,7 @@
 		var leftLabPoints =20, topResults = 80, leftResults = 340, optionsLeft = 320;
 		
 		
-		//
-		// Some properties for this application
-		//
-		var personalDetailsDialog = Titanium.UI.createAlertDialog({
-					buttonNames:['OK', 'Cancel'],
-					cancel:1,
-					title:'Please click on the Safe to enter your personal details'
-				});
-		// add event listener
-		personalDetailsDialog.addEventListener('click',function(e)
-		{
-			if (e.index === 0) {
-				personalinfo.fireEvent('click');
-			}else{
-				Titanium.App.Properties.setInt('NagTime', 7);
-			}
-		});
-		var enteredData = Titanium.App.Properties.getBool('EnteredPersonalData',false);
-		if (!enteredData){
-			var nagtime = Titanium.App.Properties.getInt('NagTime', 0);
-			if (nagtime > 0) {
-				Titanium.App.Properties.setInt('NagTime', nagtime - 1);
-			}else {
-				personalDetailsDialog.show();
-			}
-		}
+		
 		Ti.API.debug('homeWin 1');
 
 		
@@ -146,12 +123,12 @@
 		function swapMateMode(){
 			if (Titanium.App.Properties.getBool('MateMode',false)){
 				//switch back into regular mode
-				Ti.App.boozerlyzer.data.session = Ti.App.boozerlyzer.db.sessions.getLatestData(0);
+				dataAlias.session = dbAlias.sessions.getLatestData(0);
 				//retrieve current session
 				Titanium.App.Properties.setBool('MateMode', false);			//set to false
-				Titanium.App.Properties.setInt('SessionID',Ti.App.boozerlyzer.data.session[0].ID);
-				Titanium.App.Properties.setInt('UserID', Ti.App.boozerlyzer.data.session[0].UserID);				
-				Ti.API.debug("Switch out of mate mode - session info:" + JSON.stringify(Ti.App.boozerlyzer.data.session));
+				Titanium.App.Properties.setInt('SessionID',dataAlias.session[0].ID);
+				Titanium.App.Properties.setInt('UserID', dataAlias.session[0].UserID);				
+				Ti.API.debug("Switch out of mate mode - session info:" + JSON.stringify(dataAlias.session));
 				var shrink = Ti.UI.create2DMatrix();
 				shrink.scale(0.5);
 				mateModeOffAnimation = Ti.UI.createAnimation({transform:shrink, opacity:0.5});
@@ -162,10 +139,10 @@
 				//set properties
 				Titanium.App.Properties.setBool('MateMode', true);
 				//switch into mate mode.. create a new session.
-				Ti.App.boozerlyzer.data.session = Ti.App.boozerlyzer.db.sessions.createNewSession(Titanium.App.Properties.getBool('MateMode',false));
-				Titanium.App.Properties.setInt('SessionID', Ti.App.boozerlyzer.data.session[0].ID);
-				Titanium.App.Properties.setInt('UserID', Ti.App.boozerlyzer.data.session[0].UserID);
-				Ti.API.debug("Switch into mate mode - session info:" + JSON.stringify(Ti.App.boozerlyzer.data.session));
+				dataAlias.session = dbAlias.sessions.createNewSession(Titanium.App.Properties.getBool('MateMode',false));
+				Titanium.App.Properties.setInt('SessionID', dataAlias.session[0].ID);
+				Titanium.App.Properties.setInt('UserID', dataAlias.session[0].UserID);
+				Ti.API.debug("Switch into mate mode - session info:" + JSON.stringify(dataAlias.session));
 				var grow = Ti.UI.create2DMatrix();
 				grow.scale(2);
 				mateModeOnAnimation = Ti.UI.createAnimation({transform:grow, opacity:0.99});
@@ -400,31 +377,34 @@
 		newSessionDialog.addEventListener('click',function(e)
 		{
 			if (e.index === 0) {
-				Ti.App.boozerlyzer.data.session = Ti.App.boozerlyzer.db.sessions.createNewSession(false);
+				dataAlias.session = dbAlias.sessions.createNewSession(false);
 				rewriteUpdateLabel();
-				labelCurrentSession.text = 'Session Started\n' + Ti.App.boozerlyzer.dateTimeHelpers.formatDayPlusTime(Ti.App.boozerlyzer.data.session[0].StartTime,true);
+				labelCurrentSession.text = 'Session Started\n' + Ti.App.boozerlyzer.dateTimeHelpers.formatDayPlusTime(dataAlias.session[0].StartTime,true);
 			}
 		});
 		
 		
-		if (Ti.App.boozerlyzer.data.session === undefined){
-			Ti.App.boozerlyzer.data.session = Ti.App.boozerlyzer.db.sessions.getLatestData(0);
-			if (Ti.App.boozerlyzer.data.session === null 
-			|| Ti.App.boozerlyzer.data.session === false){
-				Ti.App.boozerlyzer.data.session = Ti.App.boozerlyzer.db.sessions.createNewSession(false);
+		if (dataAlias.session === undefined){
+			dataAlias.session = dbAlias.sessions.getLatestData(0);
+			if (dataAlias.session === null 
+			|| dataAlias.session === false){
+				dataAlias.session = dbAlias.sessions.createNewSession(false);
 			}
 				
 		}
-		var timeSinceUpdate = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(Ti.App.boozerlyzer.data.session[0].LastUpdate);
+		var timeSinceUpdate = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(dataAlias.session[0].LastUpdate);
+
 		function rewriteUpdateLabel(){
-			timeSinceUpdate = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(Ti.App.boozerlyzer.data.session[0].LastUpdate);
+			Ti.API.debug('rewriteUpdateLabel');
+			timeSinceUpdate = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(dataAlias.session[0].LastUpdate);
 			labelLastUpdate.text = 'Last activity\n' + timeSinceUpdate;
 		
 		}
 		Ti.API.debug('homeWin 3');
 
 		function rewriteLabPoints(){
-			var labPoints = Ti.App.boozerlyzer.db.gameScores.TotalPoints(); 
+			Ti.API.debug('rewriteLabPoints');
+			var labPoints = dbAlias.gameScores.TotalPoints(); 
 			// if (isNaN(labPoints[0].Total)){
 				// labelLabPoints.text = 'Err';
 			// }
@@ -439,39 +419,43 @@
 		rewriteLabPoints();
 		Ti.API.debug('homeWin 5');
 
-		Titanium.API.debug("session info: " + JSON.stringify(Ti.App.boozerlyzer.data.session));
+		Titanium.API.debug("session info: " + JSON.stringify(dataAlias.session));
 		var now = parseInt((new Date()).getTime()/1000);
-		if (now - Ti.App.boozerlyzer.data.session[0].LastUpdate  <43200){ //12hours
-		}else if (now - Ti.App.boozerlyzer.data.session[0].LastUpdate < 129600){ //36 hours
+		if (now - dataAlias.session[0].LastUpdate  <43200){ //12hours
+		}else if (now - dataAlias.session[0].LastUpdate < 129600){ //36 hours
 			newSessionDialog.title = 'Last update ' + timeSinceUpdate + '\nStart a new session?';
 			newSessionDialog.show();
 		}else{
 			//>36 hours since last update, don't ask just start new
-			Ti.App.boozerlyzer.data.session = Ti.App.boozerlyzer.db.sessions.createNewSession(false);
+			dataAlias.session = dbAlias.sessions.createNewSession(false);
 		} 
 		Ti.API.debug('homeWin 6');
 		rewriteUpdateLabel();
-		labelCurrentSession.text = 'Session Started\n' + Ti.App.boozerlyzer.dateTimeHelpers.formatDayPlusTime(Ti.App.boozerlyzer.data.session[0].StartTime,true);
-		Ti.API.debug('Session ID - ' + Ti.App.boozerlyzer.data.session[0].ID);
-		Titanium.App.Properties.setInt('SessionID', Ti.App.boozerlyzer.data.session[0].ID);
-		Titanium.App.Properties.setInt('SessionStart',Ti.App.boozerlyzer.data.session[0].StartTime/1000);
-		Titanium.App.Properties.setInt('SessionChanged',Ti.App.boozerlyzer.data.session[0].LastUpdate/1000);
+		labelCurrentSession.text = 'Session Started\n' + Ti.App.boozerlyzer.dateTimeHelpers.formatDayPlusTime(dataAlias.session[0].StartTime,true);
+		Ti.API.debug('Session ID - ' + dataAlias.session[0].ID);
+		Titanium.App.Properties.setInt('SessionID', dataAlias.session[0].ID);
+		Titanium.App.Properties.setInt('SessionStart',dataAlias.session[0].StartTime/1000);
+		Titanium.App.Properties.setInt('SessionChanged',dataAlias.session[0].LastUpdate/1000);
 		
 		loadedonce = true;
 		Ti.API.debug('homeWin 7');
 
-		
-		homeWin.addEventListener('focus', function(){
+		homeWin.refresh = function(){
+			Ti.API.debug('homeWin refresh');
+    	    rewriteUpdateLabel();		
+			rewriteLabPoints();
+		}
+				
+		homeWin.addEventListener('focused', function(){
 			Ti.API.debug('homeWin got focus');
 			if (loadedonce){
 				//this code only runs when we reload this page
-			    rewriteUpdateLabel();		
-				rewriteLabPoints();
-		
+				Ti.App.boozerlyzer.win.main.refresh();
 			}
 		});
 		Ti.API.debug('homeWin 0');
 		return homeWin;
+
 
 	};
 	} catch (err) {

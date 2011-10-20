@@ -185,6 +185,7 @@
 			}
 			win.close();
 			Ti.App.boozerlyzer.winHome.open();
+			Ti.App.boozerlyzer.winHome.refresh();
 		});
 		initialised = true;
 	}

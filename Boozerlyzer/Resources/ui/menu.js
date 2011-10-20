@@ -9,6 +9,10 @@ var menus = (function(){
 //add the menu.
 var activity = Ti.Android.currentActivity;
 var helpMessage;
+/**
+ * Public API
+ */
+var api = {};
 
 activity.onCreateOptionsMenu = function( event ) {
 	  var menu = event.menu
@@ -55,10 +59,7 @@ activity.onCreateOptionsMenu = function( event ) {
 		  });		  
 	};
 
-	/**
-	 * Public API
-	 */
-	var api = {};
+
 	api.setHelpMessage = function(helpString){helpMessage = helpString;};
 	
 	//show the settings tabs

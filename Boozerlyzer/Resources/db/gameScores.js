@@ -213,7 +213,7 @@
 		
 			if (LastSentID>checked_highest) {
 				// first insert should be LastSentID+1
-				alert('got next StartInsertID ' + (LastSentID+1));
+				Ti.API.debug('got next StartInsertID ' + (LastSentID+1));
 				Titanium.App.Properties.setInt('StartInsertID', LastSentID+1);
 				//dbAlias.conn.execute('update sqlite_sequence SET seq=' + (LastSentID+1) +' WHERE name="GameScores"');
 			} else {
@@ -222,6 +222,7 @@
 		} else {
 			Titanium.App.Properties.setInt('StartInsertID',0);
 		}
+		rows.close();
 	};
 
 	/**

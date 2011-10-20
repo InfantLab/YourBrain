@@ -131,7 +131,7 @@
 			});
 			loc[i].visible = false;
 		}
-		win.addEventListener('dblclick',function(ev)
+		win.addEventListener('click',function(ev)
 		{
 			Ti.API.debug('Game Start');
 			if (!gameStarted){
@@ -168,6 +168,8 @@
 			}
 			win.close();
 			Ti.App.boozerlyzer.winHome.open();
+			Ti.App.boozerlyzer.winHome.refresh();
+		
 		});
 		
 		//
@@ -393,6 +395,10 @@
 			for (var i = 0; i < 6; i++) {
 				wordChoices[i] = pissonymList[i].Pissonym;
 			}
+			//except sober is always one of the choices.. 
+			//just overwrite one at random
+			var soberloc = Math.floor(6*Math.random());
+			wordChoices[soberloc] = "Sober";
 			//TODO
 			//make a suggest new dialog
 			//suggest.visible = true;
@@ -441,7 +447,7 @@
 	    imageMisc.left = 60 + Math.floor(320*val)-15;
 	    imageMisc.top = Math.floor(320*aro)-15;
 	    imageMisc.visible = true;
-		showAxis(true,'pissonyms');
+		showAxis(true,'Emotions');
 	}
 	
 	function showAxis(visibleFlag, gameType){
@@ -486,7 +492,7 @@
 			Ti.API.debug('DrunkScore - ' + drunkscore/count);
 
 			//convert this scores into values between 0 & 1
-			var drunk = (drunkscore/count - 1)/(7-1);
+			var drunk = (drunkscore/count)/(7);
 			//then use these to plot the x and y coords of the spot
 		    //TODO use layout variables instead of hard coding these values
 		    imageMisc.left = 60 + Math.floor(320*drunk)-15;

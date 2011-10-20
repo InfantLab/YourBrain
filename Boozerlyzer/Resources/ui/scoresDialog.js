@@ -78,7 +78,7 @@ var scoresDialog = (function(){
 		speedBonusLabel = Ti.UI.createLabel({
 			top:80,
 			width:'auto',
-			text:'Speed Bonus    -      000 points',
+			text:'Speed Bonus    :      000 points',
 			font:{fontSize:18,fontFamily:'Marker Felt',fontWeight:'bold'},
 			textAlign:'center',
 			color:'#119'
@@ -86,7 +86,7 @@ var scoresDialog = (function(){
 		coordBonusLabel = Ti.UI.createLabel({
 			top:120,
 			width:'auto',
-			text:'Coord Bonus    -      000 points',
+			text:'Coord Bonus    :      000 points',
 			font:{fontSize:18,fontFamily:'Marker Felt',fontWeight:'bold'},
 			textAlign:'center',
 			color:'#119'
@@ -94,7 +94,7 @@ var scoresDialog = (function(){
 		inhibitBonusLabel = Ti.UI.createLabel({
 			top:160,
 			width:'auto',
-			text:'Control Bonus    -      000 points',
+			text:'Control Bonus    :      000 points',
 			font:{fontSize:18,fontFamily:'Marker Felt',fontWeight:'bold'},
 			textAlign:'center',
 			color:'#119'
@@ -169,10 +169,10 @@ var scoresDialog = (function(){
 	api.setScores = function(gameName, totalScore, speedBonus, coordBonus,inhibitBonus, labPoints, message,gameIconUrl){
 		createControls();
 		gameNameLabel.text = gameName;
-		scoreLabel.text = "Score    -  " + Math.round(totalScore) + " points";
-		speedBonusLabel.text = "Speed bonus    -  " + Math.round(speedBonus) + " points";
-		coordBonusLabel.text = "Coordination bonus   -  " + Math.round(coordBonus) + " points";
-		inhibitBonusLabel.text = "Control Bonus    -  " + Math.round(inhibitBonus) + " points";
+		scoreLabel.text = "Score:      " + Math.round(totalScore) + " points";
+		speedBonusLabel.text = "Speed bonus:     " + Math.round(speedBonus) + " points";
+		coordBonusLabel.text = "Coordination bonus:     " + Math.round(coordBonus) + " points";
+		inhibitBonusLabel.text = "Control Bonus:      " + Math.round(inhibitBonus) + " points";
 		labPointsLabel.text = labPoints + "\n Lab Points";
 		messageLabel.text = message;
 		gameIcon.image = gameIconUrl;

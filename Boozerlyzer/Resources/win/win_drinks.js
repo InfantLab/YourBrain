@@ -11,6 +11,8 @@
 (function() {
 
 		var win = Ti.UI.currentWindow;
+		var dbAlias = Ti.App.boozerlyzer.db;
+		var dataAlias = Ti.App.boozerlyzer.data;
 		if (Titanium.App.Properties.getBool('MateMode',false)){
 			win.backgroundImage = '/images/smallcornercup.matemode.png';
 		}else{
@@ -34,15 +36,16 @@
 		var drinkImgs = ['/icons/beer-full.png','/icons/wine.png','/icons/whiskey.png','/icons/whiskey-empty.png'];
 		
 		
-		if (!Ti.App.boozerlyzer.data.personalInfo || Ti.App.boozerlyzer.data.personalInfo === null || Ti.App.boozerlyzer.data.personalInfo === 'undefined'){
-			Ti.App.boozerlyzer.data.personalInfo = Ti.App.boozerlyzer.db.personalInfo.getData();
+		if (!dataAlias.personalInfo || dataAlias.personalInfo === null || dataAlias.personalInfo === 'undefined'){
+			dataAlias.personalInfo = dbAlias.personalInfo.getData();
 		}
-		Ti.API.debug('Ti.App.boozerlyzer.data.standardDrinks ' + Ti.App.boozerlyzer.data.standardDrinks );
-		if (!Ti.App.boozerlyzer.data.standardDrinks || Ti.App.boozerlyzer.data.standardDrinks === null || Ti.App.boozerlyzer.data.standardDrinks ==='undefined'){
-			Ti.App.boozerlyzer.data.standardDrinks = Ti.App.boozerlyzer.db.alcoholStandardDrinks.get(Ti.App.boozerlyzer.data.personalInfo.Country);
+		Ti.API.debug('dataAlias.standardDrinks ' + dataAlias.standardDrinks );
+		Titanium.API.debug('personal info' + JSON.stringify(dataAlias.personalInfo));
+		if (!dataAlias.standardDrinks || dataAlias.standardDrinks === null || dataAlias.standardDrinks ==='undefined'){
+			dataAlias.standardDrinks = dbAlias.alcoholStandardDrinks.get(dataAlias.personalInfo.Country);
 		}
-		var millsPerStandardUnits = Ti.App.boozerlyzer.data.standardDrinks[0].MillilitresPerUnit;
-		Ti.API.debug('Ti.App.boozerlyzer.data.standardDrinks ' + JSON.stringify(Ti.App.boozerlyzer.data.standardDrinks));
+		var millsPerStandardUnits = dataAlias.standardDrinks[0].MillilitresPerUnit;
+		Ti.API.debug('dataAlias.standardDrinks ' + JSON.stringify(dataAlias.standardDrinks));
 		
 		
 		// the Dosesage database object
@@ -50,21 +53,21 @@
 		var SessionID = Titanium.App.Properties.getInt('SessionID');
 		
 		//All dose data for this session
-		Ti.API.debug('Ti.App.boozerlyzer.data.AllDrinks '+ Ti.App.boozerlyzer.data.AllDrinks);
-		if (!Ti.App.boozerlyzer.data.AllDrinks || Ti.App.boozerlyzer.data.AllDrinks === null || Ti.App.boozerlyzer.data.AllDrinks === false){
-			Ti.App.boozerlyzer.data.AllDrinks = Ti.App.boozerlyzer.db.doseageLog.getAllSessionData(SessionID);
+		Ti.API.debug('dataAlias.AllDrinks '+ dataAlias.AllDrinks);
+		if (!dataAlias.AllDrinks || dataAlias.AllDrinks === null || dataAlias.AllDrinks === false){
+			dataAlias.AllDrinks = dbAlias.doseageLog.getAllSessionData(SessionID);
 		}
-		if (!Ti.App.boozerlyzer.data.AllDrinks || Ti.App.boozerlyzer.data.AllDrinks.length === 0){
-			Ti.App.boozerlyzer.data.AllDrinks = Ti.App.boozerlyzer.db.doseageLog.newDrink();
-			Ti.App.boozerlyzer.db.sessions.Updated(SessionID);
+		if (!dataAlias.AllDrinks || dataAlias.AllDrinks.length === 0){
+			dataAlias.AllDrinks = dbAlias.doseageLog.newDrink();
+			dbAlias.sessions.Updated(SessionID);
 		}
-		Ti.API.debug('Ti.App.boozerlyzer.data.AllDrinks '+ Ti.App.boozerlyzer.data.AllDrinks);
-		var sessionData = Ti.App.boozerlyzer.db.sessions.getSession(SessionID);
+		Ti.API.debug('dataAlias.AllDrinks '+ dataAlias.AllDrinks);
+		var sessionData = dbAlias.sessions.getSession(SessionID);
 //		Titanium.API.debug('sessionData -' + JSON.stringify(sessionData));
 		//find the last row 
-		var lastIndex = Ti.App.boozerlyzer.data.AllDrinks.length - 1;
+		var lastIndex = dataAlias.AllDrinks.length - 1;
 		//we will use these to keep count of drinks..
-		Ti.App.boozerlyzer.data.AllDrinks[lastIndex].DoseageStart = winOpened;
+		dataAlias.AllDrinks[lastIndex].DoseageStart = winOpened;
 		
 		
 		// Respond when selection made and dialog closed
@@ -74,7 +77,7 @@
 		        Ti.API.debug('e.doseSize '+ e.doseSize );
 		        Ti.API.debug('e.strength '+ e.strength );
 		        Ti.API.debug('e.NumDoses' + e.NumDoses);
-				var newDrinks = Ti.App.boozerlyzer.db.doseageLog.newDrink();
+				var newDrinks = dbAlias.doseageLog.newDrink();
 				newDrinks[0].DoseDescription = e.doseDescription;
 				newDrinks[0].DrugVariety = e.drugVariety;
 				newDrinks[0].Volume = e.doseSize;
@@ -83,17 +86,17 @@
 				newDrinks[0].DrugType = 'Alcohol';
 				Ti.API.debug('Total units' +  1000 * e.doseSize * e.strength * e.NumDoses / (100) );
 				newDrinks[0].TotalUnits = 1000*e.doseSize * e.strength * e.NumDoses / (100);
-				if (isNaN(Ti.App.boozerlyzer.data.standardDrinks[0].MillilitresPerUnit) || Ti.App.boozerlyzer.data.standardDrinks[0].MillilitresPerUnit <= 0){
+				if (isNaN(dataAlias.standardDrinks[0].MillilitresPerUnit) || dataAlias.standardDrinks[0].MillilitresPerUnit <= 0){
 					newDrinks[0].StandardUnits = 0;
 				}else{
-					newDrinks[0].StandardUnits = newDrinks[0].TotalUnits / Ti.App.boozerlyzer.data.standardDrinks[0].MillilitresPerUnit;
+					newDrinks[0].StandardUnits = newDrinks[0].TotalUnits / dataAlias.standardDrinks[0].MillilitresPerUnit;
 				}
 				newDrinks[0].Changed = true;
 		 		Ti.API.debug('std units ' + newDrinks[0].StandardUnits );
-				Ti.App.boozerlyzer.db.doseageLog.setData(newDrinks);
+				dbAlias.doseageLog.setData(newDrinks);
 				tv.appendRow(formatTableRow(newDrinks[0]));
-				Ti.App.boozerlyzer.data.AllDrinks.push(newDrinks[0]);	
-				tv.scrollToIndex(Ti.App.boozerlyzer.data.AllDrinks.length -1);
+				dataAlias.AllDrinks.push(newDrinks[0]);	
+				tv.scrollToIndex(dataAlias.AllDrinks.length -1);
 				totalizeDrinks();
 		    }
 		});
@@ -140,7 +143,7 @@
 		howLongDialog.addEventListener('click',function(e)
 		{
 			Ti.App.Properties.setString('GrandTotal',howLong[e.index]);
-			howLongDialog.title = 'Total Drinks in last ' + Ti.App.Properties.getString('GrandTotal','1 weeks');
+			calendarTotalDrinksButton.title = 'Total Drinks in last ' + Ti.App.Properties.getString('GrandTotal','1 week');
 			calendarTotalDrinks();
 		});
 		calendarTotalDrinksButton.addEventListener('click',function()
@@ -296,7 +299,7 @@
 		    //convert DrinkData obj into text, etc.
 		    Titanium.API.debug('DrinkData.DoseageStart '+ DrinkData.DoseageStart);
 		    var addedTime = Ti.App.boozerlyzer.dateTimeHelpers.formatTime(DrinkData.DoseageStart,true);
-		    var numUnits = DrinkData.TotalUnits / Ti.App.boozerlyzer.data.standardDrinks[0].MillilitresPerUnit;
+		    var numUnits = DrinkData.TotalUnits / dataAlias.standardDrinks[0].MillilitresPerUnit;
 			//calorie calculation = 7kCals per gram of alcohol , 0.79 grams per millilitre
 			var numkCals = DrinkData.TotalUnits * 0.79 * 7;
 			var thisDrinkUnits = '', thisDrinkkCals = '';
@@ -372,13 +375,13 @@
 		}
 		
 		function totalizeDrinks(){
-			var len = Ti.App.boozerlyzer.data.AllDrinks.length;
+			var len = dataAlias.AllDrinks.length;
 			totalvolAlcohol = 0;
 			for (var idx =0;idx<len;idx++){
-				totalvolAlcohol += Ti.App.boozerlyzer.data.AllDrinks[idx].TotalUnits; 
+				totalvolAlcohol += dataAlias.AllDrinks[idx].TotalUnits; 
 			}
-			if (Ti.App.boozerlyzer.data.standardDrinks[0].MillilitresPerUnit > 0){
-				footerUnits.text = (totalvolAlcohol / Ti.App.boozerlyzer.data.standardDrinks[0].MillilitresPerUnit).toFixed(1) +'u';
+			if (dataAlias.standardDrinks[0].MillilitresPerUnit > 0){
+				footerUnits.text = (totalvolAlcohol / dataAlias.standardDrinks[0].MillilitresPerUnit).toFixed(1) +'u';
 				//calorie calculation = 7kCals per gram of alcohol , 0.79 grams per millilitre
 				footerkCals.text = (totalvolAlcohol * 0.79 * 7).toFixed(0) + 'kCal'; 
 			} 
@@ -395,13 +398,13 @@
 			}else{
 				howLongAgo = now - howLongDays[idx]*3600*24;
 			}
-			var totalDrinks	=Ti.App.boozerlyzer.db.doseageLog.drinksinTimePeriod(howLongAgo, now);			
+			var totalDrinks	=dbAlias.doseageLog.drinksinTimePeriod(howLongAgo, now);			
 			var lenType = drinkNames.length -1;
 			var len = totalDrinks.length;
 			for (var d=-0;d<lenType;d++){				
 				for (var i=0;i<len;i++){
 					if (drinkNames[d] === totalDrinks[i].DrugVariety){
-						drinkCountLabels[d].text = (totalDrinks[i].TotalUnits / Ti.App.boozerlyzer.data.standardDrinks[0].MillilitresPerUnit).toFixed(1) + ' U ' + drinkNames[d];
+						drinkCountLabels[d].text = (totalDrinks[i].TotalUnits / dataAlias.standardDrinks[0].MillilitresPerUnit).toFixed(1) + ' U ' + drinkNames[d];
 					
 					} 
 				}
@@ -411,7 +414,7 @@
 		
 		function calcDisplayBloodAlcohol(){
 			var now = parseInt((new Date()).getTime()/1000,10);
-			currentBloodAlcohol = Ti.App.boozerlyzer.analysis.BAC.calculate(now, Ti.App.boozerlyzer.data.AllDrinks.slice(lastIndex),Ti.App.boozerlyzer.data.personalInfo);
+			currentBloodAlcohol = Ti.App.boozerlyzer.analysis.BAC.calculate(now, dataAlias.AllDrinks.slice(lastIndex),dataAlias.personalInfo);
 			BloodAlcohol.text = 'Blood Alcohol ' + currentBloodAlcohol.toFixed(4) + '%';
 			var baLevel = Ti.App.boozerlyzer.analysis.BAC.levels(currentBloodAlcohol);
 			BloodAlcohol.color = baLevel.color;
@@ -477,9 +480,9 @@
 		});
 		
 		//initial population of drink list.
-		var len = Ti.App.boozerlyzer.data.AllDrinks.length;
+		var len = dataAlias.AllDrinks.length;
 		for(var idx=0;idx<len; idx++){
-			tv.appendRow(formatTableRow(Ti.App.boozerlyzer.data.AllDrinks[idx]));	
+			tv.appendRow(formatTableRow(dataAlias.AllDrinks[idx]));	
 		}
 		sessionView.add(tv);
 		
@@ -553,22 +556,6 @@
 		});
 		win.add(newgame);
 		
-		// Cleanup and return home
-		win.addEventListener('android:back', function(e) {
-			gameEndSaveScores();
-			if (Ti.App.boozerlyzer.winHome === undefined 
-			 || Ti.App.boozerlyzer.winHome === null) {
-				Ti.App.boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
-					url: '/app.js',
-					title: 'Boozerlyzer',
-					backgroundImage: '/images/smallcornercup.png',
-					orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
-				})
-			}
-			win.close();
-			Ti.App.boozerlyzer.winHome.open();
-		});
-		
 		//log data to the activity tracker
 		// record the total units at the moment
 		// and give user 2 lab points for using this screen
@@ -581,7 +568,7 @@
 			var gameSaveData = [{Game: 'Drink Logging',
 								GameVersion:1,
 								PlayStart:winOpened ,
-								PlayEnd: parseInt((new Date()).getTime()/1000),
+								PlayEnd: parseInt((new Date()).getTime()/1000,10),
 								TotalScore:parseFloat(footerUnits.text,10),
 								GameSteps:0,
 								Speed_GO:0,
@@ -596,10 +583,39 @@
 								UserID:Titanium.App.Properties.getInt('UserID'),
 								LabPoints:2
 							}];
-			Ti.App.boozerlyzer.db.gameScores.SaveResult(gameSaveData);
+			dbAlias.gameScores.SaveResult(gameSaveData);
 		}
-
-				
+		
+		//TODO
+		//There ought to be a simple way of wrapping this up as a UI element rather than repeating code in 
+		//every win_.js file but i tried it a few ways and i never got it to work.
+		function goHome(){
+			gameEndSaveScores();
+			if (Ti.App.boozerlyzer.winHome === undefined || Ti.App.boozerlyzer.winHome === null) {
+				Ti.App.boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
+					url: '/app.js',
+					title: 'Boozerlyzer',
+					backgroundImage: '/images/smallcornercup.png',
+					orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
+				});
+			}
+			win.close();
+			Ti.App.boozerlyzer.winHome.open();
+			Ti.App.boozerlyzer.winHome.refresh();
+		}
+		//invisible button to return home over the cup
+		var homeButton = Titanium.UI.createView({
+									image:'/icons/transparenticon.png',
+									bottom:0,
+								    left:0,
+								    width:30,
+								    height:60
+							    });
+		win.add(homeButton);
+		homeButton.addEventListener('click',goHome);
+		// Cleanup and return home
+		win.addEventListener('android:back', goHome);
+		
 		win.addEventListener('close', function(){
 			if (loadedonce){
 				//this code only runs when we close this page

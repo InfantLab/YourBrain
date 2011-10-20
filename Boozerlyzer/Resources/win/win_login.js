@@ -54,7 +54,7 @@
       
     loginBtn.addEventListener('click',function(e)  
     {  
-        if (username.value != '' && password.value != '')  
+        if (username.value !== '' && password.value !== '')  
         {  
             loginReq.open("POST","http:/boozerlyzer.net/receive/post_auth.php");  
             var params = {  
@@ -73,7 +73,7 @@
 	    var json = this.responseText;  
 	    Ti.API.debug('login post_auth response '+ json);  
 	    var response = JSON.parse(json);
-	    if (response.logged == true)  
+	    if (response.logged === true)  
 	    {  
 	        username.blur();  
 	        password.blur();  

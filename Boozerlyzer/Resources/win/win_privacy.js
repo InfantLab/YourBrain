@@ -10,11 +10,15 @@
 	
 	var win = Titanium.UI.currentWindow;
 	var winHome = win.home;
+	
+	var mLaunchType = win.launchType;
+	var helpMessage = "Please indicate your preferred level of privacy.\nClick the buttons to change settings.";
+	
 	//include the menu choices	
 	Ti.include('/ui/menu.js');
 	var menu = menus;
 	//need to give it specific help for this screen
-	menu.setHelpMessage("Please indicate your preferred level of privacy.");
+	menu.setHelpMessage(helpMessage);
 
 	var netprivacy = ['Send data with nickname', 'Send data with anonymous key','Send totally anonymous data' ,'Never send my data'];
 	var phoneprivacy = ['Store all data', 'Store games scores but not drinking data', 'Never store data'];
@@ -22,9 +26,9 @@
 	
 	var netPrivacyLabel = Ti.UI.createLabel({
 			text:'Network Privacy',
-			top: 120,
+			top: 80,
 			left:20,
-			width:100,
+			width:140,
 			height:24,
 			font:{fontSize:14},
 			textAlign:'center',
@@ -34,8 +38,8 @@
 	
 	var netPrivacyBtn= Ti.UI.createButton({
 	    title:netprivacy[Titanium.App.Properties.getInt('NetPrivacy',0)],  
-	    top:120,  
-	    width:180,  
+	    top:80,  
+	    width:240,  
 	    height:35,  
 	    borderRadius:2,  
 	    font:{fontFamily:'Arial',fontWeight:'bold',fontSize:14} 
@@ -45,7 +49,7 @@
 		options:netprivacy,
 		destructive:2,
 		cancel:1,
-		title:'Set communications privacy.'
+		title:'Data sent to network'
 	});
 	// add event listener
 	netPrivacyDialog.addEventListener('click',function(e)
@@ -53,6 +57,7 @@
 	
 		netPrivacyBtn.text = netprivacy[e.index];
 		Titanium.App.Properties.setInt('NetPrivacy',e.index);
+		Titanium.App.Properties.setBool('PrivacySet', true)
 		//TODO
 		//ought to delete data, etc when privacy levels change.
 	});
@@ -61,16 +66,16 @@
 	});
 
 	var phonePrivacyLabel = Ti.UI.createLabel({
-			text:'Handset Privacy',
+			text:'Phone Storage',
 			top: 20,
 			left:20,
-			width:100,
+			width:140,
 			height:24,
 			font:{fontSize:14},
 			textAlign:'center',
 			color:'black'	
 	});
-	win.add(netPrivacyLabel);
+	win.add(phonePrivacyLabel);
 	
 	var phonePrivacyDialog = Titanium.UI.createOptionDialog({
 		options:phoneprivacy,
@@ -81,7 +86,7 @@
 	var phonePrivacyBtn= Ti.UI.createButton({
 	    title:phoneprivacy[Titanium.App.Properties.getInt('PhonePrivacy',0)],  
 	    top:20,  
-	    width:180,  
+	    width:240,  
 	    height:35,  
 	    borderRadius:2,  
 	    font:{fontFamily:'Arial',fontWeight:'bold',fontSize:14} 
@@ -125,6 +130,8 @@
 		//Ti.App.boozerlyzer.db.conn.execute('ALTER TABLE "main"."GameScores" ADD COLUMN "Alcohol_ml" NUMERIC');
 		//Ti.App.boozerlyzer.db.conn.execute('ALTER TABLE "main"."GameScores" ADD COLUMN "BloodAlcoholConc" NUMERIC');
 		//Ti.App.boozerlyzer.db.conn.close();
+		// //Ti.App.boozerlyzer.db.conn.execute('ALTER TABLE "main"."GameScores" ADD COLUMN "GameSteps" INTEGER');
+		
 	});
 	win.add(debug);
 	
@@ -146,21 +153,18 @@
 	});
 	win.add(charttest);
 
-		var exportData = Ti.UI.createButton({
-			title:'Save to SD Card',
-			width:200,
-			height:28,
-			bottom:30,
-			right:10,
-			backgroundColor:'gray'
-		});
-		exportData.addEventListener('click',function()
-		{
-			Ti.App.boozerlyzer.comm.exportData.exportTabFile();
-		});	
-		win.add(exportData);
+	var exportData = Ti.UI.createButton({
+		title:'Export data to SD Card',
+		width:240,
+		height:28,
+		bottom:30
+	});
+	exportData.addEventListener('click',function()
+	{
+		Ti.App.boozerlyzer.comm.exportData.exportTabFile();
+	});	
+	win.add(exportData);
 		
-	//
 	// Cleanup and return home
 	win.addEventListener('android:back', function(e) {
 		if (Ti.App.boozerlyzer.winHome === undefined  || Ti.App.boozerlyzer.winHome === null) {
@@ -174,4 +178,13 @@
 		win.close();
 		Ti.App.boozerlyzer.winHome.open();
 	});
+	
+	if (mLaunchType==="Welcome"){
+		var alertDialog = Titanium.UI.createAlertDialog({
+		    title: 'Boozerlyzer',
+		    message: helpMessage,
+		    buttonNames: ['OK']
+		});
+		alertDialog.show();
+	}
 })();

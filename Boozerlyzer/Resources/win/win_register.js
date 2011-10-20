@@ -13,7 +13,14 @@
 	
 	
     var win = Titanium.UI.currentWindow;  
-      
+    var mLaunchType = win.launchType;
+    var helpMessage = "Please register with Boozerlyzer.net.\nAll data are held securely and anonymously.";
+	//include the menu choices	
+	Ti.include('/ui/menu.js');
+	var menu = menus;
+	//need to give it specific help for this screen
+	menu.setHelpMessage(helpMessage);
+	
     /* 
     * Interface 
     */  
@@ -28,8 +35,7 @@
       
     var username = Titanium.UI.createTextField({  
         color:'#336699',  
-        top:10,  
-        left:10,  
+        top:5,  
         width:300,  
         height:40,  
         hintText:'Username',  
@@ -41,8 +47,7 @@
       
     var password1 = Titanium.UI.createTextField({  
         color:'#336699',  
-        top:60,  
-        left:10,  
+        top:50,  
         width:300,  
         height:40,  
         hintText:'Password',  
@@ -55,8 +60,7 @@
       
     var password2 = Titanium.UI.createTextField({  
         color:'#336699',  
-        top:110,  
-        left:10,  
+        top:95,  
         width:300,  
         height:40,  
         hintText:'Password Again',  
@@ -70,8 +74,7 @@
       
     var email = Titanium.UI.createTextField({  
         color:'#336699',  
-        top:210,  
-        left:10,  
+        top:140,  
         width:300,  
         height:40,  
         hintText:'email',  
@@ -83,7 +86,7 @@
       
     var createBtn = Titanium.UI.createButton({  
         title:'Create Account',  
-        top:260,  
+        top:195,  
         width:130,  
         height:35,  
         borderRadius:1,  
@@ -106,22 +109,15 @@
             testresults = false;  
         }  
         return (testresults);  
-    };  
+    } 
       
     var createReq = Titanium.Network.createHTTPClient();  
     createReq.onload = function(){  
-    	Ti.API.debug("Registration request loaded.");
-    	var json = this.responseText;  
+		Ti.API.debug("Registration request loaded.");
+		var json = this.responseText;  
 	    Ti.API.debug('login post_auth response '+ json);  
 	    var response = JSON.parse(json);
-	    if (response.success === false)  
-        {  
-            createBtn.enabled = true;  
-            createBtn.opacity = 1;  
-            alert(response.message);  
-        }  
-        else  
-         { //probably succeeded :-) 
+	    if (response.success)   { //probably succeeded :-) 
 			Ti.App.Properties.setString('username',username.value );
 			Ti.App.Properties.setString('password',password1.value );
 			Ti.App.Properties.setString('email',email.value );
@@ -140,7 +136,12 @@
                 win.close(); 
             });    
             alertDialog.show();  
+        } else        {  
+            createBtn.enabled = true;  
+            createBtn.opacity = 1;  
+			alert(response.message);  
         }  
+
     };
       
     createBtn.addEventListener('click',function(e)  
@@ -161,7 +162,7 @@
                 {  
                     createBtn.enabled = false;  
 	                createBtn.opacity = 0.3;  
-	                createReq.open("POST","http://yourbrainondrugs.net/boozerlyzer/post_register.php");  
+	                createReq.open("POST","http://boozerlyzer.net/receive/post_register.php");  
 	                var params = {  
 	                    username: username.value,  
 	                    password: Ti.Utils.md5HexDigest(password1.value),  
@@ -175,6 +176,9 @@
         {  
             alert("All fields are required");  
         }  
-    });      
+    });    
+	if (mLaunchType==="Welcome"){
+		alert(helpMessage);
+	}  
     
 })();
