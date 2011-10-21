@@ -25,56 +25,59 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 50, ................................................} },
    ]
  }*/
-
 	/*
 	 * function to send the gameScores  table entries to the ybodnet web database
-	 */
-	commAlias.sendData.sync = function(){
+	 * since data sending is asynchronous we will mostly succeed fail silently
+	 * but allow possiblity of callbacks.
+	 * */
+	commAlias.sendData.sync = function(callbackFn){
+		if (!Ti.Network.online){
+			return {status:'failed',message:'No internet connection'};
+		}
+		if (!Ti.App.Properties.getInt())
+		
 		//find the ID of the last data sent to website
 		//based on a persistent app property
 		//TODO retrieve this from server.
 		var lastSentID = Titanium.App.Properties.getInt('LastSentID', 0);
-		alert('Got lastSentID ' + lastSentID);
-		
 		Ti.API.debug('sendData - lastSentID ' + lastSentID);
 		// build an object containing the data that we should send
 		var dataToSend = Ti.App.boozerlyzer.db.gameScores.GamePlaySummaryforWebserver(null,null,lastSentID);
 		
-		
 		//what is the last row id from this dataset?
 		if (!dataToSend || dataToSend.length===0) {
 			Ti.API.error('sendData: no data to send; play some games first!');
-			return;
+			return {status:'failed',message:'No data to send; play some games first!'};
 		}
 		
-		//var newLastID = dataToSend[dataToSend.length -1].ID;
-
         var xhrPost = Ti.Network.createHTTPClient();
-        
-        //Ti.API.debug('About to send data for ' + dataToSend);
-        //Ti.API.debug(dataToSend);
-
 
 		//what do we get back?
 		xhrPost.onload = function() {
-		  alert ('data sending onload');
-				var rc = Titanium.JSON.parse(this.responseText);
-				if (rc.status == 'success') {
-					var complete = Ti.UI.createAlertDialog('Game scores saved.');
-					complete.show();
-					Ti.API.info('Game scores saved.');
-					alert(rc.SavedCount.toString() + ' Game Scores saved - last ID was ' + rc.LastReceivedID.toString());
-					Titanium.App.Properties.setInt('LastSentID', rc.LastReceivedID/*newLastID*/);
-				} else {
-					alert('Cloud Error: try again (' + this.responseText + ')');
+			Ti.API.debug('sync data sending onload');
+			var rc = Titanium.JSON.parse(this.responseText);
+			if (rc.status == 'success') {
+				// var complete = Ti.UI.createAlertDialog('Game scores saved.');
+				// complete.show();
+				Ti.API.info('Game scores saved.');
+				var retMessage = rc.SavedCount.toString() + ' Game Scores saved - last ID was ' + rc.LastReceivedID.toString();
+				Titanium.App.Properties.setInt('LastSentID', rc.LastReceivedID/*newLastID*/);
+				var now = parseInt((new Date()).getTime()/1000,10);
+				Titanium.App.Properties.setInt('LastSentTime',now);
+				if (callbackFn){
+					callbackFn( {status:'success',message:retMessage});
 				}
-			};
+			} else {
+				Ti.API.debug('Cloud Error: try again (' + this.responseText + ')');
+				if (callbackFn){
+					callbackFn( {status:'failed',message:'Cloud Error: try again (' + this.responseText + ')'});
+				}
+			}
+		};
 		xhrPost.onerror = function(e) {
 			Ti.API.error('got error ' + e.error);
-		}
+		};
 		
-
-        alert('About to send data');
 		// send the data to the server
 		xhrPost.open('POST', 'http://boozerlyzer.net/receive/submit_data.php');
 		xhrPost.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -92,13 +95,15 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		 }//)
 		);
 		Ti.API.debug( dataToSend.length + ' items sent.');
+		return {status:'success',message:'Nothing went wrong at this end.'};
 		
 	};
 
-	commAlias.sendData.getLastServerRowID = function(){
-		
+	commAlias.sendData.getLastServerRowID = function(callbackFn){
+		if (!Ti.Network.online){
+			return {status:'failed',message:'No internet connection'};
+		}		
 		var xhrPost = Ti.Network.createHTTPClient();
-	
 		xhrPost.open('POST', 'http://boozerlyzer.net/receive/req_GameScoresLastID.php');
 		xhrPost.setRequestHeader('Content-type','application/json');
 		xhrPost.setRequestHeader('Accept','application/json');
@@ -106,12 +111,13 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		//what do we get back?
 		xhrPost.onload = function() {
 				var rc = Titanium.JSON.parse(this.responseText);
-				if (rc['status'] == 'success') {
-					newLastID = rc['Last'];
-					alert('Got last ID ' + newLastID);
+				if (rc.status == 'success') {
+					var newLastID = rc.Last;
+					Ti.API.debug('Got last ID ' + newLastID);
 					Titanium.App.Properties.setInt('LastSentID', newLastID);
+					Titanium.App.Properties.setString('LastSentTime','#Sent Time#');
 				} else {
-					alert('Network Error: try again (' + this.responseText + ')');
+					Ti.API.debug('Network Error: try again (' + this.responseText + ')');
 				}
 			};
 			
@@ -127,6 +133,22 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		);
 		
 
+	};
+	
+	/*
+	 * a function that gets called every time we return to the main menu
+	 * every 20th time it checks if we have an internet connection
+	 * and if so attempts to send the most recent data.
+	 */
+	commAlias.sendData.autoSync = function(){
+		alert('autoSync');
+		var count = Ti.App.Properties.getInt('AutoSyncCount', 0);
+		count++;
+		Ti.API.debug('autoSync count ' + count);
+		Ti.App.Properties.setInt('AutoSyncCount', count);
+		if (count % 10 === 0 && Ti.Network.online){
+			commAlias.sendData.sync();
+		}
 	};
 	
 	

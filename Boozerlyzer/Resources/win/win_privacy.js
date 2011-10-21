@@ -20,9 +20,10 @@
 	//need to give it specific help for this screen
 	menu.setHelpMessage(helpMessage);
 
-	var netprivacy = ['Send data with nickname', 'Send data with anonymous key','Send totally anonymous data' ,'Never send my data'];
-	var phoneprivacy = ['Store all data', 'Store games scores but not drinking data', 'Never store data'];
-	
+	// var netprivacy = ['Send data with nickname', 'Send data with anonymous key','Send totally anonymous data' ,'Never send my data'];
+	// var phoneprivacy = ['Store all data', 'Store games scores but not drinking data', 'Never store data'];	
+	var netprivacy = ['Never send my data','Send data with nickname'];
+	var phoneprivacy = ['Store all data', 'Erase data'];
 	
 	var netPrivacyLabel = Ti.UI.createLabel({
 			text:'Network Privacy',
@@ -37,7 +38,7 @@
 	win.add(netPrivacyLabel);
 	
 	var netPrivacyBtn= Ti.UI.createButton({
-	    title:netprivacy[Titanium.App.Properties.getInt('NetPrivacy',0)],  
+	    title:netprivacy[Titanium.App.Properties.getInt('NetPrivacy',1)],  
 	    top:80,  
 	    width:240,  
 	    height:35,  
@@ -95,10 +96,18 @@
 	// add event listener
 	phonePrivacyDialog.addEventListener('click',function(e)
 	{
-		phonePrivacyBtn.text = phoneprivacy[e.index];
-		Titanium.App.Properties.setInt('PhonePrivacy',e.index);
+		// phonePrivacyBtn.text = phoneprivacy[e.index];
+		// Titanium.App.Properties.setInt('PhonePrivacy',e.index);
 		//TODO
 		//need to actually do something about this!
+		if (e.index === 0){
+			var deleteWarning = Ti.UI.createAlertDialog({
+				 title: 'Delete all data?',
+			    message: 'This feature is not implemented yet. To delete data go to your phone settings and use the Android Application manager',
+			    buttonNames: ['OK']
+			});
+			deleteWarning.show();
+		}
 	});
 	phonePrivacyBtn.addEventListener('click', function(e) {
 		phonePrivacyDialog.show();

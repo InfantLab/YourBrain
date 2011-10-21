@@ -1,8 +1,8 @@
 /**
  * @author Caspar Addyman
  * 
- * The data privacy settinhs screen 
- * 
+ * This screen gives user information about the data they are sending to our servers.
+ *
  * Copyright yourbrainondrugs.net 2011
  */
 
@@ -10,12 +10,13 @@
 	
 	
     var win = Titanium.UI.currentWindow;  
+    var commAlias = Ti.App.boozerlyzer.comm;
       
 	var username = Titanium.UI.createTextField({  
 	    color:'#336699',  
 	    top:10,  
 	    left:10,  
-	    width:300,  
+	    width:160,  
 	    height:40,  
 	    hintText:'Username',  
 	    keyboardType:Titanium.UI.KEYBOARD_DEFAULT,  
@@ -27,9 +28,9 @@
 	  
 	var password = Titanium.UI.createTextField({  
 	    color:'#336699',  
-	    top:60,  
-	    left:10,  
-	    width:300,  
+	    top:10,  
+	    left:180,  
+	    width:120,  
 	    height:40,  
 	    hintText:'Password',  
 	    passwordMask:true,  
@@ -42,8 +43,9 @@
 	  
 	var loginBtn = Titanium.UI.createButton({  
 	    title:'Login',  
-	    top:110,  
-	    width:90,  
+	    top:10,  
+	    width:90,
+	    left:320,  
 	    height:35,  
 	    borderRadius:1,  
 	    font:{fontFamily:'Arial',fontWeight:'bold',fontSize:14}  
@@ -98,5 +100,47 @@
 	    }  
 	}; 
     //loginReq.
+    
+    var labelLastSync = Titanium.UI.createLabel({
+		text:'Last sync with server - Never',
+		top:60,  
+	    left:10,  
+	    width:300,  
+	    height:40,  
+	    borderRadius:2,  
+	    font:{fontFamily:'Arial',fontWeight:'bold',fontSize:14} 
+    });
+    win.add(labelLastSync);
+    
+    
+    var buttonSyncNow = Titanium.UI.createButton({
+		title:'Sync Now',
+		top:60,  
+	    left:320,  
+	    width:100,  
+	    height:40,  
+	    borderRadius:2,  
+	    font:{fontFamily:'Arial',fontWeight:'bold',fontSize:14}
+    });
+    buttonSyncNow.addEventListener('click', function(){
+		commAlias.sendData.sync();
+		var updateTime = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(Titanium.App.Properties.getInt('LastSentTime', 0));
+		labelLastSync.text = 'Last sync with server - ID('+ Titanium.App.Properties.getInt('LastSentID', 0) +') ' +  updateTime;
+	});
+    win.add(buttonSyncNow);
+    
+    var checkAutoSync = Titanium.UI.createSwitch({
+		titleOn:'Auto Sync On',
+		titleOff:'Auto Sync Off',
+		value:Titanium.App.Properties.getBool('AutoSync',true),
+		top:200,
+		left:60,
+		height:44,
+		width:120
+    });
+    checkAutoSync.addEventListener('click',function(){
+		Titanium.App.Properties.setBool('AutoSync',checkAutoSync.value);
+    });
+    win.add(checkAutoSync);
     
 })();

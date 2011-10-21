@@ -67,17 +67,17 @@
 	}else{
 		// create tab for login
 		// only show this tab if needed.
-		var winlogin = Titanium.UI.createWindow({ modal:true,
-		    url:'/win/win_login.js',
-			titleid:'win_login',
+		var winSyncInfo = Titanium.UI.createWindow({ modal:true,
+		    url:'/win/win_syncInfo.js',
+			titleid:'win_syncInfo',
 			backgroundImage:'/images/smallcornercup.png'
 		});
-		var tablogin = Titanium.UI.createTab({
-			title:'Log In',
-		    window:winlogin,
+		var tabSyncInfo = Titanium.UI.createTab({
+			title:'Sync Info',
+		    window:winSyncInfo,
 		    tabGroup:tabGroup
 		});
-		tabGroup.addTab(tablogin);	
+		tabGroup.addTab(tabSyncInfo);	
 	}
 
 	//default show personal details

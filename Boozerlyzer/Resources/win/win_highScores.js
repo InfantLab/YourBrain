@@ -74,8 +74,8 @@
 	var scrollChoices = Ti.UI.createScrollView({
 		bottom:4,
 		left:60,
+		width:'auto',
 		height:sizeIcons,
-		width:300,
 		contentHeight:'auto',
 		contentWidth:'auto',
 		showHorizontalScrollIndicator:true,
@@ -83,9 +83,13 @@
 	});
 	win.add(scrollChoices);
 	
+	function scrollChoiceClicked(events){
+		selectedGameIdx = parseInt(events.source.idx,10);
+		populateHighScores();
+	}
+	
 	var leftPlace = 0;
 	var leftPlaceOriginal = leftPlace;
-	
 	for(var i =0, iMax=choiceImgUrls.length;i<iMax;i++){
 		var imgGame = Ti.UI.createImageView({
 			idx:i,
@@ -103,11 +107,7 @@
 		leftPlace += sizeIcons + 10;;
 	}
 	
-	function scrollChoiceClicked(events){
-		selectedGameIdx = parseInt(events.source.idx);
-		populateHighScores()
-	}
-	
+
 	
 	var footer = Ti.UI.createView({
 		backgroundColor:'#111',
@@ -166,7 +166,7 @@
 		        className: 'oneScore'
 		    });
 		    var labelOneScore = Ti.UI.createLabel({
-		    	text:(i+1) + ' - ' + thisGameHighScores[i].TotalScore,
+				text:(i+1) + ' - ' + thisGameHighScores[i].TotalScore.toFixed(0),
 				top:0,
 				left:32,
 				textAlign:'left',

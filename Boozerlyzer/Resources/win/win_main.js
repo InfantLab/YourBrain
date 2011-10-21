@@ -16,6 +16,7 @@
 	Ti.App.boozerlyzer.win.main = {};
 	var dbAlias = Ti.App.boozerlyzer.db;
 	var dataAlias = Ti.App.boozerlyzer.data;
+	var commAlias = Ti.App.boozerlyzer.comm;
 	
 	//Create the main application window
 	Ti.App.boozerlyzer.win.main.createApplicationWindow = function(_args) {
@@ -363,10 +364,19 @@
 		homeWin.add(labelLastUpdate);
 		Ti.API.debug('homeWin 2');
 
-		//what is the current session? 
-		//if last update was >36 hours ago automatically start new session
-		//if last update was >12 hours ago ask if what to start new session
-		//if last update was <12 hours ago continue that session[0].
+		function rewriteSessionInfo(){
+			//function that writes the latest update times for this session.			
+			Ti.API.debug('rewriteSessionInfo');
+			var timeSinceUpdate = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(dataAlias.session[0].LastUpdate);
+			labelLastUpdate.text = 'Last activity\n' + timeSinceUpdate;
+			labelCurrentSession.text = 'Session Started\n' + Ti.App.boozerlyzer.dateTimeHelpers.formatDayPlusTime(dataAlias.session[0].StartTime,true);
+			Ti.API.debug('Session ID - ' + dataAlias.session[0].ID);
+			Titanium.App.Properties.setInt('SessionID', dataAlias.session[0].ID);
+			Titanium.App.Properties.setInt('SessionStart',dataAlias.session[0].StartTime/1000);
+			Titanium.App.Properties.setInt('SessionChanged',dataAlias.session[0].LastUpdate/1000);
+		
+		}
+
 		var newSessionDialog = Titanium.UI.createOptionDialog({
 			options:['New session', 'Continue..'],
 			destructive:2,
@@ -378,30 +388,37 @@
 		{
 			if (e.index === 0) {
 				dataAlias.session = dbAlias.sessions.createNewSession(false);
-				rewriteUpdateLabel();
-				labelCurrentSession.text = 'Session Started\n' + Ti.App.boozerlyzer.dateTimeHelpers.formatDayPlusTime(dataAlias.session[0].StartTime,true);
+				rewriteSessionInfo();
+				labelCurrentSession.text = 'Session Started\n' + Ti.App.boozerlyzer.daterewriteSessionInfoHelpers.formatDayPlusTime(dataAlias.session[0].StartTime,true);
 			}
 		});
-		
-		
+
+		//what is the current session? 
+		//if last update was >36 hours ago automatically start new session
+		//if last update was >12 hours ago ask if what to start new session
+		//if last update was <12 hours ago continue that session[0].
 		if (dataAlias.session === undefined){
 			dataAlias.session = dbAlias.sessions.getLatestData(0);
-			if (dataAlias.session === null 
-			|| dataAlias.session === false){
+			if (dataAlias.session === null || dataAlias.session === false){
 				dataAlias.session = dbAlias.sessions.createNewSession(false);
 			}
 				
 		}
-		var timeSinceUpdate = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(dataAlias.session[0].LastUpdate);
-
-		function rewriteUpdateLabel(){
-			Ti.API.debug('rewriteUpdateLabel');
-			timeSinceUpdate = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(dataAlias.session[0].LastUpdate);
-			labelLastUpdate.text = 'Last activity\n' + timeSinceUpdate;
-		
-		}
+		Titanium.API.debug("session info: " + JSON.stringify(dataAlias.session));
+		var now = parseInt((new Date()).getTime()/1000, 10);
+		if (now - dataAlias.session[0].LastUpdate  <43200){ 
+			//less than 12hours - carry on 
+		}else if (now - dataAlias.session[0].LastUpdate < 129600){ //36 hours
+			var timeSinceUpdate = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(dataAlias.session[0].LastUpdate);
+			newSessionDialog.title = 'Last update ' + timeSinceUpdate + '\nStart a new session?';
+			newSessionDialog.show();
+		}else{
+			//>36 hours since last update, don't ask just start new
+			dataAlias.session = dbAlias.sessions.createNewSession(false);
+		} 
 		Ti.API.debug('homeWin 3');
 
+		//updates the lab points counter
 		function rewriteLabPoints(){
 			Ti.API.debug('rewriteLabPoints');
 			var labPoints = dbAlias.gameScores.TotalPoints(); 
@@ -414,36 +431,29 @@
 			// }
 		}
 		
-		Ti.API.debug('homeWin 4');
-		rewriteUpdateLabel();
-		rewriteLabPoints();
-		Ti.API.debug('homeWin 5');
-
-		Titanium.API.debug("session info: " + JSON.stringify(dataAlias.session));
-		var now = parseInt((new Date()).getTime()/1000);
-		if (now - dataAlias.session[0].LastUpdate  <43200){ //12hours
-		}else if (now - dataAlias.session[0].LastUpdate < 129600){ //36 hours
-			newSessionDialog.title = 'Last update ' + timeSinceUpdate + '\nStart a new session?';
-			newSessionDialog.show();
-		}else{
-			//>36 hours since last update, don't ask just start new
-			dataAlias.session = dbAlias.sessions.createNewSession(false);
-		} 
-		Ti.API.debug('homeWin 6');
-		rewriteUpdateLabel();
-		labelCurrentSession.text = 'Session Started\n' + Ti.App.boozerlyzer.dateTimeHelpers.formatDayPlusTime(dataAlias.session[0].StartTime,true);
-		Ti.API.debug('Session ID - ' + dataAlias.session[0].ID);
-		Titanium.App.Properties.setInt('SessionID', dataAlias.session[0].ID);
-		Titanium.App.Properties.setInt('SessionStart',dataAlias.session[0].StartTime/1000);
-		Titanium.App.Properties.setInt('SessionChanged',dataAlias.session[0].LastUpdate/1000);
+		function checkLevelUp(){
+			
+		}
 		
+		//every 10th call it tries to send data to boozerlyzer.net
+		function autoSendData(){
+			commAlias.sendData.autoSync();
+		}
+		
+		Ti.API.debug('homeWin 4');
+		Ti.API.debug('homeWin 5');
+		Ti.API.debug('homeWin 6');
+		
+		rewriteSessionInfo();
+		rewriteLabPoints();
 		loadedonce = true;
 		Ti.API.debug('homeWin 7');
 
 		homeWin.refresh = function(){
 			Ti.API.debug('homeWin refresh');
-    	    rewriteUpdateLabel();		
+    	    rewriteSessionInfo();		
 			rewriteLabPoints();
+			autoSendData();
 		}
 				
 		homeWin.addEventListener('focused', function(){
