@@ -6,11 +6,14 @@
  * Copyright yourbrainondrugs.net 2011
  */
 
-(function() {
-	
-	
-    var win = Titanium.UI.currentWindow;  
-    var commAlias = Ti.App.boozerlyzer.comm;
+exports.createApplicationWindow =function(){
+	var win = Titanium.UI.createWindow({
+		title:'YBOB Boozerlyzer',
+		backgroundImage:'/images/smallcornercup.png',
+		modal:true,
+		orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
+	});	
+    var commAlias = Boozerlyzer.comm;
       
 	var username = Titanium.UI.createTextField({  
 	    color:'#336699',  
@@ -124,7 +127,7 @@
     });
     buttonSyncNow.addEventListener('click', function(){
 		commAlias.sendData.sync();
-		var updateTime = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(Titanium.App.Properties.getInt('LastSentTime', 0));
+		var updateTime = Boozerlyzer.dateTimeHelpers.prettyDate(Titanium.App.Properties.getInt('LastSentTime', 0));
 		labelLastSync.text = 'Last sync with server - ID('+ Titanium.App.Properties.getInt('LastSentID', 0) +') ' +  updateTime;
 	});
     win.add(buttonSyncNow);
@@ -143,4 +146,5 @@
     });
     win.add(checkAutoSync);
     
-})();
+	return win;
+};

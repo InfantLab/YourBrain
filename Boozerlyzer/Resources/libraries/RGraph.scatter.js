@@ -1180,7 +1180,7 @@
     
     
     /**
-    * Draws an optional lineTi.App.boozerlyzer.db.connecting the tick marks.
+    * Draws an optional lineBoozerlyzer.db.connecting the tick marks.
     * 
     * @param i The index of the dataset to use
     */

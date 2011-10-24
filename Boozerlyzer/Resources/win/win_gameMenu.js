@@ -20,10 +20,17 @@
  * 
  * Copyright 2011 YourBrainonDrugs.net
  */
-(function() {
+// (function() {
+
+var dbAlias = Boozerlyzer.db;
 	
-	var win = Titanium.UI.currentWindow;
-	var dbAlias = Titanium.App.boozerlyzer.db;
+exports.createApplicationWindow = function(){
+	var win = Titanium.UI.createWindow({
+		title:'YBOB Boozerlyzer',
+		backgroundImage:'/images/smallcornercup.png',
+		modal:true,
+		orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
+	});
 	if (Titanium.App.Properties.getBool('MateMode',false)){
 		win.backgroundImage = '/images/smallcornercup.matemode.png';
 	}else{
@@ -31,8 +38,9 @@
 	}
 	var winHome = win.Home;
 	//include the menu choices	
-	Ti.include('/ui/menu.js');
-	var menu = menus;
+	// Ti.include('/ui/menu.js');
+	// var menu = menus;
+	var menu = require('/ui/menu');
 	//need to give it specific help for this screen
 	menu.setHelpMessage("Click on game icon to start the game.");
 
@@ -47,7 +55,14 @@
 	var imgleft = [60,180,300,60,180,300];
 	var iconSize = 94;
 	var gameImgUrls = ['/icons/teddy_bears.png','/icons/Memory.png','/icons/numberStroop.png','/icons/Ice.png','/icons/emotionalwords.png','/icons/feelings.png'];
-	var gameWinUrls = ['/win/win_gameStatLearn.js','/win/win_gameMemory.js','/win/win_gameStroop.js','/win/win_gameWords.js','/win/win_gameWords.js','/win/win_gameWords.js'];
+//	var gameWinUrls = ['/win/win_gameStatLearn.js','/win/win_gameMemory.js','/win/win_gameStroop.js','/win/win_gameWords.js','/win/win_gameWords.js','/win/win_gameWords.js'];
+	var gameWin = [];
+	gameWin[0] = require('/win/win_gameStatLearn');
+	gameWin[1] = require('/win/win_gameMemory');
+	gameWin[2] = require('/win/win_gameStroop');
+	gameWin[3] = require('/win/win_gameWords');
+	gameWin[4] = require('/win/win_gameWords');
+	gameWin[5] = require('/win/win_gameWords');
 	
 	//this code just needs to be called once for this window
 	function setUpOnce(){ 
@@ -67,15 +82,16 @@
 			gameViews[idx].add(gameIcons[idx]);
 			gameIcons[idx].addEventListener('click',function(e){
 				var which = parseInt(e.source.idx,10);
-				Ti.API.debug('winurl -' + gameWinUrls[which] );
-				var winplay = Titanium.UI.createWindow({ modal:true,
-					url:gameWinUrls[which],
-					title:gameNames[which],
-					backgroundImage:'/images/smallcornercup.png',
-					orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT],  //Landscape mode only
-					gameType:gameTypes[which],
-					numRounds:numRounds[which]
-					});
+				// Ti.API.debug('winurl -' + gameWinUrls[which] );
+				// var winplay = Titanium.UI.createWindow({ modal:true,
+					// url:gameWinUrls[which],
+					// title:gameNames[which],
+					// backgroundImage:'/images/smallcornercup.png',
+					// orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT],  //Landscape mode only
+					// gameType:gameTypes[which],
+					// numRounds:numRounds[which]
+					// });
+				var winplay = gameWin[which].createApplicationWindow(gameTypes[which],numRounds[which]);
 				winplay.home = winHome; //reference to home
 				winplay.open();
 				//add a callback that will fire when the subwindow is closed 
@@ -107,7 +123,7 @@
 			var lastObj = dbAlias.gameScores.LastPlayed(gameTypes[i]);
 			Ti.API.debug('i, lastObj ' + i + ' ' + JSON.stringify(lastObj));
 			if (lastObj){
-				gameLastPlayedLabels[i].text = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(lastObj[0].LastPlayed);
+				gameLastPlayedLabels[i].text = Boozerlyzer.dateTimeHelpers.prettyDate(lastObj[0].LastPlayed);
 			}
 		}
 	}
@@ -133,17 +149,12 @@
 	//There ought to be a simple way of wrapping this up as a UI element rather than repeating code in 
 	//every win_.js file but i tried it a few ways and i never got it to work.
 	function goHome(){
-		if (Ti.App.boozerlyzer.winHome === undefined || Ti.App.boozerlyzer.winHome === null) {
-			Ti.App.boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
-				url: '/app.js',
-				title: 'Boozerlyzer',
-				backgroundImage: '/images/smallcornercup.png',
-				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
-			});
+		if (Boozerlyzer.winHome === undefined || Boozerlyzer.winHome === null) {
+			Boozerlyzer.winHome = Boozerlyzer.win.home.createApplicationWindow();
 		}
 		win.close();
-		Ti.App.boozerlyzer.winHome.open();
-		Ti.App.boozerlyzer.winHome.refresh();
+		Boozerlyzer.winHome.open();
+		Boozerlyzer.winHome.refresh();
 	}
 	//invisible button to return home over the cup
 	var homeButton = Titanium.UI.createView({
@@ -161,4 +172,7 @@
 	setUpOnce();
 	initialised = true;
 	updateAllGameStats();	
-})();
+	
+	return win;
+};
+// })();

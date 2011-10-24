@@ -9,15 +9,19 @@
  * http://mobile.tutsplus.com/tutorials/appcelerator/titanium-user-authentication-part-1/
  */
 
-(function() {
-	
-	
-    var win = Titanium.UI.currentWindow;  
+exports.createApplicationWindow =function(){
+	var win = Titanium.UI.createWindow({
+		title:'YBOB Boozerlyzer',
+		backgroundImage:'/images/smallcornercup.png',
+		modal:true,
+		orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
+	});	  
     var mLaunchType = win.launchType;
     var helpMessage = "Please register with Boozerlyzer.net.\nAll data are held securely and anonymously.";
 	//include the menu choices	
-	Ti.include('/ui/menu.js');
-	var menu = menus;
+	// Ti.include('/ui/menu.js');
+	// var menu = menus;
+	var menu = require('/ui/menu');
 	//need to give it specific help for this screen
 	menu.setHelpMessage(helpMessage);
 	
@@ -132,7 +136,7 @@
             });
             alertDialog.addEventListener('click',function(e)  
             {  
-                Ti.App.boozerlyzer.winHome.open();
+                Boozerlyzer.winHome.open();
                 win.close(); 
             });    
             alertDialog.show();  
@@ -181,4 +185,5 @@
 		alert(helpMessage);
 	}  
     
-})();
+	return win;
+};

@@ -4,15 +4,15 @@
  * @author caspar
  */
 
-var menus = (function(){	
+// var menus = (function(){	
 	
 //add the menu.
 var activity = Ti.Android.currentActivity;
 var helpMessage;
-/**
- * Public API
- */
-var api = {};
+// /**
+ // * Public API
+ // */
+// var api = {};
 
 activity.onCreateOptionsMenu = function( event ) {
 	  var menu = event.menu
@@ -55,15 +55,15 @@ activity.onCreateOptionsMenu = function( event ) {
 	        alertDialog.show();
 		});
 		menuSettings.addEventListener( 'click', function( event ) {
-		    api.showSettingsScreen();
+		    exports.showSettingsScreen();
 		  });		  
 	};
 
 
-	api.setHelpMessage = function(helpString){helpMessage = helpString;};
+	exports.setHelpMessage = function(helpString){helpMessage = helpString;};
 	
 	//show the settings tabs
-	api.showSettingsScreen = function(){		
+	exports.showSettingsScreen = function(){		
 		var winpers = Titanium.UI.createWindow({ 
 			exitOnClose: false,
 			modal:true,
@@ -75,5 +75,5 @@ activity.onCreateOptionsMenu = function( event ) {
 		winpers.home = Ti.UI.CurrentWindow; //reference to home
 		winpers.open();
 	};
-	return api;
-}());
+	// return api;
+// }());

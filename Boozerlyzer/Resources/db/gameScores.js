@@ -9,7 +9,7 @@
 	
 	//create an object which will be our public API
 	//Note we need to use an alias of db variable (for some reason that i don't fully understand)
-	var dbAlias = Ti.App.boozerlyzer.db;
+	var dbAlias = Boozerlyzer.db;
 	dbAlias.gameScores = {};
 		
 	//maintain a database connection we can use
@@ -237,17 +237,17 @@
 		var now = parseInt((new Date()).getTime()/1000,10);
 		var SessionID = Titanium.App.Properties.getInt('SessionID');
 		//load up the drink data so we can work out current blood alcohol
-		if (!Ti.App.boozerlyzer.data.AllDrinks || Ti.App.boozerlyzer.data.AllDrinks === null || Ti.App.boozerlyzer.data.AllDrinks === 'undefined'){
-			Ti.App.boozerlyzer.data.AllDrinks = dbAlias.doseageLog.getAllSessionData(SessionID);
+		if (!Boozerlyzer.data.AllDrinks || Boozerlyzer.data.AllDrinks === null || Boozerlyzer.data.AllDrinks === 'undefined'){
+			Boozerlyzer.data.AllDrinks = dbAlias.doseageLog.getAllSessionData(SessionID);
 		}
-		if (!Ti.App.boozerlyzer.data.personalInfo || Ti.App.boozerlyzer.data.personalInfo === null || Ti.App.boozerlyzer.data.personalInfo === 'undefined'){
-			Ti.App.boozerlyzer.data.personalInfo = dbAlias.personalInfo.getData();
+		if (!Boozerlyzer.data.personalInfo || Boozerlyzer.data.personalInfo === null || Boozerlyzer.data.personalInfo === 'undefined'){
+			Boozerlyzer.data.personalInfo = dbAlias.personalInfo.getData();
 		}
-		if (!Ti.App.boozerlyzer.data.currentEmotions || Ti.App.boozerlyzer.data.currentEmotions === null || Ti.App.boozerlyzer.data.currentEmotions === 'undefined'){
-			Ti.App.boozerlyzer.data.currentEmotions = dbAlias.selfAssessment.getLatestData(Titanium.App.Properties.getInt('SessionID'));
+		if (!Boozerlyzer.data.currentEmotions || Boozerlyzer.data.currentEmotions === null || Boozerlyzer.data.currentEmotions === 'undefined'){
+			Boozerlyzer.data.currentEmotions = dbAlias.selfAssessment.getLatestData(Titanium.App.Properties.getInt('SessionID'));
 		}
-		var drinkVolume_ml = dbAlias.doseageLog.totalDrinkVolume(Ti.App.boozerlyzer.data.AllDrinks); 
-		var currentBloodAlcohol = Ti.App.boozerlyzer.analysis.BAC.calculate(now, Ti.App.boozerlyzer.data.AllDrinks,Ti.App.boozerlyzer.data.personalInfo);
+		var drinkVolume_ml = dbAlias.doseageLog.totalDrinkVolume(Boozerlyzer.data.AllDrinks); 
+		var currentBloodAlcohol = Boozerlyzer.analysis.BAC.calculate(now, Boozerlyzer.data.AllDrinks,Boozerlyzer.data.personalInfo);
 
 		dbAlias.gameScores.setupStartSequence();
 
@@ -283,9 +283,9 @@
 								   
 								   drinkVolume_ml,
 								   currentBloodAlcohol,
-								   Ti.App.boozerlyzer.data.currentEmotions[0].Happiness,
-								   Ti.App.boozerlyzer.data.currentEmotions[0].Energy,
-								   Ti.App.boozerlyzer.data.currentEmotions[0].Drunkeness );
+								   Boozerlyzer.data.currentEmotions[0].Happiness,
+								   Boozerlyzer.data.currentEmotions[0].Energy,
+								   Boozerlyzer.data.currentEmotions[0].Drunkeness );
 			Titanium.API.debug('gameScores result, rowsAffected = ' +dbAlias.conn.rowsAffected);
 			Titanium.API.debug('gameScores result, lastInsertRowId = ' +dbAlias.conn.lastInsertRowId);	
 			

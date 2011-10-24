@@ -4,31 +4,38 @@
  * A modal user interface element for informing users that they have
  * graduated to the next level. Show them their new icon, 
  * 
- * We wrap all code in a self-calling function to protect the global namespace.
- * 
- * TODO - potential this could be passed a gameScores data structure.
+ * we use the commonJS require approach to wrap up this modul
  * Copyright yourbrainondrugs.net 2011
  */
 
 
-var levelUpDialog = (function(){
+// var levelUpDialog = (function(){
+	var win; //reference to calling window
 	var e, callbackOnClose, isControlsCreated = false;
 	var containerViewOpenAnimation, containerViewCloseAnimation;
 	var coverViewOpenAnimation, coverViewCloseAnimation;
 	var containerView, coverView;
-	var gameNameLabel,scoreLabel,speedBonusLabel,coordBonusLabel,inhibitBonusLabel,labPointsLabel;
-	var messageLabel, gameIcon, labPointsIcon, iconSize = 78;
-	var api = {};
+	var oldLevel = 0,newLevel=0;
+	var congratulationsLabel,labPointsLabel,goodHamsterIcon,trophyIcon,oldLevelLabel,newLevelLabel;
+	var messageLabel, oldLevelIcon, rightArrowIcon, newLevelIcon;
+	var levels = [0, 50, 100,200, 500, 1000, 1500,2000,3000,4000, 5000, 10000, 15000, 20000];
+	var levelImgs = ['/icons/hamsterwheel.png', '/icons/astronaut_256.png','/icons/hamsterwheel.png', '/icons/astronaut_256.png','/icons/hamsterwheel.png', '/icons/astronaut_256.png','/icons/hamsterwheel.png', '/icons/astronaut_256.png','/icons/hamsterwheel.png'];
+	var levelLabels =['Primordial Soup','Virus','E.coli', 'Yeast','C.Elegans','Fruit Fly','Zebra Fish','Mouse','Pigeon','Rat',"Pavlov's Dog","Chimpanzee","Homo Sapiens","Cyborg"];
+	var wikiBaseUrl = 'http://en.wikipedia.org/wiki/';
+	var wikiLevelItem = ['Stanley_Miller','Tobacco_mosaic_virus', 'E.Coli','Yeast', 'Caenorhabditis_elegans','Drosophila_melanogaster','Zebra_Fish','Laboratory_mice#Laboratory_mice','Pigeon_intelligence','Laboratory_rat','Ivan_Pavlov','Chimapanzee','Homo_Sapiens', 'Cyborg'];
+	var imgSizeSmall = 56, imgSizeLarge = 78;
+	var exports = {};
 	
 	function createControls(){
 		if (isControlsCreated) {return;}
+		Ti.API.debug('levelUpDialog - createControls');
 
 		coverViewOpenAnimation = Ti.UI.createAnimation({opacity:0.8});
 		coverViewCloseAnimation = Ti.UI.createAnimation({opacity:0});
 		containerViewOpenAnimation = Ti.UI.createAnimation({bottom:0});
 		containerViewCloseAnimation = Ti.UI.createAnimation({bottom:-251});
 
-		containerView = Ti.UI.createView({
+		containerView = Ti.UI.createView({ 
 			top:'5%',
 			left:'5%',
 			height:'90%',
@@ -37,7 +44,7 @@ var levelUpDialog = (function(){
 		});
 		containerView.addEventListener('click', function(){
 			//e.cancel = true;
-			api.close();
+			exports.close();
 		});		
 		
 		coverView = Ti.UI.createView({
@@ -54,106 +61,121 @@ var levelUpDialog = (function(){
 		// we close this dialog if it is clicked anywhere
 		coverView.addEventListener('click', function(){
 			//e.cancel = true;
-			api.close();
+			exports.close();
 		});		
-		Ti.UI.currentWindow.add(coverView);
+		win.add(coverView);
 
 		// game results
-		gameNameLabel = Ti.UI.createLabel({
-			top:2,
+		congratulationsLabel = Ti.UI.createLabel({
+			top:4,
 			width:'auto',
-			text:'Score',
+			text:'Congratulations',
 			font:{fontSize:28,fontFamily:'Marker Felt',fontWeight:'bold'},
 			textAlign:'center',
-			color:'#911'
+			color:'#FFD700'
 		});
-		scoreLabel = Ti.UI.createLabel({
-			top:40,
+		labPointsLabel = Ti.UI.createLabel({
+			top:48,
 			width:'auto',
 			text:'Score    -   00000 points',
 			font:{fontSize:24,fontFamily:'Marker Felt',fontWeight:'bold'},
 			textAlign:'center',
 			color:'#191'
 		});
-		speedBonusLabel = Ti.UI.createLabel({
-			top:80,
-			width:'auto',
-			text:'Speed Bonus    :      000 points',
-			font:{fontSize:18,fontFamily:'Marker Felt',fontWeight:'bold'},
-			textAlign:'center',
-			color:'#119'
-		});
-		coordBonusLabel = Ti.UI.createLabel({
-			top:120,
-			width:'auto',
-			text:'Coord Bonus    :      000 points',
-			font:{fontSize:18,fontFamily:'Marker Felt',fontWeight:'bold'},
-			textAlign:'center',
-			color:'#119'
-		});
-		inhibitBonusLabel = Ti.UI.createLabel({
-			top:160,
-			width:'auto',
-			text:'Control Bonus    :      000 points',
-			font:{fontSize:18,fontFamily:'Marker Felt',fontWeight:'bold'},
-			textAlign:'center',
-			color:'#119'
-		});
 		messageLabel = Ti.UI.createLabel({
 			top:200,
 			width:'auto',
-			text:'Well played!',
+			text:'Keep up the good work!',
 			font:{fontSize:18,fontFamily:'Helvetic Neue',fontWeight:'italic'},
 			textAlign:'center',
 			color:'#000'		
 		});
-		labPointsLabel = Ti.UI.createLabel({
-			bottom:'7%',
-			right:'45%',
+		goodHamsterIcon = Ti.UI.createImageView({
+			top:'4%',
+			left:'4%',
+			image:'/icons/hamsterwheel.png',
+			height:imgSizeSmall,
+			width:imgSizeSmall
+		});
+		trophyIcon = Ti.UI.createImageView({
+			top:'4%',
+			right:'2%',
+			image:'/icons/Trophy_Gold_256.png',
+			height:imgSizeSmall,
+			width:imgSizeSmall
+		});		
+		oldLevelIcon = Ti.UI.createImageView({
+			bottom:'25%',
+			left:'20%',
+			image:'/icons/hamsterwheel.png',
+			height:imgSizeSmall,
+			width:imgSizeSmall
+		});
+		oldLevelLabel = Ti.UI.createLabel({
+			bottom:'8%',
+			left:'15%',
 			width:'auto',
-			text:'0\n Lab Points',
-			font:{fontSize:22,fontFamily:'Marker Felt',fontWeight:'bold'},
+			text:'Old Level',
+			font:{fontSize:18,fontFamily:'Marker Felt',fontWeight:'bold'},
 			textAlign:'center',
 			color:'cyan'
 		});
-		labPointsIcon = Ti.UI.createImageView({
-			bottom:'6%',
-			right:'25%',
-			image:'/icons/hamsterwheel.png',
-			height:iconSize * 0.8,
-			width:iconSize * 0.8
+		oldLevelLabel.addEventListener('click', function(){
+			Titanium.Platform.openURL(wikiBaseUrl[oldLevel] + wikiLevelItem[oldLevel]);
 		});
-		gameIcon = Ti.UI.createImageView({
-			top:'1%',
-			left:'1%',
-			image:'/icons/hamsterwheel.png',
-			height:iconSize,
-			width:iconSize
+		rightArrowIcon = Ti.UI.createImageView({
+			bottom:'30%',
+			left:'44%',
+			image:'/icons/rightArrow.png',
+			height:imgSizeSmall,
+			width:imgSizeSmall
 		});
-
-		containerView.add(gameNameLabel);
-		containerView.add(scoreLabel);
-		containerView.add(speedBonusLabel);
-		containerView.add(coordBonusLabel);
-		containerView.add(inhibitBonusLabel);
+		newLevelIcon = Ti.UI.createImageView({
+			bottom:'20%',
+			right:'15%',
+			image:'/icons/hamsterwheel.png',
+			height:imgSizeLarge,
+			width:imgSizeLarge
+		});
+		newLevelLabel = Ti.UI.createLabel({
+			bottom:'8%',
+			right:'15%',
+			width:'auto',
+			text:'New level',
+			font:{fontSize:18,fontFamily:'Marker Felt',fontWeight:'bold'},
+			textAlign:'center',
+			color:'cyan'
+		});
+		newLevelLabel.addEventListener('click', function(){
+			Titanium.Platform.openURL(wikiBaseUrl[newLevel] + wikiLevelItem[newLevel]);
+		});
+		containerView.add(congratulationsLabel);
+		containerView.add(goodHamsterIcon);
+		containerView.add(trophyIcon);
 		containerView.add(labPointsLabel);
+		containerView.add(oldLevelLabel);
 		containerView.add(messageLabel);
-		containerView.add(gameIcon);
-		containerView.add(labPointsIcon);
-		Ti.UI.currentWindow.add(containerView);		
+		containerView.add(oldLevelIcon);
+		containerView.add(rightArrowIcon);
+		containerView.add(newLevelIcon);
+		win.add(containerView);		
 		
 		isControlsCreated = true;
 	}
 
 	/**
-	 * Public API
+	 * Public exports
 	 */
-	api.open = function(){	
+	exports.setParent = function (window){
+		win = window;
+	}
+	exports.open = function(){	
+		alert('leveled up');
 		coverView.animate(coverViewOpenAnimation);
 		containerView.animate(containerViewOpenAnimation);
 		containerView.visible = true;
 	};
-	api.close = function(){
+	exports.close = function(){
 		coverView.animate(coverViewCloseAnimation);
 		containerView.animate(containerViewCloseAnimation);
 		containerView.visible = false;
@@ -162,26 +184,31 @@ var levelUpDialog = (function(){
 		}
 	};
 
+	function getLevel(labPoints){
+		var l = 0;
+		while(labPoints>levels[l]){l++;}
+		return l;
+	}
 	/***
-	 * fill the fields with the scores.
+	 * woo hoo, you're helping science
 	 * 
 	 */
-	api.setScores = function(gameName, totalScore, speedBonus, coordBonus,inhibitBonus, labPoints, message,gameIconUrl){
+	exports.levelUp = function(labPoints){
+		newLevel =getLevel(labPoints);
+		oldLevel =newLevel -1;
+		Ti.App.Properties.setInt('NextLevel',levels[newLevel+1]);
 		createControls();
-		gameNameLabel.text = gameName;
-		scoreLabel.text = "Score:      " + Math.round(totalScore) + " points";
-		speedBonusLabel.text = "Speed bonus:     " + Math.round(speedBonus) + " points";
-		coordBonusLabel.text = "Coordination bonus:     " + Math.round(coordBonus) + " points";
-		inhibitBonusLabel.text = "Control Bonus:      " + Math.round(inhibitBonus) + " points";
-		labPointsLabel.text = labPoints + "\n Lab Points";
-		messageLabel.text = message;
-		gameIcon.image = gameIconUrl;
-
+		labPointsLabel.text = "Lab Points:      " + Math.round(labPoints) + " points";
+		//messageLabel.text = message;
+		oldLevelIcon.image = levelImgs[oldLevel];
+		newLevelIcon.image = levelImgs[newLevel];
+		oldLevelLabel.text = levelLabels[oldLevel];
+		newLevelLabel.text = levelLabels[newLevel];
 	};
 
-	api.addEventListener = function(eventName, callback){
+	exports.addEventListener = function(eventName, callback){
 		if (eventName=='close') {callbackOnClose = callback;}
 	};
 
-	return api;
-}());
+	// return exports;
+// }());

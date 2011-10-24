@@ -7,7 +7,7 @@
 (function(){
 
 	//Note we need to use an alias of comm variable (for some reason that i don't fully understand)
-	var commAlias = Ti.App.boozerlyzer.comm;
+	var commAlias = Boozerlyzer.comm;
 	commAlias.sendData = {};
 
 /*
@@ -42,7 +42,7 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		var lastSentID = Titanium.App.Properties.getInt('LastSentID', 0);
 		Ti.API.debug('sendData - lastSentID ' + lastSentID);
 		// build an object containing the data that we should send
-		var dataToSend = Ti.App.boozerlyzer.db.gameScores.GamePlaySummaryforWebserver(null,null,lastSentID);
+		var dataToSend = Boozerlyzer.db.gameScores.GamePlaySummaryforWebserver(null,null,lastSentID);
 		
 		//what is the last row id from this dataset?
 		if (!dataToSend || dataToSend.length===0) {
@@ -141,7 +141,9 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 	 * and if so attempts to send the most recent data.
 	 */
 	commAlias.sendData.autoSync = function(){
-		alert('autoSync');
+		if (Ti.App.Properties.getBool('AutoSync',true)){
+			return;
+		}
 		var count = Ti.App.Properties.getInt('AutoSyncCount', 0);
 		count++;
 		Ti.API.debug('autoSync count ' + count);

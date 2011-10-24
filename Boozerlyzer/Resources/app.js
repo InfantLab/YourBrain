@@ -16,18 +16,18 @@
 
 Ti.API.debug('app main 0');
 //application namespace
-Ti.App.boozerlyzer = {};
-Ti.App.boozerlyzer.win = {};	//windows
-Ti.App.boozerlyzer.db ={};		//database access functions
-Ti.App.boozerlyzer.comm = {};	//network communication functions
-Ti.App.boozerlyzer.analysis = {};//functions that calculate stuff
+var Boozerlyzer = {};
+Boozerlyzer.win = {};	//windows
+Boozerlyzer.db ={};		//database access functions
+Boozerlyzer.comm = {};	//network communication functions
+Boozerlyzer.analysis = {};//functions that calculate stuff
 
 //cached data objects
-Ti.App.boozerlyzer.data ={};	
-Ti.App.boozerlyzer.data.AllDrinks = null;//array of drinks
-Ti.App.boozerlyzer.data.personalInfo = null;//demographic info for this participant
-Ti.App.boozerlyzer.data.standardDrinks = null; //standard drink sizes per country
-Ti.App.boozerlyzer.data.currentEmotions = null; //what are current levels of happiness/energy/drunkeness 
+Boozerlyzer.data ={};	
+Boozerlyzer.data.AllDrinks = null;//array of drinks
+Boozerlyzer.data.personalInfo = null;//demographic info for this participant
+Boozerlyzer.data.standardDrinks = null; //standard drink sizes per country
+Boozerlyzer.data.currentEmotions = null; //what are current levels of happiness/energy/drunkeness 
 
 Ti.include('/analysis/bloodalcohol.js');
 Ti.include('/analysis/maths.js');
@@ -51,9 +51,9 @@ Ti.include('/comm/sendData.js');
 Ti.include('/comm/exportData.js');
 	
 	
-Ti.include('/win/win_main.js'); //construct main screen UI
-var winMain = Ti.App.boozerlyzer.win.main.createApplicationWindow();
-Ti.App.boozerlyzer.winHome = winMain;
+Ti.include('/win/win.js'); 
+var winMain = Boozerlyzer.win.main.createApplicationWindow();
+Boozerlyzer.winHome = winMain;
 	
 var registrationNag = Titanium.App.Properties.getInt('RegistrationNag', 0);
 if (registrationNag < 0){

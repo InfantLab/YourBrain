@@ -30,7 +30,7 @@
 					lastDrinkIdx = d; 
 				}
 			}
-			var bac = Ti.App.boozerlyzer.analysis.BAC.calculate(timePoints[t],drinkData.slice(0,lastDrinkIdx+1),personalInfo);
+			var bac = Boozerlyzer.analysis.BAC.calculate(timePoints[t],drinkData.slice(0,lastDrinkIdx+1),personalInfo);
 			returnData.push({
 				time:timePoints[t],
 				millsAlcohol:totalUnits,

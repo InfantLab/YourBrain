@@ -8,33 +8,36 @@
  * Copyright yourbrainondrugs.net 2011
  */
 
-(function() {
-	try{
 	Ti.API.debug('homeWin 0');
 
 	//Create sub-namespace
-	Ti.App.boozerlyzer.win.main = {};
-	var dbAlias = Ti.App.boozerlyzer.db;
-	var dataAlias = Ti.App.boozerlyzer.data;
-	var commAlias = Ti.App.boozerlyzer.comm;
+//	Boozerlyzer.win.main = {};
+	var dbAlias = Boozerlyzer.db;
+	var dataAlias = Boozerlyzer.data;
+	var commAlias = Boozerlyzer.comm;
 	
 	//Create the main application window
-	Ti.App.boozerlyzer.win.main.createApplicationWindow = function(_args) {
-		//include the menu choices	
-		Ti.include('/ui/menu.js');
-		var menu = menus;
-		//need to give it specific help for this screen
-		menu.setHelpMessage("Click on the icons to add new drinks, launch games, etc.");
-		
-		//reset to main user and MateMode flag.
-		Titanium.App.Properties.setInt('UserID',0);
-		Titanium.App.Properties.setBool('MateMode',false); 
+	exports.createApplicationWindow = function(_args) {
 		//the start screen for the YBOB boozerlyzer
 		var homeWin = Titanium.UI.createWindow({
 			exitOnClose: true,
 			title:'YBOB Boozerlyzer',
 			backgroundImage:'/images/smallcornercup.png'
 		});
+		
+		var levelUpDialog = require('/ui/levelUpDialog');
+		//Ti.include('/ui/levelUpDialog.js');
+		//include the menu choices	
+		// var menu = menus;
+		var menu = require('/ui/menu');
+		
+		//need to give it specific help for this screen
+		menu.setHelpMessage("Click on the icons to add new drinks, launch games, etc.");
+		
+		//reset to main user and MateMode flag.
+		Titanium.App.Properties.setInt('UserID',0);
+		Titanium.App.Properties.setBool('MateMode',false); 
+
 			
 		homeWin.orientationModes = [
 		    Titanium.UI.LANDSCAPE_LEFT,
@@ -162,15 +165,12 @@
 			left:optionsLeft + 100
 		});
 		newbugreport.addEventListener('click',function(){
-			var newtripwin = Titanium.UI.createWindow({ modal:true,
-				url:'/win/win_tripreport.js',
-				title:'How are you feeling?',
-				backgroundImage:'/images/smallcornercup.png',
-				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT],  //Landscape mode only
-				type: 'BUG' //need this because same code used for trip report screen
-				});
-			newtripwin.home = homeWin; //reference to home
-			newtripwin.open();
+			if (!Boozerlyzer.winBugReport ){
+				Boozerlyzer.winBugReport = Boozerlyzer.win.tripReport.createApplicationWindow('BUG');
+				Boozerlyzer.winBugReport.home = homeWin; //reference to home
+				Boozerlyzer.winBugReport.addEventListener('close',homeWin.refresh)			
+			}
+			Boozerlyzer.winBugReport.open();
 		});
 		homeWin.add(newbugreport);	
 			
@@ -183,14 +183,12 @@
 		});
 		
 		report.addEventListener('click',function(){
-			var winreport = Titanium.UI.createWindow({ modal:true,
-				url:'/win/win_charts.js',
-				title:'Personal Information',
-				backgroundImage:'/images/smallcornercup.png',
-				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
-				});
-			winreport.home = homeWin; //reference to home
-			winreport.open();
+			if (!Boozerlyzer.winCharts ){
+				Boozerlyzer.winCharts = Boozerlyzer.win.charts.createApplicationWindow();
+				Boozerlyzer.winCharts.home = homeWin; //reference to home
+				Boozerlyzer.winCharts.addEventListener('close',homeWin.refresh);				
+			}
+			Boozerlyzer.winCharts.open();
 		});
 		homeWin.add(report);
 		
@@ -203,14 +201,12 @@
 			left:leftNewDrinks
 		});
 		newdrinks.addEventListener('click',function(){
-			var newdosewin = Titanium.UI.createWindow({ modal:true,
-				url:'/win/win_drinks.js',
-				title:'What have you had to drink?',
-				backgroundImage:'/images/smallcornercup.png',
-				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
-			});
-			newdosewin.home = homeWin; //reference to home
-			newdosewin.open();
+			if (!Boozerlyzer.winDrinks ){
+				Boozerlyzer.winDrinks = Boozerlyzer.win.drinks.createApplicationWindow();
+				Boozerlyzer.winDrinks.home = homeWin; //reference to home
+				Boozerlyzer.winDrinks.addEventListener('close',homeWin.refresh);				
+			}
+			Boozerlyzer.winDrinks.open();
 		});
 		homeWin.add(newdrinks);
 		
@@ -222,15 +218,12 @@
 			left:leftEmotion
 		});
 		newmood.addEventListener('click',function(){
-			var newmoodwin = Titanium.UI.createWindow({ 
-			modal:true,
-				url:'/win/win_emotion.js',
-				title:'How are you feeling?',
-				backgroundImage:'/images/smallcornercup.png',
-				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
-				});
-			newmoodwin.home = homeWin; //reference to home
-			newmoodwin.open();
+			if (!Boozerlyzer.winEmotion){
+				Boozerlyzer.winEmotion = Boozerlyzer.win.emotion.createApplicationWindow();
+				Boozerlyzer.winEmotion.home = homeWin; //reference to home
+				Boozerlyzer.winEmotion.addEventListener('close',homeWin.refresh);			
+			}
+			Boozerlyzer.winEmotion.open();
 		});
 		homeWin.add(newmood);
 		
@@ -242,16 +235,13 @@
 			left:leftTripReport
 		});
 		newtripreport.addEventListener('click',function(){
-			var newtripwin = Titanium.UI.createWindow({ modal:true,
-				url:'/win/win_tripreport.js',
-				title:'How are you feeling?',
-				backgroundImage:'/images/smallcornercup.png',
-				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT],  //Landscape mode only
-				type: 'TripReport' //need this because same code used for bug report screen
-
-				});
-			newtripwin.home = homeWin; //reference to home
-			newtripwin.open();
+			if (!Boozerlyzer.winTripReport){
+				Boozerlyzer.winTripReport = Boozerlyzer.win.tripReport.createApplicationWindow('TRIP');
+				Boozerlyzer.winTripReport.home = homeWin; //reference to home
+				Boozerlyzer.winTripReport.addEventListener('close',homeWin.refresh);
+			}
+			Boozerlyzer.winTripReport.open();
+			win.close();
 		});
 		homeWin.add(newtripreport);
 		
@@ -263,14 +253,12 @@
 			left:leftGame
 		});
 		newgame.addEventListener('click',function(){
-			var winplay = Titanium.UI.createWindow({ modal:true,
-				url:'/win/win_gameMenu.js',
-				title:'YBOB Game Menu',
-				backgroundImage:'/images/smallcornercup.png',
-				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
-				});
-			winplay.home = homeWin; //reference to home
-			winplay.open();
+			if (!Boozerlyzer.winGameMenu || Boozerlyzer.winGameMenu === undefined){
+				Boozerlyzer.winGameMenu = Boozerlyzer.win.gameMenu.createApplicationWindow();
+				Boozerlyzer.winGameMenu.home = homeWin; //reference to home
+				Boozerlyzer.winGameMenu.addEventListener('close',homeWin.refresh);
+			}
+			Boozerlyzer.winGameMenu.open();
 		});
 		homeWin.add(newgame);
 
@@ -304,6 +292,9 @@
 				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 			});
 			highscoreswin.home = homeWin; //reference to home
+			//add a close event listener which will refresh homescreen
+			//see http://developer.appcelerator.com/question/49971/giving-parent-window-focus-after-modal-closes
+			highscoreswin.addEventListener('close',homeWin.refresh);
 			highscoreswin.open();
 		});
 		homeWin.add(highScores);
@@ -367,9 +358,9 @@
 		function rewriteSessionInfo(){
 			//function that writes the latest update times for this session.			
 			Ti.API.debug('rewriteSessionInfo');
-			var timeSinceUpdate = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(dataAlias.session[0].LastUpdate);
+			var timeSinceUpdate = Boozerlyzer.dateTimeHelpers.prettyDate(dataAlias.session[0].LastUpdate);
 			labelLastUpdate.text = 'Last activity\n' + timeSinceUpdate;
-			labelCurrentSession.text = 'Session Started\n' + Ti.App.boozerlyzer.dateTimeHelpers.formatDayPlusTime(dataAlias.session[0].StartTime,true);
+			labelCurrentSession.text = 'Session Started\n' + Boozerlyzer.dateTimeHelpers.formatDayPlusTime(dataAlias.session[0].StartTime,true);
 			Ti.API.debug('Session ID - ' + dataAlias.session[0].ID);
 			Titanium.App.Properties.setInt('SessionID', dataAlias.session[0].ID);
 			Titanium.App.Properties.setInt('SessionStart',dataAlias.session[0].StartTime/1000);
@@ -389,7 +380,7 @@
 			if (e.index === 0) {
 				dataAlias.session = dbAlias.sessions.createNewSession(false);
 				rewriteSessionInfo();
-				labelCurrentSession.text = 'Session Started\n' + Ti.App.boozerlyzer.daterewriteSessionInfoHelpers.formatDayPlusTime(dataAlias.session[0].StartTime,true);
+				labelCurrentSession.text = 'Session Started\n' + Boozerlyzer.daterewriteSessionInfoHelpers.formatDayPlusTime(dataAlias.session[0].StartTime,true);
 			}
 		});
 
@@ -409,7 +400,7 @@
 		if (now - dataAlias.session[0].LastUpdate  <43200){ 
 			//less than 12hours - carry on 
 		}else if (now - dataAlias.session[0].LastUpdate < 129600){ //36 hours
-			var timeSinceUpdate = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(dataAlias.session[0].LastUpdate);
+			var timeSinceUpdate = Boozerlyzer.dateTimeHelpers.prettyDate(dataAlias.session[0].LastUpdate);
 			newSessionDialog.title = 'Last update ' + timeSinceUpdate + '\nStart a new session?';
 			newSessionDialog.show();
 		}else{
@@ -432,35 +423,49 @@
 		}
 		
 		function checkLevelUp(){
-			
+			if (!loadedonce) {return;}
+			Ti.API.debug('checkLevelUp');
+			var labPoints = dbAlias.gameScores.TotalPoints(); 
+			Ti.API.debug(JSON.stringify(labPoints));
+			if (labPoints[0].Total > Ti.App.Properties.getInt('NextLevel',50)){
+				Ti.API.debug('checkLevelUp2');
+				levelUpDialog.setParent(homeWin);
+				levelUpDialog.levelUp( labPoints[0].Total);
+				levelUpDialog.addEventListener('close', function(e){
+					setTimeout(function(){
+						dialogOpen = false;
+						alert('leveled up');
+					}, 1000);
+				});
+				levelUpDialog.open();
+			}
 		}
+
 		
 		//every 10th call it tries to send data to boozerlyzer.net
 		function autoSendData(){
 			commAlias.sendData.autoSync();
 		}
 		
-		Ti.API.debug('homeWin 4');
-		Ti.API.debug('homeWin 5');
-		Ti.API.debug('homeWin 6');
-		
-		rewriteSessionInfo();
-		rewriteLabPoints();
+		homeWin.refresh = function(){
+			Ti.API.debug('homeWin refresh');
+			rewriteSessionInfo();		
+			rewriteLabPoints();
+			checkLevelUp();
+			autoSendData();
+		};
+
+		homeWin.refresh();
 		loadedonce = true;
 		Ti.API.debug('homeWin 7');
 
-		homeWin.refresh = function(){
-			Ti.API.debug('homeWin refresh');
-    	    rewriteSessionInfo();		
-			rewriteLabPoints();
-			autoSendData();
-		}
+		
 				
 		homeWin.addEventListener('focused', function(){
 			Ti.API.debug('homeWin got focus');
 			if (loadedonce){
 				//this code only runs when we reload this page
-				Ti.App.boozerlyzer.win.main.refresh();
+				Boozerlyzer.win.main.refresh();
 			}
 		});
 		Ti.API.debug('homeWin 0');
@@ -468,8 +473,8 @@
 
 
 	};
-	} catch (err) {
-	    Ti.API.error(err);
-	}
-})();
+	// } catch (err) {
+	    // Ti.API.error(err);
+	// }
+// })();
 

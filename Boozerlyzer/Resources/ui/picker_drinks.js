@@ -42,7 +42,7 @@
  * @author Bart Lewis <bartlewis@gmail.com>
  */
 
-var optionPickerDialog = (function(){
+// var optionPickerDialog = (function(){
 	var e, callbackOnClose, isControlsCreated = false;
 	var containerViewOpenAnimation, containerViewCloseAnimation, cancelButton;
 	var doneButton, flexibleSpace, toolbar, picker, containerView, coverView;
@@ -77,7 +77,7 @@ var optionPickerDialog = (function(){
 		});
 		cancelButton.addEventListener('click', function(){
 			e.cancel = true;
-			api.close();
+			exports.close();
 		});
 
 		doneButton =  Ti.UI.createButton({
@@ -98,7 +98,7 @@ var optionPickerDialog = (function(){
 			e.doseDescription = picker.getSelectedRow(1).doseDesc;
 			Ti.API.debug('Done button dose Desc' + e.doseDescription);
 			e.NumDoses = picker.getSelectedRow(2).title;
-			api.close();
+			exports.close();
 		});
 
 		Ti.API.debug('win width ' + Ti.UI.currentWindow.width);
@@ -127,17 +127,17 @@ var optionPickerDialog = (function(){
 		isControlsCreated = true;
 	}
 
-	/**
-	 * Public API
-	 */
-	var api = {};
+	// /**
+	 // * Public API
+	 // */
+	// var api = {};
 
-	api.getPicker = function(){return picker;};
-	api.open = function(){	
+	exports.getPicker = function(){return picker;};
+	exports.open = function(){	
 		coverView.animate(coverViewOpenAnimation);
 		containerView.animate(containerViewOpenAnimation);
 	};
-	api.close = function(){
+	exports.close = function(){
 		coverView.animate(coverViewCloseAnimation);
 		containerView.animate(containerViewCloseAnimation);
 
@@ -152,7 +152,7 @@ var optionPickerDialog = (function(){
 	 * @DrinkType - String description of drinks are we choosing from
 	 * @prevChoice - [optional] three integer array of previous row choices
 	 */
-	api.setDrinkType = function(DrinkType,prevChoices){
+	exports.setDrinkType = function(DrinkType,prevChoices){
 		var i = 0, len, property, row, rows = [], dataLength = DrinkType.length;
 
 		createControls();
@@ -175,7 +175,7 @@ var optionPickerDialog = (function(){
 
 		Ti.API.debug('picker_drinks set data 3');		
 		//Retrieve the strengths for this DrugType
-		strengths = Ti.App.boozerlyzer.db.drugDoses.getStrengths(DrinkType);
+		strengths = Boozerlyzer.db.drugDoses.getStrengths(DrinkType);
 		//Fill the appropriate column	
 		var columnStrength = Ti.UI.createPickerColumn();
 		for (i=0;i<strengths.length;i++){
@@ -188,7 +188,7 @@ var optionPickerDialog = (function(){
 		}
 
 		//Retrieve the strengths for this DrugType
-		sizes = Ti.App.boozerlyzer.db.drugDoses.getSizes(DrinkType);
+		sizes = Boozerlyzer.db.drugDoses.getSizes(DrinkType);
 		//Fill the appropriate column	
 		var columnSize = Ti.UI.createPickerColumn();
 		// Loop with each data instance to create picker rows
@@ -217,9 +217,9 @@ var optionPickerDialog = (function(){
 
 	};
 
-	api.addEventListener = function(eventName, callback){
+	exports.addEventListener = function(eventName, callback){
 		if (eventName=='close') {callbackOnClose = callback;}
 	};
 
-	return api;
-}());
+	// return api;
+// }());

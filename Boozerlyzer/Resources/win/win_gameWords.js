@@ -18,9 +18,16 @@
  * Copyright yourbrainondrugs.net 2011
  */
 
-(function() {
-				
-	var win = Titanium.UI.currentWindow;
+exports.createApplicationWindow =function(type,rounds){
+	var numRounds = rounds;
+	var MgameType = type;
+
+	var win = Titanium.UI.createWindow({
+		title:'YBOB Boozerlyzer',
+		backgroundImage:'/images/smallcornercup.png',
+		modal:true,
+		orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
+	});	
 	if (Titanium.App.Properties.getBool('MateMode',false)){
 		win.backgroundImage = '/images/smallcornercup.matemode.png';
 	}else{
@@ -30,8 +37,9 @@
 	var winHome = win.Home;
 	Ti.include('/analysis/maths.js');
 	//include the menu choices	
-	Ti.include('/ui/menu.js');
-	var menu = menus;
+	// Ti.include('/ui/menu.js');
+	// var menu = menus;
+	var menu = require('/ui/menu');
 	//need to give it specific help for this screen
 	menu.setHelpMessage("Simply pick which ever words you like best. There are no right answers.");
 
@@ -41,8 +49,6 @@
 	var gameStarted = false, initialised = false, paused = false;
 	var wordList = '', loc = [], wordChoices = [], answers = [];	//array to store the selected answers.
 	var answersChoiceTime = [], answersCoordination = [];
-	var numRounds = Titanium.UI.currentWindow.numRounds;
-	var MgameType = Titanium.UI.currentWindow.gameType;
 	var labelChosenWords;
 	var imageXyAxes, imageYAxisUp, imageYAxisDown, imageXAxisLeft, imageXAxisRight;
 	var imageMisc, arousal = 0,	valence = 0;	
@@ -158,8 +164,8 @@
 		//
 		// Cleanup and return home
 		win.addEventListener('android:back', function(e) {
-			if (Ti.App.boozerlyzer.winHome === undefined || Ti.App.boozerlyzer.winHome === null) {
-				Ti.App.boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
+			if (Boozerlyzer.winHome === undefined || Boozerlyzer.winHome === null) {
+				Boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
 					url: '/app.js',
 					title: 'Boozerlyzer',
 					backgroundImage: '/images/smallcornercup.png',
@@ -167,8 +173,8 @@
 				});
 			}
 			win.close();
-			Ti.App.boozerlyzer.winHome.open();
-			Ti.App.boozerlyzer.winHome.refresh();
+			Boozerlyzer.winHome.open();
+			Boozerlyzer.winHome.refresh();
 		
 		});
 		
@@ -255,13 +261,13 @@
 		Ti.API.debug('MgameType' + MgameType);
 		switch (MgameType) {	
 			case 'Pissonyms':
-				Ti.App.boozerlyzer.db.pissonyms.Chosen(choice);
+				Boozerlyzer.db.pissonyms.Chosen(choice);
 				break;
 			case 'Emotions':
-				Ti.App.boozerlyzer.db.emotionWords.Chosen(choice);
+				Boozerlyzer.db.emotionWords.Chosen(choice);
 				break;
 			case 'WeFeelFine':
-				Ti.App.boozerlyzer.db.weFeelFine.Chosen(choice);
+				Boozerlyzer.db.weFeelFine.Chosen(choice);
 				break;
 			default:
 			//do nothing	
@@ -308,7 +314,7 @@
 							UserID:Titanium.App.Properties.getInt('UserID'),
 							LabPoints:5	
 						}];
-		Ti.App.boozerlyzer.db.gameScores.SaveResult(gameSaveData);
+		Boozerlyzer.db.gameScores.SaveResult(gameSaveData);
 	}
 	/**
 	 * Here we display list of chosen words and 
@@ -381,17 +387,17 @@
 		
 		wordChoices = [];
 		if (MgameType === 'Emotions') {
-			var emotionwords = Ti.App.boozerlyzer.db.emotionWords.selectNRandomRows(6);
+			var emotionwords = Boozerlyzer.db.emotionWords.selectNRandomRows(6);
 			for (var i = 0; i < 6; i++) {
 				wordChoices[i] = emotionwords[i].EmotionalWord;
 			}
 		} else if (MgameType === 'WeFeelFine') {
-			var wefeelfinewords = Ti.App.boozerlyzer.db.weFeelFine.selectNRandomRows(6);
+			var wefeelfinewords = Boozerlyzer.db.weFeelFine.selectNRandomRows(6);
 			for (var i = 0; i < 6; i++) {
 				wordChoices[i] = wefeelfinewords[i].Feeling;
 			}
 		} else if (MgameType === 'Pissonyms') {
-			var pissonymList = Ti.App.boozerlyzer.db.pissonyms.selectNRandomRows(6);
+			var pissonymList = Boozerlyzer.db.pissonyms.selectNRandomRows(6);
 			for (var i = 0; i < 6; i++) {
 				wordChoices[i] = pissonymList[i].Pissonym;
 			}
@@ -429,7 +435,7 @@
 		var arousal = 0;
 		var valence = 0;
 		for (var i =0; i< answers.length; i++){
-			var info = Ti.App.boozerlyzer.db.emotionWords.getWordInfo(answers[i]);
+			var info = Boozerlyzer.db.emotionWords.getWordInfo(answers[i]);
 			Ti.API.debug('emotion word info ' + JSON.stringify(info));
 			if (info!==null){
 				arousal += info[0].ArousalMean;
@@ -481,7 +487,7 @@
 	function pissonymFeedback(){
 		var drunkscore = 0, coordscore = 0, speedscore = 0, count = 0;
 		for (var i =0; i< answers.length; i++){
-			var info = Ti.App.boozerlyzer.db.pissonyms.getWordInfo(answers[i]);
+			var info = Boozerlyzer.db.pissonyms.getWordInfo(answers[i]);
 			Ti.API.debug('pissonym  info ' + JSON.stringify(info));
 			if (info!==null && info.length===1){
 				count++;
@@ -505,4 +511,5 @@
 	setUpOnce();
 	paused = false;
 
-})();
+	return win;
+};

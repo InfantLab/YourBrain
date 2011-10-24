@@ -11,14 +11,15 @@
  */
 
 
-var scoresDialog = (function(){
+// var scoresDialog = (function(){
+
 	var e, callbackOnClose, isControlsCreated = false;
 	var containerViewOpenAnimation, containerViewCloseAnimation;
 	var coverViewOpenAnimation, coverViewCloseAnimation;
 	var containerView, coverView;
 	var gameNameLabel,scoreLabel,speedBonusLabel,coordBonusLabel,inhibitBonusLabel,labPointsLabel;
 	var messageLabel, gameIcon, labPointsIcon, iconSize = 78;
-	var api = {};
+	// var api = {};
 	
 	function createControls(){
 		if (isControlsCreated) {return;}
@@ -37,7 +38,7 @@ var scoresDialog = (function(){
 		});
 		containerView.addEventListener('click', function(){
 			//e.cancel = true;
-			api.close();
+			exports.close();
 		});		
 		
 		coverView = Ti.UI.createView({
@@ -148,12 +149,12 @@ var scoresDialog = (function(){
 	/**
 	 * Public API
 	 */
-	api.open = function(){	
+	exports.open = function(){	
 		coverView.animate(coverViewOpenAnimation);
 		containerView.animate(containerViewOpenAnimation);
 		containerView.visible = true;
 	};
-	api.close = function(){
+	exports.close = function(){
 		coverView.animate(coverViewCloseAnimation);
 		containerView.animate(containerViewCloseAnimation);
 		containerView.visible = false;
@@ -166,7 +167,7 @@ var scoresDialog = (function(){
 	 * fill the fields with the scores.
 	 * 
 	 */
-	api.setScores = function(gameName, totalScore, speedBonus, coordBonus,inhibitBonus, labPoints, message,gameIconUrl){
+	exports.setScores = function(gameName, totalScore, speedBonus, coordBonus,inhibitBonus, labPoints, message,gameIconUrl){
 		createControls();
 		gameNameLabel.text = gameName;
 		scoreLabel.text = "Score:      " + Math.round(totalScore) + " points";
@@ -179,9 +180,9 @@ var scoresDialog = (function(){
 
 	};
 
-	api.addEventListener = function(eventName, callback){
+	exports.addEventListener = function(eventName, callback){
 		if (eventName=='close') {callbackOnClose = callback;}
 	};
 
-	return api;
-}());
+	// return api;
+// }());

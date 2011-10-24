@@ -12,7 +12,7 @@
 
  (function(){
 
-	Ti.App.boozerlyzer.analysis.BAC = {};
+	Boozerlyzer.analysis.BAC = {};
 	/**
 	 * Blood Alcohol calculation, returns an array of values for each row of doseageData.
 	 * If personalInfo is unavailable we use an average default value. 
@@ -21,7 +21,7 @@
 	 * @param {Object} doseageData
 	 * @param {Object} personalInfo
 	 */
-	Ti.App.boozerlyzer.analysis.BAC.calculate = function (timeStamp,doseageData,personalInfo) {
+	Boozerlyzer.analysis.BAC.calculate = function (timeStamp,doseageData,personalInfo) {
 		
 		Ti.API.debug('BACCalculate timeStamp -' + timeStamp);
 		Ti.API.debug('BACCalculate doseageData -' + JSON.stringify(doseageData));
@@ -145,7 +145,7 @@
 	 * function to return a text colour and warning message for this level of BAC
 	 * @param BAC - passed as a percentage
 	 * */
-	Ti.App.boozerlyzer.analysis.BAC.levels = function (BAC){
+	Boozerlyzer.analysis.BAC.levels = function (BAC){
 		// http://celtickane.com/projects/blood-alcohol-content-bac-calculator/
 		if (BAC < 0.03){
 			return {color:'#00FF00', //green

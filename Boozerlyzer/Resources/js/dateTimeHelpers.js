@@ -9,9 +9,9 @@
  */
 
 (function() {
-	Ti.App.boozerlyzer.dateTimeHelpers = {};
+	Boozerlyzer.dateTimeHelpers = {};
 
-	Ti.App.boozerlyzer.dateTimeHelpers.formatDate = function(dateVal)
+	Boozerlyzer.dateTimeHelpers.formatDate = function(dateVal)
 	{
 		var date = new Date(dateVal*1000);
 		var datestr = date.getMonth()+'/'+date.getDate()+'/'+date.getFullYear();
@@ -34,7 +34,7 @@
 		return x;
 	}
 	
-	Ti.App.boozerlyzer.dateTimeHelpers.formatTime =function(timeVal,flagShowMins, flag24h){
+	Boozerlyzer.dateTimeHelpers.formatTime =function(timeVal,flagShowMins, flag24h){
 		var date = new Date(timeVal*1000);
 		var h = date.getHours();
 		var m = date.getMinutes();
@@ -55,7 +55,7 @@
 	}
 
 	//create an N element array of equally spaced times 
-	Ti.App.boozerlyzer.dateTimeHelpers.timeIntervals =function(N, startTime, endTime){
+	Boozerlyzer.dateTimeHelpers.timeIntervals =function(N, startTime, endTime){
 		if (N < 2){return startTime;}
 		var fullInterval = endTime - startTime;
 		var stepInterval = fullInterval / (N-1);
@@ -68,7 +68,7 @@
 	}
 	
 	// creates a 'pretty date' from a unix time stamp
-	Ti.App.boozerlyzer.dateTimeHelpers.prettyDate =function(time){
+	Boozerlyzer.dateTimeHelpers.prettyDate =function(time){
 		var monthname = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 		var date = new Date(time*1000),
 		diff = (((new Date()).getTime() - date.getTime()) / 1000),
@@ -103,21 +103,21 @@
 		day_diff < 31 && Math.ceil( day_diff / 7 ) + " week" + ((Math.ceil( day_diff / 7 )) == 1 ? "" : "s") + " ago";
 	}
 	
-	Ti.App.boozerlyzer.dateTimeHelpers.formatDay = function(time){
+	Boozerlyzer.dateTimeHelpers.formatDay = function(time){
 		var dayName = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri','Sat'];
 		var date = new Date(time*1000);
 		return dayName[date.getDay()];
 	}
 	
-	Ti.App.boozerlyzer.dateTimeHelpers.formatDayPlusTime = function(time, flag24h){
-		return Ti.App.boozerlyzer.dateTimeHelpers.formatDay(time) + ' ' + Ti.App.boozerlyzer.dateTimeHelpers.formatTime(time,true,flag24h);
+	Boozerlyzer.dateTimeHelpers.formatDayPlusTime = function(time, flag24h){
+		return Boozerlyzer.dateTimeHelpers.formatDay(time) + ' ' + Boozerlyzer.dateTimeHelpers.formatTime(time,true,flag24h);
 	}
 	
-	Ti.App.boozerlyzer.dateTimeHelpers.timeLabel = function(timeValue, flagShowDay, flagShowMins, flag24h){
+	Boozerlyzer.dateTimeHelpers.timeLabel = function(timeValue, flagShowDay, flagShowMins, flag24h){
 		//a function that will return a hour l
 		var time = formatTime(timeValue, flagShowMins, flag24h);
 		if(flagShowDay){
-			time += '\n' + Ti.App.boozerlyzer.dateTimeHelpers.formatDay(time)	
+			time += '\n' + Boozerlyzer.dateTimeHelpers.formatDay(time)	
 		}
 		return time;
 	}

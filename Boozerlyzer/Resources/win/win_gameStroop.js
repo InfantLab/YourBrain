@@ -17,17 +17,23 @@
  * Copyright yourbrainondrugs.net 2011
  */
 
-(function() {
-			
-	var win = Titanium.UI.currentWindow;
+exports.createApplicationWindow =function(){
+	var win = Titanium.UI.createWindow({
+		title:'YBOB Boozerlyzer',
+		backgroundImage:'/images/smallcornercup.png',
+		modal:true,
+		orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
+	});	
 	if (Titanium.App.Properties.getBool('MateMode',false)){
 		win.backgroundImage = '/images/smallcornercup.matemode.png';
 	}else{
 		win.backgroundImage = '/images/smallcornercup.png';
 	}
+	var scoresDialog = require('/ui/scoresDialog');
 	//include the menu choices	
-	Ti.include('/ui/menu.js');
-	var menu = menus;
+	// Ti.include('/ui/menu.js');
+	// var menu = menus;
+	var menu = require('/ui/menu');
 	//need to give it specific help for this screen
 	menu.setHelpMessage("On each step tap on the NUMERICALLY larger value and try to ignore the font-size. Points are awarded for speed, coordination & avoiding errors.");
 
@@ -174,9 +180,9 @@
 		//
 		// Cleanup and return home
 		win.addEventListener('android:back', function(e) {
-			if (Ti.App.boozerlyzer.winHome === undefined 
-				 || Ti.App.boozerlyzer.winHome === null) {
-				Ti.App.boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
+			if (Boozerlyzer.winHome === undefined 
+				 || Boozerlyzer.winHome === null) {
+				Boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
 					url: '/app.js',
 					title: 'Boozerlyzer',
 					backgroundImage: '/images/smallcornercup.png',
@@ -184,8 +190,8 @@
 				})
 			}
 			win.close();
-			Ti.App.boozerlyzer.winHome.open();
-			Ti.App.boozerlyzer.winHome.refresh();
+			Boozerlyzer.winHome.open();
+			Boozerlyzer.winHome.refresh();
 		});
 		initialised = true;
 	}
@@ -359,7 +365,8 @@
 		loc[0].visible = false;
 		loc[1].visible = false;
 		labelGameMessage.visible = true;
-		labelGameMessage.text = 'Final Score: ' + Math.floor(points+inhibitbonus+coordbonus+speedbonus) + '\nGame Over';
+		labelGameMessage.text = 'Game Over';
+		//labelGameMessage.text = 'Final Score: ' + Math.floor(points+inhibitbonus+coordbonus+speedbonus) + '\nGame Over';
 		count = 0;
 		missCount = 0;
 		setTimeout(function(){// do something 
@@ -368,7 +375,24 @@
 			},
 			6000);
 		gameEndSaveScores();
+		scoresDialog.setScores( 'Number Stroop', 
+						Math.floor(points+inhibitbonus+coordbonus+speedbonus),
+						speedbonus, 
+						coordbonus,
+						inhibitbonus,
+						5,
+						"",
+						'/icons/numberStroop.png' );
+		scoresDialog.open();
 	}
+	scoresDialog.addEventListener('close', function(e){
+		setTimeout(function(){
+			dialogOpen = false;
+			labelGameMessage.visible = true;
+			labelGameMessage.text = 'Double click to start game';
+		}, 1000);
+	});
+	
 	function gameEndSaveScores(){
 		var gameSaveData = [{Game: 'NumberStroop',
 							GameVersion:1,
@@ -387,11 +411,12 @@
 							UserID:Titanium.App.Properties.getInt('UserID'),
 							LabPoints:5		
 						}];
-		Ti.App.boozerlyzer.db.gameScores.SaveResult(gameSaveData);
+		Boozerlyzer.db.gameScores.SaveResult(gameSaveData);
 	}
 
 	
 	setUpOnce();
 	var paused = false;
 	
-})();
+	return win;
+};

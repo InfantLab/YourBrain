@@ -1,7 +1,7 @@
 /**
  * @author Caspar Addyman
  * 
- * helper functions forTi.App.boozerlyzer.db.connecting to the yourbrainondrugs.net site
+ * helper functions forBoozerlyzer.db.connecting to the yourbrainondrugs.net site
  * 
  */
 
@@ -9,7 +9,7 @@
 (function(){
 	
 	//Note we need to use an alias of comm variable (for some reason that i don't fully understand)
-	var commAlias = Ti.App.boozerlyzer.comm;
+	var commAlias = Boozerlyzer.comm;
 	//create an object which will be our public API
 	commAlias.ybodnet = {};
 	commAlias.ybodnet.username = 'test';

@@ -15,7 +15,7 @@
 
 	//create an object which will be our public API
 	//Note we need to use an alias of db variable (for some reason that i don't fully understand)
-	var dbAlias = Ti.App.boozerlyzer.db;
+	var dbAlias = Boozerlyzer.db;
 	dbAlias.doseageLog = {};
 	dbAlias.doseageLog.columnNames = ['ID','DoseDescription','DoseageStart','DoseageChanged','ExitCode','SessionID','Volume','Strength','Volume','StandardUnits','DrugType','TotalUnits','NumDoses'];
 	

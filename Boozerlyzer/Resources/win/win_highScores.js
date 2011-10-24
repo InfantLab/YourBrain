@@ -8,11 +8,13 @@
  * Copyright yourbrainondrugs.net 2011
  */
 
-(function() {
-
-	// The main screen for  results
-	var win = Titanium.UI.currentWindow;
-	
+exports.createApplicationWindow =function(){
+	var win = Titanium.UI.createWindow({
+		title:'YBOB Boozerlyzer',
+		backgroundImage:'/images/smallcornercup.png',
+		modal:true,
+		orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
+	});	
 	//layout variables
 	var sizeScoreIcon = 48,	sizeIcons = 66, selectedGameIdx = 0;	
 	var subtypes = ['Total', 'Speed', 'Coordination', 'Accuracy','Alcohol'];
@@ -155,7 +157,7 @@
 	function populateHighScores(){
 		tv.data = [];
 		headerLabel.text = gameNames[selectedGameIdx];
-		var thisGameHighScores = Ti.App.boozerlyzer.db.gameScores.HighScores(gameTypes[selectedGameIdx],10);
+		var thisGameHighScores = Boozerlyzer.db.gameScores.HighScores(gameTypes[selectedGameIdx],10);
 		
 		var len = thisGameHighScores.length;
 		
@@ -187,17 +189,12 @@
 	//There ought to be a simple way of wrapping this up as a UI element rather than repeating code in 
 	//every win_.js file but i tried it a few ways and i never got it to work.
 	function goHome(){
-		if (Ti.App.boozerlyzer.winHome === undefined || Ti.App.boozerlyzer.winHome === null) {
-			Ti.App.boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
-				url: '/app.js',
-				title: 'Boozerlyzer',
-				backgroundImage: '/images/smallcornercup.png',
-				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
-			});
+		if (Boozerlyzer.winHome === undefined || Boozerlyzer.winHome === null) {
+			Boozerlyzer.winHome = Boozerlyzer.win.main.createApplicationWindow();
 		}
 		win.close();
-		Ti.App.boozerlyzer.winHome.open();
-		Ti.App.boozerlyzer.winHome.refresh();
+		Boozerlyzer.winHome.open();
+		Boozerlyzer.winHome.refresh();
 	}
 	//invisible button to return home over the cup
 	var homeButton = Titanium.UI.createView({
@@ -211,4 +208,5 @@
 	homeButton.addEventListener('click',goHome);
 	// Cleanup and return home
 	win.addEventListener('android:back', goHome);
-})();
+	return win;
+};

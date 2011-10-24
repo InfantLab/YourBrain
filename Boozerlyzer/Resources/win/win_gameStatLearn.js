@@ -18,17 +18,25 @@
  * Copyright yourbrainondrugs.net 2011
  */
 
-(function() {
+// (function() {
 
-	var win = Titanium.UI.currentWindow;
+exports.createApplicationWindow =function(){
+	var win = Titanium.UI.createWindow({
+		title:'YBOB Boozerlyzer',
+		backgroundImage:'/images/smallcornercup.png',
+		modal:true,
+		orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
+	});	
 	if (Titanium.App.Properties.getBool('MateMode',false)){
 		win.backgroundImage = '/images/smallcornercup.matemode.png';
 	}else{
 		win.backgroundImage = '/images/smallcornercup.png';
 	}
-	Ti.include('/ui/scoresDialog.js');
-	Ti.include('/ui/menu.js'); 	//include the menu choices	
-	var menu = menus;
+	var scoresDialog = require('/ui/scoresDialog');
+	//include the menu choices	
+	// Ti.include('/ui/menu.js');
+	// var menu = menus;
+	var menu = require('/ui/menu');
 	//need to give it specific help for this screen
 	menu.setHelpMessage("Tap on the animals as fast as they appear. But if animal is upside down, tap as far away from it as possible. Points are awarded for speed, coordination & avoiding errors.");
 
@@ -169,7 +177,6 @@
 						"",
 						'/icons/teddy_bears.png' );
 		scoresDialog.open();
-
 	}
 	scoresDialog.addEventListener('close', function(e){
 		setTimeout(function(){
@@ -407,15 +414,15 @@
 							UserID:Titanium.App.Properties.getInt('UserID'),
 							LabPoints:5
 						}];
-		Ti.App.boozerlyzer.db.gameScores.SaveResult(gameSaveData);
+		Boozerlyzer.db.gameScores.SaveResult(gameSaveData);
 	}
 	
 	//
 	// Cleanup and return home
 	win.addEventListener('android:back', function(e) {
-		if (Ti.App.boozerlyzer.winHome === undefined 
-			 || Ti.App.boozerlyzer.winHome === null) {
-			Ti.App.boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
+		if (Boozerlyzer.winHome === undefined 
+			 || Boozerlyzer.winHome === null) {
+			Boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
 				url: '/app.js',
 				title: 'Boozerlyzer',
 				backgroundImage: '/images/smallcornercup.png',
@@ -423,7 +430,8 @@
 			})
 		}
 		win.close();
-		Ti.App.boozerlyzer.winHome.open();
-		Ti.App.boozerlyzer.winHome.refresh();
+		Boozerlyzer.winHome.open();
 	});
-})();
+	return win;
+};
+// })();

@@ -14,7 +14,7 @@
 	
 	//create an object which will be our public API
 	//need an alias for some reason i don't understand
-	var dbAlias = Ti.App.boozerlyzer.db;
+	var dbAlias = Boozerlyzer.db;
 	dbAlias.alcoholStandardDrinks = {};
 	
 	//maintain a database connection we can use

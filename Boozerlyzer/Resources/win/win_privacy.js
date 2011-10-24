@@ -6,17 +6,22 @@
  * Copyright yourbrainondrugs.net 2011
  */
 
-(function() {
-	
-	var win = Titanium.UI.currentWindow;
+exports.createApplicationWindow =function(){
+	var win = Titanium.UI.createWindow({
+		title:'YBOB Boozerlyzer',
+		backgroundImage:'/images/smallcornercup.png',
+		modal:true,
+		orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
+	});	
 	var winHome = win.home;
 	
 	var mLaunchType = win.launchType;
 	var helpMessage = "Please indicate your preferred level of privacy.\nClick the buttons to change settings.";
 	
 	//include the menu choices	
-	Ti.include('/ui/menu.js');
-	var menu = menus;
+	// Ti.include('/ui/menu.js');
+	// var menu = menus;
+	var menu = require('/ui/menu');
 	//need to give it specific help for this screen
 	menu.setHelpMessage(helpMessage);
 
@@ -133,13 +138,13 @@
 		// db.close();
 
 		// //quick fix		
-		// varTi.App.boozerlyzer.db.conn = Titanium.Database.install('ybob.db','ybob');
-		// //Ti.App.boozerlyzer.db.conn.execute('UPDATE GameScores set UserID = 0 ');
-		// //Ti.App.boozerlyzer.db.conn.execute('ALTER TABLE "main"."GameScores" ADD COLUMN "GameSteps" INTEGER');
-		//Ti.App.boozerlyzer.db.conn.execute('ALTER TABLE "main"."GameScores" ADD COLUMN "Alcohol_ml" NUMERIC');
-		//Ti.App.boozerlyzer.db.conn.execute('ALTER TABLE "main"."GameScores" ADD COLUMN "BloodAlcoholConc" NUMERIC');
-		//Ti.App.boozerlyzer.db.conn.close();
-		// //Ti.App.boozerlyzer.db.conn.execute('ALTER TABLE "main"."GameScores" ADD COLUMN "GameSteps" INTEGER');
+		// varBoozerlyzer.db.conn = Titanium.Database.install('ybob.db','ybob');
+		// //Boozerlyzer.db.conn.execute('UPDATE GameScores set UserID = 0 ');
+		// //Boozerlyzer.db.conn.execute('ALTER TABLE "main"."GameScores" ADD COLUMN "GameSteps" INTEGER');
+		//Boozerlyzer.db.conn.execute('ALTER TABLE "main"."GameScores" ADD COLUMN "Alcohol_ml" NUMERIC');
+		//Boozerlyzer.db.conn.execute('ALTER TABLE "main"."GameScores" ADD COLUMN "BloodAlcoholConc" NUMERIC');
+		//Boozerlyzer.db.conn.close();
+		// //Boozerlyzer.db.conn.execute('ALTER TABLE "main"."GameScores" ADD COLUMN "GameSteps" INTEGER');
 		
 	});
 	win.add(debug);
@@ -170,22 +175,18 @@
 	});
 	exportData.addEventListener('click',function()
 	{
-		Ti.App.boozerlyzer.comm.exportData.exportTabFile();
+		Boozerlyzer.comm.exportData.exportTabFile();
 	});	
 	win.add(exportData);
 		
 	// Cleanup and return home
 	win.addEventListener('android:back', function(e) {
-		if (Ti.App.boozerlyzer.winHome === undefined  || Ti.App.boozerlyzer.winHome === null) {
-			Ti.App.boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
-				url: '/app.js',
-				title: 'Boozerlyzer',
-				backgroundImage: '/images/smallcornercup.png',
-				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
-			});
+		if (Boozerlyzer.winHome === undefined || Boozerlyzer.winHome === null) {
+			Boozerlyzer.winHome = Boozerlyzer.win.main.createApplicationWindow();
 		}
 		win.close();
-		Ti.App.boozerlyzer.winHome.open();
+		Boozerlyzer.winHome.open();
+		Boozerlyzer.winHome.refresh();
 	});
 	
 	if (mLaunchType==="Welcome"){
@@ -196,4 +197,5 @@
 		});
 		alertDialog.show();
 	}
-})();
+	return win;
+};

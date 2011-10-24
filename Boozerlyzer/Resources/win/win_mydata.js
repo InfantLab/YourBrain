@@ -6,9 +6,13 @@
  * Copyright yourbrainondrugs.net 2011
  */
 
-(function() {
-	
-	var win = Titanium.UI.currentWindow;
+exports.createApplicationWindow =function(){
+	var win = Titanium.UI.createWindow({
+		title:'YBOB Boozerlyzer',
+		backgroundImage:'/images/smallcornercup.png',
+		modal:true,
+		orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
+	});	
 	// create tab group
 	var tabGroup = Titanium.UI.createTabGroup({id:'tabGroupMyData'});
 	var mLaunchType = win.launchType;
@@ -93,14 +97,14 @@
 	
 	
 	function returnToMainScreen(){
-		if (Ti.App.boozerlyzer.winHome === undefined || Ti.App.boozerlyzer.winHome === null) {
-			// Ti.App.boozerlyzer.winHome = Ti.App.boozerlyzer.win.main.createApplicationWindow();
-			var winMain = Ti.App.boozerlyzer.win.main.createApplicationWindow();
-			Ti.App.boozerlyzer.winHome = winMain;
+		if (Boozerlyzer.winHome === undefined || Boozerlyzer.winHome === null) {
+			// Boozerlyzer.winHome = Boozerlyzer.win.main.createApplicationWindow();
+			var winMain = Boozerlyzer.win.main.createApplicationWindow();
+			Boozerlyzer.winHome = winMain;
 
 		}
 		win.close();
-		Ti.App.boozerlyzer.winHome.open();
+		Boozerlyzer.winHome.open();
 	}
 	
 
@@ -110,4 +114,5 @@
 		returnToMainScreen();
 	});
 	
-})();
+	return win;
+};

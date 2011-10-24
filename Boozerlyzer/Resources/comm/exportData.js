@@ -8,7 +8,7 @@
 (function(){
 
 	//Note we need to use an alias of comm variable (for some reason that i don't fully understand)
-	var commAlias = Ti.App.boozerlyzer.comm;
+	var commAlias = Boozerlyzer.comm;
 	commAlias.exportData = {};
 
 	/*
@@ -56,7 +56,7 @@
 		var outfile = Titanium.Filesystem.getFile(dataDir.nativePath,'gameScores.dat');
 
 		//get data from elsewhere
-		var data = Ti.App.boozerlyzer.db.gameScores.GamePlaySummary(null,null,0);
+		var data = Boozerlyzer.db.gameScores.GamePlaySummary(null,null,0);
 		//what is the last row id from this dataset?
 		if (!data || data.length===0) {
 			Ti.API.error('writeCSV: no data to send; play some games first!');
@@ -139,7 +139,7 @@
 
 		//get data from elsewhere
 		var now =  parseInt((new Date()).getTime()/1000,10);
-		var data = Ti.App.boozerlyzer.db.doseageLog.getTimeRangeData(0,now);
+		var data = Boozerlyzer.db.doseageLog.getTimeRangeData(0,now);
 		//what is the last row id from this dataset?
 		if (!data || data.length===0) {
 			Ti.API.error('writeDrinkData: no data to send; drink something first!');

@@ -6,14 +6,20 @@
  * Copyright yourbrainondrugs.net 2011
  */
 
-(function() {
-	
-	var win = Titanium.UI.currentWindow;
+exports.createApplicationWindow =function(type){
+	var win = Titanium.UI.createWindow({
+		title:'YBOB Boozerlyzer',
+		backgroundImage:'/images/smallcornercup.png',
+		modal:true,
+		orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
+	});	
 	var winOpened = parseInt((new Date()).getTime()/1000,10);
-	var reportType = Titanium.UI.currentWindow.type;
+	var reportType = type;
 	//include the menu choices	
-	Ti.include('/ui/menu.js');
-	var menu = menus;
+	//include the menu choices	
+	// Ti.include('/ui/menu.js');
+	// var menu = menus;
+	var menu = require('/ui/menu');
 	
 	var choices = ['Main Menu','Add drinks','Feelings','Game Menu', 'Raccoon Hunt', 'Memory Game', 'Number Stroop', 'Pissonyms', 'Emotional Words', 'We Feel Fine', 'High Scores', 'Graphs','Personal Info', 'Log on & Security', 'Other..'];
 
@@ -24,9 +30,9 @@
 	var SessionID = Titanium.App.Properties.getInt('SessionID');
 	
 	//most recent emotion values for this session
-	var currentTripReport = Ti.App.boozerlyzer.db.tripReports.getLatestData(SessionID);
+	var currentTripReport = Boozerlyzer.db.tripReports.getLatestData(SessionID);
 	if (currentTripReport === null || currentTripReport === false){
-		currentTripReport = Ti.App.boozerlyzer.db.tripReports.newReport();
+		currentTripReport = Boozerlyzer.db.tripReports.newReport();
 	}
 	Titanium.API.debug(JSON.stringify(currentTripReport));
 	
@@ -57,7 +63,7 @@
 		currentTripReport[0].Content = tripContent.value;
 	});
 	
-	var updated = Ti.App.boozerlyzer.dateTimeHelpers.prettyDate(currentTripReport[0].ReportChanged);
+	var updated = Boozerlyzer.dateTimeHelpers.prettyDate(currentTripReport[0].ReportChanged);
 	var lastchangedLabel = Ti.UI.createLabel({
 		text:'Last Updated\n' + updated,
 		top:topChangedLabel,
@@ -91,7 +97,7 @@
 							UserID:Titanium.App.Properties.getInt('UserID'),
 							LabPoints:2		
 						}];
-		Ti.App.boozerlyzer.db.gameScores.SaveResult(gameSaveData);
+		Boozerlyzer.db.gameScores.SaveResult(gameSaveData);
 	}
 	
 	// SAVE BUTTON	
@@ -106,8 +112,8 @@
 	win.add(save);
 	
 	save.addEventListener('click',function(){
-		Ti.App.boozerlyzer.db.sessions.Updated(SessionID);
-		Ti.App.boozerlyzer.db.tripReports.setData(currentTripReport);
+		Boozerlyzer.db.sessions.Updated(SessionID);
+		Boozerlyzer.db.tripReports.setData(currentTripReport);
 		win.close();
 	});	
 	
@@ -158,13 +164,10 @@
 		left:leftFirst
 	});
 	newdrinks.addEventListener('click',function(){
-		var newdosewin = Titanium.UI.createWindow({ modal:true,
-			url:'/win/win_drinks.js',
-			title:'What have you had to drink?',
-			backgroundImage:'/images/smallcornercup.png'
-		});
-		win.close();
-		newdosewin.open();
+		if (!Boozerlyzer.winDrinks ){
+			Boozerlyzer.winDrinks = Boozerlyzer.win.drinks.createApplicationWindow();
+		}
+		Boozerlyzer.winDrinks.open();
 	});
 	win.add(newdrinks);
 	
@@ -176,14 +179,10 @@
 		left:leftSecond
 	});
 	newmood.addEventListener('click',function(){
-		var newmoodwin = Titanium.UI.createWindow({
-			modal:true,
-			url:'/win/win_emotion.js',
-			title:'How are you feeling?',
-			backgroundImage:'/images/smallcornercup.png'
-		});
-		win.close();
-		newmoodwin.open();
+		if (!Boozerlyzer.winEmotion){
+			Boozerlyzer.winEmotion = Boozerlyzer.win.emotion.createApplicationWindow();
+		}
+		Boozerlyzer.winEmotion.open();
 	});
 	win.add(newmood);
 	
@@ -195,14 +194,10 @@
 		left:leftThird
 	});
 	newgame.addEventListener('click',function(){
-		var winplay = Titanium.UI.createWindow({ 
-			modal:true,
-			url:'/win/win_gameMenu.js',
-			title:'Boozerlyzer Games',
-			backgroundImage:'/images/smallcornercup.png'
-		});
-		winplay.open();
-		win.close();
+		if (!Boozerlyzer.winGameMenu || Boozerlyzer.winGameMenu === undefined){
+			Boozerlyzer.winGameMenu = Boozerlyzer.win.gameMenu.createApplicationWindow();
+		}
+		Boozerlyzer.winGameMenu.open();
 	});
 	win.add(newgame);
 	
@@ -262,16 +257,12 @@
 	//
 	// Cleanup and return home
 	win.addEventListener('android:back', function(e) {
-		if (Ti.App.boozerlyzer.winHome === undefined || Ti.App.boozerlyzer.winHome === null) {
-			Ti.App.boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
-				url: '/app.js',
-				title: 'Boozerlyzer',
-				backgroundImage: '/images/smallcornercup.png',
-				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
-			});
+		if (Boozerlyzer.winHome === undefined || Boozerlyzer.winHome === null) {
+			Boozerlyzer.winHome = Boozerlyzer.win.main.createApplicationWindow();
 		}
 		win.close();
-		Ti.App.boozerlyzer.winHome.open();
-		Ti.App.boozerlyzer.winHome.refresh();
+		Boozerlyzer.winHome.open();
+		Boozerlyzer.winHome.refresh();
 	});
-})();
+	return win;
+};
