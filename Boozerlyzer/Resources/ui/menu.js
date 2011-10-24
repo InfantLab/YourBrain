@@ -64,13 +64,13 @@ activity.onCreateOptionsMenu = function( event ) {
 	
 	//show the settings tabs
 	exports.showSettingsScreen = function(){		
-		if (!Boozerlyzer.tabMyData ){
-			Boozerlyzer.tabMyData = Boozerlyzer.win.myData.createApplicationWindow();
+		if (!Boozerlyzer.winMyData ){
+			Boozerlyzer.winMyData = Boozerlyzer.win.myData.createApplicationWindow();
 			// Boozerlyzer.tabMyData.home = homeWin; //reference to home
 			// Boozerlyzer.tabMyData.addEventListener('close',homeWin.refresh);				
 		}
-		Boozerlyzer.tabMyData.setActiveTab(0);
-		Boozerlyzer.tabMyData.show();
+		// Boozerlyzer.tabMyData.setActiveTab(0);
+		Boozerlyzer.winMyData.open();
 	};
 	// return api;
 // }());

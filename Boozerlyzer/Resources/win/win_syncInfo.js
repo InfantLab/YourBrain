@@ -7,12 +7,12 @@
  */
 
 exports.createApplicationWindow =function(){
-	var win = Titanium.UI.createWindow({
-		title:'YBOB Boozerlyzer',
-		backgroundImage:'/images/smallcornercup.png',
-		modal:true,
-		orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
-	});	
+	var win = Titanium.UI.createView({
+		top:'10%',
+		height:'auto',
+		left:0,
+		width:'100%'
+	});
     var commAlias = Boozerlyzer.comm;
       
 	var username = Titanium.UI.createTextField({  

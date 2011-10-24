@@ -7,13 +7,19 @@
  */
 
 exports.createApplicationWindow =function(launchType){
-	var win = Titanium.UI.createWindow({
-		title:'YBOB Boozerlyzer',
-		backgroundImage:'/images/smallcornercup.png',
-		modal:true,
-		exitOnClose:false,
-		orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
-	});	
+	// var win = Titanium.UI.createWindow({
+		// title:'YBOB Boozerlyzer',
+		// backgroundImage:'/images/smallcornercup.png',
+		// modal:true,
+		// exitOnClose:false,
+		// orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
+	// });	
+	var win = Titanium.UI.createView({
+		top:'10%',
+		height:'auto',
+		left:0,
+		width:'100%'
+	});
 	var winHome = win.home;
 	
 	var mLaunchType;
@@ -64,7 +70,6 @@ exports.createApplicationWindow =function(launchType){
 	// add event listener
 	netPrivacyDialog.addEventListener('click',function(e)
 	{
-	
 		netPrivacyBtn.text = netprivacy[e.index];
 		Titanium.App.Properties.setInt('NetPrivacy',e.index);
 		Titanium.App.Properties.setBool('PrivacySet', true)
@@ -121,55 +126,7 @@ exports.createApplicationWindow =function(launchType){
 	phonePrivacyBtn.addEventListener('click', function(e) {
 		phonePrivacyDialog.show();
 	});
-	
-	var debug = Titanium.UI.createImageView({
-		image:'/icons/Misc.png',
-		height:48,
-		width:48,
-		top:60,
-		right:10
-	});
-	debug.addEventListener('click',function(){
-	
-		// //reinstall the database - gets new structure but wipes ALL data.
-		// var db0 = Titanium.Database.install('/ybob.db','ybob');
-		// db0.remove();
-		// Titanium.API.debug('Removed old YBOB database')
-		// db0.close();
-
-		// var db = Titanium.Database.install('/ybob.db','ybob');
-		// Titanium.API.debug('Installed new YBOB database')
-		// db.close();
-
-		// //quick fix		
-		// varBoozerlyzer.db.conn = Titanium.Database.install('ybob.db','ybob');
-		// //Boozerlyzer.db.conn.execute('UPDATE GameScores set UserID = 0 ');
-		// //Boozerlyzer.db.conn.execute('ALTER TABLE "main"."GameScores" ADD COLUMN "GameSteps" INTEGER');
-		//Boozerlyzer.db.conn.execute('ALTER TABLE "main"."GameScores" ADD COLUMN "Alcohol_ml" NUMERIC');
-		//Boozerlyzer.db.conn.execute('ALTER TABLE "main"."GameScores" ADD COLUMN "BloodAlcoholConc" NUMERIC');
-		//Boozerlyzer.db.conn.close();
-		// //Boozerlyzer.db.conn.execute('ALTER TABLE "main"."GameScores" ADD COLUMN "GameSteps" INTEGER');
 		
-	});
-	win.add(debug);
-	
-	var charttest = Titanium.UI.createImageView({
-		image:'/icons/line_chart.png',
-		height:48,
-		width:48,
-		top:120,
-		right:10
-	});
-	charttest.addEventListener('click',function(){
-		var newchart = Titanium.UI.createWindow({ modal:true,
-			url:'/win/win_results2.js',
-			title:'How are you feeling?',
-			backgroundImage:'/images/smallcornercup.png'
-		});
-		win.close();
-		newchart.open();
-	});
-	win.add(charttest);
 
 	var exportData = Ti.UI.createButton({
 		title:'Export data to SD Card',
@@ -182,16 +139,19 @@ exports.createApplicationWindow =function(launchType){
 		Boozerlyzer.comm.exportData.exportTabFile();
 	});	
 	win.add(exportData);
-		
-	// Cleanup and return home
-	win.addEventListener('android:back', function(e) {
+	
+	function goHome(){
+		Ti.API.debug('win_personal goHome');
 		if (Boozerlyzer.winHome === undefined || Boozerlyzer.winHome === null) {
 			Boozerlyzer.winHome = Boozerlyzer.win.main.createApplicationWindow();
 		}
 		Boozerlyzer.winHome.open();
-		win.close();
+		Boozerlyzer.tabMyData.hide();
 		Boozerlyzer.winHome.refresh();
-	});
+	}	
+	
+	// Cleanup and return home
+	win.addEventListener('android:back', goHome);
 	
 	if (mLaunchType==="Welcome"){
 		var alertDialog = Titanium.UI.createAlertDialog({

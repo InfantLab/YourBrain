@@ -9,14 +9,13 @@
  * http://mobile.tutsplus.com/tutorials/appcelerator/titanium-user-authentication-part-1/
  */
 
-exports.createApplicationWindow =function(launchType){
-	var win = Titanium.UI.createWindow({
-		title:'YBOB Boozerlyzer',
-		backgroundImage:'/images/smallcornercup.png',
-		modal:true,
-	 	exitOnClose:false,
-		orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
-	});	  
+exports.createApplicationWindow =function(launchType){	  
+	var win = Titanium.UI.createView({
+		top:'10%',
+		height:'auto',
+		left:0,
+		width:'100%'
+	});
 	var mLaunchType;
 	if (!launchType){
 		 mLaunchType = launchType

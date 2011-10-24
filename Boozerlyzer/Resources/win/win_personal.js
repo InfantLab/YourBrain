@@ -9,13 +9,19 @@
 
 exports.createApplicationWindow =function(launchType){
 	Ti.API.debug('creating win_personal');
-	var win = Titanium.UI.createWindow({
-		title:'YBOB Boozerlyzer',
-		backgroundImage:'/images/smallcornercup.png',
-		exitOnClose:false,
-		modal:true,
-		orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
-	});	
+	// var win = Titanium.UI.createWindow({
+		// title:'YBOB Boozerlyzer',
+		// backgroundImage:'/images/smallcornercup.png',
+		// exitOnClose:false,
+		// modal:true,
+		// orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
+	// });	
+	var win = Titanium.UI.createView({
+		top:'10%',
+		height:'auto',
+		left:0,
+		width:'100%'
+	});
 	var dbAlias = Boozerlyzer.db;
 	var initialised = false;
 	//layout variables
@@ -329,12 +335,13 @@ exports.createApplicationWindow =function(launchType){
 	
 	
 	function goHome(){
-	if (Boozerlyzer.winHome === undefined || Boozerlyzer.winHome === null) {
+		Ti.API.debug('win_personal goHome');
+		if (Boozerlyzer.winHome === undefined || Boozerlyzer.winHome === null) {
 			Boozerlyzer.winHome = Boozerlyzer.win.home.createApplicationWindow();
 		}
-		win.close();
 		Boozerlyzer.winHome.show();
 		Boozerlyzer.winHome.refresh();
+		Boozerlyzer.winMyData.hide();
 	}
 	
 
@@ -372,8 +379,8 @@ exports.createApplicationWindow =function(launchType){
 			goHome();			
 		}else{
 			Titanium.App.Properties.setInt('RegistrationNag', 10);
-			var mTabGroup = win.tabGroup;
-			mTabGroup.setActiveTab(1);
+			// var mTabGroup = win.tabGroup;
+			// mTabGroup.setActiveTab(1);
 		}
 	});	
 	// CANCEL BUTTON	

@@ -8,83 +8,132 @@
 
 exports.createApplicationWindow =function(launchType){
 	Ti.API.debug('creating win_mydata');
-
-	var tabGroup = Titanium.UI.createTabGroup({id:'tabGroupMyData'});
-	
-	// create tab for personal / demographic data
-	Boozerlyzer.winPers = Boozerlyzer.win.personal.createApplicationWindow(launchType);
-	var tabpers = Titanium.UI.createTab({
-		title:'Personal Data',
-	    window:Boozerlyzer.winPers ,
-	    tabGroup:tabGroup
-	});	
-	// create tab for privacy settings
-	Boozerlyzer.winPrivacy =  Boozerlyzer.win.privacy.createApplicationWindow(launchType);
-	var tabprivacy = Titanium.UI.createTab({
-		title:'Privacy settings',
-	    window:Boozerlyzer.winPrivacy,
-	    tabGroup:tabGroup
+	var win = Titanium.UI.createWindow({
+		title:'YBOB Boozerlyzer',
+		backgroundImage:'/images/smallcornercup.png',
+		modal:true,
+		orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 	});
-	//  add tabs
-	tabGroup.addTab(tabpers);
-	tabGroup.addTab(tabprivacy);
 	
-	if (Ti.App.Properties.getBool('Registered', true)){
-		// create tab for registration settings
-		// only show this tab if needed.
-		Boozerlyzer.winRegister =  Boozerlyzer.win.register.createApplicationWindow();
-		var tabregister = Titanium.UI.createTab({
-			title:'Register',
-		    window:Boozerlyzer.winRegister,
-		    tabGroup:tabGroup
-		});
-		tabGroup.addTab(tabregister);			
-	}else{
-		// create tab for login
-		// only show this tab if needed.
-		Boozerlyzer.winSyncInfo = Titanium.UI.createApplicationWindow();
-		var tabSyncInfo = Titanium.UI.createTab({
-			title:'Sync Info',
-		    window:Boozerlyzer.winSyncInfo,
-		    tabGroup:tabGroup
-		});
-		tabGroup.addTab(tabSyncInfo);	
-	}
+	var viewPersonal = Boozerlyzer.win.personal.createApplicationWindow(launchType);
+	var viewPrivacy = Boozerlyzer.win.privacy.createApplicationWindow(launchType);
+	win.add(viewPersonal);
+	win.add(viewPrivacy);
+	viewPersonal.visible = true;
+	viewPrivacy.visible = false;
 
-	//default show personal details
-	tabGroup.setActiveTab(0); 
-	//exceptions
-	if (!Titanium.App.Properties.getBool('PersonalDetailEntered', false)){
-		//force show personal info tab
-	}else if (!Titanium.App.Properties.getBool('PrivacySet', false)){
-		//show privacy tab
-		tabGroup.setActiveTab(1);
+	var viewComm, buttonCommText;
+	//and do we show registration or sync screen?
+	if (Ti.App.Properties.getBool('Registered', true)){
+		// view registration settings
+		viewComm =  Boozerlyzer.win.register.createApplicationWindow();
+		buttonCommText = 'Register';			
+	}else{
+		viewComm =  Boozerlyzer.win.sync.createApplicationWindow();
+		buttonCommText = 'Sync';			
 	}
-	tabGroup.open();
+	win.add(viewComm);
+	viewComm.visible = false;
+
+	var buttonPersonal = Titanium.UI.createButton({
+	    backgroundColor:'#336699',
+	    top:0,
+	    left:0,
+	    width:'33%',
+	    height:40,
+	    title:'Personal Info',
+	    borderRadius:3,
+	    borderWidth:2,
+	    borderColor:'#111'
+	});
+	buttonPersonal.addEventListener('click', function(){
+		viewPrivacy.hide();
+		viewPersonal.show();
+		viewComm.hide();
+	})
+	win.add(buttonPersonal);
+	
+	var buttonPrivacy = Titanium.UI.createButton({
+	    backgroundColor:'#336699',
+	    top:0,
+	    left:'34%',
+	    width:'33%',
+	    height:40,
+	    title:'Privacy',
+	    borderRadius:3,
+	    borderWidth:2,
+	    borderColor:'#111'
+	});
+	buttonPersonal.addEventListener('click', function(){
+		viewPrivacy.show();
+		viewPersonal.hide();
+		viewComm.hide();
+	})
+	win.add(buttonPrivacy);
+		
+	var buttonComm = Titanium.UI.createButton({
+	    backgroundColor:'#336699',
+	    top:0,
+	    left:'67%',
+	    width:'33%',
+	    height:40, 
+	    title:buttonCommText,
+	    borderRadius:3,
+	    borderWidth:2,
+	    borderColor:'#111'
+	});
+	buttonComm.addEventListener('click', function(){
+		viewPrivacy.hide();
+		viewPersonal.hide();
+		viewComm.show();
+	});
+	win.add(buttonComm);
 	
 	
+	// // create tab for personal / demographic data
+	// Boozerlyzer.winPers = Boozerlyzer.win.personal.createApplicationWindow(launchType);
+	// var tabpers = Titanium.UI.createTab({
+		// title:'Personal Data',
+	    // window:Boozerlyzer.winPers ,
+	    // tabGroup:tabGroup
+	// });	
+	// // create tab for privacy settings
+	// Boozerlyzer.winPrivacy =  Boozerlyzer.win.privacy.createApplicationWindow(launchType);
+	// var tabprivacy = Titanium.UI.createTab({
+		// title:'Privacy settings',
+	    // window:Boozerlyzer.winPrivacy,
+	    // tabGroup:tabGroup
+	// });
+	// //  add tabs
+	// tabGroup.addTab(tabpers);
+	// tabGroup.addTab(tabprivacy);
+// 	
+	
+// 
 	function goHome(){
 		Ti.API.debug('win_mydata - gohome');
 		if (Boozerlyzer.winHome === undefined || Boozerlyzer.winHome === null) {
 			Boozerlyzer.winHome = Boozerlyzer.win.home.createApplicationWindow();
 		}
 		Boozerlyzer.winHome.open();
-		tabGroup.close();
+		Boozerlyzer.winMyData.close();
 		Boozerlyzer.winHome.refresh();
 	}
-	
+
 	//invisible button to return home over the cup
-	var homeButton = Titanium.UI.createView({
-								image:'/icons/transparenticon.png',
-								bottom:0,
-							    left:0,
-							    width:30,
-							    height:60
-						    });
-	tabGroup.add(homeButton);
-	homeButton.addEventListener('click',goHome);
-	// Cleanup and return home
-	tabGroup.addEventListener('android:back', goHome);	
-	tabGroup.addEventListener('close', goHome);
-	return tabGroup;
+	// var homeButton = Titanium.UI.createView({
+								// image:'/icons/transparenticon.png',
+								// bottom:0,
+							    // left:0,
+							    // width:30,
+							    // height:60
+						    // });
+	// tabGroup.add(homeButton);
+	// homeButton.addEventListener('click',goHome);
+	// // Cleanup and return home
+	// tabGroup.addEventListener('android:back', goHome);	
+	// tabGroup.addEventListener('close', goHome);
+	// return tabGroup;
+	
+	return win;
 };
