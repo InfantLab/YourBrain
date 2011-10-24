@@ -206,7 +206,8 @@
 				Boozerlyzer.winDrinks.home = homeWin; //reference to home
 				Boozerlyzer.winDrinks.addEventListener('close',homeWin.refresh);				
 			}
-			Boozerlyzer.winDrinks.open();
+			Boozerlyzer.winDrinks.show();
+			homeWin.hide();
 		});
 		homeWin.add(newdrinks);
 		
@@ -224,6 +225,7 @@
 				Boozerlyzer.winEmotion.addEventListener('close',homeWin.refresh);			
 			}
 			Boozerlyzer.winEmotion.open();
+			homeWin.hide();
 		});
 		homeWin.add(newmood);
 		
@@ -241,7 +243,7 @@
 				Boozerlyzer.winTripReport.addEventListener('close',homeWin.refresh);
 			}
 			Boozerlyzer.winTripReport.open();
-			win.close();
+			homeWin.hide();
 		});
 		homeWin.add(newtripreport);
 		
@@ -285,17 +287,16 @@
 			opacity:0.3
 		});
 		highScores.addEventListener('click',function(){
-			var highscoreswin = Titanium.UI.createWindow({ modal:true,
-				url:'/win/win_highScores.js',
-				title:'What have you had to drink?',
-				backgroundImage:'/images/smallcornercup.png',
-				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
-			});
-			highscoreswin.home = homeWin; //reference to home
 			//add a close event listener which will refresh homescreen
 			//see http://developer.appcelerator.com/question/49971/giving-parent-window-focus-after-modal-closes
 			highscoreswin.addEventListener('close',homeWin.refresh);
 			highscoreswin.open();
+			if (!Boozerlyzer.winHighScores || Boozerlyzer.winHighScores === undefined){
+				Boozerlyzer.winHighScores = Boozerlyzer.win.HighScores.createApplicationWindow();
+				Boozerlyzer.winHighScores.home = homeWin; //reference to home
+				Boozerlyzer.winHighScores.addEventListener('close',homeWin.refresh);
+			}
+			Boozerlyzer.winHighScores.open();
 		});
 		homeWin.add(highScores);
 
@@ -465,7 +466,7 @@
 			Ti.API.debug('homeWin got focus');
 			if (loadedonce){
 				//this code only runs when we reload this page
-				Boozerlyzer.win.main.refresh();
+				homeWin.refresh();
 			}
 		});
 		Ti.API.debug('homeWin 0');

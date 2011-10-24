@@ -55,8 +55,8 @@
 			if (!dataAlias.standardDrinks || dataAlias.standardDrinks === null || dataAlias.standardDrinks ==='undefined'){
 				dataAlias.standardDrinks = dbAlias.alcoholStandardDrinks.get(dataAlias.personalInfo.Country);
 			}
-			var millsPerStandardUnits = dataAlias.standardDrinks[0].MillilitresPerUnit;
 			Ti.API.debug('dataAlias.standardDrinks ' + JSON.stringify(dataAlias.standardDrinks));
+			var millsPerStandardUnits = dataAlias.standardDrinks[0].MillilitresPerUnit;
 			
 			
 			// the Dosesage database object

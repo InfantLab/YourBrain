@@ -6,16 +6,20 @@
  * Copyright yourbrainondrugs.net 2011
  */
 
-exports.createApplicationWindow =function(){
+exports.createApplicationWindow =function(launchType){
 	var win = Titanium.UI.createWindow({
 		title:'YBOB Boozerlyzer',
 		backgroundImage:'/images/smallcornercup.png',
 		modal:true,
+		exitOnClose:false,
 		orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 	});	
 	var winHome = win.home;
 	
-	var mLaunchType = win.launchType;
+	var mLaunchType;
+	if (!launchType){
+		 mLaunchType = launchType
+	}
 	var helpMessage = "Please indicate your preferred level of privacy.\nClick the buttons to change settings.";
 	
 	//include the menu choices	
@@ -184,8 +188,8 @@ exports.createApplicationWindow =function(){
 		if (Boozerlyzer.winHome === undefined || Boozerlyzer.winHome === null) {
 			Boozerlyzer.winHome = Boozerlyzer.win.main.createApplicationWindow();
 		}
-		win.close();
 		Boozerlyzer.winHome.open();
+		win.close();
 		Boozerlyzer.winHome.refresh();
 	});
 	

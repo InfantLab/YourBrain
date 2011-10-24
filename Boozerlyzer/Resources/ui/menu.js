@@ -64,16 +64,13 @@ activity.onCreateOptionsMenu = function( event ) {
 	
 	//show the settings tabs
 	exports.showSettingsScreen = function(){		
-		var winpers = Titanium.UI.createWindow({ 
-			exitOnClose: false,
-			modal:true,
-			url:'/win/win_mydata.js',
-			orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT],  //Landscape mode only
-			title:'Personal and Privacy',
-			backgroundImage:'/images/smallcornercup.png'
-		});
-		winpers.home = Ti.UI.CurrentWindow; //reference to home
-		winpers.open();
+		if (!Boozerlyzer.tabMyData ){
+			Boozerlyzer.tabMyData = Boozerlyzer.win.myData.createApplicationWindow();
+			// Boozerlyzer.tabMyData.home = homeWin; //reference to home
+			// Boozerlyzer.tabMyData.addEventListener('close',homeWin.refresh);				
+		}
+		Boozerlyzer.tabMyData.setActiveTab(0);
+		Boozerlyzer.tabMyData.show();
 	};
 	// return api;
 // }());

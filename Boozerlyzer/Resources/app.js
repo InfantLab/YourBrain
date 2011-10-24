@@ -52,28 +52,18 @@ Ti.include('/comm/exportData.js');
 	
 	
 Ti.include('/win/win.js'); 
-var winMain = Boozerlyzer.win.main.createApplicationWindow();
-Boozerlyzer.winHome = winMain;
+Boozerlyzer.winHome = Boozerlyzer.win.main.createApplicationWindow();
 	
 var registrationNag = Titanium.App.Properties.getInt('RegistrationNag', 0);
 if (registrationNag < 0){
 	//launch main app
-	winMain.open();	
+	Boozerlyzer.winHome.open();	
 }else if (registrationNag === 0){
-	var win_mydata = Titanium.UI.createWindow({ 
-		exitOnClose: false,
-		modal:true,
-		url:'/win/win_mydata.js',
-		orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT],  //Landscape mode only
-		title:'Personal and Privacy',
-		backgroundImage:'/images/smallcornercup.png',
-		launchType:'Welcome',
-		home:winMain
-	});
-	win_mydata.open();
+	Boozerlyzer.tabMyData = Boozerlyzer.win.myData.createApplicationWindow("Welcome");
+	//Boozerlyzer.tabMyData.open();
 }else{
 	//we will nag them eventually.
 	Titanium.App.Properties.setInt('RegistrationNag', registrationNag - 1);
 	//launch main app
-	winMain.open();	
+	Boozerlyzer.winHome.open();	
 }

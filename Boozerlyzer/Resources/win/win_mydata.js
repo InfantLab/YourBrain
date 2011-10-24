@@ -6,79 +6,46 @@
  * Copyright yourbrainondrugs.net 2011
  */
 
-exports.createApplicationWindow =function(){
-	var win = Titanium.UI.createWindow({
-		title:'YBOB Boozerlyzer',
-		backgroundImage:'/images/smallcornercup.png',
-		modal:true,
-		orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
-	});	
-	// create tab group
+exports.createApplicationWindow =function(launchType){
+	Ti.API.debug('creating win_mydata');
+
 	var tabGroup = Titanium.UI.createTabGroup({id:'tabGroupMyData'});
-	var mLaunchType = win.launchType;
-	Titanium.API.debug('mydata - launchType:' + mLaunchType);
 	
-	//
 	// create tab for personal / demographic data
-	//
-	var winpers = Titanium.UI.createWindow({ modal:true,
-		url: '/win/win_personal.js',
-		titleid: 'win_personal',
-		backgroundImage:'/images/smallcornercup.png',
-	    launchType:mLaunchType
-	});
+	Boozerlyzer.winPers = Boozerlyzer.win.personal.createApplicationWindow(launchType);
 	var tabpers = Titanium.UI.createTab({
 		title:'Personal Data',
-	    window:winpers,
+	    window:Boozerlyzer.winPers ,
 	    tabGroup:tabGroup
-	});
-	
-	
+	});	
 	// create tab for privacy settings
-	//
-	var winprivacy = Titanium.UI.createWindow({ modal:true,
-	    url:'/win/win_privacy.js',
-		titleid:'win_privacy',
-		backgroundImage:'/images/smallcornercup.png',
-	    launchType:mLaunchType
-	});
+	Boozerlyzer.winPrivacy =  Boozerlyzer.win.privacy.createApplicationWindow(launchType);
 	var tabprivacy = Titanium.UI.createTab({
 		title:'Privacy settings',
-	    window:winprivacy,
+	    window:Boozerlyzer.winPrivacy,
 	    tabGroup:tabGroup
 	});
-
-	
-	//
 	//  add tabs
-	//
 	tabGroup.addTab(tabpers);
 	tabGroup.addTab(tabprivacy);
+	
 	if (Ti.App.Properties.getBool('Registered', true)){
 		// create tab for registration settings
 		// only show this tab if needed.
-		var winregister = Titanium.UI.createWindow({ modal:true,
-		    url:'/win/win_register.js',
-			titleid:'win_register',
-			backgroundImage:'/images/smallcornercup.png'
-		});
+		Boozerlyzer.winRegister =  Boozerlyzer.win.register.createApplicationWindow();
 		var tabregister = Titanium.UI.createTab({
 			title:'Register',
-		    window:winregister,
+		    window:Boozerlyzer.winRegister,
 		    tabGroup:tabGroup
 		});
 		tabGroup.addTab(tabregister);			
 	}else{
 		// create tab for login
 		// only show this tab if needed.
-		var winSyncInfo = Titanium.UI.createWindow({ modal:true,
-		    url:'/win/win_syncInfo.js',
-			titleid:'win_syncInfo',
-			backgroundImage:'/images/smallcornercup.png'
-		});
+		Boozerlyzer.winSyncInfo = Titanium.UI.createApplicationWindow();
 		var tabSyncInfo = Titanium.UI.createTab({
 			title:'Sync Info',
-		    window:winSyncInfo,
+		    window:Boozerlyzer.winSyncInfo,
 		    tabGroup:tabGroup
 		});
 		tabGroup.addTab(tabSyncInfo);	
@@ -96,23 +63,28 @@ exports.createApplicationWindow =function(){
 	tabGroup.open();
 	
 	
-	function returnToMainScreen(){
+	function goHome(){
+		Ti.API.debug('win_mydata - gohome');
 		if (Boozerlyzer.winHome === undefined || Boozerlyzer.winHome === null) {
-			// Boozerlyzer.winHome = Boozerlyzer.win.main.createApplicationWindow();
-			var winMain = Boozerlyzer.win.main.createApplicationWindow();
-			Boozerlyzer.winHome = winMain;
-
+			Boozerlyzer.winHome = Boozerlyzer.win.home.createApplicationWindow();
 		}
-		win.close();
 		Boozerlyzer.winHome.open();
+		tabGroup.close();
+		Boozerlyzer.winHome.refresh();
 	}
 	
-
+	//invisible button to return home over the cup
+	var homeButton = Titanium.UI.createView({
+								image:'/icons/transparenticon.png',
+								bottom:0,
+							    left:0,
+							    width:30,
+							    height:60
+						    });
+	tabGroup.add(homeButton);
+	homeButton.addEventListener('click',goHome);
 	// Cleanup and return home
-	win.addEventListener('android:back', function(e) {
-		Ti.API.debug('win_mydata android:back');
-		returnToMainScreen();
-	});
-	
-	return win;
+	tabGroup.addEventListener('android:back', goHome);	
+	tabGroup.addEventListener('close', goHome);
+	return tabGroup;
 };

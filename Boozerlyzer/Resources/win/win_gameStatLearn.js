@@ -420,17 +420,12 @@ exports.createApplicationWindow =function(){
 	//
 	// Cleanup and return home
 	win.addEventListener('android:back', function(e) {
-		if (Boozerlyzer.winHome === undefined 
-			 || Boozerlyzer.winHome === null) {
-			Boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
-				url: '/app.js',
-				title: 'Boozerlyzer',
-				backgroundImage: '/images/smallcornercup.png',
-				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
-			})
+		if (Boozerlyzer.winHome === undefined || Boozerlyzer.winHome === null) {
+			Boozerlyzer.winHome = Boozerlyzer.win.home.createApplicationWindow();
 		}
 		win.close();
 		Boozerlyzer.winHome.open();
+		Boozerlyzer.winHome.refresh();
 	});
 	return win;
 };
