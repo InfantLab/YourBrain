@@ -55,7 +55,7 @@
 		// we close this dialog if it is clicked anywhere
 		coverView.addEventListener('click', function(){
 			//e.cancel = true;
-			api.close();
+			exports.close();
 		});		
 		Ti.UI.currentWindow.add(coverView);
 

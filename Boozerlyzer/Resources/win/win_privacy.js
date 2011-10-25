@@ -52,6 +52,7 @@ exports.createApplicationWindow =function(launchType){
 	});
 	win.add(netPrivacyLabel);
 	
+
 	var netPrivacyBtn= Ti.UI.createButton({
 	    title:netprivacy[Titanium.App.Properties.getInt('NetPrivacy',1)],  
 	    top:80,  

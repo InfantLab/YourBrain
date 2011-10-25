@@ -64,7 +64,7 @@ exports.createApplicationWindow =function(launchType){
 	    borderWidth:2,
 	    borderColor:'#111'
 	});
-	buttonPersonal.addEventListener('click', function(){
+	buttonPrivacy.addEventListener('click', function(){
 		viewPrivacy.show();
 		viewPersonal.hide();
 		viewComm.hide();

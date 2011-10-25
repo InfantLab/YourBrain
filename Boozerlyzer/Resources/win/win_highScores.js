@@ -8,6 +8,8 @@
  * Copyright yourbrainondrugs.net 2011
  */
 
+var dbAlias = Boozerlyzer.db;
+
 exports.createApplicationWindow =function(){
 	var win = Titanium.UI.createWindow({
 		title:'YBOB Boozerlyzer',
@@ -157,7 +159,7 @@ exports.createApplicationWindow =function(){
 	function populateHighScores(){
 		tv.data = [];
 		headerLabel.text = gameNames[selectedGameIdx];
-		var thisGameHighScores = Boozerlyzer.db.gameScores.HighScores(gameTypes[selectedGameIdx],10);
+		var thisGameHighScores = dbAlias.gameScores.HighScores(gameTypes[selectedGameIdx],10);
 		
 		var len = thisGameHighScores.length;
 		
@@ -183,7 +185,34 @@ exports.createApplicationWindow =function(){
 
 	populateHighScores();
 	
+	var labPoints = dbAlias.gameScores.TotalPoints(); 
+	var levelUpDialog = require('/ui/levelUpDialog');
+	var levelImg = levelUpDialog.getLevelImg(labPoints[0].Total);
 	
+	var showCurrentLevel = Titanium.UI.createImageView({
+		image:levelImg,
+		height:48,
+		width:48,
+		top:5,
+		right:5,	    
+		borderRadius:3,
+	    borderWidth:2,
+	    borderColor:'#111'
+	});
+	showCurrentLevel.addEventListener('click',function(){
+		Ti.API.debug('high scores showCurrentLevel click');
+		var labPoints = dbAlias.gameScores.TotalPoints(); 
+		Ti.API.debug(JSON.stringify(labPoints));
+		levelUpDialog.setParent(win);
+		levelUpDialog.levelUp( labPoints[0].Total);
+		levelUpDialog.addEventListener('close', function(e){
+			setTimeout(function(){
+					dialogOpen = false;
+				}, 1000);
+			});
+		levelUpDialog.open();
+	});
+	win.add(showCurrentLevel);
 	
 	//TODO
 	//There ought to be a simple way of wrapping this up as a UI element rather than repeating code in 

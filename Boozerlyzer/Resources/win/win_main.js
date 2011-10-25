@@ -207,7 +207,7 @@
 				Boozerlyzer.winDrinks.addEventListener('close',homeWin.refresh);				
 			}
 			Boozerlyzer.winDrinks.open();
-			homeWin.hide();
+			// homeWin.hide();
 		});
 		homeWin.add(newdrinks);
 		
@@ -225,7 +225,7 @@
 				Boozerlyzer.winEmotion.addEventListener('close',homeWin.refresh);			
 			}
 			Boozerlyzer.winEmotion.open();
-			homeWin.hide();
+			// homeWin.hide();
 		});
 		homeWin.add(newmood);
 		
@@ -243,7 +243,7 @@
 				Boozerlyzer.winTripReport.addEventListener('close',homeWin.refresh);
 			}
 			Boozerlyzer.winTripReport.open();
-			homeWin.hide();
+			// homeWin.hide();
 		});
 		homeWin.add(newtripreport);
 		

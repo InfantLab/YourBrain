@@ -117,6 +117,7 @@
 			rows.close();
 			return count;
 		}else{
+			rows.close();
 			return 0;
 		}
 	};

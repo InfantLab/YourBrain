@@ -19,12 +19,11 @@
 	var congratulationsLabel,labPointsLabel,goodHamsterIcon,trophyIcon,oldLevelLabel,newLevelLabel;
 	var messageLabel, oldLevelIcon, rightArrowIcon, newLevelIcon;
 	var levels = [0, 50, 100,200, 500, 1000, 1500,2000,3000,4000, 5000, 10000, 15000, 20000];
-	var levelImgs = ['/icons/Potato_Soup-icon.png', '/icons/virus_256.png', '/icons/beer-full.png','/icons/escherichia_coli1.jpg','/icons/normal.gif', '/icons/zebrafish.jpg','/icons/Mouse.jpg', '/icons/pigeon.jpg','/icons/rat.jpg','/icons/Pavlovs_dog.jpg','/icons/chimpanzee.jpg','/icons/caspar_nirs.png','/icons/android.jpg'];
+	var levelImgs = ['/icons/Potato_Soup-icon.png', '/icons/virus_256.png','/icons/escherichia_coli1.jpg','/icons/beer-full.png','/icons/normal.gif', '/icons/zebrafish.jpg','/icons/Mouse.jpg', '/icons/pigeon.jpg','/icons/rat.jpg','/icons/Pavlovs_dog.jpg','/icons/chimpanzee.jpg','/icons/caspar_nirs.png','/icons/android.jpg'];
 	var levelLabels =['Primordial Soup','Virus','E.coli', 'Yeast','C.Elegans','Fruit Fly','Zebra Fish','Mouse','Pigeon','Rat',"Pavlov's Dog","Chimpanzee","Homo Sapiens","Cyborg"];
 	var wikiBaseUrl = 'http://en.wikipedia.org/wiki/';
 	var wikiLevelItem = ['Stanley_Miller','Tobacco_mosaic_virus', 'E.Coli','Yeast', 'Caenorhabditis_elegans','Drosophila_melanogaster','Zebra_Fish','Laboratory_mice#Laboratory_mice','Pigeon_intelligence','Laboratory_rat','Ivan_Pavlov','Chimapanzee','Homo_Sapiens', 'Cyborg'];
 	var imgSizeSmall = 56, imgSizeLarge = 78;
-	var exports = {};
 	
 	function createControls(){
 		if (isControlsCreated) {return;}
@@ -154,6 +153,7 @@
 		containerView.add(trophyIcon);
 		containerView.add(labPointsLabel);
 		containerView.add(oldLevelLabel);
+		containerView.add(newLevelLabel);
 		containerView.add(messageLabel);
 		containerView.add(oldLevelIcon);
 		containerView.add(rightArrowIcon);
@@ -168,9 +168,9 @@
 	 */
 	exports.setParent = function (window){
 		win = window;
-	}
+	};
 	exports.open = function(){	
-		alert('leveled up');
+		//alert('leveled up');
 		coverView.animate(coverViewOpenAnimation);
 		containerView.animate(containerViewOpenAnimation);
 		containerView.visible = true;
@@ -189,6 +189,10 @@
 		while(labPoints>levels[l]){l++;}
 		return l;
 	}
+	
+	exports.getLevelImg = function(labPoints){
+		return levelImgs[getLevel(labPoints)];
+	};
 	/***
 	 * woo hoo, you're helping science
 	 * 
