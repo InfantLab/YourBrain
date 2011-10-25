@@ -23,7 +23,7 @@
         if ($query)  
         {  
             // Select eveything from the users table where username field == the username we posted and password field == the password we posted so we can send back the newly created UUID
-            $sql = "SELECT * FROM users WHERE username = '" . escape($username) . "' AND password = '" . escape($password) . "'";
+            $sql = "SELECT * FROM users WHERE username = '" . escape($username) . "' AND password = PASSWORD('" . escape($password) . "')";
             $subquery = db_query($sql);
             // If we find a match, create an array of data, json_encode it and echo it out
             if (db_num_rows($subquery) > 0)
