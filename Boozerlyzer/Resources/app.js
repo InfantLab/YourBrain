@@ -53,6 +53,26 @@ Ti.include('/comm/exportData.js');
 	
 Ti.include('/win/win.js'); 
 Boozerlyzer.winHome = Boozerlyzer.win.main.createApplicationWindow();
+				
+var gameSaveData = [{Game: 'Boozerlyzer Started',
+					GameVersion:1,
+					PlayStart:parseInt((new Date()).getTime()/1000,10) ,
+					PlayEnd: 0,
+					TotalScore:0,
+					GameSteps:0,
+					Speed_GO:0,
+					Speed_NOGO:0,
+					Coord_GO:0,
+					Coord_NOGO:0,
+					Level:0,
+					Inhibition:0,
+					Feedback:'',
+					Choices:'',
+					SessionID:Titanium.App.Properties.getInt('SessionID', 0),
+					UserID:Titanium.App.Properties.getInt('UserID', 0),
+					LabPoints:10
+				}];
+Boozerlyzer.db.gameScores.SaveResult(gameSaveData);
 	
 var registrationNag = Titanium.App.Properties.getInt('RegistrationNag', 0);
 if (registrationNag < 0){

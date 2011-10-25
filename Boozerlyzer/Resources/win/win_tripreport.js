@@ -95,7 +95,7 @@ exports.createApplicationWindow =function(type){
 							Choices:choiceLabel.value,
 							SessionID:Titanium.App.Properties.getInt('SessionID'),
 							UserID:Titanium.App.Properties.getInt('UserID'),
-							LabPoints:2		
+							LabPoints:8	
 						}];
 		Boozerlyzer.db.gameScores.SaveResult(gameSaveData);
 	}
@@ -114,7 +114,9 @@ exports.createApplicationWindow =function(type){
 	save.addEventListener('click',function(){
 		Boozerlyzer.db.sessions.Updated(SessionID);
 		Boozerlyzer.db.tripReports.setData(currentTripReport);
-		win.close();
+		Boozerlyzer.winHome.open();
+		Boozerlyzer.winHome.refresh();
+		win.close();		
 	});	
 	
 	// CANCEL BUTTON	
@@ -260,9 +262,9 @@ exports.createApplicationWindow =function(type){
 		if (Boozerlyzer.winHome === undefined || Boozerlyzer.winHome === null) {
 			Boozerlyzer.winHome = Boozerlyzer.win.main.createApplicationWindow();
 		}
-		win.close();
 		Boozerlyzer.winHome.open();
 		Boozerlyzer.winHome.refresh();
+		win.close();
 	});
 	return win;
 };

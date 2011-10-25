@@ -562,8 +562,6 @@
 			function gameEndSaveScores(){
 				Ti.API.debug('Drinks gameEndSaveScores');
 				// first get the total drinks this session
-				var now = parseInt((new Date()).getTime()/1000,10);
-				
 				
 				var gameSaveData = [{Game: 'Drink Logging',
 									GameVersion:1,
@@ -581,7 +579,7 @@
 									Choices:'',
 									SessionID:Titanium.App.Properties.getInt('SessionID'),
 									UserID:Titanium.App.Properties.getInt('UserID'),
-									LabPoints:2
+									LabPoints:4
 								}];
 				dbAlias.gameScores.SaveResult(gameSaveData);
 			}

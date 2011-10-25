@@ -206,7 +206,7 @@
 				Boozerlyzer.winDrinks.home = homeWin; //reference to home
 				Boozerlyzer.winDrinks.addEventListener('close',homeWin.refresh);				
 			}
-			Boozerlyzer.winDrinks.show();
+			Boozerlyzer.winDrinks.open();
 			homeWin.hide();
 		});
 		homeWin.add(newdrinks);
@@ -289,8 +289,6 @@
 		highScores.addEventListener('click',function(){
 			//add a close event listener which will refresh homescreen
 			//see http://developer.appcelerator.com/question/49971/giving-parent-window-focus-after-modal-closes
-			highscoreswin.addEventListener('close',homeWin.refresh);
-			highscoreswin.open();
 			if (!Boozerlyzer.winHighScores || Boozerlyzer.winHighScores === undefined){
 				Boozerlyzer.winHighScores = Boozerlyzer.win.HighScores.createApplicationWindow();
 				Boozerlyzer.winHighScores.home = homeWin; //reference to home
