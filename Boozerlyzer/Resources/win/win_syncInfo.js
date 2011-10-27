@@ -56,23 +56,6 @@ exports.createApplicationWindow =function(){
 	win.add(loginBtn);  
     
     var loginReq = Titanium.Network.createHTTPClient();  
-      
-    loginBtn.addEventListener('click',function(e)  
-    {  
-        if (username.value !== '' && password.value !== '')  
-        {  
-            loginReq.open("POST","http:/boozerlyzer.net/receive/post_auth.php");  
-            var params = {  
-                username: username.value,  
-                password: Ti.Utils.md5HexDigest(password.value)  
-            };  
-            loginReq.send(params);  
-        }  
-        else  
-        {  
-            alert("Username/Password are required");  
-        }  
-    }); 
     loginReq.onload = function()  
 	{  
 	    var json = this.responseText;  
@@ -91,7 +74,7 @@ exports.createApplicationWindow =function(){
 			//Ti.App.Properties.setInt('UserID', response.UserID);
 			Ti.App.Properties.setString('UUID', response.UUID);
 			Ti.App.Properties.setString('AuthToken', response.AuthToken);
-			Ti.App.Properties.setInt('LastSentID', response.LastID);
+			Ti.App.Properties.setInt('LastSentID', (response.LastID ? response.LastID : 0));
 			alert('Logged in, response was ' + response.toString());
 	        alert('Logged in successfully!');
 	        //win.close();  
@@ -102,7 +85,30 @@ exports.createApplicationWindow =function(){
 	        //alert('Response was: ' + response.toString());
 	    }  
 	}; 
-    //loginReq.
+    loginReq.onerror = function(error){
+        alert(error);
+    }      
+    loginBtn.addEventListener('click',function(e)  
+    {  
+    	if(!loginReq){
+    		alert('Network error');
+    		return;
+    	}
+        if (username.value !== '' && password.value !== '')  
+        {  
+            loginReq.open("POST","https://boozerlyzer.net/receive/post_auth.php");  
+            var params = {  
+                username: username.value,  
+                password: Ti.Utils.md5HexDigest(password.value)  
+            };  
+            loginReq.send(params);  
+        }  
+        else  
+        {  
+            alert("Username/Password are required");  
+        }  
+    }); 
+
     
     var labelLastSync = Titanium.UI.createLabel({
 		text:'Last sync with server - Never',
@@ -128,7 +134,7 @@ exports.createApplicationWindow =function(){
     buttonSyncNow.addEventListener('click', function(){
 		commAlias.sendData.sync();
 		var updateTime = Boozerlyzer.dateTimeHelpers.prettyDate(Titanium.App.Properties.getInt('LastSentTime', 0));
-		labelLastSync.text = 'Last sync with server - ID('+ Titanium.App.Properties.getInt('LastSentID', 0) +') ' +  updateTime;
+		labelLastSync.text = 'Last sync with server - '+  updateTime + '\nRow ID :'+ Titanium.App.Properties.getInt('LastSentID', 0) ;
 	});
     win.add(buttonSyncNow);
     

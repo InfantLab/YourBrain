@@ -24,13 +24,14 @@ exports.createApplicationWindow =function(launchType){
 
 	var viewComm, buttonCommText;
 	//and do we show registration or sync screen?
-	if (Ti.App.Properties.getBool('Registered', true)){
+	if (Ti.App.Properties.getBool('Registered', false)){
+		viewComm =  Boozerlyzer.win.syncInfo.createApplicationWindow();
+		buttonCommText = 'Sync';		
+	}else{  
 		// view registration settings
 		viewComm =  Boozerlyzer.win.register.createApplicationWindow();
-		buttonCommText = 'Register';			
-	}else{
-		viewComm =  Boozerlyzer.win.sync.createApplicationWindow();
-		buttonCommText = 'Sync';			
+		buttonCommText = 'Register';	
+					
 	}
 	win.add(viewComm);
 	viewComm.visible = false;
@@ -56,7 +57,7 @@ exports.createApplicationWindow =function(launchType){
 	var buttonPrivacy = Titanium.UI.createButton({
 	    backgroundColor:'#336699',
 	    top:0,
-	    left:'34%',
+	    left:'33.5%',
 	    width:'33%',
 	    height:40,
 	    title:'Privacy',
@@ -90,25 +91,7 @@ exports.createApplicationWindow =function(launchType){
 	win.add(buttonComm);
 	
 	
-	// // create tab for personal / demographic data
-	// Boozerlyzer.winPers = Boozerlyzer.win.personal.createApplicationWindow(launchType);
-	// var tabpers = Titanium.UI.createTab({
-		// title:'Personal Data',
-	    // window:Boozerlyzer.winPers ,
-	    // tabGroup:tabGroup
-	// });	
-	// // create tab for privacy settings
-	// Boozerlyzer.winPrivacy =  Boozerlyzer.win.privacy.createApplicationWindow(launchType);
-	// var tabprivacy = Titanium.UI.createTab({
-		// title:'Privacy settings',
-	    // window:Boozerlyzer.winPrivacy,
-	    // tabGroup:tabGroup
-	// });
-	// //  add tabs
-	// tabGroup.addTab(tabpers);
-	// tabGroup.addTab(tabprivacy);
-// 	
-	
+
 // 
 	function goHome(){
 		Ti.API.debug('win_mydata - gohome');
@@ -121,19 +104,18 @@ exports.createApplicationWindow =function(launchType){
 	}
 
 	//invisible button to return home over the cup
-	// var homeButton = Titanium.UI.createView({
-								// image:'/icons/transparenticon.png',
-								// bottom:0,
-							    // left:0,
-							    // width:30,
-							    // height:60
-						    // });
-	// tabGroup.add(homeButton);
-	// homeButton.addEventListener('click',goHome);
-	// // Cleanup and return home
-	// tabGroup.addEventListener('android:back', goHome);	
-	// tabGroup.addEventListener('close', goHome);
-	// return tabGroup;
+	var homeButton = Titanium.UI.createView({
+								image:'/icons/transparenticon.png',
+								bottom:0,
+							    left:0,
+							    width:30,
+							    height:60
+						    });
+	win.add(homeButton);
+	homeButton.addEventListener('click',goHome);
+	// Cleanup and return home
+	win.addEventListener('android:back', goHome);	
+	win.addEventListener('close', goHome);
 	
 	return win;
 };

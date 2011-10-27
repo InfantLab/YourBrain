@@ -341,13 +341,12 @@
 	//There ought to be a simple way of wrapping this up as a UI element rather than repeating code in 
 	//every win_.js file but i tried it a few ways and i never got it to work.
 	function goHome(){
-		//gameEndSaveScores();
-			if (Boozerlyzer.winHome === undefined || Boozerlyzer.winHome === null) {
-				Boozerlyzer.winHome = Boozerlyzer.win.home.createApplicationWindow();
-			}
-			win.close();
-			Boozerlyzer.winHome.open();
+		if (Boozerlyzer.winHome === undefined || Boozerlyzer.winHome === null) {
+			Boozerlyzer.winHome = Boozerlyzer.win.home.createApplicationWindow();
 		}
+		win.close();
+		Boozerlyzer.winHome.open();
+	}
 		//invisible button to return home over the cup
 	var homeButton = Titanium.UI.createView({
 								image:'/icons/transparenticon.png',

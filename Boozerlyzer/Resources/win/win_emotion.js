@@ -12,6 +12,9 @@
 			
 	// Boozerlyzer.win.emotion = {};
 	var dataAlias  = Boozerlyzer.data;
+	var currentSessionID = -1, previousSessionID = -2;
+	var drunkeness, energy, happiness, lastChangedLabel;
+	var winOpened;
 	
 	exports.createApplicationWindow = function(){
 		var win = Titanium.UI.createWindow({
@@ -20,13 +23,7 @@
 			modal:true,
 			orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 		});
-		if (Titanium.App.Properties.getBool('MateMode',false)){
-			win.backgroundImage = '/images/smallcornercup.matemode.png';
-		}else{
-			win.backgroundImage = '/images/smallcornercup.png';
-		}
 		var winHome = win.home;
-		var winOpened = parseInt((new Date()).getTime()/1000, 10);
 		var tic = new Date(); //used for counting blur times.
 	
 		//include the menu choices	
@@ -35,30 +32,7 @@
 		var menu = require('/ui/menu');
 		//need to give it specific help for this screen
 		menu.setHelpMessage("Move sliders to appropriate points to indicate how you currently feel.");
-	
-		
-		var emotionsChanged = false;
-		var happyBlur = 0;
-		
-		//current session ID
-		var SessionID = Titanium.App.Properties.getInt('SessionID');
-		Ti.API.debug('win_emotion retrieved SessionID property - ' + SessionID);
-		
-		//most recent emotion values for this session
-		if (!dataAlias.currentEmotions || dataAlias.currentEmotions === null || dataAlias.currentEmotions === 'undefined'){
-			dataAlias.currentEmotions = Boozerlyzer.db.selfAssessment.getLatestData(SessionID);
-		}
-		if (dataAlias.currentEmotions === null || dataAlias.currentEmotions[0].Happinessnow < 0 ){
-			Titanium.API.trace('Boozerlyzer - currentEmotion could not be retrieved');
-			dataAlias.currentEmotions= Boozerlyzer.db.selfAssessment.newEmotion(false);
-		}
-		Titanium.API.debug(JSON.stringify(dataAlias.currentEmotions));
-		dataAlias.currentEmotions[0].SelfAssessmentStart = winOpened;
-		dataAlias.currentEmotions[0].SessionID = SessionID;
-		//clear the blur values as we start those afresh
-		dataAlias.currentEmotions[0].DrunkBlur = 0;
-		dataAlias.currentEmotions[0].HappyBlur = 0;
-		dataAlias.currentEmotions[0].EnergyBlur = 0;
+
 		
 		//layout variables
 		var sizeIcon = 48, leftLowIcon = 48;
@@ -94,7 +68,7 @@
 			top:topHappiness,
 			left:leftHighIcon
 		});
-		var happiness = Titanium.UI.createSlider({
+		happiness = Titanium.UI.createSlider({
 			min:0,
 			max:100,
 			value:0,
@@ -146,7 +120,7 @@
 			top:topEnergy,
 			left:leftHighIcon
 		});
-		var energy = Titanium.UI.createSlider({
+		energy = Titanium.UI.createSlider({
 			min:0,
 			max:100,
 			value:0,
@@ -200,8 +174,7 @@
 			top:topDrunk,
 			left:leftHighIcon
 		});
-		
-		var drunkeness = Titanium.UI.createSlider({
+		drunkeness = Titanium.UI.createSlider({
 			min:0,
 			max:100,
 			value:50,
@@ -230,41 +203,35 @@
 		win.add(drunkSober);
 		win.add(drunkDrunk);
 		
-		//set the old values
-		drunkeness.value = dataAlias.currentEmotions[0].Drunkeness;
-		energy.value = dataAlias.currentEmotions[0].Energy;
-		happiness.value = dataAlias.currentEmotions[0].Happiness;
-		
-		var updated = Boozerlyzer.dateTimeHelpers.prettyDate(dataAlias.currentEmotions[0].SelfAssessmentStart);
-		var lastchangedLabel = Ti.UI.createLabel({
-			text:'Last Updated  ' + updated,
+		lastChangedLabel = Ti.UI.createLabel({
+			text:'Last Updated  - never',
 			top:topLastEvent,
 			left:leftSlider,
 			width:widthSlider,
 			textAlign:'center'
 		});
-		win.add(lastchangedLabel);
+		win.add(lastChangedLabel);
 		
 		
 		// record activity data for right now
 		// and give user 2 lab points for using this screen
 		function gameEndSaveScores(){
-		Boozerlyzer.db.selfAssessment.setData(dataAlias.currentEmotions);
-		Boozerlyzer.db.sessions.Updated(SessionID);
-		var gameSaveData = [{Game: 'TrackMood',
+			Boozerlyzer.db.selfAssessment.setData(dataAlias.currentEmotions);
+			Boozerlyzer.db.sessions.Updated(currentSessionID);
+			var gameSaveData = [{Game: 'TrackMood',
 							GameVersion:1,
 							PlayStart:winOpened ,
 							PlayEnd: parseInt((new Date()).getTime()/1000,10),
-							TotalScore:0,
+							TotalScore:happiness.value,
 							Speed_GO:0,
 							Speed_NOGO:0,
 							Coord_GO:0,
 							Coord_NOGO:0,
-							Level:0,
-							Inhibition:0,
+							Level:energy.value,
+							Inhibition:drunkeness.value,
 							Feedback:'',
-							Choices:'',
-							SessionID:Titanium.App.Properties.getInt('SessionID'),
+							Choices:'tot:H,level:E,Inhib:D',
+							SessionID:currentSessionID,
 							UserID:Titanium.App.Properties.getInt('UserID'),
 							LabPoints:2	
 						}];
@@ -290,11 +257,11 @@
 			dataAlias.currentEmotions[0].Happiness = happiness.value;
 			dataAlias.currentEmotions[0].Drunkeness = drunkeness.value;
 			dataAlias.currentEmotions[0].Energy = energy.value;
-			dataAlias.currentEmotions[0].SessionID = SessionID;
+			dataAlias.currentEmotions[0].SessionID = currentSessionID;
 			Boozerlyzer.db.selfAssessment.setData(dataAlias.currentEmotions);
-			Boozerlyzer.db.sessions.Updated(SessionID);
+			Boozerlyzer.db.sessions.Updated(currentSessionID);
 			updated = Boozerlyzer.dateTimeHelpers.prettyDate(dataAlias.currentEmotions[0].SelfAssessmentStart);
-			lastchangedLabel.text = 'Last Updated  ' + updated;
+			lastChangedLabel.text = 'Last Updated  ' + updated;
 			dataAlias.currentEmotions[0].DrunkBlur = 0;
 			dataAlias.currentEmotions[0].HappyBlur = 0;
 			dataAlias.currentEmotions[0].EnergyBlur = 0;
@@ -337,10 +304,10 @@
 			left:leftFirst
 		});
 		newdrinks.addEventListener('click',function(){
-			if (!Boozerlyzer.winDrinks){
-				Ti.API.debug('winEmotion create winDrinks');
+			// if (!Boozerlyzer.winDrinks){
+				// Ti.API.debug('winEmotion create winDrinks');
 				Boozerlyzer.winDrinks = Boozerlyzer.win.drinks.createApplicationWindow();
-			}
+			// }
 			Boozerlyzer.winDrinks.open();
 			gameEndSaveScores();
 			win.close();
@@ -355,9 +322,9 @@
 			left:leftSecond
 		});
 		newtripreport.addEventListener('click',function(){
-			if (!Boozerlyzer.winTripReport){
+			// if (!Boozerlyzer.winTripReport){
 				Boozerlyzer.winTripReport = Boozerlyzer.win.tripReport.createApplicationWindow();
-			}
+			// }
 			Boozerlyzer.winTripReport.open();
 			gameEndSaveScores();
 			win.close();
@@ -372,9 +339,9 @@
 			left:leftThird
 		});
 		newgame.addEventListener('click',function(){
-			if (!Boozerlyzer.winGameMenu || Boozerlyzer.winGameMenu === undefined){
+			// if (!Boozerlyzer.winGameMenu || Boozerlyzer.winGameMenu === undefined){
 				Boozerlyzer.winGameMenu = Boozerlyzer.win.gameMenu.createApplicationWindow();
-			}
+			// }
 			Boozerlyzer.winGameMenu.open();
 		});
 		win.add(newgame);
@@ -400,8 +367,8 @@
 								    height:60
 							    });
 		win.add(homeButton);
-		homeButton.addEventListener('click',goHome);
 		// Cleanup and return home
+		homeButton.addEventListener('click',goHome);
 		win.addEventListener('android:back', goHome);
 			
 		win.addEventListener('close', function(){
@@ -411,7 +378,48 @@
 			}
 		});
 		
+		win.refreshData = function(){
+			//current session ID
+			currentSessionID = Titanium.App.Properties.getInt('SessionID');
+			
+			Ti.API.debug('win_emotion retrieved SessionID property - ' + currentSessionID);
+			
+			//most recent emotion values for this session
+			if (currentSessionID !== previousSessionID || !dataAlias.currentEmotions || dataAlias.currentEmotions === null || dataAlias.currentEmotions === 'undefined'){
+				dataAlias.currentEmotions = Boozerlyzer.db.selfAssessment.getLatestData(currentSessionID);
+			}
+			if (dataAlias.currentEmotions === null || dataAlias.currentEmotions[0].Happinessnow < 0 ){
+				Titanium.API.trace('Boozerlyzer - currentEmotion could not be retrieved');
+				dataAlias.currentEmotions= Boozerlyzer.db.selfAssessment.newEmotion(false);
+			}
+			Titanium.API.debug(JSON.stringify(dataAlias.currentEmotions));
+			dataAlias.currentEmotions[0].SelfAssessmentStart = winOpened;
+			dataAlias.currentEmotions[0].SessionID = currentSessionID;
+			//clear the blur values as we start those afresh
+			dataAlias.currentEmotions[0].DrunkBlur = 0;
+			dataAlias.currentEmotions[0].HappyBlur = 0;
+			dataAlias.currentEmotions[0].EnergyBlur = 0;
+			
+			winOpened = parseInt((new Date()).getTime()/1000, 10);
+			if (Titanium.App.Properties.getBool('MateMode',false)){
+				win.backgroundImage = '/images/smallcornercup.matemode.png';
+			}else{
+				win.backgroundImage = '/images/smallcornercup.png';
+			}
+			var emotionsChanged = false;
+			var happyBlur = 0;
+			
+			//set the old values
+			drunkeness.value = dataAlias.currentEmotions[0].Drunkeness;
+			energy.value = dataAlias.currentEmotions[0].Energy;
+			happiness.value = dataAlias.currentEmotions[0].Happiness;		
+			var updated = Boozerlyzer.dateTimeHelpers.prettyDate(dataAlias.currentEmotions[0].SelfAssessmentStart);
+			lastChangedLabel.text = 'Last Updated  ' + updated;
+			//set up for this session only relaoad everything sessionid changes next time we reload
+			previousSessionID = currentSessionID;
+		};
+		win.refreshData();		
 		return win;
 	};
-		
+			
 // })();

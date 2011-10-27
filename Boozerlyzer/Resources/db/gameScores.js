@@ -83,15 +83,15 @@
 		for(var row in scoreData){
 			//r = (rowcount++).toString();
 			//this line is a bit of mess to get right format
-			var thisrow =  '"'+ (rowcount++) + '":{ "data_type":"GameScore","data":' + Titanium.JSON.stringify(scoreData[row]) +'}'; 
-			Ti.API.debug('scoreData[row] ' + thisrow);
-			jsonout += thisrow;
+			// if (scoreData[row].data_type === "GameScore"){
+				var thisrow =  '"'+ (rowcount++) + '":{ "data_type":"GameScore","data":' + Titanium.JSON.stringify(scoreData[row]) +'},'; 
+				Ti.API.debug('scoreData[row] ' + thisrow);
+				jsonout += thisrow;			
+			// }
 		}
-		jsonout += '}';
-		//return Titanium.JSON.parse(jsonout.substring(0, jsonout.length-1) + '}');
-		// ^^ why does this line chop off the last character (usually a }) and then add another one?! 
-		// ^^ causes a crash when no scores are available.
-		return Titanium.JSON.parse(jsonout);  
+		//remove the final comma and add a final bracket
+		return Titanium.JSON.parse(jsonout.substring(0, jsonout.length-1) + '}');
+		  
 	};
 	
 	dbAlias.gameScores.PlayCount = function (gameNames){
@@ -316,6 +316,7 @@
 			return returnData;
 		}
 		//something didn't work
+		rows.close();
 		return false;
 
 	};

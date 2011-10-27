@@ -515,9 +515,9 @@
 				left:leftFirst
 			});
 			newmood.addEventListener('click',function(){
-				if (!Boozerlyzer.winEmotion){
+				// if (!Boozerlyzer.winEmotion){
 					Boozerlyzer.winEmotion = Boozerlyzer.win.emotion.createApplicationWindow();
-				}
+				// }
 				Boozerlyzer.winEmotion.open();
 				gameEndSaveScores();
 				win.close();
@@ -532,9 +532,9 @@
 				left:leftSecond
 			});
 			newtripreport.addEventListener('click',function(){
-				if (!Boozerlyzer.winTripReport){
+				// if (!Boozerlyzer.winTripReport){
 					Boozerlyzer.winTripReport = Boozerlyzer.win.tripReport.createApplicationWindow();
-				}
+				// }
 				Boozerlyzer.winTripReport.open();
 				gameEndSaveScores();
 				win.close();
@@ -549,10 +549,11 @@
 				left:leftThird
 			});
 			newgame.addEventListener('click',function(){
-				if (!Boozerlyzer.winGameMenu || Boozerlyzer.winGameMenu === undefined){
+				// if (!Boozerlyzer.winGameMenu || Boozerlyzer.winGameMenu === undefined){
 					Boozerlyzer.winGameMenu = Boozerlyzer.win.gameMenu.createApplicationWindow();
-				}
+				// }
 				Boozerlyzer.winGameMenu.open();
+				win.close();
 			});
 			win.add(newgame);
 			

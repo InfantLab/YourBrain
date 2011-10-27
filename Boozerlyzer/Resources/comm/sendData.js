@@ -31,10 +31,13 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 	 * but allow possiblity of callbacks.
 	 * */
 	commAlias.sendData.sync = function(callbackFn){
+		if (!Ti.App.Properties.getBool('Registered', false)){
+			return {status:'failed',message:'Please register first'};
+		}
 		if (!Ti.Network.online){
 			return {status:'failed',message:'No internet connection'};
 		}
-		if (!Ti.App.Properties.getInt())
+		
 		
 		//find the ID of the last data sent to website
 		//based on a persistent app property
@@ -56,12 +59,14 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		xhrPost.onload = function() {
 			Ti.API.debug('sync data sending onload');
 			var rc = Titanium.JSON.parse(this.responseText);
+			Ti.API.debug(this.responseText);
 			if (rc.status == 'success') {
 				// var complete = Ti.UI.createAlertDialog('Game scores saved.');
 				// complete.show();
 				Ti.API.info('Game scores saved.');
-				var retMessage = rc.SavedCount.toString() + ' Game Scores saved - last ID was ' + rc.LastReceivedID.toString();
-				Titanium.App.Properties.setInt('LastSentID', rc.LastReceivedID/*newLastID*/);
+				var id  = (rc.LastReceivedID? rc.LastReceivedID.toString(): 0 );
+				var retMessage = rc.SavedCount.toString() + ' Game Scores saved - last ID was ' + id;
+				Titanium.App.Properties.setInt('LastSentID', id/*newLastID*/);
 				var now = parseInt((new Date()).getTime()/1000,10);
 				Titanium.App.Properties.setInt('LastSentTime',now);
 				if (callbackFn){
@@ -141,7 +146,7 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 	 * and if so attempts to send the most recent data.
 	 */
 	commAlias.sendData.autoSync = function(){
-		if (Ti.App.Properties.getBool('AutoSync',true)){
+		if (!Ti.App.Properties.getBool('AutoSync',true)){
 			return;
 		}
 		var count = Ti.App.Properties.getInt('AutoSyncCount', 0);

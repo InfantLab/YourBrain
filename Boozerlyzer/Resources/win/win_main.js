@@ -165,11 +165,11 @@
 			left:optionsLeft + 100
 		});
 		newbugreport.addEventListener('click',function(){
-			if (!Boozerlyzer.winBugReport ){
+			// if (!Boozerlyzer.winBugReport ){
 				Boozerlyzer.winBugReport = Boozerlyzer.win.tripReport.createApplicationWindow('BUG');
 				Boozerlyzer.winBugReport.home = homeWin; //reference to home
 				Boozerlyzer.winBugReport.addEventListener('close',homeWin.refresh)			
-			}
+			// }
 			Boozerlyzer.winBugReport.open();
 		});
 		homeWin.add(newbugreport);	
@@ -183,11 +183,11 @@
 		});
 		
 		report.addEventListener('click',function(){
-			if (!Boozerlyzer.winCharts ){
+			// if (!Boozerlyzer.winCharts ){
 				Boozerlyzer.winCharts = Boozerlyzer.win.charts.createApplicationWindow();
 				Boozerlyzer.winCharts.home = homeWin; //reference to home
 				Boozerlyzer.winCharts.addEventListener('close',homeWin.refresh);				
-			}
+			// }
 			Boozerlyzer.winCharts.open();
 		});
 		homeWin.add(report);
@@ -201,11 +201,11 @@
 			left:leftNewDrinks
 		});
 		newdrinks.addEventListener('click',function(){
-			if (!Boozerlyzer.winDrinks ){
+			// if (!Boozerlyzer.winDrinks ){
 				Boozerlyzer.winDrinks = Boozerlyzer.win.drinks.createApplicationWindow();
 				Boozerlyzer.winDrinks.home = homeWin; //reference to home
 				Boozerlyzer.winDrinks.addEventListener('close',homeWin.refresh);				
-			}
+			// }
 			Boozerlyzer.winDrinks.open();
 			// homeWin.hide();
 		});
@@ -219,13 +219,11 @@
 			left:leftEmotion
 		});
 		newmood.addEventListener('click',function(){
-			if (!Boozerlyzer.winEmotion){
-				Boozerlyzer.winEmotion = Boozerlyzer.win.emotion.createApplicationWindow();
-				Boozerlyzer.winEmotion.home = homeWin; //reference to home
-				Boozerlyzer.winEmotion.addEventListener('close',homeWin.refresh);			
-			}
+			Boozerlyzer.winEmotion = Boozerlyzer.win.emotion.createApplicationWindow();
+			Boozerlyzer.winEmotion.home = homeWin; //reference to home
+			Boozerlyzer.winEmotion.addEventListener('close',homeWin.refresh);			
 			Boozerlyzer.winEmotion.open();
-			// homeWin.hide();
+			// Boozerlyzer.winEmotion.reopenWindow();
 		});
 		homeWin.add(newmood);
 		
@@ -237,11 +235,11 @@
 			left:leftTripReport
 		});
 		newtripreport.addEventListener('click',function(){
-			if (!Boozerlyzer.winTripReport){
+			// if (!Boozerlyzer.winTripReport){
 				Boozerlyzer.winTripReport = Boozerlyzer.win.tripReport.createApplicationWindow('TRIP');
 				Boozerlyzer.winTripReport.home = homeWin; //reference to home
 				Boozerlyzer.winTripReport.addEventListener('close',homeWin.refresh);
-			}
+			// }
 			Boozerlyzer.winTripReport.open();
 			// homeWin.hide();
 		});
@@ -255,11 +253,11 @@
 			left:leftGame
 		});
 		newgame.addEventListener('click',function(){
-			if (!Boozerlyzer.winGameMenu || Boozerlyzer.winGameMenu === undefined){
+			// if (!Boozerlyzer.winGameMenu || Boozerlyzer.winGameMenu === undefined){
 				Boozerlyzer.winGameMenu = Boozerlyzer.win.gameMenu.createApplicationWindow();
 				Boozerlyzer.winGameMenu.home = homeWin; //reference to home
 				Boozerlyzer.winGameMenu.addEventListener('close',homeWin.refresh);
-			}
+			// }
 			Boozerlyzer.winGameMenu.open();
 		});
 		homeWin.add(newgame);
@@ -289,11 +287,11 @@
 		highScores.addEventListener('click',function(){
 			//add a close event listener which will refresh homescreen
 			//see http://developer.appcelerator.com/question/49971/giving-parent-window-focus-after-modal-closes
-			if (!Boozerlyzer.winHighScores || Boozerlyzer.winHighScores === undefined){
+			// if (!Boozerlyzer.winHighScores || Boozerlyzer.winHighScores === undefined){
 				Boozerlyzer.winHighScores = Boozerlyzer.win.HighScores.createApplicationWindow();
 				Boozerlyzer.winHighScores.home = homeWin; //reference to home
 				Boozerlyzer.winHighScores.addEventListener('close',homeWin.refresh);
-			}
+			// }
 			Boozerlyzer.winHighScores.open();
 		});
 		homeWin.add(highScores);
@@ -379,7 +377,7 @@
 			if (e.index === 0) {
 				dataAlias.session = dbAlias.sessions.createNewSession(false);
 				rewriteSessionInfo();
-				labelCurrentSession.text = 'Session Started\n' + Boozerlyzer.daterewriteSessionInfoHelpers.formatDayPlusTime(dataAlias.session[0].StartTime,true);
+				labelCurrentSession.text = 'Session Started\n' + Boozerlyzer.dateTimeHelpers.formatDayPlusTime(dataAlias.session[0].StartTime,true);
 			}
 		});
 

@@ -177,6 +177,7 @@
 		var now = parseInt((new Date()).getTime()/1000);
 		dbAlias.conn.execute(insertstr, now, Titanium.App.getVersion(),userID,now, now) 
 		sessionID =dbAlias.conn.lastInsertRowId;
+		Ti.API.debug('sessions.createNewSession - id:' + sessionID);
 		Titanium.App.Properties.setInt('SessionID', sessionID);
 		Titanium.App.Properties.setInt('SessionStart',now);
 		Titanium.App.Properties.setInt('SessionChanged',now);

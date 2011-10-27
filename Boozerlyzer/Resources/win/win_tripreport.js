@@ -166,10 +166,11 @@ exports.createApplicationWindow =function(type){
 		left:leftFirst
 	});
 	newdrinks.addEventListener('click',function(){
-		if (!Boozerlyzer.winDrinks ){
+		// if (!Boozerlyzer.winDrinks ){
 			Boozerlyzer.winDrinks = Boozerlyzer.win.drinks.createApplicationWindow();
-		}
+		// }
 		Boozerlyzer.winDrinks.open();
+		win.close();
 	});
 	win.add(newdrinks);
 	
@@ -181,10 +182,11 @@ exports.createApplicationWindow =function(type){
 		left:leftSecond
 	});
 	newmood.addEventListener('click',function(){
-		if (!Boozerlyzer.winEmotion){
+		// if (!Boozerlyzer.winEmotion){
 			Boozerlyzer.winEmotion = Boozerlyzer.win.emotion.createApplicationWindow();
-		}
+		// }
 		Boozerlyzer.winEmotion.open();
+		win.close();
 	});
 	win.add(newmood);
 	
@@ -196,10 +198,11 @@ exports.createApplicationWindow =function(type){
 		left:leftThird
 	});
 	newgame.addEventListener('click',function(){
-		if (!Boozerlyzer.winGameMenu || Boozerlyzer.winGameMenu === undefined){
+		// if (!Boozerlyzer.winGameMenu || Boozerlyzer.winGameMenu === undefined){
 			Boozerlyzer.winGameMenu = Boozerlyzer.win.gameMenu.createApplicationWindow();
-		}
+		// }
 		Boozerlyzer.winGameMenu.open();
+		win.close();
 	});
 	win.add(newgame);
 	
