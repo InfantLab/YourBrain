@@ -147,6 +147,7 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 	 */
 	commAlias.sendData.autoSync = function(){
 		if (!Ti.App.Properties.getBool('AutoSync',true)){
+			//not autosyncing so return home
 			return;
 		}
 		var count = Ti.App.Properties.getInt('AutoSyncCount', 0);

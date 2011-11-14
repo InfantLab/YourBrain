@@ -9,7 +9,7 @@
  * http://mobile.tutsplus.com/tutorials/appcelerator/titanium-user-authentication-part-1/
  */
 
-exports.createApplicationWindow =function(launchType){	  
+exports.createApplicationWindow =function(launchType, parent){	  
 	var win = Titanium.UI.createView({
 		top:'10%',
 		height:'auto',
@@ -20,6 +20,7 @@ exports.createApplicationWindow =function(launchType){
 	if (!launchType){
 		 mLaunchType = launchType
 	}
+	var winMyDataAlias = parent;
     var helpMessage = "Please register with Boozerlyzer.net.\nAll data are held securely and anonymously.";
 	//include the menu choices	
 	// Ti.include('/ui/menu.js');
@@ -139,17 +140,21 @@ exports.createApplicationWindow =function(launchType){
             });
             alertDialog.addEventListener('click',function(e)  
             {  
-                Boozerlyzer.winHome.open();
-                win.close(); 
+            	//go to main screen
+                winMyDataAlias.goHome();
             });    
             alertDialog.show();  
-        } else        {  
+        } else {  
             createBtn.enabled = true;  
             createBtn.opacity = 1;  
 			alert(response.message);  
         }  
-
     };
+    createReq.onerror = function(error){
+		createBtn.enabled = true;  
+        createBtn.opacity = 1;  
+		alert(error); 
+	};
       
     createBtn.addEventListener('click',function(e)  
     {  

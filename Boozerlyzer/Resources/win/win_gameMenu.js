@@ -50,7 +50,7 @@ exports.createApplicationWindow = function(){
 	var gameViews = [], gameIcons = [],gameCounts = [], gameNameLabels = [], gameLastPlayedLabels = [];
 	var gameNames = ['Raccoon Hunt','Memory','Number Stroop', 'Pissonyms', 'Emotional Words', 'We feel fine'];
 	var gameTypes = ['StatLearning','DualNBack','NumberStroop','Pissonyms', 'Emotions', 'WeFeelFine'];
-	var numRounds = [0,0,0,3,10,10];
+	var numRounds = [0,0,0,4,10,10];
 	var imgtop = [20,20,20,160,160,160];
 	var imgleft = [60,180,300,60,180,300];
 	var iconSize = 94;

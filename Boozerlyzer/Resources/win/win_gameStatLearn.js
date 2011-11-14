@@ -134,8 +134,12 @@ exports.createApplicationWindow =function(){
 			gameOver();
 			return;
 		}
-		currentObj = Math.floor(6*Math.random());
-		inverted = (Math.random()<0.15);
+		//Random but no repeating 
+		while(currentObj===previousObj){
+			currentObj = Math.floor(6*Math.random());
+		}	
+		previousObj = currentObj;
+		inverted = (Math.random()<proportionInverted);
 		if (inverted){		
 			loc[currentObj].image = '/icons/inverted_teddy_bear_toy_' + currentObj + '.png';
 			count_NOGO++; //another nogo trial

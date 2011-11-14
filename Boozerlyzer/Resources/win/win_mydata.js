@@ -15,21 +15,21 @@ exports.createApplicationWindow =function(launchType){
 		orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 	});
 	
-	var viewPersonal = Boozerlyzer.win.personal.createApplicationWindow(launchType);
-	var viewPrivacy = Boozerlyzer.win.privacy.createApplicationWindow(launchType);
+	var viewPersonal = Boozerlyzer.win.personal.createApplicationWindow(launchType, win);
+	var viewPrivacy = Boozerlyzer.win.privacy.createApplicationWindow(launchType, win);
+	var viewComm, buttonCommText;
 	win.add(viewPersonal);
 	win.add(viewPrivacy);
 	viewPersonal.visible = true;
 	viewPrivacy.visible = false;
 
-	var viewComm, buttonCommText;
 	//and do we show registration or sync screen?
 	if (Ti.App.Properties.getBool('Registered', false)){
-		viewComm =  Boozerlyzer.win.syncInfo.createApplicationWindow();
+		viewComm =  Boozerlyzer.win.syncInfo.createApplicationWindow("normal", win);
 		buttonCommText = 'Sync';		
 	}else{  
 		// view registration settings
-		viewComm =  Boozerlyzer.win.register.createApplicationWindow();
+		viewComm =  Boozerlyzer.win.register.createApplicationWindow(launchType, win);
 		buttonCommText = 'Register';	
 					
 	}
@@ -47,11 +47,12 @@ exports.createApplicationWindow =function(launchType){
 	    borderWidth:2,
 	    borderColor:'#111'
 	});
-	buttonPersonal.addEventListener('click', function(){
+	win.showPersonal = function(){
 		viewPrivacy.hide();
 		viewPersonal.show();
 		viewComm.hide();
-	})
+	};
+	buttonPersonal.addEventListener('click',win.showPersonal);
 	win.add(buttonPersonal);
 	
 	var buttonPrivacy = Titanium.UI.createButton({
@@ -65,11 +66,12 @@ exports.createApplicationWindow =function(launchType){
 	    borderWidth:2,
 	    borderColor:'#111'
 	});
-	buttonPrivacy.addEventListener('click', function(){
+	win.showPrivacy = function(){
 		viewPrivacy.show();
 		viewPersonal.hide();
 		viewComm.hide();
-	})
+	};
+	buttonPrivacy.addEventListener('click', win.showPrivacy);
 	win.add(buttonPrivacy);
 		
 	var buttonComm = Titanium.UI.createButton({
@@ -83,17 +85,17 @@ exports.createApplicationWindow =function(launchType){
 	    borderWidth:2,
 	    borderColor:'#111'
 	});
-	buttonComm.addEventListener('click', function(){
+	win.showComm = function(){
 		viewPrivacy.hide();
 		viewPersonal.hide();
 		viewComm.show();
-	});
+	};
+	buttonComm.addEventListener('click', win.showComm);
 	win.add(buttonComm);
-	
 	
 
 // 
-	function goHome(){
+	win.goHome = function (){
 		Ti.API.debug('win_mydata - gohome');
 		if (Boozerlyzer.winHome === undefined || Boozerlyzer.winHome === null) {
 			Boozerlyzer.winHome = Boozerlyzer.win.home.createApplicationWindow();
@@ -101,7 +103,7 @@ exports.createApplicationWindow =function(launchType){
 		Boozerlyzer.winHome.open();
 		Boozerlyzer.winMyData.close();
 		Boozerlyzer.winHome.refresh();
-	}
+	};
 
 	//invisible button to return home over the cup
 	var homeButton = Titanium.UI.createView({
@@ -112,10 +114,10 @@ exports.createApplicationWindow =function(launchType){
 							    height:60
 						    });
 	win.add(homeButton);
-	homeButton.addEventListener('click',goHome);
+	homeButton.addEventListener('click',win.goHome);
 	// Cleanup and return home
-	win.addEventListener('android:back', goHome);	
-	win.addEventListener('close', goHome);
+	win.addEventListener('android:back', win.goHome);	
+	win.addEventListener('close', win.goHome);
 	
 	return win;
 };

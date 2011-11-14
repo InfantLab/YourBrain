@@ -123,6 +123,14 @@
 		});
 		return result;
 	};
+	
+	//get all data for this Session ID 
+	dbAlias.doseageLog.deleteDrink = function (drinkID){
+		var rows =dbAlias.conn.execute('SELECT * FROM DoseageLog WHERE SESSIONID = ? ORDER BY DoseageChanged ASC', sessionID);
+		var returnData = fillDataObject(rows);
+		rows.close();
+		return returnData;
+	};
 		
 	//get all data for this Session ID 
 	dbAlias.doseageLog.getAllSessionData = function (sessionID){

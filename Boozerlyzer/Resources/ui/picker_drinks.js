@@ -147,6 +147,13 @@
 	};
 
 	/***
+	 * Set up a new drink dialog based on a drinkData object
+	 */
+	exports.setDrinkData = function(drinkData){
+		exports.setDrinkType(drinkData.DrugVariety,[0])	;
+	}
+
+	/***
 	 * fill the spinners with the appropriate drink choices.
 	 * 
 	 * @DrinkType - String description of drinks are we choosing from

@@ -186,8 +186,8 @@
 
 	function getLevel(labPoints){
 		var l = 0;
-		while(labPoints>levels[l]){l++;}
-		return l;
+		while(levels[l]<labPoints){l++;}
+		return l-1;
 	}
 	
 	exports.getLevelImg = function(labPoints){

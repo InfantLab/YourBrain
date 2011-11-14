@@ -42,10 +42,12 @@ exports.createApplicationWindow =function(){
 	var useSmallerFonts =  false;
 	var fontsLarger =  [12, 20, 30, 55, 70, 90, 110, 136]; // eight possible sizes for levels with only 2 digit numbers
 	var fontsSmaller = [10,14,18,24,30,40,50,61,72,84,95, 110]; //
+	var imgTop = [80,80];
+	var imgLeft = [60,240];
 	var startTime = 0, maxDigit = 10;
 	var points = 0, count = 0; coordbonus = 0, speedbonus = 0, inhibitbonus = 0, level = 0;
 	var missCount = 0, correctCount = 0, stroopMissTotal = 0, nonStroopMissTotal = 0;
-	var stepInterval = 2000;
+	var stepInterval = 500;
 	var loc = [];
 	var score, bonus;
 	
@@ -119,7 +121,7 @@ exports.createApplicationWindow =function(){
 			anchorPoint:{x:0.5,y:0.5},
 			backgroundColor:'orange',
 			color:'black',
-			top:80,left:60,
+			top:imgTop[0],left:imgLeft[0],
 			height:160,width:160,
 			center:{x:60+80,y:80+80},
 			name:"left",
@@ -132,7 +134,7 @@ exports.createApplicationWindow =function(){
 			anchorPoint:{x:0.5,y:0.5},
 			backgroundColor:'purple',
 			color:'black',
-			top:80,left:240,
+			top:imgTop[1],left:imgLeft[1],
 			height:160,width:160,
 			center:{x:240+80,y:80+80},
 			name:"right",
@@ -146,14 +148,14 @@ exports.createApplicationWindow =function(){
 		for (var i = 0; i < 2; i++) {
 			win.add(loc[i]);
 			loc[i].addEventListener('touchstart', function(ev){
-				for (t in ev)
-					Ti.API.debug(t);
+				// for (t in ev)
+					// Ti.API.debug(t);
 				Ti.API.debug('Clicked ' + ev.source );
 				var choiceTime = parseInt((new Date()).getTime() / 1000);
 				buttonClicked(choiceTime, ev);
 			});
 		}
-		win.addEventListener('dblclick',function(ev)
+		win.addEventListener('click',function(ev)
 		{
 		 	Ti.API.debug('Game Start');
 			if (!gameStarted){
@@ -203,6 +205,14 @@ exports.createApplicationWindow =function(){
 			Ti.API.debug(t);
 			
 		var idx = parseInt(events.source.idx);
+		var globalCoords = {x:0,y:0}; 
+		if (idx < 0 ){
+			globalCoords.x = events.x;
+			globalCoords.y = events.y;
+		}else{
+			globalCoords.x = events.x + imgLeft[idx];
+			globalCoords.y = events.y + imgTop[idx];
+		}
 		var oppidx = 1 - idx;
 		loc[idx].touchEnabled = false;
 		loc[oppidx].touchEnabled = false;
@@ -214,7 +224,7 @@ exports.createApplicationWindow =function(){
 			correctCount++;
 			points += 10;
 			speedbonus += calcSpeedBonus(startTime,clickTime);
-			coordbonus += calcCoordinationBonus(loc[idx].center, events);
+			coordbonus += calcCoordinationBonus(loc[idx].center, globalCoords);
 			//five extra points for stroop trials
 			inhibitbonus += (isStroopTrial?5:0);
 			
@@ -269,7 +279,7 @@ exports.createApplicationWindow =function(){
 			{
 				o.text = "";
 			}
-		},2000);
+		},1000);
 	}
 	
 	function resetScores(){
@@ -294,7 +304,7 @@ exports.createApplicationWindow =function(){
 			level++;
 			correctCount = 0;
 			missCount = 0;
-			stepInterval = stepInterval * 0.95;
+			stepInterval = Math.max(100,500 - 100*level);
 			labelGameMessage.text = "Level " + level;
 			clear(labelGameMessage);
 			maxDigit = 10 + (level-1)*10;
@@ -370,7 +380,7 @@ exports.createApplicationWindow =function(){
 		count = 0;
 		missCount = 0;
 		setTimeout(function(){// do something 
-			labelGameMessage.text = 'Double click to start game';
+			labelGameMessage.text = 'Click to start game';
 			gameStarted = false;
 			},
 			6000);
@@ -389,7 +399,7 @@ exports.createApplicationWindow =function(){
 		setTimeout(function(){
 			dialogOpen = false;
 			labelGameMessage.visible = true;
-			labelGameMessage.text = 'Double click to start game';
+			labelGameMessage.text = 'Click to start game';
 		}, 1000);
 	});
 	

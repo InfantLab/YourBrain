@@ -19,8 +19,9 @@
  */
 
 exports.createApplicationWindow =function(type,rounds){
-	var numRounds = rounds;
 	var MgameType = type;
+	var numRounds = rounds;
+	
 
 	var win = Titanium.UI.createWindow({
 		title:'YBOB Boozerlyzer',
@@ -142,6 +143,7 @@ exports.createApplicationWindow =function(type,rounds){
 			Ti.API.debug('Game Start');
 			if (!gameStarted){
 				gameStarted = true;
+				numRounds--;
 				setUpThisRound();
 			}
 		});
@@ -275,15 +277,15 @@ exports.createApplicationWindow =function(type,rounds){
 	
 		//picked one go on to next
 		setTimeout(function(){
-			if (win.numRounds > 0){
+			if (numRounds > 0){
 				//we go around again
-				win.numRounds--;
+				numRounds--;
 				setUpThisRound();
 			}else{
 				//show the results.
 				gameEndFeedback();				
 			}
-		}, 1700);
+		}, 1500);
 	}
 	function calcCoordination(centObj,centTouch){
 		var distx = centObj.x - centTouch.x; 
@@ -362,17 +364,17 @@ exports.createApplicationWindow =function(type,rounds){
 		//start a timer
 		roundStarted = (new Date()).getTime() / 1000;
 		
-		//get the number of rounds we still have to go.
-		if (numRounds === undefined) {
-			numRounds = 1;
-		}
-		else if (numRounds < 1) {
-			//time to go 
-			labelGameMessage.text = 'Thank you';
-			setTimeout(function(){
-				win.close();
-			}, 3000);
-		}
+		// //get the number of rounds we still have to go.
+		// if (numRounds === undefined) {
+			// numRounds = 1;
+		// }
+		// else if (numRounds < 1) {
+			// //time to go 
+			// labelGameMessage.text = 'Thank you';
+			// setTimeout(function(){
+				// win.close();
+			// }, 3000);
+		// }
 			
 		
 		///////////////////////////

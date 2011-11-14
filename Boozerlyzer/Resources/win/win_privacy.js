@@ -6,7 +6,7 @@
  * Copyright yourbrainondrugs.net 2011
  */
 
-exports.createApplicationWindow =function(launchType){
+exports.createApplicationWindow =function(launchType, parent){
 	// var win = Titanium.UI.createWindow({
 		// title:'YBOB Boozerlyzer',
 		// backgroundImage:'/images/smallcornercup.png',
@@ -21,6 +21,7 @@ exports.createApplicationWindow =function(launchType){
 		width:'100%'
 	});
 	var winHome = win.home;
+	var winMyDataAlias = parent;
 	
 	var mLaunchType;
 	if (!launchType){
@@ -141,18 +142,58 @@ exports.createApplicationWindow =function(launchType){
 	});	
 	win.add(exportData);
 	
-	function goHome(){
-		Ti.API.debug('win_personal goHome');
-		if (Boozerlyzer.winHome === undefined || Boozerlyzer.winHome === null) {
-			Boozerlyzer.winHome = Boozerlyzer.win.main.createApplicationWindow();
+	// function goHome(){
+		// Ti.API.debug('win_personal goHome');
+		// if (Boozerlyzer.winHome === undefined || Boozerlyzer.winHome === null) {
+			// Boozerlyzer.winHome = Boozerlyzer.win.main.createApplicationWindow();
+		// }
+		// Boozerlyzer.winHome.open();
+		// Boozerlyzer.tabMyData.hide();
+		// Boozerlyzer.winHome.refresh();
+	// }
+	
+		// SAVE BUTTON	
+	var save = Ti.UI.createButton({
+		title:'Save',
+		width:70,
+		height:28,
+		bottom:4,
+		right:4,
+		backgroundColor:'green'
+	});
+	win.add(save);
+	
+	save.addEventListener('click',function()
+	{
+		Titanium.App.Properties.setBool('PrivacySet', true);
+		Titanium.App.Properties.setInt('RegistrationNag', 10);
+		if(!Titanium.App.Properties.getBool('PersonalDetailEntered', false)){
+			winMyDataAlias.showPersonal();
+		}else if(!Titanium.App.Properties.getBool('Registered', false)){
+			winMyDataAlias.showComm();
+		}else{
+			Titanium.App.Properties.setInt('RegistrationNag', -1);
+			winMyDataAlias.goHome();			
 		}
-		Boozerlyzer.winHome.open();
-		Boozerlyzer.tabMyData.hide();
-		Boozerlyzer.winHome.refresh();
-	}	
+	});	
+	// CANCEL BUTTON	
+	var cancel = Ti.UI.createButton({
+		title:'Cancel',
+		width:70,
+		height:28,
+		bottom:4,
+		right:80,
+		backgroundColor:'red'
+	});
+	win.add(cancel);
+	
+	cancel.addEventListener('click',function()
+	{
+		winMyDataAlias.goHome();
+	});		
 	
 	// Cleanup and return home
-	win.addEventListener('android:back', goHome);
+	win.addEventListener('android:back', winMyDataAlias.goHome);
 	
 	if (mLaunchType==="Welcome"){
 		var alertDialog = Titanium.UI.createAlertDialog({

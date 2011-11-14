@@ -35,6 +35,8 @@
 		var labelScore, score, labelBonus, bonus, countLabel,nBackLabel,missCountLabel, labelGameMessage;
 		var currentObj = 0, points = 0, coordbonus = 0, speedbonus = 0,  inhibitbonus = 0;
 		var startTime = 0, stepStartTime = 0, count = 0, missCount = 0, falseAlarmCount = 0;
+		var count_GO, miss_GO, count_NOGO, miss_NOGO;
+		var speed_GO, speed_NOGO, coord_GO, coord_NOGO, inhibit;
 		var gameStarted = false, gameAllowRestart = true, clicked = false,dialogOpen  = false;
 		var iconSize = 90;
 		var imgtop = [2,2,2,96,96,96,190,190,190];
@@ -56,6 +58,14 @@
 			clicked = true;
 			var cen = e.source.center;
 			var idx = parseInt(e.source.idx);
+			var globalCoords = {x:0,y:0}; 
+			if (idx < 0 ){
+				globalCoords.x = e.x;
+				globalCoords.y = e.y;
+			}else{
+				globalCoords.x = events.x + imgLeft[idx];
+				globalCoords.y = events.y + imgTop[idx];
+			}
 			
 			Ti.API.debug("whatClicked x,y " + e.x + ", " + e.y  );
 			Ti.API.debug('source cen' + JSON.stringify(cen));
@@ -74,7 +84,7 @@
 					//CORRECT!
 					points += 10;
 					speedbonus += calcSpeedBonus(stepStartTime, new Date().getTime());
-					coordbonus += calcCoordinationBonus(cen,e);
+					coordbonus += calcCoordinationBonus("GO",cen,e);
 				}else{
 					//WRONG!
 					inhibitbonus -= 5;
@@ -87,7 +97,7 @@
 					//CORRECT!
 					points += 10;
 					speedbonus += calcSpeedBonus(stepStartTime, new Date().getTime());
-					coordbonus += calcCoordinationBonus(cen,e);
+					coordbonus += calcCoordinationBonus("GO",cen,e);
 				}else{
 					//WRONG!
 					inhibitbonus -= 5; 
@@ -101,6 +111,8 @@
 					missCount++;
 				}else{
 					Ti.API.debug('no match');
+					speedbonus += calcSpeedBonus(stepStartTime, new Date().getTime());
+					coordbonus += calcCoordinationBonus("NOGO",cen,e);
 					points += 2;
 				}			
 			}	
@@ -212,7 +224,7 @@
 			return Math.max(0, timediff);
 		}
 		
-		function calcCoordinationBonus(centObj,centTouch){
+		function calcCoordinationBonus(trialType, centObj,centTouch){
 			// a simple linear bonus of between 0 & 10 points for being
 			// between 50 and 0 units from the object center
 			var distx = centObj.x - centTouch.x; 
@@ -221,6 +233,11 @@
 			Ti.API.debug('calcCoordinationBonus - dist' + dist);
 			var bonusdist = Math.min(dist,50);
 			return 10*(50-bonusdist)/50;
+			if(trialType === "GO"){
+				speed_GO += timediff;
+			}else{
+				speed_NOGO += timediff;
+			}
 		}
 		function clear(o){
 			var t  = o.text;

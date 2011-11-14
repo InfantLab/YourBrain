@@ -7,7 +7,7 @@
  * Copyright yourbrainondrugs.net 2011
  */
 
-exports.createApplicationWindow =function(launchType){
+exports.createApplicationWindow =function(launchType, parent){
 	Ti.API.debug('creating win_personal');
 	// var win = Titanium.UI.createWindow({
 		// title:'YBOB Boozerlyzer',
@@ -23,6 +23,7 @@ exports.createApplicationWindow =function(launchType){
 		width:'100%'
 	});
 	var dbAlias = Boozerlyzer.db;
+	var winMyDataAlias = parent;
 	var initialised = false;
 	//layout variables
 	var topHW = 140, topNickname = 50, topSex = 10,topCountry = 10;
@@ -30,7 +31,7 @@ exports.createApplicationWindow =function(launchType){
 	var bottomDOB =4, leftDOB =80; 
 	
 	var mLaunchType;
-	if (!launchType){
+	if (launchType){
 		 mLaunchType = launchType
 	}
 	var helpMessage = "Please enter your personal information.\nClick on the Birth Date button to enter birth month and year. \nTo change from metric to imperial units click on height (m) or weight (kg).";
@@ -334,16 +335,16 @@ exports.createApplicationWindow =function(launchType){
 	validateWeight();
 	
 	
-	function goHome(){
-		Ti.API.debug('win_personal goHome');
-		if (Boozerlyzer.winHome === undefined || Boozerlyzer.winHome === null) {
-			Boozerlyzer.winHome = Boozerlyzer.win.home.createApplicationWindow();
-		}
-		Boozerlyzer.winHome.show();
-		Boozerlyzer.winHome.refresh();
-		Boozerlyzer.winMyData.hide();
-	}
-	
+	// function goHome(){
+		// Ti.API.debug('win_personal goHome');
+		// if (Boozerlyzer.winHome === undefined || Boozerlyzer.winHome === null) {
+			// Boozerlyzer.winHome = Boozerlyzer.win.home.createApplicationWindow();
+		// }
+		// Boozerlyzer.winHome.show();
+		// Boozerlyzer.winHome.refresh();
+		// winMyDataAlias.close();
+	// }
+// 	
 
 	//invisible button to return home over the cup
 	var homeButton = Titanium.UI.createView({
@@ -354,10 +355,10 @@ exports.createApplicationWindow =function(launchType){
 							    height:60
 						    });
 	win.add(homeButton);
-	homeButton.addEventListener('click',goHome);
+	homeButton.addEventListener('click',winMyDataAlias.goHome);
 	// Cleanup and return home
-	win.addEventListener('android:back', goHome);
-	win.addEventListener('close', goHome);
+	win.addEventListener('android:back', winMyDataAlias.goHome);
+	win.addEventListener('close', winMyDataAlias.goHome);
 	
 	// SAVE BUTTON	
 	var save = Ti.UI.createButton({
@@ -372,15 +373,16 @@ exports.createApplicationWindow =function(launchType){
 	
 	save.addEventListener('click',function()
 	{
-		Titanium.App.Properties.setBool('PersonalDetailEntered', true);
+		Titanium.App.Properties.setBool('PersonalDetailsEntered', true);
+		Titanium.App.Properties.setInt('RegistrationNag', 10);
 		dbAlias.personalInfo.setData(persInfo);
-		if(Titanium.App.Properties.getBool('PrivacySet', false)){
-			Titanium.App.Properties.setInt('RegistrationNag', -1);
-			goHome();			
+		if(!Titanium.App.Properties.getBool('PrivacySet', false)){
+			winMyDataAlias.showPrivacy();
+		}else if(!Titanium.App.Properties.getBool('Registered', false)){
+			winMyDataAlias.showComm();
 		}else{
-			Titanium.App.Properties.setInt('RegistrationNag', 10);
-			// var mTabGroup = win.tabGroup;
-			// mTabGroup.setActiveTab(1);
+			Titanium.App.Properties.setInt('RegistrationNag', -1);
+			winMyDataAlias.goHome();			
 		}
 	});	
 	// CANCEL BUTTON	
@@ -396,7 +398,7 @@ exports.createApplicationWindow =function(launchType){
 	
 	cancel.addEventListener('click',function()
 	{
-		goHome();
+		winMyDataAlias.goHome();
 	});	
 	
 	updateDateOfBirth();

@@ -62,7 +62,7 @@
 			// the Dosesage database object
 			//current session ID
 			var SessionID = Titanium.App.Properties.getInt('SessionID');
-			
+			Ti.API.debug('win_drinks - SessionID:'+ SessionID);
 			//All dose data for this session
 			Ti.API.debug('dataAlias.AllDrinks '+ dataAlias.AllDrinks);
 			if (!dataAlias.AllDrinks || dataAlias.AllDrinks === null || dataAlias.AllDrinks === false){
@@ -378,10 +378,26 @@
 															font:{fontSize:12,fontWeight:'normal'}
 														});
 				row.add(drinkkCalsLabel);
+				//click to edit
 				row.addEventListener('click', function(){
-					alert('Row clicked - row info:' + JSON.stringify(row.drinkData));
+			
+					// alert('Row clicked - row info:' + JSON.stringify(row.drinkData));
+					optionPickerDialog.setDrinkData(DrinkData);
 				});
-				
+				//longclick to delete 
+				row.addEventListener('longclick',function(){
+	      	   		var alertDialog = Titanium.UI.createAlertDialog({  
+		                title: 'Delete this drink..',  
+		                message: 'Are you sure?',  
+		                buttonNames: ['OK', 'Cancel']  
+		            });
+		            alertDialog.addEventListener('click',function(e)  
+		            {  
+		            	if (e.index === 0){
+		            			
+		            	}
+		            });  
+				});
 				return row;
 			}
 			

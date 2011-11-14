@@ -80,7 +80,7 @@ if (registrationNag < 0){
 	Boozerlyzer.winHome.open();	
 }else if (registrationNag === 0){
 	Boozerlyzer.winMyData = Boozerlyzer.win.myData.createApplicationWindow("Welcome");
-	//Boozerlyzer.winMyData.open();
+	Boozerlyzer.winMyData.open();
 }else{
 	//we will nag them eventually.
 	Titanium.App.Properties.setInt('RegistrationNag', registrationNag - 1);
