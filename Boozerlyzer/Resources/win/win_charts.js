@@ -11,6 +11,7 @@
 
 	var dataAlias = Boozerlyzer.data;
 	var dbAlias = Boozerlyzer.db;
+	//va//appdebugstepsps = "";
 	exports.createApplicationWindow = function(){
 		var win = Titanium.UI.createWindow({
 			title:'YBOB Boozerlyzer',
@@ -20,7 +21,7 @@
 		});	
 		// The main screen for plotting results
 		
-		Ti.include('/analysis/dataOverTime.js');
+		var dataOverTime = require('/analysis/dataOverTime');
 		//include the menu choices	
 		var menu = require('/ui/menu') ;
 		//need to give it specific help for this screen
@@ -44,6 +45,7 @@
 		Ti.API.debug('Charts - timeAxis ' + timeAxis);	
 		
 		function loadData(type){	
+			//appdebugsteps +='loading chart data..';
 			if (type === "Hourly Graph"){		
 				//All dose data for this session
 				sessionData = dbAlias.sessions.getSession(SessionID);
@@ -61,6 +63,7 @@
 				nTimeSteps = 84;
 			}
 			reloadData  = false;
+			//appdebugsteps +='finished loading chart data..';
 		}
 		loadData(timeAxis);
 		
@@ -72,13 +75,22 @@
 			url:'/charts/chartSingleSession.html',
 			zIndex:9
 		});
+		//appdebugsteps +='adding webView..';
 		win.add(webView);
+		//appdebugsteps +='added webView..';
 			
-		// Attach an APP wide event listener	
-		// it gets fired when the webView has finished loading
-		Ti.App.addEventListener('webViewLoaded', function(e) {
-			redrawGraph();
-		});
+		// // Attach an APP wide event listener	
+		// // it gets fired when the webView has finished loading
+		// Ti.App.addEventListener('webViewLoaded', function(e) {
+			// //appdebugsteps +='event: webViewLoaded';
+			// //alert(appdebugsteps);
+			// redrawGraph();
+		// });
+		//as an alternative to call back use this 
+		webView.addEventListener('load', function(e) {
+		    // code that fires AFTER webview has loaded
+		    redrawGraph();
+		 });
 		
 		var time = Ti.UI.createImageView({
 			image:'/icons/time.png',
@@ -99,6 +111,7 @@
 		var labelWeeklyDailyGraph, controlsDrawn = false; 
 		
 		function drawGraphControls(){	
+			//appdebugsteps +='drawGraphControls ..';
 			if (controlsDrawn) { return;}
 		
 			labelWeeklyDailyGraph = Ti.UI.createLabel({
@@ -140,8 +153,12 @@
 		changeGraphTimeAxis(timeAxis);
 		
 		function redrawGraph(){
+		try{
+				
+			//appdebugsteps +='redrawGraph start ..';
 			if (reloadData){
 				loadData(timeAxis);
+				//appdebugsteps +='redrawGraph: data loaded';
 			}
 			//webView has loaded so we can draw our chart
 			var options = {
@@ -183,9 +200,9 @@
 			
 		
 			//Ti.API.debug('redrawGraph -allDrinks ' + JSON.stringify(allDrinks));
-			var drinkSteps = drinksByTime(timeSteps,allDrinks,dataAlias.personalInfo, millsPerStandardUnits);
+			var drinkSteps = dataOverTime.drinksByTime(timeSteps,allDrinks,dataAlias.personalInfo, millsPerStandardUnits);
 			Ti.API.debug('redrawGraph -selfAssess ' + JSON.stringify(selfAssess));
-			var emotionSteps = emotionsByTime(timeSteps,selfAssess);
+			var emotionSteps = dataOverTime.emotionsByTime(timeSteps,selfAssess);
 			//var stroopSteps = gameByTime(timeSteps,gameData);
 			
 			var myData =  JSON.stringify({
@@ -195,7 +212,12 @@
 				selfData: emotionSteps, 			
 				drinkData:drinkSteps	});
 			
+			//appdebugsteps +='pre webView.evalJS';
 			webView.evalJS("paintLineChart('" + myData + "')");
+			//appdebugsteps +='post webView.evalJS';
+		} catch (err) {
+		    alert('chart redraw error' + err.description);
+		}
 		}
 		
 		
@@ -203,6 +225,7 @@
 		webView.addEventListener("error", function(e){
 		    Ti.API.log("Error: " + e.message);
 		//do something
+			alert('Charting error ' + e.message);
 		});
 		
 		// var yAxisTopIcon = Ti.UI.createImageView({

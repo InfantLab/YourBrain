@@ -23,9 +23,9 @@
 	 */
 	Boozerlyzer.analysis.BAC.calculate = function (timeStamp,doseageData,personalInfo) {
 		
-		Ti.API.debug('BACCalculate timeStamp -' + timeStamp);
-		Ti.API.debug('BACCalculate doseageData -' + JSON.stringify(doseageData));
-		Ti.API.debug('BACCalculate personalInfo -' + JSON.stringify(personalInfo));
+		Ti.API.debug('BACCalculate timeStamp: ' + timeStamp);
+		Ti.API.debug('BACCalculate doseageData: ' + JSON.stringify(doseageData));
+		Ti.API.debug('BACCalculate personalInfo: ' + JSON.stringify(personalInfo));
 		
 		
 		if (doseageData==null) return 0; // added by doctea so that no drinks is interpreted as BAC of 0 - avoids crash

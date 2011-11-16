@@ -17,12 +17,19 @@
 <body> 
 	<canvas id='myLineGraph'>[No canvas support]</canvas>
 	<script>
-    window.onload = function(){
-		var message = {onload:"complete"};
-		Ti.App.fireEvent('webViewLoaded', message);
-	}
+    // window.onload = function(){
+		// var message = {onload:"complete"};
+		// Ti.App.fireEvent('webViewLoaded', message);
+	// }
+			//helper to give us an N element array of nulls
+		function nNullsArray(array){
+			var nullArray = [];
+			nullArray[array.length -1 ] = null;
+			return nullArray;
+		}
 	
 	function paintLineChart(e) {
+		try{
 		//Ti.API.info("webview chart e -" + JSON.stringify(e));
 	
 		//clear any existing graph
@@ -107,14 +114,12 @@
 		 	lineHappy.Draw();
         	Ti.API.info("webview end emotion plotting ");
 		}
-            
-	}
-		//helper to give us an N element array of nulls
-		function nNullsArray(array){
-			var nullArray = [];
-			nullArray[array.length -1 ] = null;
-			return nullArray;
+        }
+        catch(err){
+        	alert('RGraphing error ' + err.description);    
 		}
+	}
+
     
     </script>
                          

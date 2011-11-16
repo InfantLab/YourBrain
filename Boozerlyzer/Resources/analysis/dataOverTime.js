@@ -15,10 +15,11 @@
 	 * and given timepoint together with
 	 * the blood alcohol level they cause 
 	 */	
-	function drinksByTime(timePoints,drinkData,personalInfo, millsPerStandardUnits){
+	exports.drinksByTime = function (timePoints,drinkData,personalInfo, millsPerStandardUnits){
 		var returnData = [];
-		var lenTime = timePoints.length;
-		var lenDrinks = drinkData.length;
+		//get lengths of arrays if they exist
+		var lenTime = (timePoints ? timePoints.length : 0);
+		var lenDrinks = (drinkData ? drinkData.length : 0);
 		Ti.API.debug('drinksByTime lenDrinks' + lenDrinks);
 		for (var t=0;t<lenTime;t++){
 			var totalUnits = 0;
@@ -30,7 +31,10 @@
 					lastDrinkIdx = d; 
 				}
 			}
-			var bac = Boozerlyzer.analysis.BAC.calculate(timePoints[t],drinkData.slice(0,lastDrinkIdx+1),personalInfo);
+			var bac = 0;
+			if (lenDrinks > 0){
+				bac = Boozerlyzer.analysis.BAC.calculate(timePoints[t],drinkData.slice(0,lastDrinkIdx+1),personalInfo);
+			} 
 			returnData.push({
 				time:timePoints[t],
 				millsAlcohol:totalUnits,
@@ -39,16 +43,17 @@
 			});
 		}
 		return returnData;
-	}
+	};
 
 	/***
 	 * passed an array of timepoints and set of emotion data.
 	 * returns array of the most recent emotion scores for each timepoint 
 	 */	
-	function emotionsByTime(timePoints,emotionData){
+	exports.emotionsByTime = function (timePoints,emotionData){
 		var returnData = [];
-		var lenTime = timePoints.length;
-		var lenEmotions = emotionData.length;
+		//get lengths of arrays if they exist
+		var lenTime = (timePoints ? timePoints.length : 0);
+		var lenEmotions = (emotionData ? emotionData.length : 0);
 		Ti.API.debug('emotionsByTime lenEmotions' + lenEmotions);
 		for (var t=1;t<lenTime;t++){
 			var currTime = timePoints[t];
@@ -84,5 +89,5 @@
 			}
 		}//end time loop
 		return returnData;
-	}
+	};
 //})();

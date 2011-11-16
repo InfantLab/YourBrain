@@ -17,9 +17,15 @@
 <body> 
 	<canvas id='myLineGraph'>[No canvas support]</canvas>
 	<script>
-    window.onload = function(){
-		var message = {onload:"complete"};
-		Ti.App.fireEvent('webViewLoaded', message);
+    // window.onload = function(){
+		// var message = {onload:"complete"};
+		// Ti.App.fireEvent('webViewLoaded', message);
+	// }
+	//helper to give us an N element array of nulls
+	function nNullsArray(array){
+		var nullArray = [];
+		nullArray[array.length -1 ] = null;
+		return nullArray;
 	}
 	
 	function paintLineChart(e) {
@@ -60,10 +66,10 @@
 		var lastDrunkeness = [];
 		var lastHappiness = [];
 		var lastEnergy = [];
-		for (var i = 0; i < selfData.length; i++) {		
-			lastDrunkeness.push(selfData[i].Drunkeness);
-			lastHappiness.push(selfData[i].Happiness);
-			lastEnergy.push(selfData[i].Energy);
+		for (var j = 0; j < selfData.length; j++) {		
+			lastDrunkeness.push(selfData[j].Drunkeness);
+			lastHappiness.push(selfData[j].Happiness);
+			lastEnergy.push(selfData[j].Energy);
 		}
 		
 		
@@ -109,12 +115,7 @@
 		}
             
 	}
-		//helper to give us an N element array of nulls
-		function nNullsArray(array){
-			var nullArray = [];
-			nullArray[array.length -1 ] = null;
-			return nullArray;
-		}
+
     
     </script>
                          

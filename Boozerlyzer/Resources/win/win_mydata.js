@@ -20,9 +20,6 @@ exports.createApplicationWindow =function(launchType){
 	var viewComm, buttonCommText;
 	win.add(viewPersonal);
 	win.add(viewPrivacy);
-	viewPersonal.visible = true;
-	viewPrivacy.visible = false;
-
 	//and do we show registration or sync screen?
 	if (Ti.App.Properties.getBool('Registered', false)){
 		viewComm =  Boozerlyzer.win.syncInfo.createApplicationWindow("normal", win);
@@ -34,8 +31,20 @@ exports.createApplicationWindow =function(launchType){
 					
 	}
 	win.add(viewComm);
+	//work out which one to show by default
+	viewPersonal.visible = false;
+	viewPrivacy.visible = false;
 	viewComm.visible = false;
-
+	if (!Titanium.App.Properties.getBool('PersonalDetailsEntered', false)){
+		viewPersonal.visible = true;
+	}else if (!Titanium.App.Properties.getBool('PrivacySet', false)){
+		viewPrivacy.visible = true;
+	}else if (Ti.App.Properties.getBool('Registered', false)){
+		viewComm.visible = true;
+	}else{
+		viewPersonal.visible = true;
+	}
+	//add buttons to switch between them
 	var buttonPersonal = Titanium.UI.createButton({
 	    backgroundColor:'#336699',
 	    top:0,
@@ -117,7 +126,6 @@ exports.createApplicationWindow =function(launchType){
 	homeButton.addEventListener('click',win.goHome);
 	// Cleanup and return home
 	win.addEventListener('android:back', win.goHome);	
-	win.addEventListener('close', win.goHome);
 	
 	return win;
 };

@@ -180,7 +180,7 @@
 	 * Return the sum of mls of alcohol in this array of drink data
 	 */
 	dbAlias.doseageLog.totalDrinkVolume = function (drinkData){
-		if (drinkData==null) return 0; // no drink data (ie user hasn't entered any drinks)
+		if (drinkData===null) {return 0;} // no drink data (ie user hasn't entered any drinks)
 		var d = drinkData.length;
 		var vol =0;
 		for(var i=0;i<d;i++){

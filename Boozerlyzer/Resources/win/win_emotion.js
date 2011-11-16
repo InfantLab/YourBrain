@@ -14,7 +14,7 @@
 	var dataAlias  = Boozerlyzer.data;
 	var currentSessionID = -1, previousSessionID = -2;
 	var drunkeness, energy, happiness, lastChangedLabel;
-	var winOpened;
+	var winOpened, loadedonce;
 	
 	exports.createApplicationWindow = function(){
 		var win = Titanium.UI.createWindow({
@@ -356,7 +356,8 @@
 			}
 			win.close();
 			Boozerlyzer.winHome.open();
-			Boozerlyzer.winHome.refresh();
+			// Boozerlyzer.winHome.refresh();
+			Ti.App.fireEvent('homeWinRefresh');
 		}
 		//invisible button to return home over the cup
 		var homeButton = Titanium.UI.createView({
@@ -419,7 +420,9 @@
 			previousSessionID = currentSessionID;
 		};
 		win.refreshData();		
+		loadedonce = true;
 		return win;
+		
 	};
 			
 // })();

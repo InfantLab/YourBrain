@@ -431,7 +431,7 @@
 				levelUpDialog.addEventListener('close', function(e){
 					setTimeout(function(){
 						dialogOpen = false;
-						alert('leveled up');
+						//alert('leveled up');
 					}, 1000);
 				});
 				levelUpDialog.open();
@@ -456,7 +456,7 @@
 		loadedonce = true;
 		Ti.API.debug('homeWin 7');
 
-		
+		homeWin.addEventListener('homeWinRefresh',homeWin.refresh);
 				
 		homeWin.addEventListener('focused', function(){
 			Ti.API.debug('homeWin got focus');

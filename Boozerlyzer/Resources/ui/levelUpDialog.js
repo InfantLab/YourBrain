@@ -35,10 +35,10 @@
 		containerViewCloseAnimation = Ti.UI.createAnimation({bottom:-251});
 
 		containerView = Ti.UI.createView({ 
-			top:'5%',
-			left:'5%',
-			height:'90%',
-			width:'90%',
+			top:10,
+			left:10,
+			height:290,
+			width:460,
 			zIndex:9
 		});
 		containerView.addEventListener('click', function(){
@@ -47,10 +47,10 @@
 		});		
 		
 		coverView = Ti.UI.createView({
-			top:'5%',
-			left:'5%',
-			height:'90%',
-			width:'90%',
+			top:10,
+			left:10,
+			height:290,
+			width:460,
 			backgroundColor:'#000',
 			opacity:1,
 			borderRadius:4,
@@ -74,7 +74,7 @@
 			color:'#FFD700'
 		});
 		labPointsLabel = Ti.UI.createLabel({
-			top:48,
+			top:92,
 			width:'auto',
 			text:'Score    -   00000 points',
 			font:{fontSize:24,fontFamily:'Marker Felt',fontWeight:'bold'},
@@ -82,12 +82,12 @@
 			color:'#191'
 		});
 		messageLabel = Ti.UI.createLabel({
-			top:200,
+			top:46,
 			width:'auto',
-			text:'Keep up the good work!',
-			font:{fontSize:18,fontFamily:'Helvetic Neue',fontWeight:'italic'},
+			text:"You're moving up in the world",
+			font:{fontSize:16,fontFamily:'Helvetic Neue',fontWeight:'italic'},
 			textAlign:'center',
-			color:'#000'		
+			color:'#119'		
 		});
 		goodHamsterIcon = Ti.UI.createImageView({
 			top:'4%',
@@ -149,12 +149,12 @@
 			Titanium.Platform.openURL(wikiBaseUrl[newLevel] + wikiLevelItem[newLevel]);
 		});
 		containerView.add(congratulationsLabel);
+		containerView.add(messageLabel);
 		containerView.add(goodHamsterIcon);
 		containerView.add(trophyIcon);
 		containerView.add(labPointsLabel);
 		containerView.add(oldLevelLabel);
 		containerView.add(newLevelLabel);
-		containerView.add(messageLabel);
 		containerView.add(oldLevelIcon);
 		containerView.add(rightArrowIcon);
 		containerView.add(newLevelIcon);
