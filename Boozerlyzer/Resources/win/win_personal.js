@@ -398,6 +398,7 @@ exports.createApplicationWindow =function(launchType, parent){
 	
 	cancel.addEventListener('click',function()
 	{
+		Titanium.App.Properties.setInt('RegistrationNag', 5);
 		winMyDataAlias.goHome();
 	});	
 	

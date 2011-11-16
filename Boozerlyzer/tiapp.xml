@@ -9,7 +9,7 @@
     </deployment-targets>
     <id>net.boozerlyzer.app</id>
     <name>Boozerlyzer</name>
-    <version>0.25</version>
+    <version>0.26</version>
     <publisher>boozerlyzer.net</publisher>
     <url>http://boozerlyzer.net</url>
     <description>An app to track alcohol consumption.</description>

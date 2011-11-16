@@ -41,6 +41,8 @@
 		var iconSize = 90;
 		var imgtop = [2,2,2,96,96,96,190,190,190];
 		var imgleft = [2,96,190,2,96,190,2,96,190];
+		var leftButton = 10, rightButton= 376;
+		var topButton = 30, bottomButton = 150;
 		
 		var fruitprefix = '/images/fruit/';
 		var fruits = ['apple.png','banana.png','cherry.png','grapefruit.png','kiwi.png','lemon.png','lime.png','strawberry.png','watermelon.png','starfruit.png'];
@@ -59,13 +61,6 @@
 			var cen = e.source.center;
 			var idx = parseInt(e.source.idx);
 			var globalCoords = {x:0,y:0}; 
-			if (idx < 0 ){
-				globalCoords.x = e.x;
-				globalCoords.y = e.y;
-			}else{
-				globalCoords.x = events.x + imgLeft[idx];
-				globalCoords.y = events.y + imgTop[idx];
-			}
 			
 			Ti.API.debug("whatClicked x,y " + e.x + ", " + e.y  );
 			Ti.API.debug('source cen' + JSON.stringify(cen));
@@ -77,6 +72,10 @@
 			if(count < nBack){
 				//nothing to do
 			}else if (idx === -1){ 
+				//work out correct location of the click globally
+				globalCoords.x = e.x + leftButton;
+				globalCoords.y = e.y + bottomButton;
+			
 				//clicked left button, cheick if image matches N back item
 				//clicked teh right button see if location matches nBack location.
 				if (stepImage[count] === stepImage[count - nBack]){
@@ -84,20 +83,22 @@
 					//CORRECT!
 					points += 10;
 					speedbonus += calcSpeedBonus(stepStartTime, new Date().getTime());
-					coordbonus += calcCoordinationBonus("GO",cen,e);
+					coordbonus += calcCoordinationBonus("GO",cen,globalCoords);
 				}else{
 					//WRONG!
 					inhibitbonus -= 5;
 					missCount++;
 				} 			
 			}else if (idx === 1){ 
+				globalCoords.x = e.x + rightButton;
+				globalCoords.y = e.y + bottomButton;
 				//clicked teh right button see if location matches nBack location.
 				if (stepLocation[count] === stepLocation[count - nBack]){
 					Ti.API.debug('location match');
 					//CORRECT!
 					points += 10;
 					speedbonus += calcSpeedBonus(stepStartTime, new Date().getTime());
-					coordbonus += calcCoordinationBonus("GO",cen,e);
+					coordbonus += calcCoordinationBonus("GO",cen,globalCoords);
 				}else{
 					//WRONG!
 					inhibitbonus -= 5; 
@@ -110,9 +111,12 @@
 					//too bad
 					missCount++;
 				}else{
+					globalCoords.x = e.x + (idx=== -10 ? leftButton: rightButton);
+					globalCoords.y = e.y + topButton;
+
 					Ti.API.debug('no match');
 					speedbonus += calcSpeedBonus(stepStartTime, new Date().getTime());
-					coordbonus += calcCoordinationBonus("NOGO",cen,e);
+					coordbonus += calcCoordinationBonus("NOGO",cen,globalCoords);
 					points += 2;
 				}			
 			}	
@@ -200,8 +204,9 @@
 									inhibitbonus,
 									5,
 									"",
-									'/icons/Memory.png' )
+									'/icons/Memory.png' );
 			scoresDialog.open();
+			Ti.API.debug('memory game over end');
 		}
 		scoresDialog.addEventListener('close', function(e){
 			setTimeout(function(){
@@ -256,8 +261,8 @@
 				title:'No match',
 				width:'20%',
 				height:'30%',
-				bottom:'60%',
-				left:'1%',
+				top:topButton,
+				left:leftButton,
 				backgroundColor:'#888',
 				borderWidth:3,
 				borderRadius:4,
@@ -274,8 +279,8 @@
 				title:'Shape matched item 1 step before',
 				width:'20%',
 				height:'30%',
-				bottom:'23%',
-				left:'1%',
+				top:bottomButton,
+				left:leftButton,
 				backgroundColor:'#888',
 				borderWidth:3,
 				borderRadius:4,
@@ -291,8 +296,8 @@
 				title:'No match',
 				width:'20%',
 				height:'30%',
-				bottom:'60%',
-				right:'1%',
+				top:topButton,
+				left:rightButton,
 				backgroundColor:'#888',
 				borderWidth:3,
 				borderRadius:4,
@@ -308,8 +313,8 @@
 				title:'Location matched item 1 step before',
 				width:'20%',
 				height:'30%',
-				bottom:'23%',
-				right:'1%',
+				top:bottomButton,
+				left:rightButton,
 				backgroundColor:'#888',
 				borderWidth:3,
 				borderRadius:4,
@@ -481,11 +486,6 @@
 		
 		function gameEndSaveScores(){
 			var now = parseInt((new Date()).getTime()/1000);
-	
-			// var drinkSteps = drinksByTime([now],
-										  // Ti.App.booozerlyzer.currentDrinks,
-										  // Ti.App.booozerlyzer.personalInfo, 
-										  // millsPerStandardUnits);
 										  
 			var gameSaveData = [{Game: 'DualNBack',
 								GameVersion:1,

@@ -42,7 +42,7 @@ exports.createApplicationWindow =function(){
 
 	win.idx = -1;
 	
-	var currentObj = 0, startTime = 0,stepStartTime = 0;
+	var currentObj = 0, previousObj = 0, startTime = 0,stepStartTime = 0, proportionInverted = 0.1;
 	var gameStarted = false, clicked = false, inverted = false, dialogOpen = false, shrinkTime = 5000; // how long does this blob stay visible?
 	var points = 0, coordbonus = 0, speedbonus = 0, inhibitbonus = 0;
 	var count_GO, miss_GO, count_NOGO, miss_NOGO;
@@ -56,7 +56,7 @@ exports.createApplicationWindow =function(){
 	var loc = [];
 	
 	var whatClicked = function (e) {
-		if (currentObj < 0 || clicked){ 
+		if (currentObj < -1 || clicked){ 
 			//don't fire more than once
 			return;
 		}
@@ -81,7 +81,7 @@ exports.createApplicationWindow =function(){
 		loc[currentObj].animate(stopAnim);			//cancel remaining animation 
 		loc[currentObj].visible = false;	//and hide the object
 		if (idx === currentObj && !inverted){ //clicked correct one
-			currentObj = -1;
+			currentObj = -99;
 			points += 10;
 			calcCoordinationBonus("GO",cen,globalCoords);
 			calcSpeedBonus("GO",stepStartTime, new Date().getTime());
@@ -95,7 +95,7 @@ exports.createApplicationWindow =function(){
 			inhibitbonus += 5;
 			calcCoordinationBonus("NOGO",cen,globalCoords);
 			calcSpeedBonus("NOGO",stepStartTime, new Date().getTime());
-			currentObj = -1;
+			currentObj = -99;
 		}else{ //missed
 			miss_GO++;
 			labelGameMessage.text = 'Oops!'
@@ -135,6 +135,7 @@ exports.createApplicationWindow =function(){
 			return;
 		}
 		//Random but no repeating 
+		currentObj = Math.floor(6*Math.random());
 		while(currentObj===previousObj){
 			currentObj = Math.floor(6*Math.random());
 		}	
@@ -163,7 +164,7 @@ exports.createApplicationWindow =function(){
 		updateScore();	
 		//set a timeout in case user doesn't press anything
 		//Ti.API.debug('old missTimeOut -' + missTimeOut);
-		missTimeOut = setTimeout(stepTimedOut, Math.round(3*shrinkTime));
+		missTimeOut = setTimeout(stepTimedOut, Math.round(1.5*shrinkTime));
 		//Ti.API.debug('new missTimeOut -' + missTimeOut);
 	}
 	function gameOver(){
@@ -293,6 +294,7 @@ exports.createApplicationWindow =function(){
 		
 		//reset counters & other variables 
 		currentObj = 0;
+		previousObj = 0;
 		points = 0;
 		coordbonus = 0;
 		speedbonus = 0;
