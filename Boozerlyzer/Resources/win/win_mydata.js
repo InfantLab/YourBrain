@@ -39,7 +39,7 @@ exports.createApplicationWindow =function(launchType){
 		viewPersonal.visible = true;
 	}else if (!Titanium.App.Properties.getBool('PrivacySet', false)){
 		viewPrivacy.visible = true;
-	}else if (Ti.App.Properties.getBool('Registered', false)){
+	}else if (!Ti.App.Properties.getBool('Registered', false)){
 		viewComm.visible = true;
 	}else{
 		viewPersonal.visible = true;
@@ -107,7 +107,7 @@ exports.createApplicationWindow =function(launchType){
 	win.goHome = function (){
 		Ti.API.debug('win_mydata - gohome');
 		if (Boozerlyzer.winHome === undefined || Boozerlyzer.winHome === null) {
-			Boozerlyzer.winHome = Boozerlyzer.win.home.createApplicationWindow();
+			Boozerlyzer.winHome = Boozerlyzer.win.main.createApplicationWindow();
 		}
 		Boozerlyzer.winHome.open();
 		Boozerlyzer.winMyData.close();

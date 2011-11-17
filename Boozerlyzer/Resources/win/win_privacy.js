@@ -43,7 +43,7 @@ exports.createApplicationWindow =function(launchType, parent){
 	
 	var netPrivacyLabel = Ti.UI.createLabel({
 			text:'Network Privacy',
-			top: 80,
+			top: 100,
 			left:20,
 			width:140,
 			height:24,
@@ -56,7 +56,7 @@ exports.createApplicationWindow =function(launchType, parent){
 
 	var netPrivacyBtn= Ti.UI.createButton({
 	    title:netprivacy[Titanium.App.Properties.getInt('NetPrivacy',1)],  
-	    top:80,  
+	    top:120,  
 	    width:240,  
 	    height:35,  
 	    borderRadius:2,  
@@ -102,7 +102,7 @@ exports.createApplicationWindow =function(launchType, parent){
 	});
 	var phonePrivacyBtn= Ti.UI.createButton({
 	    title:phoneprivacy[Titanium.App.Properties.getInt('PhonePrivacy',0)],  
-	    top:20,  
+	    top:40,  
 	    width:240,  
 	    height:35,  
 	    borderRadius:2,  

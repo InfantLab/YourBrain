@@ -68,12 +68,13 @@
 			if (latestDataIdx >= 0 ){
 				returnData.push({
 					time:currTime,
-					DrunkBlur: emotionData[latestDataIdx].DrunkBlur,
-					Drunkeness: emotionData[latestDataIdx].Drunkeness,
-					Energy: emotionData[latestDataIdx].Energy,
-					EnergyBlur: emotionData[latestDataIdx].EnergyBlur,
-					Happiness: emotionData[latestDataIdx].Happiness,
-					HappyBlur: emotionData[latestDataIdx].HappyBlur
+					//replace missing values with nulls
+					DrunkBlur: 	(emotionData[latestDataIdx].DrunkBlur<0 ? null :emotionData[latestDataIdx].DrunkBlur)  ,
+					Drunkeness: (emotionData[latestDataIdx].Drunkeness<0 ? null :emotionData[latestDataIdx].Drunkeness),
+					Energy: 	(emotionData[latestDataIdx].Energy<0 ? null :emotionData[latestDataIdx].Energy),
+					EnergyBlur: (emotionData[latestDataIdx].EnergyBlur<0 ? null :emotionData[latestDataIdx].EnergyBlur),
+					Happiness: 	(emotionData[latestDataIdx].Happiness<0 ? null :emotionData[latestDataIdx].Happiness),
+					HappyBlur:	(emotionData[latestDataIdx].HappyBlur<0 ? null :emotionData[latestDataIdx].HappyBlur)
 				});
 			}else{
 				//default values
@@ -81,9 +82,9 @@
 					time:currTime,
 					DrunkBlur: 0,
 					Drunkeness: 0,
-					Energy: 50,
+					Energy: 0,
 					EnergyBlur: 0,
-					Happiness: 50,
+					Happiness: 0,
 					HappyBlur: 0
 				});
 			}

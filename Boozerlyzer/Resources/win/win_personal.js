@@ -338,7 +338,7 @@ exports.createApplicationWindow =function(launchType, parent){
 	// function goHome(){
 		// Ti.API.debug('win_personal goHome');
 		// if (Boozerlyzer.winHome === undefined || Boozerlyzer.winHome === null) {
-			// Boozerlyzer.winHome = Boozerlyzer.win.home.createApplicationWindow();
+			// Boozerlyzer.winHome = Boozerlyzer.win.main.createApplicationWindow();
 		// }
 		// Boozerlyzer.winHome.show();
 		// Boozerlyzer.winHome.refresh();

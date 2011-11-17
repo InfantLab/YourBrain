@@ -133,6 +133,7 @@ exports.createApplicationWindow =function(launchType, parent){
 			Ti.App.Properties.setString('AuthToken', response.AuthToken);
 			Ti.App.Properties.setInt('LastSentID', response.LastID);
 			Ti.App.Properties.setBool('Registered', true);
+			Ti.App.Properties.setInt('RegistrationNag', -1);
             var alertDialog = Titanium.UI.createAlertDialog({  
                 title: 'Registration complete',  
                 message: response.message,  

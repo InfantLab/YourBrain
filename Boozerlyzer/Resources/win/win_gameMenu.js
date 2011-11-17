@@ -150,7 +150,7 @@ exports.createApplicationWindow = function(){
 	//every win_.js file but i tried it a few ways and i never got it to work.
 	function goHome(){
 		if (Boozerlyzer.winHome === undefined || Boozerlyzer.winHome === null) {
-			Boozerlyzer.winHome = Boozerlyzer.win.home.createApplicationWindow();
+			Boozerlyzer.winHome = Boozerlyzer.win.main.createApplicationWindow();
 		}
 		win.close();
 		Boozerlyzer.winHome.open();

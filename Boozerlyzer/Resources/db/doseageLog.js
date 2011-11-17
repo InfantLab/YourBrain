@@ -126,7 +126,7 @@
 	
 	//get all data for this Session ID 
 	dbAlias.doseageLog.deleteDrink = function (drinkID){
-		var rows =dbAlias.conn.execute('SELECT * FROM DoseageLog WHERE SESSIONID = ? ORDER BY DoseageChanged ASC', sessionID);
+		var rows =dbAlias.conn.execute('delete FROM DoseageLog WHERE DrinkID = ? ', drinkID);
 		var returnData = fillDataObject(rows);
 		rows.close();
 		return returnData;

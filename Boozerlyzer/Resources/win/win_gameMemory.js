@@ -519,7 +519,7 @@
 		win.addEventListener('android:back', function(e) {
 			if (Boozerlyzer.winHome === undefined 
 			 || Boozerlyzer.winHome === null) {
-				Boozerlyzer.winHome = Boozerlyzer.win.home.createApplicationWindow();		
+				Boozerlyzer.winHome = Boozerlyzer.win.main.createApplicationWindow();		
 			}
 			win.close();
 			Boozerlyzer.winHome.open();

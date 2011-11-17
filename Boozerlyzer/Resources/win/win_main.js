@@ -128,6 +128,9 @@
 			if (Titanium.App.Properties.getBool('MateMode',false)){
 				//switch back into regular mode
 				dataAlias.session = dbAlias.sessions.getLatestData(0);
+				//clear stored data too to force it to reload
+				dataAlias.AllDrinks = null;//array of drinks
+				dataAlias.currentEmotions = null; //what are current levels of happiness/energy/drunkeness 
 				//retrieve current session
 				Titanium.App.Properties.setBool('MateMode', false);			//set to false
 				Titanium.App.Properties.setInt('SessionID',dataAlias.session[0].ID);
@@ -144,6 +147,9 @@
 				Titanium.App.Properties.setBool('MateMode', true);
 				//switch into mate mode.. create a new session.
 				dataAlias.session = dbAlias.sessions.createNewSession(Titanium.App.Properties.getBool('MateMode',false));
+				//clear stored data too to force it to reload
+				dataAlias.AllDrinks = null;//array of drinks
+				dataAlias.currentEmotions = null; //what are current levels of happiness/energy/drunkeness 
 				Titanium.App.Properties.setInt('SessionID', dataAlias.session[0].ID);
 				Titanium.App.Properties.setInt('UserID', dataAlias.session[0].UserID);
 				Ti.API.debug("Switch into mate mode - session info:" + JSON.stringify(dataAlias.session));
@@ -376,6 +382,10 @@
 		{
 			if (e.index === 0) {
 				dataAlias.session = dbAlias.sessions.createNewSession(false);
+				//clear stored data too.
+				dataAlias.AllDrinks = null;//array of drinks
+				dataAlias.currentEmotions = null; //what are current levels of happiness/energy/drunkeness 
+
 				rewriteSessionInfo();
 				labelCurrentSession.text = 'Session Started\n' + Boozerlyzer.dateTimeHelpers.formatDayPlusTime(dataAlias.session[0].StartTime,true);
 			}
@@ -389,6 +399,9 @@
 			dataAlias.session = dbAlias.sessions.getLatestData(0);
 			if (dataAlias.session === null || dataAlias.session === false){
 				dataAlias.session = dbAlias.sessions.createNewSession(false);
+				//clear stored data too.
+				dataAlias.AllDrinks = null;//array of drinks
+				dataAlias.currentEmotions = null; //what are current levels of happiness/energy/drunkeness 
 			}
 				
 		}
@@ -403,6 +416,9 @@
 		}else{
 			//>36 hours since last update, don't ask just start new
 			dataAlias.session = dbAlias.sessions.createNewSession(false);
+			//clear stored data too.
+			dataAlias.AllDrinks = null;//array of drinks
+			dataAlias.currentEmotions = null; //what are current levels of happiness/energy/drunkeness 
 		} 
 		Ti.API.debug('homeWin 3');
 
