@@ -2,10 +2,6 @@
 /**
  * @author Caspar Addyman
  * 
- * The user interface for the main screen of the boozerlyzer app.
- * We wrap all code in a self-calling function to protect the 
- * global namespace.
- * 
  * Copyright yourbrainondrugs.net 2011
  */
 
@@ -42,18 +38,43 @@
  * @author Bart Lewis <bartlewis@gmail.com>
  */
 
-// var optionPickerDialog = (function(){
-	var e, callbackOnClose, isControlsCreated = false;
+	var callbackOnClose, isControlsCreated = false;
+	var coverViewOpenAnimation,coverViewCloseAnimation;
 	var containerViewOpenAnimation, containerViewCloseAnimation, cancelButton;
-	var doneButton, flexibleSpace, toolbar, picker, containerView, coverView;
-	var strengths, sizes;
+	var deleteButton, doneButton, flexibleSpace, toolbar, picker, containerView, coverView;
+	var strengths, sizes, drinkTypeImage;
+	var typeIcons =[];
+	typeIcons['Beer']    ='/icons/beer-full.png';
+	typeIcons['Wine']    = '/icons/wine.png';
+	typeIcons['Spirits'] = '/icons/whiskey.png';
+	// basic callback event object - very like drink object
+	var	returnData = {
+			cancel:false,
+			done:false,
+			selectedRow:null,
+			deleteDrink:false,
+			ID:-1,
+			DrugVariety:'',
+			DoseDescription:'',
+			DoseageStart: 0,
+			DoseageChanged: 0,
+			ExitCode: '',
+			SessionID:0,
+			Volume: 0,
+			Strength:0,
+			StandardUnits: 0,
+			DrugType:'Alcohol',
+			TotalUnits: 0,
+			NumDoses: 0
+		};
+
 
 	function createControls(){
 		if (isControlsCreated) {return;}
 
-		colVolumeLabel = Ti.UI.createLabel({text:'%',top:28,left:120,color:'blue',font: {fontSize: "16"}});
-		colDescriptionLabel = Ti.UI.createLabel({text:'Amount',top:28,left:210,color:'blue',font: {fontSize: "16"}});
-		colCountLabel = Ti.UI.createLabel({text:'Num',top:28,left:330,color:'blue',font: {fontSize: "16"}});
+		colVolumeLabel = Ti.UI.createLabel({text:'% ABV',top:28,left:120,color:'blue',font: {fontSize: '16',fontWeight:'bold'}});
+		colDescriptionLabel = Ti.UI.createLabel({text:'Amount',top:28,left:210,color:'blue',font: {fontSize: '16',fontWeight:'bold'}});
+		colCountLabel = Ti.UI.createLabel({text:'Number',top:28,left:330,color:'blue',font: {fontSize: '16',fontWeight:'bold'}});
 
 		picker = Ti.UI.createPicker({		
 			useSpinner: true, visibleItems: 4,
@@ -65,39 +86,54 @@
 		coverViewOpenAnimation = Ti.UI.createAnimation({opacity:0.7});
 		coverViewCloseAnimation = Ti.UI.createAnimation({opacity:0});
 		containerViewOpenAnimation = Ti.UI.createAnimation({bottom:0});
-		containerViewCloseAnimation = Ti.UI.createAnimation({bottom:-251});
+		containerViewCloseAnimation = Ti.UI.createAnimation({bottom:-281});
 
+
+		drinkTypeImage = Ti.UI.createImageView({
+			image:'/icons/newdrinks.png',
+			height:52,
+			width:52,
+			top:4,
+			left:4
+		});
+		deleteButton =  Ti.UI.createButton({
+			title:'Delete',
+			bottom:20,
+			left:20,
+			width:90
+		});
+		deleteButton.addEventListener('click', function(){
+			returnData.deleteDrink = true;
+			exports.close();
+		});
+		
 		cancelButton =  Ti.UI.createButton({
 			title:'Cancel',
 			bottom:20,
-			left:60,
-			width:120
-			
-			//,style:Ti.UI.iPhone.SystemButtonStyle.BORDERED
+			left:150,
+			width:90
 		});
 		cancelButton.addEventListener('click', function(){
-			e.cancel = true;
+			returnData.cancel = true;
 			exports.close();
 		});
 
 		doneButton =  Ti.UI.createButton({
 			title:'Done',
 			bottom:20,
-			right:60,
-			width:120
-			//,			style:Ti.UI.iPhone.SystemButtonStyle.DONE
+			left:280,
+			width:90
  		});
 		doneButton.addEventListener('click', function(){
-			e.done = true;
-			e.selectedRow = picker.getSelectedRow(0);
-			e.strength = picker.getSelectedRow(0).title;
-			Ti.API.debug('selected row strength ' + picker.getSelectedRow(0).strength); 
-			
+			returnData.done = true;
+			returnData.selectedRow = picker.getSelectedRow(0);
+			returnData.Strength = parseFloat(picker.getSelectedRow(0).title);
+			returnData.Volume = parseFloat(picker.getSelectedRow(1).Volume);
+			returnData.DoseDescription = picker.getSelectedRow(1).DoseDesc;
+			returnData.NumDoses = picker.getSelectedRow(2).title;
+			Ti.API.debug('selected row strength ' + picker.getSelectedRow(0).title); 
 			Ti.API.debug('selected row obj ' + JSON.stringify(picker.getSelectedRow(1))); 
-			e.doseSize = picker.getSelectedRow(1).doseSize;
-			e.doseDescription = picker.getSelectedRow(1).doseDesc;
-			Ti.API.debug('Done button dose Desc' + e.doseDescription);
-			e.NumDoses = picker.getSelectedRow(2).title;
+			Ti.API.debug('Done button dose Desc' + returnData.doseDescription);
 			exports.close();
 		});
 
@@ -114,23 +150,20 @@
 		});
 		Ti.UI.currentWindow.add(coverView);
 
-		containerView = Ti.UI.createView({height:251, bottom:-251, zIndex:9});
+		containerView = Ti.UI.createView({height:281, width:400, bottom:-281, zIndex:9});
 		containerView.add(colVolumeLabel);
 		containerView.add(colDescriptionLabel);
 		containerView.add(colCountLabel);
 		containerView.add(picker);
+		containerView.add(drinkTypeImage);
 		containerView.add(doneButton);
+		containerView.add(deleteButton);
 		containerView.add(cancelButton);
-
+		deleteButton.visible = false;
 		Ti.UI.currentWindow.add(containerView);		
 
 		isControlsCreated = true;
 	}
-
-	// /**
-	 // * Public API
-	 // */
-	// var api = {};
 
 	exports.getPicker = function(){return picker;};
 	exports.open = function(){	
@@ -140,18 +173,47 @@
 	exports.close = function(){
 		coverView.animate(coverViewCloseAnimation);
 		containerView.animate(containerViewCloseAnimation);
-
 		if (callbackOnClose){
-			callbackOnClose(e);
+			callbackOnClose(returnData);
 		}
 	};
 
 	/***
-	 * Set up a new drink dialog based on a drinkData object
+	 * Set up a new drink dialog based on an existing drinkData object
 	 */
 	exports.setDrinkData = function(drinkData){
-		exports.setDrinkType(drinkData.DrugVariety,[0])	;
-	}
+		createControls();
+		returnData = drinkData;
+		returnData.cancel =false;
+		returnData.done = false;
+		returnData.deleteDrink = false;
+		deleteButton.visible = true;
+
+		//fill picker rows appropriately
+		exports.setDrinkType(returnData.DrugVariety);
+	
+		//select the correct picker rows.
+		//strength
+		Ti.API.debug('picker strength row:' + JSON.stringify(picker.columns[0]));
+		var nRows = picker.columns[0].rows.length;
+		for(var r=0;r<nRows;r++){
+			if (picker.columns[0].rows[r].Strength === returnData.Strength){
+				Ti.API.debug('picker strength setSelectedRow:');
+				picker.setSelectedRow(0,r);
+				break;
+			}
+		}
+		//size
+		nRows = picker.columns[1].rows.length;
+		for(r=0;r<nRows;r++){
+			if (picker.columns[1].rows[r].Volume === returnData.Volume){
+				picker.setSelectedRow(1,r);
+				break;
+			}
+		}
+		//quantity is a bit easier
+		picker.setSelectedRow(2,returnData.NumDoses-1);
+	};
 
 	/***
 	 * fill the spinners with the appropriate drink choices.
@@ -159,27 +221,13 @@
 	 * @DrinkType - String description of drinks are we choosing from
 	 * @prevChoice - [optional] three integer array of previous row choices
 	 */
-	exports.setDrinkType = function(DrinkType,prevChoices){
+	exports.setDrinkType = function(DrinkType){
+		createControls();
+		
 		var i = 0, len, property, row, rows = [], dataLength = DrinkType.length;
 
-		createControls();
-
-		// reset callback event object
-		e = {
-			cancel:false,
-			done:false,
-			selectedRow:null,
-			drugType:'Alcohol',
-			drugVariety:DrinkType,
-			doseSize:0,
-			strength:0,
-			NumDoses:0,
-			doseDescription:0
-		};
-	
-		//clear old columns	
-		picker.colums = null;
-
+		returnData.DrugVariety =DrinkType;
+		drinkTypeImage.image =  typeIcons[DrinkType];
 		Ti.API.debug('picker_drinks set data 3');		
 		//Retrieve the strengths for this DrugType
 		strengths = Boozerlyzer.db.drugDoses.getStrengths(DrinkType);
@@ -189,7 +237,7 @@
 			var thisStrength = strengths[i].DoseStrength;
 			var row = Ti.UI.createPickerRow({title:		thisStrength.toFixed(1)});
 			row.extend({
-				strength:thisStrength
+				Strength:thisStrength
 			});
 			columnStrength.add(row);			
 		}
@@ -204,8 +252,8 @@
 			var sizeStr = Math.round(1000*sizes[i].DoseSize) + 'ml -' + sizes[i].DoseDescription;
 			var row = Ti.UI.createPickerRow({title:sizeStr});
 			row.extend({
-					doseSize: sizes[i].DoseSize,
-					doseDesc: sizes[i].DoseDescription
+					Volume: sizes[i].DoseSize,
+					DoseDesc: sizes[i].DoseDescription
 				});
 			columnSize.add(row);
 		}
@@ -215,18 +263,16 @@
 		for (i=0; i<4; i++){		
 			columnNumber.add(Ti.UI.createPickerRow({title:(i+1).toFixed(0)}));
 		}
-	
 		picker.columns = [columnStrength,columnSize,columnNumber];
-		for(i=0;i<3;i++){
-			if (prevChoices[i] >= 0){picker.setSelectedRow(i,prevChoices[i]); } 	 	
-		}
 		Ti.API.debug('picker_drinks set data end');
-
+	};
+	exports.quickSelect = function(prevChoices){
+		for(var i=0;i<3;i++){
+			if (prevChoices[i] >= 0 ){picker.setSelectedRow(i,prevChoices[i]);}
+		}
 	};
 
 	exports.addEventListener = function(eventName, callback){
 		if (eventName=='close') {callbackOnClose = callback;}
 	};
 
-	// return api;
-// }());

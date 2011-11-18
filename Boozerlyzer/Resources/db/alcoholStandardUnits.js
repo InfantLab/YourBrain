@@ -47,7 +47,12 @@
 			return returnData;
 		}
 		//something didn't work
-		return false;
+		//return some defaults
+		rows.close();
+		return [{	Country: 'UK',
+					GramsPerUnit: 8.7,
+					MillilitresPerUnit: 10
+				}];
 	};
 	
 	

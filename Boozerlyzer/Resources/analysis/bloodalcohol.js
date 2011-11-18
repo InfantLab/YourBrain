@@ -56,14 +56,14 @@
 			
 		for (var b = 0; b<doseageData.length; b++ ){	
 			var thisDose = doseageData[b].TotalUnits;
-			if (doseageData[b].DoseageChanged > timeStamp){
+			if (doseageData[b].DoseageStart > timeStamp){
 				//can skip this drink.. it happens in the future
 			}else if (remainingAlcohol === 0) {
-				if (endProcessingThis > doseageData[b].DoseageChanged){
+				if (endProcessingThis > doseageData[b].DoseageStart){
 					//our body is ready to process more
 					startProcessingThis = endProcessingThis;
 				}else{
-					startProcessingThis = doseageData[b].DoseageChanged;					
+					startProcessingThis = doseageData[b].DoseageStart;					
 				}
 				//it will take this long to process it.
 				endProcessingThis = startProcessingThis + 3600*(thisDose / mStandardMetabolicRate);
@@ -76,10 +76,10 @@
 				remainingAlcohol += thisDose;
 			}else{
 				//add this dose to the pile				
-				 if (endProcessingThis > doseageData[b].DoseageChanged){
+				 if (endProcessingThis > doseageData[b].DoseageStart){
 					startProcessingThis = endProcessingThis;
 				}else{
-					startProcessingThis = doseageData[b].DoseageChanged;
+					startProcessingThis = doseageData[b].DoseageStart;
 				}
 				remainingAlcohol += thisDose;
 				endProcessingThis = startProcessingThis + 3600*(remainingAlcohol / mStandardMetabolicRate);

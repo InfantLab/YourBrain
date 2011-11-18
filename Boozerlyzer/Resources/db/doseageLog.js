@@ -44,52 +44,52 @@
 	
 	dbAlias.doseageLog.setData = function (newData){
 		Titanium.API.debug('doseagelog setData');
-		Titanium.API.debug('newData - ' + JSON.stringify(newData[0]));
-		if (newData[0].Changed){
-			if (newData[0].ID > 0){
+		Titanium.API.debug('newData - ' + JSON.stringify(newData));
+		if (newData.Changed){
+			if (newData.ID > 0){
 				//We update an existing row
 				var insertstr = 'UPDATE DOSEAGELOG SET DrugVariety= ?, DoseDescription= ?, DoseageStart = ?,DoseageChanged = ?,ExitCode = ?,SessionID = ?,Volume = ?,Strength = ?,StandardUnits = ?,DrugType = ?,TotalUnits = ?,Number = ? ';
 				insertstr += 'WHERE ID = ?';
 				Titanium.API.debug('update str ' + insertstr);
-				Titanium.API.debug('update str variety ' + newData[0].DrugVariety);
-				Titanium.API.debug('update str desc' + newData[0].DoseDescription);
-				Titanium.API.debug('update str start ' + newData[0].DoseageStart);
+				Titanium.API.debug('update str variety ' + newData.DrugVariety);
+				Titanium.API.debug('update str desc' + newData.DoseDescription);
+				Titanium.API.debug('update str start ' + newData.DoseageStart);
 				
 				dbAlias.conn.execute(insertstr,
-							 newData[0].DrugVariety,
-							 newData[0].DoseDescription,
-							 newData[0].DoseageStart,
-							 newData[0].DoseageChanged,
-							 newData[0].ExitCode,
-							 newData[0].SessionID,
-							 newData[0].Volume,
-							 newData[0].Strength,
-							 newData[0].StandardUnits,
-							 newData[0].DrugType,
-							 newData[0].TotalUnits,
-							 newData[0].NumDoses,
-							 newData[0].ID );
+							 newData.DrugVariety,
+							 newData.DoseDescription,
+							 newData.DoseageStart,
+							 newData.DoseageChanged,
+							 newData.ExitCode,
+							 newData.SessionID,
+							 newData.Volume,
+							 newData.Strength,
+							 newData.StandardUnits,
+							 newData.DrugType,
+							 newData.TotalUnits,
+							 newData.NumDoses,
+							 newData.ID );
 			} else {
 				//new row
 				var insertstr = 'INSERT INTO DOSEAGELOG (DrugVariety, DoseDescription,DoseageStart,DoseageChanged,ExitCode,SessionID,Volume,Strength,StandardUnits,DrugType,TotalUnits,Number)';
 				insertstr += 'VALUES(?,?,?, ?,?,?, ?,?,?, ?,?,?)';
 				Titanium.API.debug('update str ' + insertstr);
-				Titanium.API.debug('update str variety ' + newData[0].DrugVariety);
-				Titanium.API.debug('update str desc' + newData[0].DoseDescription);
-				Titanium.API.debug('update str start ' + newData[0].DoseageStart);
+				Titanium.API.debug('update str variety ' + newData.DrugVariety);
+				Titanium.API.debug('update str desc' + newData.DoseDescription);
+				Titanium.API.debug('update str start ' + newData.DoseageStart);
 				dbAlias.conn.execute(insertstr,
-							 newData[0].DrugVariety,		//beer/wine/spirits
-							 newData[0].DoseDescription,	//pint/sml glass etc
-							 newData[0].DoseageStart,		//time opened the drinks log window
-							 newData[0].DoseageChanged,		//time we closed it
-							 newData[0].ExitCode,			//how did we close it (not used)
-							 newData[0].SessionID,			//current session id
-							 newData[0].Volume,				//Size of drink in millilitres
-							 newData[0].Strength,			//Strength as % abv
-							 newData[0].StandardUnits,		//how many standard units (for given country)
-							 newData[0].DrugType,			//always 'Alcohol'
-							 newData[0].TotalUnits,			//Total millilitres pure alcohol
-							 newData[0].NumDoses);			//Number of drinks
+							 newData.DrugVariety,		//beer/wine/spirits
+							 newData.DoseDescription,	//pint/sml glass etc
+							 newData.DoseageStart,		//time opened the drinks log window
+							 newData.DoseageChanged,		//time we closed it
+							 newData.ExitCode,			//how did we close it (not used)
+							 newData.SessionID,			//current session id
+							 newData.Volume,				//Size of drink in millilitres
+							 newData.Strength,			//Strength as % abv
+							 newData.StandardUnits,		//how many standard units (for given country)
+							 newData.DrugType,			//always 'Alcohol'
+							 newData.TotalUnits,			//Total millilitres pure alcohol
+							 newData.NumDoses);			//Number of drinks
 			}
 			Titanium.API.debug('DoseageLog updated, rowsAffected = ' +dbAlias.conn.rowsAffected);
 			Titanium.API.debug('DoseageLog, lastInsertRowId = ' +dbAlias.conn.lastInsertRowId);
@@ -108,7 +108,7 @@
 		result.push({
 			Changed: false,
 			DrugVariety:'',
-			DoseDescription:'Session Start',
+			DoseDescription:'',
 			ID:dbAlias.conn.lastInsertRowId,
 			DoseageStart: now,
 			DoseageChanged: now,
@@ -126,10 +126,8 @@
 	
 	//get all data for this Session ID 
 	dbAlias.doseageLog.deleteDrink = function (drinkID){
-		var rows =dbAlias.conn.execute('delete FROM DoseageLog WHERE DrinkID = ? ', drinkID);
-		var returnData = fillDataObject(rows);
-		rows.close();
-		return returnData;
+		Ti.API.debug('deleting drink ID : ' + drinkID);
+		dbAlias.conn.execute('delete FROM DoseageLog WHERE ID = ? ', drinkID);
 	};
 		
 	//get all data for this Session ID 
@@ -202,8 +200,8 @@
 					ID:				parseInt(rows.fieldByName('ID'), 10),			
 					DrugVariety:	rows.fieldByName('DrugVariety'),				//beer/wine/spirits
 					DoseDescription:rows.fieldByName('DoseDescription'),			//pint/sml glass etc
-					DoseageStart:	parseInt(rows.fieldByName('DoseageStart'),10),	//time opened the drinks log window
-					DoseageChanged:	parseInt(rows.fieldByName('DoseageChanged'),10),//time we closed it
+					DoseageStart:	parseInt(rows.fieldByName('DoseageStart'),10),	//time drink was added - used in BAC calculations
+					DoseageChanged:	parseInt(rows.fieldByName('DoseageChanged'),10),//time drink was last edited
 					ExitCode:		rows.fieldByName('ExitCode'),					//how did we close it (not used)
 					SessionID:		parseInt(rows.fieldByName('SessionID'),10),		//current session id
 					Volume:			parseFloat(rows.fieldByName('Volume')),			//Size of drink in millilitres

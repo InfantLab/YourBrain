@@ -45,71 +45,80 @@
 			var howLongDays = [1, 7, 28, 365];
 			var drinkNames = ['Beer','Wine','Spirits','NULL'];
 			var drinkImgs = ['/icons/beer-full.png','/icons/wine.png','/icons/whiskey.png','/icons/whiskey-empty.png'];
+			var millsPerStandardUnits, lastIndex;
 			
-			
-			if (!dataAlias.personalInfo || dataAlias.personalInfo === null || dataAlias.personalInfo === 'undefined'){
-				dataAlias.personalInfo = dbAlias.personalInfo.getData();
-			}
-			Ti.API.debug('dataAlias.standardDrinks ' + dataAlias.standardDrinks );
-			Titanium.API.debug('personal info' + JSON.stringify(dataAlias.personalInfo));
-			if (!dataAlias.standardDrinks || dataAlias.standardDrinks === null || dataAlias.standardDrinks ==='undefined'){
-				dataAlias.standardDrinks = dbAlias.alcoholStandardDrinks.get(dataAlias.personalInfo.Country);
-			}
-			Ti.API.debug('dataAlias.standardDrinks ' + JSON.stringify(dataAlias.standardDrinks));
-			var millsPerStandardUnits = dataAlias.standardDrinks[0].MillilitresPerUnit;
-			
-			
-			// the Dosesage database object
 			//current session ID
 			var SessionID = Titanium.App.Properties.getInt('SessionID');
 			Ti.API.debug('win_drinks - SessionID:'+ SessionID);
-			//All dose data for this session
-			Ti.API.debug('dataAlias.AllDrinks '+ dataAlias.AllDrinks);
-			if (!dataAlias.AllDrinks || dataAlias.AllDrinks === null || dataAlias.AllDrinks === false){
-				dataAlias.AllDrinks = dbAlias.doseageLog.getAllSessionData(SessionID);
-			}
-			if (!dataAlias.AllDrinks || dataAlias.AllDrinks.length === 0){
-				dataAlias.AllDrinks = dbAlias.doseageLog.newDrink();
-				dbAlias.sessions.Updated(SessionID);
-			}
-			Ti.API.debug('dataAlias.AllDrinks '+ dataAlias.AllDrinks);
 			var sessionData = dbAlias.sessions.getSession(SessionID);
-	//		Titanium.API.debug('sessionData -' + JSON.stringify(sessionData));
-			//find the last row 
-			var lastIndex = dataAlias.AllDrinks.length - 1;
-			//we will use these to keep count of drinks..
-			dataAlias.AllDrinks[lastIndex].DoseageStart = winOpened;
+				
+			function getUserLocale(){
+				//need to know where user is from so we can tell standard drink sizes
+				if (!dataAlias.personalInfo || dataAlias.personalInfo === null || dataAlias.personalInfo === 'undefined'){
+					dataAlias.personalInfo = dbAlias.personalInfo.getData();
+				}
+				if (!dataAlias.standardDrinks || dataAlias.standardDrinks === null || dataAlias.standardDrinks ==='undefined'){
+					dataAlias.standardDrinks = dbAlias.alcoholStandardDrinks.get(dataAlias.personalInfo.Country);
+				}
+				millsPerStandardUnits = dataAlias.standardDrinks[0].MillilitresPerUnit;
+				
+				Ti.API.debug('personal info' + JSON.stringify(dataAlias.personalInfo));
+				Ti.API.debug('dataAlias.standardDrinks ' + JSON.stringify(dataAlias.standardDrinks));
+			}
+			getUserLocale();
 			
+			function getAllDrinkData(forceReload){
+				//All dose data for this session
+				if (forceReload || !dataAlias.AllDrinks || dataAlias.AllDrinks === null || dataAlias.AllDrinks === false){
+					dataAlias.AllDrinks = dbAlias.doseageLog.getAllSessionData(SessionID);
+				}
+				if (!dataAlias.AllDrinks || dataAlias.AllDrinks.length === 0){
+					dataAlias.AllDrinks = dbAlias.doseageLog.newDrink();
+					dbAlias.sessions.Updated(SessionID);
+				}
+				Ti.API.debug('dataAlias.AllDrinks '+ dataAlias.AllDrinks);
+				//find the last row 
+				lastIndex = dataAlias.AllDrinks.length - 1;
+			}
+			getAllDrinkData(false);
 			
 			// Respond when selection made and dialog closed
-			optionPickerDialog.addEventListener('close', function(e){
-			    if (e.done===true && e.selectedRow){
-			        Ti.API.debug('e.drugVariety '+ e.drugVariety );
-			        Ti.API.debug('e.doseSize '+ e.doseSize );
-			        Ti.API.debug('e.strength '+ e.strength );
-			        Ti.API.debug('e.NumDoses' + e.NumDoses);
-					var newDrinks = dbAlias.doseageLog.newDrink();
-					newDrinks[0].DoseDescription = e.doseDescription;
-					newDrinks[0].DrugVariety = e.drugVariety;
-					newDrinks[0].Volume = e.doseSize;
-					newDrinks[0].Strength = e.strength;
-					newDrinks[0].NumDoses = e.NumDoses;
-					newDrinks[0].DrugType = 'Alcohol';
-					Ti.API.debug('Total units' +  1000 * e.doseSize * e.strength * e.NumDoses / (100) );
-					newDrinks[0].TotalUnits = 1000*e.doseSize * e.strength * e.NumDoses / (100);
+			optionPickerDialog.addEventListener('close', function(editedDrink){
+			    if (editedDrink.deleteDrink && editedDrink.ID > 0 ){
+			    	//remove this drink
+			    	dbAlias.doseageLog.deleteDrink(editedDrink.ID);
+			    }else  if (editedDrink.done===true && editedDrink.selectedRow){
+			        Ti.API.debug('editedDrink='+ JSON.stringify(editedDrink));
+			       // var newDrinks = dbAlias.doseageLog.newDrink();
+					// newDrinks[0].DoseDescription = editedDrink.DoseDescription;
+					// newDrinks[0].DrugVariety = editedDrink.DrugVariety;
+					// newDrinks[0].Volume = editedDrink.doseSize;
+					// newDrinks[0].Strength = editedDrink.strength;
+					// newDrinks[0].NumDoses = editedDrink.NumDoses;
+					// newDrinks[0].DrugType = 'Alcohol';
+					editedDrink.TotalUnits = 1000*editedDrink.Volume * editedDrink.Strength * editedDrink.NumDoses / (100);
 					if (isNaN(dataAlias.standardDrinks[0].MillilitresPerUnit) || dataAlias.standardDrinks[0].MillilitresPerUnit <= 0){
-						newDrinks[0].StandardUnits = 0;
+						editedDrink.StandardUnits = 0;
 					}else{
-						newDrinks[0].StandardUnits = newDrinks[0].TotalUnits / dataAlias.standardDrinks[0].MillilitresPerUnit;
+						editedDrink.StandardUnits = editedDrink.TotalUnits / dataAlias.standardDrinks[0].MillilitresPerUnit;
 					}
-					newDrinks[0].Changed = true;
-			 		Ti.API.debug('std units ' + newDrinks[0].StandardUnits );
-					dbAlias.doseageLog.setData(newDrinks);
-					tv.appendRow(formatTableRow(newDrinks[0]));
-					dataAlias.AllDrinks.push(newDrinks[0]);	
-					tv.scrollToIndex(dataAlias.AllDrinks.length -1);
-					totalizeDrinks();
+					//set a few more properties before saving
+					editedDrink.SessionID = SessionID;
+					if (editedDrink.DoseageStart === null || editedDrink.DoseageStart === 0){
+						editedDrink.DoseageStart = parseInt((new Date()).getTime()/1000,10);
+					}
+					//always update editing time
+					editedDrink.DoseageChanged = parseInt((new Date()).getTime()/1000,10);
+					editedDrink.Changed = true; 
+					dbAlias.doseageLog.setData(editedDrink);
 			    }
+				//changed things so reload data
+				getAllDrinkData(true);
+				refreshDrinksTable();
+				// tv.appendRow(formatTableRow(newDrinks[0]));
+				// dataAlias.AllDrinks.push(newDrinks[0]);	
+				tv.scrollToIndex(dataAlias.AllDrinks.length -1);
+				totalizeDrinks();
 			});
 			
 			
@@ -174,7 +183,8 @@
 			win.add(beeradd);
 			beeradd.addEventListener('click',function (){
 				// Set data in picker and open as a modal
-				optionPickerDialog.setDrinkType('Beer',[2,4,0]);
+				optionPickerDialog.setDrinkType('Beer');
+				optionPickerDialog.quickSelect([2,4,0]);
 				optionPickerDialog.open();
 			});
 			
@@ -189,7 +199,8 @@
 			win.add(beeradd_sml);
 			beeradd_sml.addEventListener('click',function (){
 				// Set data in picker and open as a modal
-				optionPickerDialog.setDrinkType('Beer',[2,0,0]);
+				optionPickerDialog.setDrinkType('Beer');
+				optionPickerDialog.quickSelect([2,0,0]);
 				optionPickerDialog.open();
 			});
 	
@@ -216,7 +227,8 @@
 			win.add(wineadd);
 			wineadd.addEventListener('click',function (){
 				// Set data in picker and open as a modal
-				optionPickerDialog.setDrinkType('Wine',[2,2,0]);
+				optionPickerDialog.setDrinkType('Wine');
+				optionPickerDialog.quickSelect([2,2,0]);
 				optionPickerDialog.open();
 			});
 			
@@ -231,7 +243,8 @@
 			win.add(wineadd_sml);
 			wineadd_sml.addEventListener('click',function (){
 				// Set data in picker and open as a modal
-				optionPickerDialog.setDrinkType('Wine',[2,0,0]);
+				optionPickerDialog.setDrinkType('Wine');
+				optionPickerDialog.quickSelect([2,0,0]);
 				optionPickerDialog.open();
 			});
 			
@@ -256,7 +269,8 @@
 			win.add(spiritadd);
 			spiritadd.addEventListener('click',function (){
 				// Set data in picker and open as a modal
-				optionPickerDialog.setDrinkType('Spirits',[2,2,0]);
+				optionPickerDialog.setDrinkType('Spirits');
+				optionPickerDialog.quickSelect([2,2,0]);
 				optionPickerDialog.open();
 			});
 			
@@ -271,7 +285,8 @@
 			win.add(spiritadd_sml);
 			spiritadd_sml.addEventListener('click',function (){
 				// Set data in picker and open as a modal
-				optionPickerDialog.setDrinkType('Spirits',[2,0,0]);
+				optionPickerDialog.setDrinkType('Spirits');
+				optionPickerDialog.quickSelect([2,0,0]);
 				optionPickerDialog.open();
 			});
 			
@@ -308,8 +323,8 @@
 				//first keep a copy of all data .. handy for updating later.		    
 			    row.drinkData = DrinkData;
 			    //convert DrinkData obj into text, etc.
-			    Titanium.API.debug('DrinkData.DoseageStart '+ DrinkData.DoseageStart);
-			    var addedTime = Boozerlyzer.dateTimeHelpers.formatTime(DrinkData.DoseageStart,true);
+			    Titanium.API.debug('DrinkData.DoseageChanged '+ DrinkData.DoseageChanged);
+			    var addedTime = Boozerlyzer.dateTimeHelpers.formatTime(DrinkData.DoseageChanged,true);
 			    var numUnits = DrinkData.TotalUnits / dataAlias.standardDrinks[0].MillilitresPerUnit;
 				//calorie calculation = 7kCals per gram of alcohol , 0.79 grams per millilitre
 				var numkCals = DrinkData.TotalUnits * 0.79 * 7;
@@ -382,7 +397,8 @@
 				row.addEventListener('click', function(){
 			
 					// alert('Row clicked - row info:' + JSON.stringify(row.drinkData));
-					optionPickerDialog.setDrinkData(DrinkData);
+					optionPickerDialog.setDrinkData(row.drinkData);
+					optionPickerDialog.open();
 				});
 				//longclick to delete 
 				row.addEventListener('longclick',function(){
@@ -505,13 +521,22 @@
 				footerView:footer,
 				rowHeight:28
 			});
-			
-			//initial population of drink list.
-			var len = dataAlias.AllDrinks.length;
-			for(var idx=0;idx<len; idx++){
-				tv.appendRow(formatTableRow(dataAlias.AllDrinks[idx]));	
-			}
 			sessionView.add(tv);
+			
+
+			function refreshDrinksTable(){
+				//initial population of drink list.
+				var len = dataAlias.AllDrinks.length;
+				var drinkRows = [];
+				for(var idx=0;idx<len; idx++){
+					if (dataAlias.AllDrinks[idx].TotalUnits > 0){
+						//add a row
+						drinkRows.push(formatTableRow(dataAlias.AllDrinks[idx]));	
+					}
+				}
+				tv.setData(drinkRows);
+			}
+			refreshDrinksTable();
 			
 			function setSessionLabel(){
 				headerLabel.text = 'Session began: ' + Boozerlyzer.dateTimeHelpers.formatDayPlusTime(sessionData[0].StartTime,true);
