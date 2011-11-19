@@ -9,7 +9,7 @@
     </deployment-targets>
     <id>net.boozerlyzer.app</id>
     <name>Boozerlyzer</name>
-    <version>0.27</version>
+    <version>0.28</version>
     <publisher>boozerlyzer.net</publisher>
     <url>http://boozerlyzer.net</url>
     <description>A drinks tracker that also measures  mood and cognitive function.</description>
@@ -35,7 +35,7 @@
         </orientations>
     </iphone>
     <android xmlns:android="http://schemas.android.com/apk/res/android">
-        <manifest android:versionCode="27" android:versionName="0.27">
+        <manifest android:versionCode="28" android:versionName="0.28">
             <uses-permission android:name="android.permission.INTERNET"/>
             <supports-screens android:anyDensity="false"/>
             <application>

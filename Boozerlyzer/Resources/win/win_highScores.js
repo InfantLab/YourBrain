@@ -9,6 +9,7 @@
  */
 
 var dbAlias = Boozerlyzer.db;
+var commAlias = Boozerlyzer.comm;
 
 exports.createApplicationWindow =function(){
 	var win = Titanium.UI.createWindow({
@@ -128,7 +129,8 @@ exports.createApplicationWindow =function(){
 	});
 	footer.add(footerLabel);
 	footer.addEventListener('click',function (){
-		alert('submitting high scores');
+		alert('Latest data sent to boozerlyzer.net.\nThank you.');
+		commAlias.sendData.sync();
 	});
 	
 	var header = Ti.UI.createView({

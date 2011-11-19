@@ -72,9 +72,9 @@
 	function createControls(){
 		if (isControlsCreated) {return;}
 
-		colVolumeLabel = Ti.UI.createLabel({text:'% ABV',top:28,left:120,color:'blue',font: {fontSize: '16',fontWeight:'bold'}});
-		colDescriptionLabel = Ti.UI.createLabel({text:'Amount',top:28,left:210,color:'blue',font: {fontSize: '16',fontWeight:'bold'}});
-		colCountLabel = Ti.UI.createLabel({text:'Number',top:28,left:330,color:'blue',font: {fontSize: '16',fontWeight:'bold'}});
+		colVolumeLabel = Ti.UI.createLabel({text:'% ABV',top:28,left:66,color:'blue',font: {fontSize: '16',fontWeight:'bold'}});
+		colDescriptionLabel = Ti.UI.createLabel({text:'Amount',top:28,left:166,color:'blue',font: {fontSize: '16',fontWeight:'bold'}});
+		colCountLabel = Ti.UI.createLabel({text:'Number',top:28,left:282,color:'blue',font: {fontSize: '16',fontWeight:'bold'}});
 
 		picker = Ti.UI.createPicker({		
 			useSpinner: true, visibleItems: 4,
@@ -83,7 +83,7 @@
 			font: {fontSize: "14"}
 		});
 		
-		coverViewOpenAnimation = Ti.UI.createAnimation({opacity:0.7});
+		coverViewOpenAnimation = Ti.UI.createAnimation({opacity:0.9});
 		coverViewCloseAnimation = Ti.UI.createAnimation({opacity:0});
 		containerViewOpenAnimation = Ti.UI.createAnimation({bottom:0});
 		containerViewCloseAnimation = Ti.UI.createAnimation({bottom:-281});
@@ -93,8 +93,8 @@
 			image:'/icons/newdrinks.png',
 			height:52,
 			width:52,
-			top:4,
-			left:4
+			top:12,
+			left:8
 		});
 		deleteButton =  Ti.UI.createButton({
 			title:'Delete',
@@ -104,6 +104,7 @@
 		});
 		deleteButton.addEventListener('click', function(){
 			returnData.deleteDrink = true;
+			returnData.deleteDrink = false;
 			exports.close();
 		});
 		
@@ -114,6 +115,7 @@
 			width:90
 		});
 		cancelButton.addEventListener('click', function(){
+			returnData.deleteDrink = false;
 			returnData.cancel = true;
 			exports.close();
 		});
@@ -125,6 +127,8 @@
 			width:90
  		});
 		doneButton.addEventListener('click', function(){
+			returnData.deleteDrink = false;
+			returnData.cancel = false;
 			returnData.done = true;
 			returnData.selectedRow = picker.getSelectedRow(0);
 			returnData.Strength = parseFloat(picker.getSelectedRow(0).title);
@@ -225,7 +229,7 @@
 		createControls();
 		
 		var i = 0, len, property, row, rows = [], dataLength = DrinkType.length;
-
+		
 		returnData.DrugVariety =DrinkType;
 		drinkTypeImage.image =  typeIcons[DrinkType];
 		Ti.API.debug('picker_drinks set data 3');		

@@ -69,7 +69,7 @@
 		homeWin.add(label1);
 		
 		var labelVers = Titanium.UI.createLabel({
-			color:'#888',
+			color:'#555',
 			text:'Version: '+ Titanium.App.getVersion(),
 			font:{fontSize:12,fontFamily:'Helvetica Neue'},
 			textAlign:'center',

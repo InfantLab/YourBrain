@@ -457,7 +457,7 @@
 			
 			function calcDisplayBloodAlcohol(){
 				var now = parseInt((new Date()).getTime()/1000,10);
-				currentBloodAlcohol = Boozerlyzer.analysis.BAC.calculate(now, dataAlias.AllDrinks.slice(lastIndex),dataAlias.personalInfo);
+				currentBloodAlcohol = Boozerlyzer.analysis.BAC.calculate(now, dataAlias.AllDrinks,dataAlias.personalInfo);
 				BloodAlcohol.text = 'Blood Alcohol ' + currentBloodAlcohol.toFixed(4) + '%';
 				var baLevel = Boozerlyzer.analysis.BAC.levels(currentBloodAlcohol);
 				BloodAlcohol.color = baLevel.color;
