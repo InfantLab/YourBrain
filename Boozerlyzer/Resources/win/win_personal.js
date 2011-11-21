@@ -417,13 +417,16 @@ exports.createApplicationWindow =function(launchType, parent){
 		// winHome.open();
 	// });
 	initialised = true;
-	if (mLaunchType==="Welcome"){
-		var alertDialog = Titanium.UI.createAlertDialog({
-		    title: 'Boozerlyzer',
-		    message: helpMessage,
-		    buttonNames: ['OK']
-		});
-		alertDialog.show();
-	}
+	
+	win.addEventListener('show', function(){
+		if (mLaunchType==="Welcome"){
+			var alertDialog = Titanium.UI.createAlertDialog({
+			    title: 'Boozerlyzer',
+			    message: helpMessage,
+			    buttonNames: ['OK']
+			});
+			alertDialog.show();
+		}
+	});
 	return win;
 };

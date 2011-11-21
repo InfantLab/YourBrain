@@ -190,9 +190,16 @@ exports.createApplicationWindow =function(launchType, parent){
             alert("All fields are required");  
         }  
     });    
-	if (mLaunchType==="Welcome"){
-		alert(helpMessage);
-	}  
+	win.addEventListener('show', function(){
+		if (mLaunchType==="Welcome"){
+			var alertDialog = Titanium.UI.createAlertDialog({
+			    title: 'Boozerlyzer',
+			    message: helpMessage,
+			    buttonNames: ['OK']
+			});
+			alertDialog.show();
+		}
+	});
     
 	return win;
 };

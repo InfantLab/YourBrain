@@ -207,7 +207,7 @@ exports.createApplicationWindow =function(type){
 	win.add(newgame);
 	
 	var choiceLabel = Titanium.UI.createLabel({
-		text:'',
+		text:'Click to specify bug location',
 		top:topChangedLabel,
 		left:40,
 		width:'auto',
@@ -247,7 +247,7 @@ exports.createApplicationWindow =function(type){
 		addbug.visible = true;
 		choiceLabel.visible = true;
 		lastchangedLabel.visible = false;
-		choiceDialog();	
+		
 	}else{
 		//need to give it specific help for this screen
 		menu.setHelpMessage("Simply record how you are feeling right now. Thanks :-)");
@@ -259,6 +259,11 @@ exports.createApplicationWindow =function(type){
 	}
 	
 	
+	win.addEventListener('open', function(){
+		if (reportType === 'BUG'){
+			choiceDialog()
+		};	
+	});
 	//
 	// Cleanup and return home
 	win.addEventListener('android:back', function(e) {

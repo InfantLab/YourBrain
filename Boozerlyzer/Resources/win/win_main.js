@@ -462,6 +462,7 @@
 		
 		homeWin.refresh = function(){
 			Ti.API.debug('homeWin refresh');
+			menu.setHelpMessage("Click on the icons to add new drinks, launch games, etc.");
 			rewriteSessionInfo();		
 			rewriteLabPoints();
 			checkLevelUp();
@@ -470,7 +471,6 @@
 
 		homeWin.refresh();
 		loadedonce = true;
-		Ti.API.debug('homeWin 7');
 
 		homeWin.addEventListener('homeWinRefresh',homeWin.refresh);
 				
@@ -481,7 +481,7 @@
 				homeWin.refresh();
 			}
 		});
-		Ti.API.debug('homeWin 0');
+		Ti.API.debug('homeWin loaded');
 		return homeWin;
 
 

@@ -38,7 +38,7 @@ exports.createApplicationWindow =function(launchType, parent){
 
 	// var netprivacy = ['Send data with nickname', 'Send data with anonymous key','Send totally anonymous data' ,'Never send my data'];
 	// var phoneprivacy = ['Store all data', 'Store games scores but not drinking data', 'Never store data'];	
-	var netprivacy = ['Never send my data','Send data with nickname'];
+	var netprivacy = ['Send data with nickname','Never send my data'];
 	var phoneprivacy = ['Store all data', 'Erase data'];
 	
 	var netPrivacyLabel = Ti.UI.createLabel({
@@ -55,7 +55,7 @@ exports.createApplicationWindow =function(launchType, parent){
 	
 
 	var netPrivacyBtn= Ti.UI.createButton({
-	    title:netprivacy[Titanium.App.Properties.getInt('NetPrivacy',1)],  
+	    title:netprivacy[Titanium.App.Properties.getInt('NetPrivacy',0)],  
 	    top:120,  
 	    width:240,  
 	    height:35,  
@@ -72,9 +72,9 @@ exports.createApplicationWindow =function(launchType, parent){
 	// add event listener
 	netPrivacyDialog.addEventListener('click',function(e)
 	{
-		netPrivacyBtn.text = netprivacy[e.index];
+		netPrivacyBtn.title = netprivacy[e.index];
 		Titanium.App.Properties.setInt('NetPrivacy',e.index);
-		Titanium.App.Properties.setBool('PrivacySet', true)
+		Titanium.App.Properties.setBool('PrivacySet', true);
 		//TODO
 		//ought to delete data, etc when privacy levels change.
 	});
@@ -112,11 +112,11 @@ exports.createApplicationWindow =function(launchType, parent){
 	// add event listener
 	phonePrivacyDialog.addEventListener('click',function(e)
 	{
-		// phonePrivacyBtn.text = phoneprivacy[e.index];
+		//phonePrivacyBtn.text = phoneprivacy[e.index];
 		// Titanium.App.Properties.setInt('PhonePrivacy',e.index);
 		//TODO
 		//need to actually do something about this!
-		if (e.index === 0){
+		if (e.index === 1){
 			var deleteWarning = Ti.UI.createAlertDialog({
 				 title: 'Delete all data?',
 			    message: 'This feature is not implemented yet. To delete data go to your phone settings and use the Android Application manager',
@@ -138,7 +138,7 @@ exports.createApplicationWindow =function(launchType, parent){
 	});
 	exportData.addEventListener('click',function()
 	{
-		Boozerlyzer.comm.exportData.exportTabFile();
+		Boozerlyzer.comm.exportData.exportTabFiles();
 	});	
 	win.add(exportData);
 	
@@ -167,7 +167,7 @@ exports.createApplicationWindow =function(launchType, parent){
 	{
 		Titanium.App.Properties.setBool('PrivacySet', true);
 		Titanium.App.Properties.setInt('RegistrationNag', 10);
-		if(!Titanium.App.Properties.getBool('PersonalDetailEntered', false)){
+		if(!Titanium.App.Properties.getBool('PersonalDetailsEntered', false)){
 			winMyDataAlias.showPersonal();
 		}else if(!Titanium.App.Properties.getBool('Registered', false)){
 			winMyDataAlias.showComm();
@@ -195,13 +195,15 @@ exports.createApplicationWindow =function(launchType, parent){
 	// Cleanup and return home
 	win.addEventListener('android:back', winMyDataAlias.goHome);
 	
-	if (mLaunchType==="Welcome"){
-		var alertDialog = Titanium.UI.createAlertDialog({
-		    title: 'Boozerlyzer',
-		    message: helpMessage,
-		    buttonNames: ['OK']
-		});
-		alertDialog.show();
-	}
+	win.addEventListener('show', function(){
+		if (mLaunchType==="Welcome"){
+			var alertDialog = Titanium.UI.createAlertDialog({
+			    title: 'Boozerlyzer',
+			    message: helpMessage,
+			    buttonNames: ['OK']
+			});
+			alertDialog.show();
+		}
+	});
 	return win;
 };

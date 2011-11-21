@@ -37,7 +37,10 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		if (!Ti.Network.online){
 			return {status:'failed',message:'No internet connection'};
 		}
-		
+		if(Ti.App.Properties.getInt('NetPrivacy',0)===1){
+			return {status:'failed',message:'Net Privacy turned on'};
+		}
+
 		
 		//find the ID of the last data sent to website
 		//based on a persistent app property
