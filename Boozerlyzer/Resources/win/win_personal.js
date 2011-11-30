@@ -9,13 +9,7 @@
 
 exports.createApplicationWindow =function(launchType, parent){
 	Ti.API.debug('creating win_personal');
-	// var win = Titanium.UI.createWindow({
-		// title:'YBOB Boozerlyzer',
-		// backgroundImage:'/images/smallcornercup.png',
-		// exitOnClose:false,
-		// modal:true,
-		// orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
-	// });	
+
 	var win = Titanium.UI.createView({
 		top:'10%',
 		height:'auto',
@@ -26,10 +20,10 @@ exports.createApplicationWindow =function(launchType, parent){
 	var winMyDataAlias = parent;
 	var initialised = false;
 	//layout variables
-	var topHW = 140, topNickname = 50, topSex = 10,topCountry = 10;
-	var leftH = 80, leftW = 240, leftNickname = 40, leftSex = 215, leftCountry = 320;
-	var bottomDOB =4, leftDOB =80; 
-	
+	var topNickname = 50, topSex = 10,topCountry = 10;
+	var leftNickname = 40, leftSex = 215, leftCountry = 320;
+	var bottomDOB =40,leftDOB =leftSex; 
+	var topH = 140,leftH = 80,topW = 170, leftW = leftH;
 	var mLaunchType;
 	if (launchType){
 		 mLaunchType = launchType
@@ -62,6 +56,17 @@ exports.createApplicationWindow =function(launchType, parent){
 	});
 	win.add(label);
 	
+	var birthDateLabel = Ti.UI.createLabel({
+			text:'Birth Month',
+			bottom: bottomDOB + 5,
+			left:leftDOB - 140,
+			width:120,
+			height:24,
+			font:{fontSize:14},
+			textAlign:'center',
+			color:'black'	
+	});
+	win.add(birthDateLabel);
 	var birthDate = Ti.UI.createLabel({
 		text:'Birth Date..',
 		bottom:bottomDOB,
@@ -187,7 +192,7 @@ exports.createApplicationWindow =function(launchType, parent){
 	var heightUnit = Ti.UI.createLabel({
 		text:Ti.App.Properties.getString("HeightUnits",'m'),
 		left:leftH + 100,
-		top:topHW+10,
+		top:topH+10,
 		font:{fontSize:18,fontWeight:'bold'}	
 	});
 	win.add(heightUnit);
@@ -205,7 +210,7 @@ exports.createApplicationWindow =function(launchType, parent){
 	var weightUnit = Ti.UI.createLabel({
 		text:Ti.App.Properties.getString("WeightUnits",'kg'),
 		left:leftW + 100,
-		top:topHW+10,
+		top:topW+10,
 		font:{fontSize:18,fontWeight:'bold'}	
 	});
 	win.add(weightUnit);
@@ -224,7 +229,7 @@ exports.createApplicationWindow =function(launchType, parent){
 		hintText:'height',
 		textAlign:'left',
 		height:42,
-		top:topHW,
+		top:topH,
 		left:leftH,
 		borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
 		font:{fontSize:18,fontWeight:'bold'}
@@ -249,7 +254,7 @@ exports.createApplicationWindow =function(launchType, parent){
 		hintText:'weight',
 		textAlign:'left',
 		height:42,
-		top:topHW,
+		top:topW,
 		left:leftW,
 		borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
 		font:{fontSize:18,fontWeight:'bold'}

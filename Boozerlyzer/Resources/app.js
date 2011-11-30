@@ -52,8 +52,11 @@ Ti.include('/comm/exportData.js');
 	
 	
 Ti.include('/win/win.js'); 
-				
 
+//launch main app
+Boozerlyzer.winHome = Boozerlyzer.win.main.createApplicationWindow();
+Boozerlyzer.winHome.open();	
+				
 var registrationNag = Titanium.App.Properties.getInt('RegistrationNag', 0);
 if (registrationNag < 0){
 	//launch main app	
@@ -76,15 +79,11 @@ if (registrationNag < 0){
 				LabPoints:10
 			}];
 	Boozerlyzer.db.gameScores.SaveResult(gameSaveData);
-	Boozerlyzer.winHome = Boozerlyzer.win.main.createApplicationWindow();
-	Boozerlyzer.winHome.open();	
 }else if (registrationNag === 0){
-	Boozerlyzer.winMyData = Boozerlyzer.win.myData.createApplicationWindow("Welcome");
-	Boozerlyzer.winMyData.open();
+	//Boozerlyzer.winMyData = Boozerlyzer.win.myData.createApplicationWindow("Welcome");
+	Boozerlyzer.winHome.fireEvent('showSettings');	
 }else{
 	//we will nag them eventually.
 	Titanium.App.Properties.setInt('RegistrationNag', registrationNag - 1);
-	//launch main app
-	Boozerlyzer.winHome = Boozerlyzer.win.main.createApplicationWindow();
-	Boozerlyzer.winHome.open();	
+		
 }

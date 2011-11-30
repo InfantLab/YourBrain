@@ -29,8 +29,9 @@ exports.createApplicationWindow = function(){
 		title:'YBOB Boozerlyzer',
 		backgroundImage:'/images/smallcornercup.png',
 		modal:true,
-		orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
+		// orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 	});
+	win.orientationModes =  [Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT];	
 	if (Titanium.App.Properties.getBool('MateMode',false)){
 		win.backgroundImage = '/images/smallcornercup.matemode.png';
 	}else{

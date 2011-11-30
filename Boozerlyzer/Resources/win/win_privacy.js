@@ -7,13 +7,7 @@
  */
 
 exports.createApplicationWindow =function(launchType, parent){
-	// var win = Titanium.UI.createWindow({
-		// title:'YBOB Boozerlyzer',
-		// backgroundImage:'/images/smallcornercup.png',
-		// modal:true,
-		// exitOnClose:false,
-		// orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
-	// });	
+
 	var win = Titanium.UI.createView({
 		top:'10%',
 		height:'auto',

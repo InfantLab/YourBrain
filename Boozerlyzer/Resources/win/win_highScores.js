@@ -16,8 +16,9 @@ exports.createApplicationWindow =function(){
 		title:'YBOB Boozerlyzer',
 		backgroundImage:'/images/smallcornercup.png',
 		modal:true,
-		orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
+		// orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 	});	
+	win.orientationModes =  [Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT];	
 	//layout variables
 	var sizeScoreIcon = 48,	sizeIcons = 66, selectedGameIdx = 0;	
 	var subtypes = ['Total', 'Speed', 'Coordination', 'Accuracy','Alcohol'];

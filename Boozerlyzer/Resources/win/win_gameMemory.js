@@ -18,8 +18,10 @@
 			title:'YBOB Boozerlyzer',
 			backgroundImage:'/images/smallcornercup.png',
 			modal:true,
-			orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
-		});	
+//				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
+			});	
+			win.orientationModes =  [Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT];	
+	
 	
 
 		Ti.API.debug('gameMemory 1');

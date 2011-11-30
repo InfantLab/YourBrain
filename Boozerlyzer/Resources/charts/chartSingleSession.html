@@ -57,7 +57,7 @@
 		for (var i = 0; i < drinkArray.length; i++) {
 			totalDrink.push(drinkArray[i].standardDrinks);
 			//TODO make instant blood alcohol for 1 unit equal height 0
-			totalBAC.push( drinkArray[i].bloodAlcohol/ 0.0137); // 0.0137 is about 1 UK unit's worth
+			totalBAC.push( drinkArray[i].bloodAlcohol / 0.0137); // 0.0137 is about 1 UK unit's worth
 			//also find max number of drinks in this session
 			maxDrink = Math.max(maxDrink,totalDrink[i]);
 			//hopefully the drinks are in chronological order but do same for time

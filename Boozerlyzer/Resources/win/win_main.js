@@ -22,7 +22,8 @@
 		var homeWin = Titanium.UI.createWindow({
 			exitOnClose: true,
 			title:'YBOB Boozerlyzer',
-			backgroundImage:'/images/smallcornercup.png'
+			backgroundImage:'/images/smallcornercup.png',
+			orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]
 		});
 		
 		var levelUpDialog = require('/ui/levelUpDialog');
@@ -473,7 +474,8 @@
 		loadedonce = true;
 
 		homeWin.addEventListener('homeWinRefresh',homeWin.refresh);
-				
+		homeWin.addEventListener('showSettings',menu.showSettingsScreen);
+						
 		homeWin.addEventListener('focused', function(){
 			Ti.API.debug('homeWin got focus');
 			if (loadedonce){

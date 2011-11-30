@@ -26,9 +26,10 @@ exports.createApplicationWindow =function(type,rounds){
 	var win = Titanium.UI.createWindow({
 		title:'YBOB Boozerlyzer',
 		backgroundImage:'/images/smallcornercup.png',
-		modal:true,
-		orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
-	});	
+		modal:true
+//		orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
+	});
+	win.orientationModes =  [Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT];		
 	if (Titanium.App.Properties.getBool('MateMode',false)){
 		win.backgroundImage = '/images/smallcornercup.matemode.png';
 	}else{
@@ -163,23 +164,24 @@ exports.createApplicationWindow =function(type,rounds){
 		});
 		
 		
-		//
-		// Cleanup and return home
-		win.addEventListener('android:back', function(e) {
-			if (Boozerlyzer.winHome === undefined || Boozerlyzer.winHome === null) {
-				Boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
-					url: '/app.js',
-					title: 'Boozerlyzer',
-					backgroundImage: '/images/smallcornercup.png',
-					orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
-				});
-			}
-			win.close();
-			Boozerlyzer.winHome.open();
-			Boozerlyzer.winHome.refresh();
-		
-		});
-		
+		// //
+		// // Cleanup and return home
+		// win.addEventListener('android:back', function(e) {
+			// if (Boozerlyzer.winHome === undefined || Boozerlyzer.winHome === null) {
+				// Boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
+					// url: '/app.js',
+					// title: 'Boozerlyzer',
+					// backgroundImage: '/images/smallcornercup.png',
+		// //				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
+			// });	
+// 	
+			// }
+			// win.close();
+			// Boozerlyzer.winHome.open();
+			// Boozerlyzer.winHome.refresh();
+// 		
+		// });
+// 		
 		//
 		//set up the feedback items.
 		//

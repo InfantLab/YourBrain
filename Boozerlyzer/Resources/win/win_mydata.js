@@ -12,9 +12,9 @@ exports.createApplicationWindow =function(launchType){
 		title:'YBOB Boozerlyzer',
 		backgroundImage:'/images/smallcornercup.png',
 		modal:true,
-		orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
+		// orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 	});
-	
+	win.orientationModes =  [Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT];	
 	var viewPersonal = Boozerlyzer.win.personal.createApplicationWindow(launchType, win);
 	var viewPrivacy = Boozerlyzer.win.privacy.createApplicationWindow(launchType, win);
 	var viewComm, buttonCommText;

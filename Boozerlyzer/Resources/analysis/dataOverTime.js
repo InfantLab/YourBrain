@@ -23,7 +23,8 @@
 		Ti.API.debug('drinksByTime lenDrinks' + lenDrinks);
 		for (var t=0;t<lenTime;t++){
 			var totalUnits = 0;
-			var lastDrinkIdx = 0;
+			var lastDrinkIdx = -1;
+			var bac = 0;
 			//first select all drinks that occur prior to current time
 			for(var d=0;d<lenDrinks;d++){
 				if (drinkData[d].DoseageChanged <= timePoints[t] && drinkData[d].DoseageChanged >= timePoints[0]){
@@ -31,8 +32,7 @@
 					lastDrinkIdx = d; 
 				}
 			}
-			var bac = 0;
-			if (lenDrinks > 0){
+			if (lenDrinks > 0 && lastDrinkIdx >= 0){
 				bac = Boozerlyzer.analysis.BAC.calculate(timePoints[t],drinkData.slice(0,lastDrinkIdx+1),personalInfo);
 			} 
 			returnData.push({
