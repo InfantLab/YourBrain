@@ -8,16 +8,17 @@
  * Copyright yourbrainondrugs.net 2011
  */
 
-var dbAlias = Boozerlyzer.db;
-var commAlias = Boozerlyzer.comm;
+var winHome;
 
 exports.createApplicationWindow =function(){
 	var win = Titanium.UI.createWindow({
 		title:'YBOB Boozerlyzer',
 		backgroundImage:'/images/smallcornercup.png',
-		modal:true,
-		// orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
+		modal:true
 	});	
+	
+	var dbGameScores = require('/db/gameScores');
+	var commSendData = require('/comm/sendData');
 	win.orientationModes =  [Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT];	
 	//layout variables
 	var sizeScoreIcon = 48,	sizeIcons = 66, selectedGameIdx = 0;	
@@ -67,15 +68,6 @@ exports.createApplicationWindow =function(){
 	})
 	win.add(low);
 	
-	// var time = Ti.UI.createImageView({
-		// image:'/icons/time.png',
-		// height:sizeScoreIcon,
-		// width:sizeScoreIcon,
-		// top:200,
-		// left:200	
-	// })
-	// win.add(time);
-
 	
 	var scrollChoices = Ti.UI.createScrollView({
 		bottom:4,
@@ -131,7 +123,7 @@ exports.createApplicationWindow =function(){
 	footer.add(footerLabel);
 	footer.addEventListener('click',function (){
 		alert('Latest data sent to boozerlyzer.net.\nThank you.');
-		commAlias.sendData.sync();
+		commSendData.sync();
 	});
 	
 	var header = Ti.UI.createView({
@@ -162,7 +154,7 @@ exports.createApplicationWindow =function(){
 	function populateHighScores(){
 		tv.data = [];
 		headerLabel.text = gameNames[selectedGameIdx];
-		var thisGameHighScores = dbAlias.gameScores.HighScores(gameTypes[selectedGameIdx],10);
+		var thisGameHighScores = dbGameScores.HighScores(gameTypes[selectedGameIdx],10);
 		
 		var len = thisGameHighScores.length;
 		
@@ -188,7 +180,7 @@ exports.createApplicationWindow =function(){
 
 	populateHighScores();
 	
-	var labPoints = dbAlias.gameScores.TotalPoints(); 
+	var labPoints = dbGameScores.TotalPoints(); 
 	var levelUpDialog = require('/ui/levelUpDialog');
 	var levelImg = levelUpDialog.getLevelImg(labPoints[0].Total);
 	
@@ -204,7 +196,7 @@ exports.createApplicationWindow =function(){
 	});
 	showCurrentLevel.addEventListener('click',function(){
 		Ti.API.debug('high scores showCurrentLevel click');
-		var labPoints = dbAlias.gameScores.TotalPoints(); 
+		var labPoints =dbGameScores.TotalPoints(); 
 		Ti.API.debug(JSON.stringify(labPoints));
 		levelUpDialog.setParent(win);
 		levelUpDialog.levelUp( labPoints[0].Total);
@@ -221,12 +213,13 @@ exports.createApplicationWindow =function(){
 	//There ought to be a simple way of wrapping this up as a UI element rather than repeating code in 
 	//every win_.js file but i tried it a few ways and i never got it to work.
 	function goHome(){
-		if (Boozerlyzer.winHome === undefined || Boozerlyzer.winHome === null) {
-			Boozerlyzer.winHome = Boozerlyzer.win.main.createApplicationWindow();
+		if (!winHome) {
+			var winmain = require('/win/win_main');
+			winHome = winmain.createApplicationWindow();
 		}
 		win.close();
-		Boozerlyzer.winHome.open();
-		Boozerlyzer.winHome.refresh();
+		winHome.open();
+		winHome.refresh();
 	}
 	//invisible button to return home over the cup
 	var homeButton = Titanium.UI.createView({

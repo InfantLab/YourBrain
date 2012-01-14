@@ -5,34 +5,23 @@
  * to and from the database table DoseageLog 
  */
 
-
-
-// Using the JavaScript module pattern, create a persistence module for CRUD operations
-// Based on Kevin Whinnery's example: http://developer.appcelerator.com/blog/2010/07/how-to-perform-crud-operations-on-a-local-database.html
-// One tutorial on the Module Pattern: http://www.adequatelygood.com/2010/3/JavaScript-Module-Pattern-In-Depth
-(function(){
-	
-
-	//create an object which will be our public API
-	//Note we need to use an alias of db variable (for some reason that i don't fully understand)
-	var dbAlias = Boozerlyzer.db;
-	dbAlias.doseageLog = {};
-	dbAlias.doseageLog.columnNames = ['ID','DoseDescription','DoseageStart','DoseageChanged','ExitCode','SessionID','Volume','Strength','Volume','StandardUnits','DrugType','TotalUnits','NumDoses'];
+	exports.columnNames = ['ID','DoseDescription','DoseageStart','DoseageChanged','ExitCode','SessionID','Volume','Strength','Volume','StandardUnits','DrugType','TotalUnits','NumDoses'];
 	
 	//maintain a database connection we can use
-	if (!dbAlias.conn){
-		dbAlias.conn = Titanium.Database.install('ybob.db','ybob');
+	var conn;
+	if (!conn){
+		conn = Titanium.Database.install('/ybob.db','ybob');
 	}
 
 	//get data for the maximum row id 
-	dbAlias.doseageLog.getLatestData = function (){
+	exports.getLatestData = function (){
 		var sessionID = Titanium.App.Properties.getInt('SessionID');
 		//have to do count first because max on empty set behaves badly
-		var	rows =dbAlias.conn.execute('SELECT max(ID) FROM DoseageLog WHERE SESSIONID = ?', sessionID);
+		var	rows =conn.execute('SELECT max(ID) FROM DoseageLog WHERE SESSIONID = ?', sessionID);
 		if (rows !== null && (rows.isValidRow())) {
 			var maxid = parseInt(rows.field(0),10);
 			rows.close();
-			rows =dbAlias.conn.execute('SELECT * FROM DoseageLog WHERE ID = ?', maxid);
+			rows =conn.execute('SELECT * FROM DoseageLog WHERE ID = ?', maxid);
 			var returnData = fillDataObject(rows);
 			rows.close();
 			return returnData;
@@ -42,7 +31,7 @@
 		return null;
 	};
 	
-	dbAlias.doseageLog.setData = function (newData){
+	exports.setData = function (newData){
 		Titanium.API.debug('doseagelog setData');
 		Titanium.API.debug('newData - ' + JSON.stringify(newData));
 		if (newData.Changed){
@@ -55,7 +44,7 @@
 				Titanium.API.debug('update str desc' + newData.DoseDescription);
 				Titanium.API.debug('update str start ' + newData.DoseageStart);
 				
-				dbAlias.conn.execute(insertstr,
+				conn.execute(insertstr,
 							 newData.DrugVariety,
 							 newData.DoseDescription,
 							 newData.DoseageStart,
@@ -77,7 +66,7 @@
 				Titanium.API.debug('update str variety ' + newData.DrugVariety);
 				Titanium.API.debug('update str desc' + newData.DoseDescription);
 				Titanium.API.debug('update str start ' + newData.DoseageStart);
-				dbAlias.conn.execute(insertstr,
+				conn.execute(insertstr,
 							 newData.DrugVariety,		//beer/wine/spirits
 							 newData.DoseDescription,	//pint/sml glass etc
 							 newData.DoseageStart,		//time opened the drinks log window
@@ -91,25 +80,25 @@
 							 newData.TotalUnits,			//Total millilitres pure alcohol
 							 newData.NumDoses);			//Number of drinks
 			}
-			Titanium.API.debug('DoseageLog updated, rowsAffected = ' +dbAlias.conn.rowsAffected);
-			Titanium.API.debug('DoseageLog, lastInsertRowId = ' +dbAlias.conn.lastInsertRowId);
+			Titanium.API.debug('DoseageLog updated, rowsAffected = ' +conn.rowsAffected);
+			Titanium.API.debug('DoseageLog, lastInsertRowId = ' +conn.lastInsertRowId);
 		}
 	};
 	
-	dbAlias.doseageLog.newDrink = function (){
+	exports.newDrink = function (){
 		var result = [];
 		var sessionID = Titanium.App.Properties.getInt('SessionID');
 		var insertstr = 'INSERT INTO DOSEAGELOG (DrugVariety, DoseDescription,DoseageStart,DoseageChanged,ExitCode,SessionID,Volume,Strength,StandardUnits,DrugType,TotalUnits,Number)';
 		insertstr += 'VALUES(?,?,?, ?,?,?, ?,?,?, ?,?,?)';
 		var now = parseInt((new Date()).getTime()/1000,10);
-		dbAlias.conn.execute(insertstr,'NULL','Session Start',now,now,'',sessionID,0,0,0,0,0,0);
-		Titanium.API.debug('DoseageLog updated, rowsAffected = ' +dbAlias.conn.rowsAffected);
-		Titanium.API.debug('DoseageLog, lastInsertRowId = ' +dbAlias.conn.lastInsertRowId);
+		conn.execute(insertstr,'NULL','Session Start',now,now,'',sessionID,0,0,0,0,0,0);
+		Titanium.API.debug('DoseageLog updated, rowsAffected = ' +conn.rowsAffected);
+		Titanium.API.debug('DoseageLog, lastInsertRowId = ' +conn.lastInsertRowId);
 		result.push({
 			Changed: false,
 			DrugVariety:'',
 			DoseDescription:'',
-			ID:dbAlias.conn.lastInsertRowId,
+			ID:conn.lastInsertRowId,
 			DoseageStart: now,
 			DoseageChanged: now,
 			ExitCode: '',
@@ -125,14 +114,14 @@
 	};
 	
 	//get all data for this Session ID 
-	dbAlias.doseageLog.deleteDrink = function (drinkID){
+	exports.deleteDrink = function (drinkID){
 		Ti.API.debug('deleting drink ID : ' + drinkID);
-		dbAlias.conn.execute('delete FROM DoseageLog WHERE ID = ? ', drinkID);
+		conn.execute('delete FROM DoseageLog WHERE ID = ? ', drinkID);
 	};
 		
 	//get all data for this Session ID 
-	dbAlias.doseageLog.getAllSessionData = function (sessionID){
-		var rows =dbAlias.conn.execute('SELECT * FROM DoseageLog WHERE SESSIONID = ? ORDER BY DoseageChanged ASC', sessionID);
+	exports.getAllSessionData = function (sessionID){
+		var rows =conn.execute('SELECT * FROM DoseageLog WHERE SESSIONID = ? ORDER BY DoseageChanged ASC', sessionID);
 		var returnData = fillDataObject(rows);
 		rows.close();
 		return returnData;
@@ -141,12 +130,12 @@
 	/***
 	 * return all the relevant rows from a given time range.
 	 */
-	dbAlias.doseageLog.getTimeRangeData = function (minTime, maxTime){
+	exports.getTimeRangeData = function (minTime, maxTime){
 		var rows
 		if (maxTime !== null){
-			rows =dbAlias.conn.execute('SELECT * FROM DoseageLog WHERE DoseageChanged > ? and DoseageChanged < ? ORDER BY DoseageChanged ASC', minTime, maxTime);
+			rows =conn.execute('SELECT * FROM DoseageLog WHERE DoseageChanged > ? and DoseageChanged < ? ORDER BY DoseageChanged ASC', minTime, maxTime);
 		}else{
-			rows =dbAlias.conn.execute('SELECT * FROM DoseageLog WHERE DoseageChanged > ? ORDER BY DoseageChanged ASC', minTime);
+			rows =conn.execute('SELECT * FROM DoseageLog WHERE DoseageChanged > ? ORDER BY DoseageChanged ASC', minTime);
 		}
 		var returnData = fillDataObject(rows);
 		rows.close();
@@ -158,11 +147,11 @@
 	 * amount of alcohol in ML consumed in that period. 
 	 * Grouped by drink type
 	 */
-	dbAlias.doseageLog.drinksinTimePeriod= function (minTime, maxTime){
+	exports.drinksinTimePeriod= function (minTime, maxTime){
 		Ti.API.debug("drinksinTimePeriod started");
 		var returnData =[];		
 		var drink = ['Beer','Wine','Spirits'];
-		var rows =dbAlias.conn.execute('SELECT DrugVariety, SUM(totalUnits) as SumUnits from DoseageLog where DrugVariety != "NULL" and DoseageChanged > ? and DoseageChanged < ? GROUP BY DrugVariety', minTime, maxTime);
+		var rows =conn.execute('SELECT DrugVariety, SUM(totalUnits) as SumUnits from DoseageLog where DrugVariety != "NULL" and DoseageChanged > ? and DoseageChanged < ? GROUP BY DrugVariety', minTime, maxTime);
 		while(rows.isValidRow()){
 			returnData.push({
 				DrugVariety:rows.fieldByName('DrugVariety'),
@@ -177,7 +166,7 @@
 	/***
 	 * Return the sum of mls of alcohol in this array of drink data
 	 */
-	dbAlias.doseageLog.totalDrinkVolume = function (drinkData){
+	exports.totalDrinkVolume = function (drinkData){
 		if (drinkData===null) {return 0;} // no drink data (ie user hasn't entered any drinks)
 		var d = drinkData.length;
 		var vol =0;
@@ -220,4 +209,3 @@
 		rows.close();
 		return null;
 	}
-}());

@@ -6,21 +6,23 @@
  * Copyright yourbrainondrugs.net 2011
  */
 
+var winHome;
+
 exports.createApplicationWindow =function(type){
 	var win = Titanium.UI.createWindow({
 		title:'YBOB Boozerlyzer',
 		backgroundImage:'/images/smallcornercup.png',
-		modal:true,
-//		orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
+		modal:true
 	});	
 	win.orientationModes =  [Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT];	
 
 	var winOpened = parseInt((new Date()).getTime()/1000,10);
 	var reportType = type;
-	//include the menu choices	
-	//include the menu choices	
-	// Ti.include('/ui/menu.js');
-	// var menu = menus;
+	
+	var dbTripReports = require('/db/tripReports');
+	var dbGameScores = require('/db/gameScores');
+	var dbSessions = require('/db/sessions');
+	var	dateTimeHelpers = require('/js/dateTimeHelpers');
 	var menu = require('/ui/menu');
 	
 	var choices = ['Main Menu','Add drinks','Feelings','Game Menu', 'Raccoon Hunt', 'Memory Game', 'Number Stroop', 'Pissonyms', 'Emotional Words', 'We Feel Fine', 'High Scores', 'Graphs','Personal Info', 'Log on & Security', 'Other..'];
@@ -32,9 +34,9 @@ exports.createApplicationWindow =function(type){
 	var SessionID = Titanium.App.Properties.getInt('SessionID');
 	
 	//most recent emotion values for this session
-	var currentTripReport = Boozerlyzer.db.tripReports.getLatestData(SessionID);
+	var currentTripReport = dbTripReports.getLatestData(SessionID);
 	if (currentTripReport === null || currentTripReport === false){
-		currentTripReport = Boozerlyzer.db.tripReports.newReport();
+		currentTripReport = dbTripReports.newReport();
 	}
 	Titanium.API.debug(JSON.stringify(currentTripReport));
 	
@@ -65,7 +67,7 @@ exports.createApplicationWindow =function(type){
 		currentTripReport[0].Content = tripContent.value;
 	});
 	
-	var updated = Boozerlyzer.dateTimeHelpers.prettyDate(currentTripReport[0].ReportChanged);
+	var updated = dateTimeHelpers.prettyDate(currentTripReport[0].ReportChanged);
 	var lastchangedLabel = Ti.UI.createLabel({
 		text:'Last Updated\n' + updated,
 		top:topChangedLabel,
@@ -99,7 +101,7 @@ exports.createApplicationWindow =function(type){
 							UserID:Titanium.App.Properties.getInt('UserID'),
 							LabPoints:8	
 						}];
-		Boozerlyzer.db.gameScores.SaveResult(gameSaveData);
+		dbGameScores.SaveResult(gameSaveData);
 	}
 	
 	// SAVE BUTTON	
@@ -114,11 +116,9 @@ exports.createApplicationWindow =function(type){
 	win.add(save);
 	
 	save.addEventListener('click',function(){
-		Boozerlyzer.db.sessions.Updated(SessionID);
-		Boozerlyzer.db.tripReports.setData(currentTripReport);
-		Boozerlyzer.winHome.open();
-		Boozerlyzer.winHome.refresh();
-		win.close();		
+		dbSessions.Updated(SessionID);
+		dbTripReports.setData(currentTripReport);
+		goHome();	
 	});	
 	
 	// CANCEL BUTTON	
@@ -168,10 +168,10 @@ exports.createApplicationWindow =function(type){
 		left:leftFirst
 	});
 	newdrinks.addEventListener('click',function(){
-		// if (!Boozerlyzer.winDrinks ){
-			Boozerlyzer.winDrinks = Boozerlyzer.win.drinks.createApplicationWindow();
-		// }
-		Boozerlyzer.winDrinks.open();
+		var win_drinks = require('/win/win_drinks');
+		var winDrinks = win_drinks.createApplicationWindow();
+		winDrinks.open();
+		gameEndSaveScores();
 		win.close();
 	});
 	win.add(newdrinks);
@@ -184,10 +184,10 @@ exports.createApplicationWindow =function(type){
 		left:leftSecond
 	});
 	newmood.addEventListener('click',function(){
-		// if (!Boozerlyzer.winEmotion){
-			Boozerlyzer.winEmotion = Boozerlyzer.win.emotion.createApplicationWindow();
-		// }
-		Boozerlyzer.winEmotion.open();
+		var win_emotion = require('/win/win_emotion');
+		var winEmotion = win_emotion.createApplicationWindow();
+		winEmotion.open();
+		gameEndSaveScores();
 		win.close();
 	});
 	win.add(newmood);
@@ -200,10 +200,9 @@ exports.createApplicationWindow =function(type){
 		left:leftThird
 	});
 	newgame.addEventListener('click',function(){
-		// if (!Boozerlyzer.winGameMenu || Boozerlyzer.winGameMenu === undefined){
-			Boozerlyzer.winGameMenu = Boozerlyzer.win.gameMenu.createApplicationWindow();
-		// }
-		Boozerlyzer.winGameMenu.open();
+		var  winGames = require('/win/win_gameMenu');
+		var winGameMenu =winGames.createApplicationWindow();
+		winGameMenu.open();
 		win.close();
 	});
 	win.add(newgame);
@@ -219,6 +218,7 @@ exports.createApplicationWindow =function(type){
 	});
 	//click on choice label to change it.
 	choiceLabel.addEventListener('click', function(){
+		Ti.API.debug('tripreport choicelabel click event');
 		if (choiceLabel.visible){
 			choiceDialog();
 		}
@@ -263,18 +263,33 @@ exports.createApplicationWindow =function(type){
 	
 	win.addEventListener('open', function(){
 		if (reportType === 'BUG'){
-			choiceDialog()
-		};	
+			choiceDialog();
+		}	
 	});
-	//
-	// Cleanup and return home
-	win.addEventListener('android:back', function(e) {
-		if (Boozerlyzer.winHome === undefined || Boozerlyzer.winHome === null) {
-			Boozerlyzer.winHome = Boozerlyzer.win.main.createApplicationWindow();
+	
+	function goHome(){
+		gameEndSaveScores();
+		if (!winHome) {
+			var winmain = require('/win/win_main');
+			winHome = winmain.createApplicationWindow();
 		}
-		Boozerlyzer.winHome.open();
-		Boozerlyzer.winHome.refresh();
 		win.close();
-	});
+		winHome.open();
+		winHome.refresh();
+	}
+	
+	//invisible button to return home over the cup
+	var homeButton = Titanium.UI.createView({
+								image:'/icons/transparenticon.png',
+								bottom:0,
+							    left:0,
+							    width:30,
+							    height:60
+						    });
+	win.add(homeButton);
+	homeButton.addEventListener('click',goHome);
+	// Cleanup and return home
+	win.addEventListener('android:back', goHome);
+	
 	return win;
 };

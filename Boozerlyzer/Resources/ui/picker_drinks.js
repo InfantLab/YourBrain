@@ -38,6 +38,7 @@
  * @author Bart Lewis <bartlewis@gmail.com>
  */
 
+	var win;
 	var callbackOnClose, isControlsCreated = false;
 	var coverViewOpenAnimation,coverViewCloseAnimation;
 	var containerViewOpenAnimation, containerViewCloseAnimation, cancelButton;
@@ -141,7 +142,7 @@
 			exports.close();
 		});
 
-		Ti.API.debug('win width ' + Ti.UI.currentWindow.width);
+		Ti.API.debug('win width ' + win.width);
 		coverView = Ti.UI.createView({
 			top:40,
 			left:40,
@@ -152,7 +153,7 @@
 			borderRadius:4,
 			borderWidth:4 
 		});
-		Ti.UI.currentWindow.add(coverView);
+		win.add(coverView);
 
 		containerView = Ti.UI.createView({height:281, width:400, bottom:-281, zIndex:9});
 		containerView.add(colVolumeLabel);
@@ -164,12 +165,15 @@
 		containerView.add(deleteButton);
 		containerView.add(cancelButton);
 		deleteButton.visible = false;
-		Ti.UI.currentWindow.add(containerView);		
+		win.add(containerView);		
 
 		isControlsCreated = true;
 	}
 
 	exports.getPicker = function(){return picker;};
+		exports.setParent = function (window){
+		win = window;
+	};
 	exports.open = function(){	
 		coverView.animate(coverViewOpenAnimation);
 		containerView.animate(containerViewOpenAnimation);
@@ -234,31 +238,36 @@
 		drinkTypeImage.image =  typeIcons[DrinkType];
 		Ti.API.debug('picker_drinks set data 3');		
 		//Retrieve the strengths for this DrugType
-		strengths = Boozerlyzer.db.drugDoses.getStrengths(DrinkType);
+		var dbDrugDoses = require('/db/drugDoses');
+		strengths = dbDrugDoses.getStrengths(DrinkType);
 		//Fill the appropriate column	
 		var columnStrength = Ti.UI.createPickerColumn();
 		for (i=0;i<strengths.length;i++){
 			var thisStrength = strengths[i].DoseStrength;
-			var row = Ti.UI.createPickerRow({title:		thisStrength.toFixed(1)});
-			row.extend({
-				Strength:thisStrength
-			});
+			row = Ti.UI.createPickerRow({title:		thisStrength.toFixed(1)});
+			row["Strength"] = thisStrength;
+			// row.extend({
+				// Strength:thisStrength
+			// });
 			columnStrength.add(row);			
 		}
 
 		//Retrieve the strengths for this DrugType
-		sizes = Boozerlyzer.db.drugDoses.getSizes(DrinkType);
+		sizes =dbDrugDoses.getSizes(DrinkType);
+		Ti.API.debug('dbDrugDoses - sizes:'+ JSON.stringify(sizes));
 		//Fill the appropriate column	
 		var columnSize = Ti.UI.createPickerColumn();
 		// Loop with each data instance to create picker rows
 		Ti.API.debug('picker_drinks set data 4');
 		for (i=0; i<sizes.length; i++){
 			var sizeStr = Math.round(1000*sizes[i].DoseSize) + 'ml -' + sizes[i].DoseDescription;
-			var row = Ti.UI.createPickerRow({title:sizeStr});
-			row.extend({
-					Volume: sizes[i].DoseSize,
-					DoseDesc: sizes[i].DoseDescription
-				});
+			row = Ti.UI.createPickerRow({title:sizeStr});
+			row["Volume"] = sizes[i].DoseSize;
+			row["DoseDesc"] = sizes[i].DoseDescription;
+			// row.extend({
+					// Volume: sizes[i].DoseSize,
+					// DoseDesc: sizes[i].DoseDescription
+				// });
 			columnSize.add(row);
 		}
 		

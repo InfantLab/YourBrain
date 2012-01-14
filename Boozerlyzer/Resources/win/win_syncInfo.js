@@ -13,7 +13,6 @@ exports.createApplicationWindow =function(){
 		left:0,
 		width:'100%'
 	});
-    var commAlias = Boozerlyzer.comm;
       
 	var username = Titanium.UI.createTextField({  
 	    color:'#336699',  
@@ -132,7 +131,8 @@ exports.createApplicationWindow =function(){
 	    font:{fontFamily:'Arial',fontWeight:'bold',fontSize:14}
     });
     buttonSyncNow.addEventListener('click', function(){
-		commAlias.sendData.sync();
+    	var commSendData = require('/comm/sendData');
+		commSendData.sync();
 		var updateTime = Boozerlyzer.dateTimeHelpers.prettyDate(Titanium.App.Properties.getInt('LastSentTime', 0));
 		labelLastSync.text = 'Last sync with server - '+  updateTime + '\nRow ID :'+ Titanium.App.Properties.getInt('LastSentID', 0) ;
 	});

@@ -17,12 +17,13 @@
  * Copyright yourbrainondrugs.net 2011
  */
 
+var winHome;
+
 exports.createApplicationWindow =function(){
 	var win = Titanium.UI.createWindow({
 		title:'YBOB Boozerlyzer',
 		backgroundImage:'/images/smallcornercup.png',
-		modal:true,
-		// orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
+		modal:true
 	});	
 	win.orientationModes =  [Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT];	
 	if (Titanium.App.Properties.getBool('MateMode',false)){
@@ -30,23 +31,24 @@ exports.createApplicationWindow =function(){
 	}else{
 		win.backgroundImage = '/images/smallcornercup.png';
 	}
+	var dbGameScores = require('/db/gameScores');
+	var maths = require('/analysis/maths');
 	var scoresDialog = require('/ui/scoresDialog');
+	scoresDialog.setParent(win);
 	//include the menu choices	
-	// Ti.include('/ui/menu.js');
-	// var menu = menus;
 	var menu = require('/ui/menu');
 	//need to give it specific help for this screen
 	menu.setHelpMessage("On each step tap on the NUMERICALLY larger value and try to ignore the font-size. Points are awarded for speed, coordination & avoiding errors.");
 
 	var labelGameMessage, gameStarted = false, initialised = false;
-	var winopened = parseInt((new Date()).getTime()/1000);
+	var winopened = parseInt((new Date()).getTime()/1000,10);
 	var useSmallerFonts =  false;
-	var fontsLarger =  [12, 20, 30, 55, 70, 90, 110, 136]; // eight possible sizes for levels with only 2 digit numbers
-	var fontsSmaller = [10,14,18,24,30,40,50,61,72,84,95, 110]; //
+	var fontsLarger =  [14, 20, 30, 55, 70, 90, 110, 136]; // eight possible sizes for levels with only 2 digit numbers
+	var fontsSmaller = [14,18,24,30,40,50,61,72,84,95, 110, 128]; //
 	var imgTop = [80,80];
 	var imgLeft = [60,240];
 	var startTime = 0, maxDigit = 10;
-	var points = 0, count = 0; coordbonus = 0, speedbonus = 0, inhibitbonus = 0, level = 0;
+	var points = 0, count = 0, coordbonus = 0, speedbonus = 0, inhibitbonus = 0, level = 0;
 	var missCount = 0, correctCount = 0, stroopMissTotal = 0, nonStroopMissTotal = 0;
 	var stepInterval = 500;
 	var loc = [];
@@ -55,7 +57,7 @@ exports.createApplicationWindow =function(){
 	
 	//this code just needs to be called once for this window
 	function setUpOnce(){
-		if (initialised) return;
+		if (initialised) {return;}
 		//
 		//	The labels for the scores. 
 		//
@@ -152,56 +154,29 @@ exports.createApplicationWindow =function(){
 				// for (t in ev)
 					// Ti.API.debug(t);
 				Ti.API.debug('Clicked ' + ev.source );
-				var choiceTime = parseInt((new Date()).getTime() / 1000);
+				var choiceTime = parseInt((new Date()).getTime() / 1000,10);
 				buttonClicked(choiceTime, ev);
 			});
 		}
-		win.addEventListener('click',function(ev)
-		{
+		win.addEventListener('click',function(ev){
 		 	Ti.API.debug('Game Start');
 			if (!gameStarted){
 				gameStarted = true;
 				nextStep();
 			}
 		});
-		Titanium.App.addEventListener('pause',function(e)
-		{
-			paused = true;
-			label.text = "App has been paused";
-		});
-		
-		Titanium.App.addEventListener('resume',function(e)
-		{
-			if (paused)	{
-				label.text = "App has resumed";
-			} else {
-				label.text = "App has resumed (w/o pause)";
-			}
-		});
-		
-		
 
-		// //
-		// // Cleanup and return home
-		// win.addEventListener('android:back', function(e) {
-			// if (Boozerlyzer.winHome === undefined 
-				 // || Boozerlyzer.winHome === null) {
-// 
-			// }
-			// win.close();
-			// Boozerlyzer.winHome.open();
-			// Boozerlyzer.winHome.refresh();
-		// });
 		initialised = true;
 	}
 	
 	function buttonClicked(choiceTime,events){
 		Ti.API.debug('stroop button clicked time' + choiceTime );
 		
-		for (t in events)
+		for (t in events){
 			Ti.API.debug(t);
+		}
 			
-		var idx = parseInt(events.source.idx);
+		var idx = parseInt(events.source.idx,10);
 		var globalCoords = {x:0,y:0}; 
 		if (idx < 0 ){
 			globalCoords.x = events.x;
@@ -214,7 +189,7 @@ exports.createApplicationWindow =function(){
 		loc[idx].touchEnabled = false;
 		loc[oppidx].touchEnabled = false;
 		var clickTime = new Date().getTime();
-		if (parseInt(loc[idx].text) > parseInt(loc[oppidx].text)){
+		if (parseInt(loc[idx].text,10) > parseInt(loc[oppidx].text,10)){
 			//they picked the right one!
 			//clear the other text box
 			loc[oppidx].text = '';
@@ -242,31 +217,6 @@ exports.createApplicationWindow =function(){
 		writeScore();
 	}
 	
-	/***
-	 * A function that returns n Random Integers 
-	 * in the range  0 - floor(max),
-	 * with or without duplicates
-	 *
-	 * @param {Object} n
-	 * @param {Object} max
-	 * @param {Object} allowDuplicates
-	 */
-	function nRandomIntegers(n,max,allowDuplicates){
-		var set = [];
-		var mx = Math.floor(max);
-		var count = 0;
-		while (set.length<n && (count<mx)){
-			var candidate = Math.floor(mx*Math.random());
-			if (allowDuplicates){
-				set.push(candidate);
-			}else if (set.indexOf(candidate) < 0){
-				set.push(candidate);
-				count++;
-			}
-		}
-		return set;
-		
-	}
 	
 	function clear(o){
 		var t  = o.text;
@@ -309,15 +259,15 @@ exports.createApplicationWindow =function(){
 		}
 		
 		//pick two random numbers
-		var nums = nRandomIntegers(2,maxDigit,false);
+		var nums = maths.nRandomIntegers(2,maxDigit,false);
 		var maxNumberIndex = (nums[0]>nums[1]?0:1);
 		Ti.API.debug('random nums ' + JSON.stringify(nums));
 		
 		var digitSizeIndices= [];
 		if (useSmallerFonts){
-			digitSizeIndices = nRandomIntegers(2,11,false);
+			digitSizeIndices = maths.nRandomIntegers(2,11,false);
 		}else{
-			digitSizesIndices = nRandomIntegers(2,7,false); 
+			digitSizesIndices = maths.nRandomIntegers(2,7,false); 
 		}
 		var maxSizeIndex = (digitSizesIndices[0]>digitSizesIndices[1]?0:1);
 		
@@ -404,7 +354,7 @@ exports.createApplicationWindow =function(){
 		var gameSaveData = [{Game: 'NumberStroop',
 							GameVersion:1,
 							PlayStart:winopened ,
-							PlayEnd: parseInt((new Date()).getTime()/1000),
+							PlayEnd: parseInt((new Date()).getTime()/1000,10),
 							TotalScore:points,
 							Speed_GO:speedbonus,
 							Speed_NOGO:0,
@@ -418,12 +368,20 @@ exports.createApplicationWindow =function(){
 							UserID:Titanium.App.Properties.getInt('UserID'),
 							LabPoints:5		
 						}];
-		Boozerlyzer.db.gameScores.SaveResult(gameSaveData);
+		dbGameScores.SaveResult(gameSaveData);
 	}
-
 	
 	setUpOnce();
-	var paused = false;
 	
+	// Cleanup and return home
+	win.addEventListener('android:back', function(e) {
+		if (!winHome) {
+			var winmain = require('/win/win_main');
+				winHome = winmain.createApplicationWindow();
+		}
+		win.close();
+		winHome.open();
+		winHome.refresh();
+	});
 	return win;
 };

@@ -9,10 +9,10 @@
  * Copyright yourbrainondrugs.net 2011
  */
 
-
-var monthYearPickerDialog = (function(){
+	var win;
 	var e, callbackOnClose, isControlsCreated = false;
 	var containerViewOpenAnimation, containerViewCloseAnimation, cancelButton;
+	var coverViewOpenAnimation, coverViewCloseAnimation;
 	var doneButton, flexibleSpace, toolbar, picker, containerView, coverView;
 	var monthName = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 	
@@ -42,7 +42,7 @@ var monthYearPickerDialog = (function(){
 		});
 		cancelButton.addEventListener('click', function(){
 			e.cancel = true;
-			api.close();
+			exports.close();
 		});
 
 		doneButton =  Ti.UI.createButton({
@@ -57,10 +57,10 @@ var monthYearPickerDialog = (function(){
 			e.done = true;
 			e.month = monthName.indexOf(picker.getSelectedRow(0).title) + 1;
 			e.year = picker.getSelectedRow(1).title;
-			api.close();
+			exports.close();
 		});
 
-		Ti.API.debug('win width ' + Ti.UI.currentWindow.width);
+		Ti.API.debug('win width ' + win.width);
 		coverView = Ti.UI.createView({
 			top:40,
 			left:40,
@@ -72,29 +72,28 @@ var monthYearPickerDialog = (function(){
 			borderWidth:4 ,
 			zIndex:0
 		});
-		Ti.UI.currentWindow.add(coverView);
+		win.add(coverView);
 
 		containerView = Ti.UI.createView({height:251, bottom:-251, zIndex:9});
 		containerView.add(picker);
 		containerView.add(doneButton);
 		containerView.add(cancelButton);
 
-		Ti.UI.currentWindow.add(containerView);		
+		win.add(containerView);		
 
 		isControlsCreated = true;
 	}
 
-	/**
-	 * Public API
-	 */
-	var api = {};
 
-	api.getPicker = function(){return picker;};
-	api.open = function(){	
+	exports.getPicker = function(){return picker;};
+	exports.setParent = function (window){
+		win = window;
+	};
+	exports.open = function(){	
 		coverView.animate(coverViewOpenAnimation);
 		containerView.animate(containerViewOpenAnimation);
 	};
-	api.close = function(){
+	exports.close = function(){
 		coverView.animate(coverViewCloseAnimation);
 		containerView.animate(containerViewCloseAnimation);
 
@@ -109,7 +108,7 @@ var monthYearPickerDialog = (function(){
 	 * @minYear - String description of drinks are we choosing from
 	 * @prevChoice - [optional] three integer array of previous row choices
 	 */
-	api.setBirthMonthYear = function(minYear, maxYear, prevChoices){
+	exports.setBirthMonthYear = function(minYear, maxYear, prevChoices){
 		var i = 0, len, property, row, rows = [];
 
 		createControls();
@@ -145,9 +144,7 @@ var monthYearPickerDialog = (function(){
 		
 	};
 
-	api.addEventListener = function(eventName, callback){
+	exports.addEventListener = function(eventName, callback){
 		if (eventName=='close') {callbackOnClose = callback;}
 	};
 
-	return api;
-}());

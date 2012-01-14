@@ -11,15 +11,13 @@
  */
 
 
-// var scoresDialog = (function(){
-
+	var win;
 	var e, callbackOnClose, isControlsCreated = false;
 	var containerViewOpenAnimation, containerViewCloseAnimation;
 	var coverViewOpenAnimation, coverViewCloseAnimation;
 	var containerView, coverView;
 	var gameNameLabel,scoreLabel,speedBonusLabel,coordBonusLabel,inhibitBonusLabel,labPointsLabel;
 	var messageLabel, gameIcon, labPointsIcon, iconSize = 78;
-	// var api = {};
 	
 	function createControls(){
 		if (isControlsCreated) {return;}
@@ -57,7 +55,7 @@
 			//e.cancel = true;
 			exports.close();
 		});		
-		Ti.UI.currentWindow.add(coverView);
+		win.add(coverView);
 
 		// game results
 		gameNameLabel = Ti.UI.createLabel({
@@ -141,7 +139,7 @@
 		containerView.add(messageLabel);
 		containerView.add(gameIcon);
 		containerView.add(labPointsIcon);
-		Ti.UI.currentWindow.add(containerView);		
+		win.add(containerView);		
 		
 		isControlsCreated = true;
 	}
@@ -149,6 +147,9 @@
 	/**
 	 * Public API
 	 */
+	exports.setParent = function (window){
+		win = window;
+	};
 	exports.open = function(){	
 		coverView.animate(coverViewOpenAnimation);
 		containerView.animate(containerViewOpenAnimation);

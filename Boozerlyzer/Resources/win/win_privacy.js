@@ -15,7 +15,6 @@ exports.createApplicationWindow =function(launchType, parent){
 		width:'100%'
 	});
 	var winHome = win.home;
-	var winMyDataAlias = parent;
 	
 	var mLaunchType;
 	if (!launchType){
@@ -36,14 +35,14 @@ exports.createApplicationWindow =function(launchType, parent){
 	var phoneprivacy = ['Store all data', 'Erase data'];
 	
 	var netPrivacyLabel = Ti.UI.createLabel({
-			text:'Network Privacy',
-			top: 100,
-			left:20,
-			width:140,
-			height:24,
-			font:{fontSize:14},
-			textAlign:'center',
-			color:'black'	
+		text:'Network Privacy',
+		top: 100,
+		left:20,
+		width:140,
+		height:24,
+		font:{fontSize:14},
+		textAlign:'center',
+		color:'black'	
 	});
 	win.add(netPrivacyLabel);
 	
@@ -77,14 +76,14 @@ exports.createApplicationWindow =function(launchType, parent){
 	});
 
 	var phonePrivacyLabel = Ti.UI.createLabel({
-			text:'Phone Storage',
-			top: 20,
-			left:20,
-			width:140,
-			height:24,
-			font:{fontSize:14},
-			textAlign:'center',
-			color:'black'	
+		text:'Phone Storage',
+		top: 20,
+		left:20,
+		width:140,
+		height:24,
+		font:{fontSize:14},
+		textAlign:'center',
+		color:'black'	
 	});
 	win.add(phonePrivacyLabel);
 	
@@ -106,8 +105,6 @@ exports.createApplicationWindow =function(launchType, parent){
 	// add event listener
 	phonePrivacyDialog.addEventListener('click',function(e)
 	{
-		//phonePrivacyBtn.text = phoneprivacy[e.index];
-		// Titanium.App.Properties.setInt('PhonePrivacy',e.index);
 		//TODO
 		//need to actually do something about this!
 		if (e.index === 1){
@@ -132,21 +129,13 @@ exports.createApplicationWindow =function(launchType, parent){
 	});
 	exportData.addEventListener('click',function()
 	{
-		Boozerlyzer.comm.exportData.exportTabFiles();
+		var commExportData = require('/comm/exportData');
+		commExportData.exportTabFiles();
 	});	
 	win.add(exportData);
 	
-	// function goHome(){
-		// Ti.API.debug('win_personal goHome');
-		// if (Boozerlyzer.winHome === undefined || Boozerlyzer.winHome === null) {
-			// Boozerlyzer.winHome = Boozerlyzer.win.main.createApplicationWindow();
-		// }
-		// Boozerlyzer.winHome.open();
-		// Boozerlyzer.tabMyData.hide();
-		// Boozerlyzer.winHome.refresh();
-	// }
-	
-		// SAVE BUTTON	
+
+	// SAVE BUTTON	
 	var save = Ti.UI.createButton({
 		title:'Save',
 		width:70,
@@ -162,12 +151,12 @@ exports.createApplicationWindow =function(launchType, parent){
 		Titanium.App.Properties.setBool('PrivacySet', true);
 		Titanium.App.Properties.setInt('RegistrationNag', 10);
 		if(!Titanium.App.Properties.getBool('PersonalDetailsEntered', false)){
-			winMyDataAlias.showPersonal();
+			parent.showPersonal();
 		}else if(!Titanium.App.Properties.getBool('Registered', false)){
-			winMyDataAlias.showComm();
+			parent.showComm();
 		}else{
 			Titanium.App.Properties.setInt('RegistrationNag', -1);
-			winMyDataAlias.goHome();			
+			parent.goHome();			
 		}
 	});	
 	// CANCEL BUTTON	
@@ -183,11 +172,11 @@ exports.createApplicationWindow =function(launchType, parent){
 	
 	cancel.addEventListener('click',function()
 	{
-		winMyDataAlias.goHome();
+		parent.goHome();
 	});		
 	
 	// Cleanup and return home
-	win.addEventListener('android:back', winMyDataAlias.goHome);
+	win.addEventListener('android:back', parent.goHome);
 	
 	win.addEventListener('show', function(){
 		if (mLaunchType==="Welcome"){

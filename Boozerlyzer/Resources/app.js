@@ -15,47 +15,11 @@
  */
 
 Ti.API.debug('app main 0');
-//application namespace
-var Boozerlyzer = {};
-Boozerlyzer.win = {};	//windows
-Boozerlyzer.db ={};		//database access functions
-Boozerlyzer.comm = {};	//network communication functions
-Boozerlyzer.analysis = {};//functions that calculate stuff
-
-//cached data objects
-Boozerlyzer.data ={};	
-Boozerlyzer.data.AllDrinks = null;//array of drinks
-Boozerlyzer.data.personalInfo = null;//demographic info for this participant
-Boozerlyzer.data.standardDrinks = null; //standard drink sizes per country
-Boozerlyzer.data.currentEmotions = null; //what are current levels of happiness/energy/drunkeness 
-
-Ti.include('/analysis/bloodalcohol.js');
-Ti.include('/analysis/maths.js');
-//all of the data handling routines.
-Ti.include('/db/sessions.js');
-Ti.include('/db/doseageLog.js');
-Ti.include('/db/alcoholStandardUnits.js');
-Ti.include('/db/drugDoses.js');
-Ti.include('/db/emotionWords.js');
-Ti.include('/db/gameScores.js');
-Ti.include('/db/personalInfo.js');
-Ti.include('/db/pissonyms.js');
-Ti.include('/db/selfAssessment.js');
-Ti.include('/db/tripReports.js');
-Ti.include('/db/weFeelFine.js');
-//helper functions
-Ti.include('/js/dateTimeHelpers.js');
-//the scripts that communicate with server
-Ti.include('/comm/ybodnet.js');
-Ti.include('/comm/sendData.js');
-Ti.include('/comm/exportData.js');
-	
-	
-Ti.include('/win/win.js'); 
 
 //launch main app
-Boozerlyzer.winHome = Boozerlyzer.win.main.createApplicationWindow();
-Boozerlyzer.winHome.open();	
+var winMain = require('/win/win_main'); 
+var winHome = winMain.createApplicationWindow();
+winHome.open();	
 				
 var registrationNag = Titanium.App.Properties.getInt('RegistrationNag', 0);
 if (registrationNag < 0){
@@ -78,10 +42,11 @@ if (registrationNag < 0){
 				UserID:Titanium.App.Properties.getInt('UserID', 0),
 				LabPoints:10
 			}];
-	Boozerlyzer.db.gameScores.SaveResult(gameSaveData);
+	var dbGameScores = require('/db/gameScores');
+	dbGameScores.SaveResult(gameSaveData);
 }else if (registrationNag === 0){
 	//Boozerlyzer.winMyData = Boozerlyzer.win.myData.createApplicationWindow("Welcome");
-	Boozerlyzer.winHome.fireEvent('showSettings');	
+	winHome.fireEvent('showSettings');	
 }else{
 	//we will nag them eventually.
 	Titanium.App.Properties.setInt('RegistrationNag', registrationNag - 1);

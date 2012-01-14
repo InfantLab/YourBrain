@@ -5,16 +5,10 @@
  * user's phone.  
  */
 
-(function(){
-
-	//Note we need to use an alias of comm variable (for some reason that i don't fully understand)
-	var commAlias = Boozerlyzer.comm;
-	commAlias.exportData = {};
-
 	/*
 	 * function to send the gameScores  table entries to the ybodnet web database
 	 */
-	commAlias.exportData.exportTabFiles = function(){
+	exports.exportTabFiles = function(){
 		Ti.API.debug('Exporting Tab Files...');
 		if (!Titanium.Filesystem.isExternalStoragePresent){
 			var noStorage = Ti.UI.createAlertDialog('Export failed. SD Card not found.');
@@ -37,7 +31,7 @@
 		// overwriteDialog.addEventListener('click',function(e)
 		// {
 			// if (e.index === 0) {
-				// commAlias.exportData.writeCSV(outfile);
+				// exports.writeCSV(outfile);
 			// }else{
 				// //nothing
 			// }
@@ -45,13 +39,13 @@
 		// if (outfile.exists()){
 			// overwriteDialog.show();
 		// } else {
-			// commAlias.exportData.writeCSV(outfile);
+			// exports.writeCSV(outfile);
 		// }
-		commAlias.exportData.writeGameScores(boozerlyzerDir);
-		commAlias.exportData.writeAllDrinks(boozerlyzerDir);
+		exports.writeGameScores(boozerlyzerDir);
+		exports.writeAllDrinks(boozerlyzerDir);
 	
 	};
-	commAlias.exportData.writeGameScores = function(dataDir){
+	exports.writeGameScores = function(dataDir){
 		Ti.API.debug('writing Game scores...');
 		var outfile = Titanium.Filesystem.getFile(dataDir.nativePath,'gameScores.dat');
 
@@ -133,7 +127,7 @@
 		Titanium.API.info("gameScores.tsv modified: " + String(new Date( outfile.modificationTimestamp())));
 	
 	};
-	commAlias.exportData.writeAllDrinks = function(dataDir){
+	exports.writeAllDrinks = function(dataDir){
 		Ti.API.debug('writing all Drinks...');
 		var outfile = Titanium.Filesystem.getFile(dataDir.nativePath,'gameScores.dat');
 
@@ -213,4 +207,3 @@
 		Titanium.API.info("drinkdata.tsv created: " + String(new Date( outfile.createTimestamp())));
 	};
 	
-}());

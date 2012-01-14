@@ -8,10 +8,9 @@
  * Copyright yourbrainondrugs.net 2011
  */
 
-(function() {
-	Boozerlyzer.dateTimeHelpers = {};
 
-	Boozerlyzer.dateTimeHelpers.formatDate = function(dateVal)
+
+	exports.formatDate = function(dateVal)
 	{
 		var date = new Date(dateVal*1000);
 		var datestr = date.getMonth()+'/'+date.getDate()+'/'+date.getFullYear();
@@ -34,7 +33,7 @@
 		return x;
 	}
 	
-	Boozerlyzer.dateTimeHelpers.formatTime =function(timeVal,flagShowMins, flag24h){
+	exports.formatTime =function(timeVal,flagShowMins, flag24h){
 		var date = new Date(timeVal*1000);
 		var h = date.getHours();
 		var m = date.getMinutes();
@@ -55,7 +54,7 @@
 	}
 
 	//create an N element array of equally spaced times 
-	Boozerlyzer.dateTimeHelpers.timeIntervals =function(N, startTime, endTime){
+	exports.timeIntervals =function(N, startTime, endTime){
 		if (N < 2){return startTime;}
 		var fullInterval = endTime - startTime;
 		var stepInterval = fullInterval / (N-1);
@@ -68,7 +67,7 @@
 	}
 	
 	// creates a 'pretty date' from a unix time stamp
-	Boozerlyzer.dateTimeHelpers.prettyDate =function(time){
+	exports.prettyDate =function(time){
 		var monthname = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 		var date = new Date(time*1000),
 		diff = (((new Date()).getTime() - date.getTime()) / 1000),
@@ -103,22 +102,21 @@
 		day_diff < 31 && Math.ceil( day_diff / 7 ) + " week" + ((Math.ceil( day_diff / 7 )) == 1 ? "" : "s") + " ago";
 	}
 	
-	Boozerlyzer.dateTimeHelpers.formatDay = function(time){
+	exports.formatDay = function(time){
 		var dayName = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri','Sat'];
 		var date = new Date(time*1000);
 		return dayName[date.getDay()];
 	}
 	
-	Boozerlyzer.dateTimeHelpers.formatDayPlusTime = function(time, flag24h){
-		return Boozerlyzer.dateTimeHelpers.formatDay(time) + ' ' + Boozerlyzer.dateTimeHelpers.formatTime(time,true,flag24h);
+	exports.formatDayPlusTime = function(time, flag24h){
+		return exports.formatDay(time) + ' ' + exports.formatTime(time,true,flag24h);
 	}
 	
-	Boozerlyzer.dateTimeHelpers.timeLabel = function(timeValue, flagShowDay, flagShowMins, flag24h){
+	exports.timeLabel = function(timeValue, flagShowDay, flagShowMins, flag24h){
 		//a function that will return a hour l
 		var time = formatTime(timeValue, flagShowMins, flag24h);
 		if(flagShowDay){
-			time += '\n' + Boozerlyzer.dateTimeHelpers.formatDay(time)	
+			time += '\n' + exports.formatDay(time)	
 		}
 		return time;
 	}
-})();

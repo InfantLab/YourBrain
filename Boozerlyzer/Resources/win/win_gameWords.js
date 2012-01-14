@@ -27,7 +27,6 @@ exports.createApplicationWindow =function(type,rounds){
 		title:'YBOB Boozerlyzer',
 		backgroundImage:'/images/smallcornercup.png',
 		modal:true
-//		orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 	});
 	win.orientationModes =  [Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT];		
 	if (Titanium.App.Properties.getBool('MateMode',false)){
@@ -37,10 +36,13 @@ exports.createApplicationWindow =function(type,rounds){
 	}
 
 	var winHome = win.Home;
-	Ti.include('/analysis/maths.js');
+	
+	var dbGameScores = require('/db/gameScores');
+	var dbPissonyms  = require('/db/pissonyms');
+	var dbEmotionWords = require('/db/emotionWords');
+	var dbWeFeelFine = require('/db/weFeelFine');
+	var	maths = require('/analysis/maths');
 	//include the menu choices	
-	// Ti.include('/ui/menu.js');
-	// var menu = menus;
 	var menu = require('/ui/menu');
 	//need to give it specific help for this screen
 	menu.setHelpMessage("Simply pick which ever words you like best. There are no right answers.");
@@ -299,8 +301,8 @@ exports.createApplicationWindow =function(type,rounds){
 	
 	function gameEndSaveScores(){
 		var now = parseInt((new Date()).getTime()/1000,10);
-		var speed =  answersChoiceTime.sum() /answersChoiceTime.length;
-		var coord = answersCoordination.sum() /answersCoordination.length;
+		var speed =  maths.sum(answersChoiceTime) /answersChoiceTime.length;
+		var coord = maths.sum(answersCoordination) /answersCoordination.length;
 		var SessionID = Titanium.App.Properties.getInt('SessionID');
 		var gameSaveData = [{Game: MgameType,
 							GameVersion:1,
@@ -318,7 +320,7 @@ exports.createApplicationWindow =function(type,rounds){
 							UserID:Titanium.App.Properties.getInt('UserID'),
 							LabPoints:5	
 						}];
-		Boozerlyzer.db.gameScores.SaveResult(gameSaveData);
+		dbGameScores.SaveResult(gameSaveData);
 	}
 	/**
 	 * Here we display list of chosen words and 
@@ -366,18 +368,6 @@ exports.createApplicationWindow =function(type,rounds){
 		//start a timer
 		roundStarted = (new Date()).getTime() / 1000;
 		
-		// //get the number of rounds we still have to go.
-		// if (numRounds === undefined) {
-			// numRounds = 1;
-		// }
-		// else if (numRounds < 1) {
-			// //time to go 
-			// labelGameMessage.text = 'Thank you';
-			// setTimeout(function(){
-				// win.close();
-			// }, 3000);
-		// }
-			
 		
 		///////////////////////////
 		//what type of game is it?
@@ -391,17 +381,17 @@ exports.createApplicationWindow =function(type,rounds){
 		
 		wordChoices = [];
 		if (MgameType === 'Emotions') {
-			var emotionwords = Boozerlyzer.db.emotionWords.selectNRandomRows(6);
+			var emotionwords = dbEmotionWords.selectNRandomRows(6);
 			for (var i = 0; i < 6; i++) {
 				wordChoices[i] = emotionwords[i].EmotionalWord;
 			}
 		} else if (MgameType === 'WeFeelFine') {
-			var wefeelfinewords = Boozerlyzer.db.weFeelFine.selectNRandomRows(6);
+			var wefeelfinewords = dbWeFeelFine.selectNRandomRows(6);
 			for (var i = 0; i < 6; i++) {
 				wordChoices[i] = wefeelfinewords[i].Feeling;
 			}
 		} else if (MgameType === 'Pissonyms') {
-			var pissonymList = Boozerlyzer.db.pissonyms.selectNRandomRows(6);
+			var pissonymList = dbPissonyms.selectNRandomRows(6);
 			for (var i = 0; i < 6; i++) {
 				wordChoices[i] = pissonymList[i].Pissonym;
 			}
@@ -439,7 +429,7 @@ exports.createApplicationWindow =function(type,rounds){
 		var arousal = 0;
 		var valence = 0;
 		for (var i =0; i< answers.length; i++){
-			var info = Boozerlyzer.db.emotionWords.getWordInfo(answers[i]);
+			var info = dbEmotionWords.getWordInfo(answers[i]);
 			Ti.API.debug('emotion word info ' + JSON.stringify(info));
 			if (info!==null){
 				arousal += info[0].ArousalMean;
@@ -491,7 +481,7 @@ exports.createApplicationWindow =function(type,rounds){
 	function pissonymFeedback(){
 		var drunkscore = 0, coordscore = 0, speedscore = 0, count = 0;
 		for (var i =0; i< answers.length; i++){
-			var info = Boozerlyzer.db.pissonyms.getWordInfo(answers[i]);
+			var info = dbPissonyms.getWordInfo(answers[i]);
 			Ti.API.debug('pissonym  info ' + JSON.stringify(info));
 			if (info!==null && info.length===1){
 				count++;

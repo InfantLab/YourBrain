@@ -8,13 +8,6 @@
  * Copyright yourbrainondrugs.net 2011
  */
 
-	Ti.API.debug('homeWin 0');
-
-	//Create sub-namespace
-//	Boozerlyzer.win.main = {};
-	var dbAlias = Boozerlyzer.db;
-	var dataAlias = Boozerlyzer.data;
-	var commAlias = Boozerlyzer.comm;
 	
 	//Create the main application window
 	exports.createApplicationWindow = function(_args) {
@@ -25,35 +18,36 @@
 			backgroundImage:'/images/smallcornercup.png',
 			orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]
 		});
-		
-		var levelUpDialog = require('/ui/levelUpDialog');
-		//Ti.include('/ui/levelUpDialog.js');
-		//include the menu choices	
-		// var menu = menus;
-		var menu = require('/ui/menu');
-		
-		//need to give it specific help for this screen
-		menu.setHelpMessage("Click on the icons to add new drinks, launch games, etc.");
-		
-		//reset to main user and MateMode flag.
-		Titanium.App.Properties.setInt('UserID',0);
-		Titanium.App.Properties.setBool('MateMode',false); 
-
-			
 		homeWin.orientationModes = [
 		    Titanium.UI.LANDSCAPE_LEFT,
 		    Titanium.UI.LANDSCAPE_RIGHT
 		];
-		// Titanium.UI.orientation = Titanium.UI.LANDSCAPE_LEFT;
+
+		/******
+		 * the required modules
+		 */
+		var levelUpDialog = require('/ui/levelUpDialog');
+		var menu = require('/ui/menu');
+		var dataObject = require('/db/dataObject');
+		var dbSessions  = require('/db/sessions');
+		var dateTimeHelpers = require('/js/dateTimeHelpers');
+		var gameScores = require('/db/gameScores');
+		var sendData = require('/comm/sendData');
 		
+		//need to give menu object specific help for this screen
+		menu.setHelpMessage("Click on the icons to add new drinks, launch games, etc.");
+
+		//reset to main user and MateMode flag.
+		Titanium.App.Properties.setInt('UserID',0);
+		Titanium.App.Properties.setBool('MateMode',false); 
+		
+		var session;
 		var loadedonce = false;
 		
 		// layout variables
 		var bigIcons = 76, leftAppName = 20, leftNewDrinks = 20, leftEmotion = 100, leftTripReport = 180, leftGame = 240;
 		var topNewDrinks = 80, topEmotion = 80, topTripReport = 80, topGame = 80, topHighScores = 160, leftHighScores = 100, topLabPoints = 160;
 		var leftLabPoints =20, topResults = 80, leftResults = 340, optionsLeft = 320;
-		
-		
 		
 		Ti.API.debug('homeWin 1');
 
@@ -125,38 +119,39 @@
 		});
 		homeWin.add(matemode);
 		
+		function switchSession(newSession){
+			if (newSession){
+				var mateMode = Titanium.App.Properties.getBool('MateMode',false);
+				session = dbSessions.createNewSession(mateMode);
+			}else{
+				session = dbSessions.getLatestData(0);
+			}
+			//clear stored data too to force it to reload
+			dataObject.setAllDrinks(false);//array of drinks
+			dataObject.setCurrentEmotions(false); //what are current levels of happiness/energy/drunkeness 
+			Titanium.App.Properties.setInt('SessionID', session[0].ID);
+			Titanium.App.Properties.setInt('UserID', session[0].UserID);
+		}
+		
 		function swapMateMode(){
 			if (Titanium.App.Properties.getBool('MateMode',false)){
+				Titanium.App.Properties.setBool('MateMode',false);
 				//switch back into regular mode
-				dataAlias.session = dbAlias.sessions.getLatestData(0);
-				//clear stored data too to force it to reload
-				dataAlias.AllDrinks = null;//array of drinks
-				dataAlias.currentEmotions = null; //what are current levels of happiness/energy/drunkeness 
-				//retrieve current session
-				Titanium.App.Properties.setBool('MateMode', false);			//set to false
-				Titanium.App.Properties.setInt('SessionID',dataAlias.session[0].ID);
-				Titanium.App.Properties.setInt('UserID', dataAlias.session[0].UserID);				
-				Ti.API.debug("Switch out of mate mode - session info:" + JSON.stringify(dataAlias.session));
+				switchSession(false);
+				Ti.API.debug("Switch out of mate mode - session info:" + JSON.stringify(session));
 				var shrink = Ti.UI.create2DMatrix();
 				shrink.scale(0.5);
-				mateModeOffAnimation = Ti.UI.createAnimation({transform:shrink, opacity:0.5});
+				var mateModeOffAnimation = Ti.UI.createAnimation({transform:shrink, opacity:0.5});
 				matemode.animate(mateModeOffAnimation);
 				labelMateMode.visible = false;
 				homeWin.backgroundImage = '/images/smallcornercup.png';
 			}else{
-				//set properties
-				Titanium.App.Properties.setBool('MateMode', true);
-				//switch into mate mode.. create a new session.
-				dataAlias.session = dbAlias.sessions.createNewSession(Titanium.App.Properties.getBool('MateMode',false));
-				//clear stored data too to force it to reload
-				dataAlias.AllDrinks = null;//array of drinks
-				dataAlias.currentEmotions = null; //what are current levels of happiness/energy/drunkeness 
-				Titanium.App.Properties.setInt('SessionID', dataAlias.session[0].ID);
-				Titanium.App.Properties.setInt('UserID', dataAlias.session[0].UserID);
-				Ti.API.debug("Switch into mate mode - session info:" + JSON.stringify(dataAlias.session));
+				Titanium.App.Properties.setBool('MateMode',true);
+				switchSession(true);//is in mate mode so need a new session
+				Ti.API.debug("Switch into mate mode - session info:" + JSON.stringify(session));
 				var grow = Ti.UI.create2DMatrix();
 				grow.scale(2);
-				mateModeOnAnimation = Ti.UI.createAnimation({transform:grow, opacity:0.99});
+				var mateModeOnAnimation = Ti.UI.createAnimation({transform:grow, opacity:0.99});
 				matemode.animate(mateModeOnAnimation);
 				//matemode.opacity = 1;
 				homeWin.backgroundImage = '/images/smallcornercup.matemode.png';
@@ -172,12 +167,11 @@
 			left:optionsLeft + 100
 		});
 		newbugreport.addEventListener('click',function(){
-			// if (!Boozerlyzer.winBugReport ){
-				Boozerlyzer.winBugReport = Boozerlyzer.win.tripReport.createApplicationWindow('BUG');
-				Boozerlyzer.winBugReport.home = homeWin; //reference to home
-				Boozerlyzer.winBugReport.addEventListener('close',homeWin.refresh)			
-			// }
-			Boozerlyzer.winBugReport.open();
+			var win_TripReport = require('/win/win_tripreport');
+			var winBugReport = win_TripReport.createApplicationWindow('BUG');
+			winBugReport.home = homeWin; //reference to home
+			winBugReport.addEventListener('close',homeWin.refresh);
+			winBugReport.open();
 		});
 		homeWin.add(newbugreport);	
 			
@@ -190,12 +184,11 @@
 		});
 		
 		report.addEventListener('click',function(){
-			// if (!Boozerlyzer.winCharts ){
-				Boozerlyzer.winCharts = Boozerlyzer.win.charts.createApplicationWindow();
-				Boozerlyzer.winCharts.home = homeWin; //reference to home
-				Boozerlyzer.winCharts.addEventListener('close',homeWin.refresh);				
-			// }
-			Boozerlyzer.winCharts.open();
+			var win_charts = require('/win/win_charts');
+			var winCharts = win_charts.createApplicationWindow();
+			winCharts.home = homeWin; //reference to home
+			winCharts.addEventListener('close',homeWin.refresh);				
+			winCharts.open();
 		});
 		homeWin.add(report);
 		
@@ -208,13 +201,11 @@
 			left:leftNewDrinks
 		});
 		newdrinks.addEventListener('click',function(){
-			// if (!Boozerlyzer.winDrinks ){
-				Boozerlyzer.winDrinks = Boozerlyzer.win.drinks.createApplicationWindow();
-				Boozerlyzer.winDrinks.home = homeWin; //reference to home
-				Boozerlyzer.winDrinks.addEventListener('close',homeWin.refresh);				
-			// }
-			Boozerlyzer.winDrinks.open();
-			// homeWin.hide();
+			var win_drinks = require('/win/win_drinks');
+			var winDrinks = win_drinks.createApplicationWindow();
+			winDrinks.home = homeWin; //reference to home
+			winDrinks.addEventListener('close',homeWin.refresh);				
+			winDrinks.open();
 		});
 		homeWin.add(newdrinks);
 		
@@ -226,11 +217,11 @@
 			left:leftEmotion
 		});
 		newmood.addEventListener('click',function(){
-			Boozerlyzer.winEmotion = Boozerlyzer.win.emotion.createApplicationWindow();
-			Boozerlyzer.winEmotion.home = homeWin; //reference to home
-			Boozerlyzer.winEmotion.addEventListener('close',homeWin.refresh);			
-			Boozerlyzer.winEmotion.open();
-			// Boozerlyzer.winEmotion.reopenWindow();
+			var win_emotion = require('/win/win_emotion');
+			var winEmotion = win_emotion.createApplicationWindow();
+			winEmotion.home = homeWin; //reference to home
+			winEmotion.addEventListener('close',homeWin.refresh);							
+			winEmotion.open();
 		});
 		homeWin.add(newmood);
 		
@@ -242,13 +233,11 @@
 			left:leftTripReport
 		});
 		newtripreport.addEventListener('click',function(){
-			// if (!Boozerlyzer.winTripReport){
-				Boozerlyzer.winTripReport = Boozerlyzer.win.tripReport.createApplicationWindow('TRIP');
-				Boozerlyzer.winTripReport.home = homeWin; //reference to home
-				Boozerlyzer.winTripReport.addEventListener('close',homeWin.refresh);
-			// }
-			Boozerlyzer.winTripReport.open();
-			// homeWin.hide();
+			var win_TripReport = require('/win/win_tripreport');
+			var winTripReport = win_TripReport.createApplicationWindow();
+			winTripReport.home = homeWin; //reference to home
+			winTripReport.addEventListener('close',homeWin.refresh);							
+			winTripReport.open();
 		});
 		homeWin.add(newtripreport);
 		
@@ -260,12 +249,11 @@
 			left:leftGame
 		});
 		newgame.addEventListener('click',function(){
-			// if (!Boozerlyzer.winGameMenu || Boozerlyzer.winGameMenu === undefined){
-				Boozerlyzer.winGameMenu = Boozerlyzer.win.gameMenu.createApplicationWindow();
-				Boozerlyzer.winGameMenu.home = homeWin; //reference to home
-				Boozerlyzer.winGameMenu.addEventListener('close',homeWin.refresh);
-			// }
-			Boozerlyzer.winGameMenu.open();
+			var win_gameMenu = require('/win/win_gameMenu');
+			var winGameMenu = win_gameMenu.createApplicationWindow();
+			winGameMenu.home = homeWin; //reference to home
+			winGameMenu.addEventListener('close',homeWin.refresh);							
+			winGameMenu.open();
 		});
 		homeWin.add(newgame);
 
@@ -292,14 +280,11 @@
 			opacity:0.3
 		});
 		highScores.addEventListener('click',function(){
-			//add a close event listener which will refresh homescreen
-			//see http://developer.appcelerator.com/question/49971/giving-parent-window-focus-after-modal-closes
-			// if (!Boozerlyzer.winHighScores || Boozerlyzer.winHighScores === undefined){
-				Boozerlyzer.winHighScores = Boozerlyzer.win.HighScores.createApplicationWindow();
-				Boozerlyzer.winHighScores.home = homeWin; //reference to home
-				Boozerlyzer.winHighScores.addEventListener('close',homeWin.refresh);
-			// }
-			Boozerlyzer.winHighScores.open();
+			var win_HighScores = require('/win/win_highScores');
+			var winHighScores = win_HighScores.createApplicationWindow();
+			winHighScores.home = homeWin; //reference to home
+			winHighScores.addEventListener('close',homeWin.refresh);
+			winHighScores.open();
 		});
 		homeWin.add(highScores);
 
@@ -362,14 +347,13 @@
 		function rewriteSessionInfo(){
 			//function that writes the latest update times for this session.			
 			Ti.API.debug('rewriteSessionInfo');
-			var timeSinceUpdate = Boozerlyzer.dateTimeHelpers.prettyDate(dataAlias.session[0].LastUpdate);
+			var timeSinceUpdate = dateTimeHelpers.prettyDate(session[0].LastUpdate);
 			labelLastUpdate.text = 'Last activity\n' + timeSinceUpdate;
-			labelCurrentSession.text = 'Session Started\n' + Boozerlyzer.dateTimeHelpers.formatDayPlusTime(dataAlias.session[0].StartTime,true);
-			Ti.API.debug('Session ID - ' + dataAlias.session[0].ID);
-			Titanium.App.Properties.setInt('SessionID', dataAlias.session[0].ID);
-			Titanium.App.Properties.setInt('SessionStart',dataAlias.session[0].StartTime/1000);
-			Titanium.App.Properties.setInt('SessionChanged',dataAlias.session[0].LastUpdate/1000);
-		
+			labelCurrentSession.text = 'Session Started\n' + dateTimeHelpers.formatDayPlusTime(session[0].StartTime,true);
+			Ti.API.debug('Session ID - ' + session[0].ID);
+			Titanium.App.Properties.setInt('SessionID', session[0].ID);
+			Titanium.App.Properties.setInt('SessionStart',session[0].StartTime/1000);
+			Titanium.App.Properties.setInt('SessionChanged',session[0].LastUpdate/1000);	
 		}
 
 		var newSessionDialog = Titanium.UI.createOptionDialog({
@@ -378,17 +362,13 @@
 			cancel:1,
 			title:'Start a new session?'
 		});
+		homeWin.add(newSessionDialog);
 		// add event listener
 		newSessionDialog.addEventListener('click',function(e)
 		{
 			if (e.index === 0) {
-				dataAlias.session = dbAlias.sessions.createNewSession(false);
-				//clear stored data too.
-				dataAlias.AllDrinks = null;//array of drinks
-				dataAlias.currentEmotions = null; //what are current levels of happiness/energy/drunkeness 
-
+				switchSession(true);
 				rewriteSessionInfo();
-				labelCurrentSession.text = 'Session Started\n' + Boozerlyzer.dateTimeHelpers.formatDayPlusTime(dataAlias.session[0].StartTime,true);
 			}
 		});
 
@@ -396,50 +376,40 @@
 		//if last update was >36 hours ago automatically start new session
 		//if last update was >12 hours ago ask if what to start new session
 		//if last update was <12 hours ago continue that session[0].
-		if (dataAlias.session === undefined){
-			dataAlias.session = dbAlias.sessions.getLatestData(0);
-			if (dataAlias.session === null || dataAlias.session === false){
-				dataAlias.session = dbAlias.sessions.createNewSession(false);
-				//clear stored data too.
-				dataAlias.AllDrinks = null;//array of drinks
-				dataAlias.currentEmotions = null; //what are current levels of happiness/energy/drunkeness 
+		if (session === undefined){
+			session = dbSessions.getLatestData(0);
+			if (session === null || session === false){
+				switchSession(true);
+				rewriteSessionInfo();
 			}
 				
 		}
-		Titanium.API.debug("session info: " + JSON.stringify(dataAlias.session));
+		Titanium.API.debug("session info: " + JSON.stringify(session));
 		var now = parseInt((new Date()).getTime()/1000, 10);
-		if (now - dataAlias.session[0].LastUpdate  <43200){ 
+		if (now - session[0].LastUpdate  <43200){ 
 			//less than 12hours - carry on 
-		}else if (now - dataAlias.session[0].LastUpdate < 129600){ //36 hours
-			var timeSinceUpdate = Boozerlyzer.dateTimeHelpers.prettyDate(dataAlias.session[0].LastUpdate);
+		}else if (now - session[0].LastUpdate < 129600){ //36 hours
+			var timeSinceUpdate = dateTimeHelpers.prettyDate(session[0].LastUpdate);
 			newSessionDialog.title = 'Last update ' + timeSinceUpdate + '\nStart a new session?';
 			newSessionDialog.show();
 		}else{
 			//>36 hours since last update, don't ask just start new
-			dataAlias.session = dbAlias.sessions.createNewSession(false);
-			//clear stored data too.
-			dataAlias.AllDrinks = null;//array of drinks
-			dataAlias.currentEmotions = null; //what are current levels of happiness/energy/drunkeness 
+			switchSession(true);
+			rewriteSessionInfo();
 		} 
 		Ti.API.debug('homeWin 3');
 
 		//updates the lab points counter
 		function rewriteLabPoints(){
 			Ti.API.debug('rewriteLabPoints');
-			var labPoints = dbAlias.gameScores.TotalPoints(); 
-			// if (isNaN(labPoints[0].Total)){
-				// labelLabPoints.text = 'Err';
-			// }
-			// else{
-				labelLabPoints.text = labPoints[0].Total.toFixed(0); //+ ' Pts';	
-				
-			// }
+			var labPoints = gameScores.TotalPoints(); 
+			labelLabPoints.text = labPoints[0].Total.toFixed(0); //+ ' Pts';	
 		}
 		
 		function checkLevelUp(){
 			if (!loadedonce) {return;}
 			Ti.API.debug('checkLevelUp');
-			var labPoints = dbAlias.gameScores.TotalPoints(); 
+			var labPoints = gameScores.TotalPoints(); 
 			Ti.API.debug(JSON.stringify(labPoints));
 			if (labPoints[0].Total > Ti.App.Properties.getInt('NextLevel',50)){
 				Ti.API.debug('checkLevelUp2');
@@ -458,7 +428,7 @@
 		
 		//every 10th call it tries to send data to boozerlyzer.net
 		function autoSendData(){
-			commAlias.sendData.autoSync();
+			sendData.autoSync();
 		}
 		
 		homeWin.refresh = function(){
@@ -485,11 +455,5 @@
 		});
 		Ti.API.debug('homeWin loaded');
 		return homeWin;
-
-
-	};
-	// } catch (err) {
-	    // Ti.API.error(err);
-	// }
-// })();
+	}; 
 

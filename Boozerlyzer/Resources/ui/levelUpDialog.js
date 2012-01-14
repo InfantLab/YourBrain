@@ -215,5 +215,3 @@
 		if (eventName=='close') {callbackOnClose = callback;}
 	};
 
-	// return exports;
-// }());

@@ -7,29 +7,20 @@
  */
 
 
-// Using the JavaScript module pattern, create a persistence module for CRUD operations
-// Based on Kevin Whinnery's example: http://developer.appcelerator.com/blog/2010/07/how-to-perform-crud-operations-on-a-local-database.html
-// One tutorial on the Module Pattern: http://www.adequatelygood.com/2010/3/JavaScript-Module-Pattern-In-Depth
-(function(){
-	
-	//create an object which will be our public API
-	//Note we need to use an alias of db variable (for some reason that i don't fully understand)
-	var dbAlias = Boozerlyzer.db;
-	dbAlias.drugDoses= {};
-	
 	//maintain a database connection we can use
-	if (!dbAlias.conn){
-		dbAlias.conn = Titanium.Database.install('ybob.db','ybob');
+	var conn;
+	if (!conn){
+		conn = Titanium.Database.install('/ybob.db','ybob');
 	}
 
 		
 	//get standard drinks either for a single country
 	//or for all of them!
-	dbAlias.drugDoses.getStrengths = function (DrugName){
+	exports.getStrengths = function (DrugName){
 		var returnData = [];
 		var rows;
 		var selectStr = 'SELECT DOSESTRENGTH FROM DrugDoses Where DOSESTRENGTH Is NOT NULL and  DrugName = ?';
-		rows =dbAlias.conn.execute(selectStr, DrugName);
+		rows =conn.execute(selectStr, DrugName);
 		if ((rows !== null) && (rows.isValidRow())) {
 			while(rows.isValidRow()){
 				returnData.push({
@@ -47,11 +38,11 @@
 	
 	//get standard drinks either for a single country
 	//or for all of them!
-	dbAlias.drugDoses.getSizes = function (DrugName){
+	exports.getSizes = function (DrugName){
 		var returnData = [];
 		var rows;
 		var selectStr = 'SELECT DOSESIZE, DOSEDESCRIPTION FROM DrugDoses Where DOSESIZE Is NOT NULL and DrugName = ?';
-		rows =dbAlias.conn.execute(selectStr, DrugName);
+		rows =conn.execute(selectStr, DrugName);
 		if ((rows !== null) && (rows.isValidRow())) {
 			while(rows.isValidRow()){
 				returnData.push({
@@ -67,4 +58,4 @@
 		//something didn't work
 		return false;
 	};	
-}());
+

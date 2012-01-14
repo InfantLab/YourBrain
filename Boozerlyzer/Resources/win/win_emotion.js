@@ -8,29 +8,29 @@
  * Copyright yourbrainondrugs.net 2011
  */
 
-// (function() {
-			
-	// Boozerlyzer.win.emotion = {};
-	var dataAlias  = Boozerlyzer.data;
 	var currentSessionID = -1, previousSessionID = -2;
 	var drunkeness, energy, happiness, lastChangedLabel;
 	var winOpened, loadedonce;
+	var winHome;
 	
 	exports.createApplicationWindow = function(){
 		var win = Titanium.UI.createWindow({
 			title:'YBOB Boozerlyzer',
 			backgroundImage:'/images/smallcornercup.png',
 			modal:true,
-//				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 			});	
 			win.orientationModes =  [Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT];	
 
 		var winHome = win.home;
 		var tic = new Date(); //used for counting blur times.
-	
+
+		var dbSelfAssessment = require('/db/selfAssessment');
+		var dbSessions = require('/db/sessions');
+		var dbGameScores = require('/db/gameScores');
+		var dateTimeHelpers = require('/js/dateTimeHelpers');
+		var dataObject = require('/db/dataObject');	
+		var currentEmotions = dataObject.getCurrentEmotions();
 		//include the menu choices	
-		// Ti.include('/ui/menu.js');
-		// var menu = menus;
 		var menu = require('/ui/menu');
 		//need to give it specific help for this screen
 		menu.setHelpMessage("Move sliders to appropriate points to indicate how you currently feel.");
@@ -85,9 +85,9 @@
 		
 		happiness.addEventListener('change',function(e)
 		{
-			dataAlias.currentEmotions[0].Changed = true;
-			dataAlias.currentEmotions[0].Happiness =Math.round(e.value);
-			Ti.API.debug('HappyBlur: '+dataAlias.currentEmotions[0].HappyBlur);
+			currentEmotions[0].Changed = true;
+			currentEmotions[0].Happiness =Math.round(e.value);
+			Ti.API.debug('HappyBlur: '+currentEmotions[0].HappyBlur);
 		});
 		happiness.addEventListener('touchstart', function(e)
 		{
@@ -95,7 +95,7 @@
 		});
 		happiness.addEventListener('touchend', function(e)
 		{
-			dataAlias.currentEmotions[0].HappyBlur += (new Date().getTime()-tic);
+			currentEmotions[0].HappyBlur += (new Date().getTime()-tic);
 		});
 		
 		//
@@ -137,9 +137,9 @@
 		
 		energy.addEventListener('change',function(e)
 		{
-			dataAlias.currentEmotions[0].Changed = true;
-			dataAlias.currentEmotions[0].Energy =Math.round(e.value);
-			Ti.API.debug('EnergyBlur: '+dataAlias.currentEmotions[0].EnergyBlur);
+			currentEmotions[0].Changed = true;
+			currentEmotions[0].Energy =Math.round(e.value);
+			Ti.API.debug('EnergyBlur: '+currentEmotions[0].EnergyBlur);
 		});
 		// For #806
 		energy.addEventListener('touchstart', function(e)
@@ -148,7 +148,7 @@
 		});
 		energy.addEventListener('touchend', function(e)
 		{
-			dataAlias.currentEmotions[0].EnergyBlur += (new Date().getTime()-tic);
+			currentEmotions[0].EnergyBlur += (new Date().getTime()-tic);
 		});
 		
 		//
@@ -187,8 +187,8 @@
 		
 		drunkeness.addEventListener('change',function(e)
 		{
-			dataAlias.currentEmotions[0].Changed = true;
-			dataAlias.currentEmotions[0].Drunkeness =Math.round(e.value);
+			currentEmotions[0].Changed = true;
+			currentEmotions[0].Drunkeness =Math.round(e.value);
 		});
 		drunkeness.addEventListener('touchstart', function(e)
 		{
@@ -196,8 +196,8 @@
 		});
 		drunkeness.addEventListener('touchend', function(e)
 		{
-			dataAlias.currentEmotions[0].DrunkBlur += (new Date().getTime()-tic);
-			Ti.API.debug('DrunkBlur: '+dataAlias.currentEmotions[0].DrunkBlur);
+			currentEmotions[0].DrunkBlur += (new Date().getTime()-tic);
+			Ti.API.debug('DrunkBlur: '+currentEmotions[0].DrunkBlur);
 		});
 		
 		win.add(drunkenessLabel);
@@ -218,8 +218,8 @@
 		// record activity data for right now
 		// and give user 2 lab points for using this screen
 		function gameEndSaveScores(){
-			Boozerlyzer.db.selfAssessment.setData(dataAlias.currentEmotions);
-			Boozerlyzer.db.sessions.Updated(currentSessionID);
+			dbSelfAssessment.setData(currentEmotions);
+			dbSessions.Updated(currentSessionID);
 			var gameSaveData = [{Game: 'TrackMood',
 							GameVersion:1,
 							PlayStart:winOpened ,
@@ -237,7 +237,7 @@
 							UserID:Titanium.App.Properties.getInt('UserID'),
 							LabPoints:2	
 						}];
-			Boozerlyzer.db.gameScores.SaveResult(gameSaveData);
+			dbGameScores.SaveResult(gameSaveData);
 		}
 		
 		// SAVE BUTTON	
@@ -255,18 +255,18 @@
 		{
 			//shouldn't have to copy these values in again
 			//but do it anyway, don't trust the change events
-			dataAlias.currentEmotions[0].Changed = true;
-			dataAlias.currentEmotions[0].Happiness = happiness.value;
-			dataAlias.currentEmotions[0].Drunkeness = drunkeness.value;
-			dataAlias.currentEmotions[0].Energy = energy.value;
-			dataAlias.currentEmotions[0].SessionID = currentSessionID;
-			Boozerlyzer.db.selfAssessment.setData(dataAlias.currentEmotions);
-			Boozerlyzer.db.sessions.Updated(currentSessionID);
-			updated = Boozerlyzer.dateTimeHelpers.prettyDate(dataAlias.currentEmotions[0].SelfAssessmentStart);
+			currentEmotions[0].Changed = true;
+			currentEmotions[0].Happiness = happiness.value;
+			currentEmotions[0].Drunkeness = drunkeness.value;
+			currentEmotions[0].Energy = energy.value;
+			currentEmotions[0].SessionID = currentSessionID;
+			dbSelfAssessment.setData(currentEmotions);
+			dbSessions.Updated(currentSessionID);
+			updated = dateTimeHelpers.prettyDate(currentEmotions[0].SelfAssessmentStart);
 			lastChangedLabel.text = 'Last Updated  ' + updated;
-			dataAlias.currentEmotions[0].DrunkBlur = 0;
-			dataAlias.currentEmotions[0].HappyBlur = 0;
-			dataAlias.currentEmotions[0].EnergyBlur = 0;
+			currentEmotions[0].DrunkBlur = 0;
+			currentEmotions[0].HappyBlur = 0;
+			currentEmotions[0].EnergyBlur = 0;
 			gameEndSaveScores();
 			win.close();
 		});	
@@ -306,11 +306,9 @@
 			left:leftFirst
 		});
 		newdrinks.addEventListener('click',function(){
-			// if (!Boozerlyzer.winDrinks){
-				// Ti.API.debug('winEmotion create winDrinks');
-				Boozerlyzer.winDrinks = Boozerlyzer.win.drinks.createApplicationWindow();
-			// }
-			Boozerlyzer.winDrinks.open();
+			var win_drinks = require('/win/win_drinks');
+			var winDrinks = win_drinks.createApplicationWindow();
+			winDrinks.open();
 			gameEndSaveScores();
 			win.close();
 		});
@@ -324,10 +322,9 @@
 			left:leftSecond
 		});
 		newtripreport.addEventListener('click',function(){
-			// if (!Boozerlyzer.winTripReport){
-				Boozerlyzer.winTripReport = Boozerlyzer.win.tripReport.createApplicationWindow();
-			// }
-			Boozerlyzer.winTripReport.open();
+			var win_TripReport = require('/win/win_tripreport');
+			var winTripReport = win_TripReport.createApplicationWindow();
+			winTripReport.open();
 			gameEndSaveScores();
 			win.close();
 		});
@@ -341,10 +338,10 @@
 			left:leftThird
 		});
 		newgame.addEventListener('click',function(){
-			// if (!Boozerlyzer.winGameMenu || Boozerlyzer.winGameMenu === undefined){
-				Boozerlyzer.winGameMenu = Boozerlyzer.win.gameMenu.createApplicationWindow();
-			// }
-			Boozerlyzer.winGameMenu.open();
+			var  winGames = require('/win/win_gameMenu');
+			var winGameMenu =winGames.createApplicationWindow();
+			winGameMenu.open();
+			win.close();
 		});
 		win.add(newgame);
 		
@@ -353,13 +350,13 @@
 		//every win_.js file but i tried it a few ways and i never got it to work.
 		function goHome(){
 			gameEndSaveScores();
-			if (Boozerlyzer.winHome === undefined || Boozerlyzer.winHome === null) {
-				Boozerlyzer.winHome = Boozerlyzer.win.main.createApplicationWindow();
+			if (!winHome) {
+				var winmain = require('/win/win_main');
+				winHome = winmain.createApplicationWindow();
 			}
 			win.close();
-			Boozerlyzer.winHome.open();
-			// Boozerlyzer.winHome.refresh();
-			Ti.App.fireEvent('homeWinRefresh');
+			winHome.open();
+			winHome.refresh();
 		}
 		//invisible button to return home over the cup
 		var homeButton = Titanium.UI.createView({
@@ -388,20 +385,20 @@
 			Ti.API.debug('win_emotion retrieved SessionID property - ' + currentSessionID);
 			
 			//most recent emotion values for this session
-			if (currentSessionID !== previousSessionID || !dataAlias.currentEmotions || dataAlias.currentEmotions === null || dataAlias.currentEmotions === 'undefined'){
-				dataAlias.currentEmotions = Boozerlyzer.db.selfAssessment.getLatestData(currentSessionID);
+			if (currentSessionID !== previousSessionID || !currentEmotions || currentEmotions === null || currentEmotions === 'undefined'){
+				currentEmotions = dbSelfAssessment.getLatestData(currentSessionID);
 			}
-			if (dataAlias.currentEmotions === null || dataAlias.currentEmotions[0].Happinessnow < 0 ){
+			if (currentEmotions === null || currentEmotions[0].Happinessnow < 0 ){
 				Titanium.API.trace('Boozerlyzer - currentEmotion could not be retrieved');
-				dataAlias.currentEmotions= Boozerlyzer.db.selfAssessment.newEmotion(false);
+				currentEmotions= dbSelfAssessment.newEmotion(false);
 			}
-			Titanium.API.debug(JSON.stringify(dataAlias.currentEmotions));
-			dataAlias.currentEmotions[0].SelfAssessmentStart = winOpened;
-			dataAlias.currentEmotions[0].SessionID = currentSessionID;
+			Titanium.API.debug(JSON.stringify(currentEmotions));
+			currentEmotions[0].SelfAssessmentStart = winOpened;
+			currentEmotions[0].SessionID = currentSessionID;
 			//clear the blur values as we start those afresh
-			dataAlias.currentEmotions[0].DrunkBlur = 0;
-			dataAlias.currentEmotions[0].HappyBlur = 0;
-			dataAlias.currentEmotions[0].EnergyBlur = 0;
+			currentEmotions[0].DrunkBlur = 0;
+			currentEmotions[0].HappyBlur = 0;
+			currentEmotions[0].EnergyBlur = 0;
 			
 			winOpened = parseInt((new Date()).getTime()/1000, 10);
 			if (Titanium.App.Properties.getBool('MateMode',false)){
@@ -413,10 +410,10 @@
 			var happyBlur = 0;
 			
 			//set the old values
-			drunkeness.value = dataAlias.currentEmotions[0].Drunkeness;
-			energy.value = dataAlias.currentEmotions[0].Energy;
-			happiness.value = dataAlias.currentEmotions[0].Happiness;		
-			var updated = Boozerlyzer.dateTimeHelpers.prettyDate(dataAlias.currentEmotions[0].SelfAssessmentStart);
+			drunkeness.value = currentEmotions[0].Drunkeness;
+			energy.value = currentEmotions[0].Energy;
+			happiness.value = currentEmotions[0].Happiness;		
+			var updated = dateTimeHelpers.prettyDate(currentEmotions[0].SelfAssessmentStart);
 			lastChangedLabel.text = 'Last Updated  ' + updated;
 			//set up for this session only relaoad everything sessionid changes next time we reload
 			previousSessionID = currentSessionID;
@@ -426,5 +423,3 @@
 		return win;
 		
 	};
-			
-// })();

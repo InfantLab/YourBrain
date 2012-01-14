@@ -4,15 +4,12 @@
  * @author caspar
  */
 
-// var menus = (function(){	
 	
 //add the menu.
 var activity = Ti.Android.currentActivity;
 var helpMessage;
-// /**
- // * Public API
- // */
-// var api = {};
+var winMyData;
+var win_myData = require('/win/win_mydata');
 
 activity.onCreateOptionsMenu = function( event ) {
 	  var menu = event.menu
@@ -64,13 +61,13 @@ activity.onCreateOptionsMenu = function( event ) {
 	
 	//show the settings tabs
 	exports.showSettingsScreen = function(){		
-		if (!Boozerlyzer.winMyData ){
-			Boozerlyzer.winMyData = Boozerlyzer.win.myData.createApplicationWindow();
+		if (!winMyData ){
+			winMyData = win_myData.createApplicationWindow();
 			// Boozerlyzer.tabMyData.home = homeWin; //reference to home
 			// Boozerlyzer.tabMyData.addEventListener('close',homeWin.refresh);				
 		}
 		// Boozerlyzer.tabMyData.setActiveTab(0);
-		Boozerlyzer.winMyData.open();
+		winMyData.open();
 	};
 	// return api;
 // }());

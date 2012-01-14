@@ -7,38 +7,34 @@
  * Copyright yourbrainondrugs.net 2011
  */
 
-// (function() {
-
-	var dataAlias = Boozerlyzer.data;
-	var dbAlias = Boozerlyzer.db;
-	//va//appdebugstepsps = "";
 	exports.createApplicationWindow = function(){
 		var win = Titanium.UI.createWindow({
 			title:'YBOB Boozerlyzer',
 			backgroundImage:'/images/smallcornercup.png',
-			modal:true,
-//				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
+			modal:true
 			});	
 		win.orientationModes =  [Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT];	
-		// The main screen for plotting results
-		
+
+		var winHome;
+	
+		//add the appropriate requires	
+		var dataObject = require('/db/dataObject');
+		var dbSessions  = require('/db/sessions');
+		var dbDoseageLog = require('/db/doseageLog');
 		var dataOverTime = require('/analysis/dataOverTime');
+		var dbSelfAssessment = require('/db/selfAssessment');
+		var menu = require('/ui/menu') 
+		;
 		//include the menu choices	
-		var menu = require('/ui/menu') ;
 		//need to give it specific help for this screen
 		menu.setHelpMessage("Chart plots drinks, blood alcohol and happiness levels over various time periods. Swipe upwards to access controls.");
 		
 		var  sizeAxisIcon = 48, reloadData;
 		
 		var SessionID = Titanium.App.Properties.getInt('SessionID');
-		if (!dataAlias.personalInfo || dataAlias.personalInfo === null || dataAlias.personalInfo === 'undefined'){
-			dataAlias.personalInfo = dbAlias.personalInfo.getData();
-		}
-		if (!dataAlias.standardDrinks || dataAlias.standardDrinks === null || dataAlias.standardDrinks ==='undefined'){
-			dataAlias.standardDrinks = dbAlias.alcoholStandardDrinks.get(dataAlias.personalInfo.Country);
-		}
+		var standardDrinks = dataObject.getStandardDrinks();
 		
-		var millsPerStandardUnits = dataAlias.standardDrinks[0].MillilitresPerUnit;
+		var millsPerStandardUnits = standardDrinks[0].MillilitresPerUnit;
 		
 		//data variables
 		var startTime, nTimeSteps, allDrinks, selfAssess;
@@ -49,17 +45,16 @@
 			//appdebugsteps +='loading chart data..';
 			if (type === "Hourly Graph"){		
 				//All dose data for this session
-				sessionData = dbAlias.sessions.getSession(SessionID);
-				allDrinks = dbAlias.doseageLog.getAllSessionData(SessionID);
-				selfAssess = dbAlias.selfAssessment.getAllSessionData(SessionID);
+				var sessionData =dbSessions.getSession(SessionID);
+				allDrinks = dbDoseageLog.getAllSessionData(SessionID);
+				selfAssess = dbSelfAssessment.getAllSessionData(SessionID);
 				startTime = sessionData[0].StartTime;
 				nTimeSteps = 24;
 			}else if (type === "Weekly Graph"){
-				Ti.API.debug('Charts load week of data')
-				//sessionData = dbAlias.sessions.getSession(SessionID);
-				var aWeekAgo = parseInt((new Date()).getTime()/1000) - 3600 * 24 * 7;
-				allDrinks = dbAlias.doseageLog.getTimeRangeData(aWeekAgo);
-				selfAssess = dbAlias.selfAssessment.getTimeRangeData(aWeekAgo);
+				Ti.API.debug('Charts load week of data');
+				var aWeekAgo = parseInt((new Date()).getTime()/1000,10) - 3600 * 24 * 7;
+				allDrinks = dbDoseageLog.getTimeRangeData(aWeekAgo);
+				selfAssess = dbSelfAssessment.getTimeRangeData(aWeekAgo);
 				startTime = aWeekAgo;
 				nTimeSteps = 84;
 			}
@@ -370,11 +365,12 @@
 	//There ought to be a simple way of wrapping this up as a UI element rather than repeating code in 
 	//every win_.js file but i tried it a few ways and i never got it to work.
 	function goHome(){
-		if (Boozerlyzer.winHome === undefined || Boozerlyzer.winHome === null) {
-			Boozerlyzer.winHome = Boozerlyzer.win.main.createApplicationWindow();
+		if (!winHome) {
+			var winmain = require('/win/win_main');
+			winHome = winmain.createApplicationWindow();
 		}
 		win.close();
-		Boozerlyzer.winHome.open();
+		winHome.open();
 	}
 		//invisible button to return home over the cup
 	var homeButton = Titanium.UI.createView({
@@ -391,4 +387,3 @@
 	
 	return win;
 	};
-// })();

@@ -7,32 +7,23 @@
  */
 
 
-// Using the JavaScript module pattern, create a persistence module for CRUD operations
-// Based on Kevin Whinnery's example: http://developer.appcelerator.com/blog/2010/07/how-to-perform-crud-operations-on-a-local-database.html
-// One tutorial on the Module Pattern: http://www.adequatelygood.com/2010/3/JavaScript-Module-Pattern-In-Depth
-(function(){
-	
-	//create an object which will be our public API
-	//need an alias for some reason i don't understand
-	var dbAlias = Boozerlyzer.db;
-	dbAlias.alcoholStandardDrinks = {};
-	
+	var conn	
 	//maintain a database connection we can use
-  	if (!dbAlias.conn){
-		dbAlias.conn = Titanium.Database.install('ybob.db','ybob');
+  	if (!conn){
+		conn = Titanium.Database.install('/ybob.db','ybob');
 	}
 
 		
 	//get standard drinks either for a single country
 	//or for all of them!
-	dbAlias.alcoholStandardDrinks.get = function (Country){
+	exports.get = function (Country){
 		var rows, returnData = [];
 		var selectStr = 'SELECT * FROM AlcoholStandardDrinks ';
 		if (typeof(Country)=="undefined" || Country === null){
-			rows =dbAlias.conn.execute(selectStr);	 
+			rows =conn.execute(selectStr);	 
 		}else {
 			selectStr += 'WHERE Country = ?';
-			rows =dbAlias.conn.execute(selectStr, Country);
+			rows =conn.execute(selectStr, Country);
 		}
 		if ((rows !== null) && (rows.isValidRow())) {
 			while(rows.isValidRow()){
@@ -54,6 +45,3 @@
 					MillilitresPerUnit: 10
 				}];
 	};
-	
-	
-}());

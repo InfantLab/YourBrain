@@ -6,6 +6,14 @@
  * Copyright yourbrainondrugs.net 2011
  */
 
+var winpersonal = require('/win/win_personal');
+var winprivacy = require('/win/win_privacy');
+var winregister = require('/win/win_register');
+var winsyncinfo = require('/win/win_syncInfo');
+var winHome;
+var winmain = require('/win/win_main');
+
+
 exports.createApplicationWindow =function(launchType){
 	Ti.API.debug('creating win_mydata');
 	var win = Titanium.UI.createWindow({
@@ -14,19 +22,28 @@ exports.createApplicationWindow =function(launchType){
 		modal:true,
 		// orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
 	});
+	win.goHome = function (){
+		Ti.API.debug('win_mydata - gohome');
+		if (winHome === undefined || Boozerlyzer.winHome === null) {
+			winHome =  winmain.createApplicationWindow();
+		}
+		winHome.open();
+		win.close();
+		winHome.refresh();
+	};
 	win.orientationModes =  [Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT];	
-	var viewPersonal = Boozerlyzer.win.personal.createApplicationWindow(launchType, win);
-	var viewPrivacy = Boozerlyzer.win.privacy.createApplicationWindow(launchType, win);
+	var viewPersonal = winpersonal.createApplicationWindow(launchType, win, win.goHome);
+	var viewPrivacy = winprivacy.createApplicationWindow(launchType, win);
 	var viewComm, buttonCommText;
 	win.add(viewPersonal);
 	win.add(viewPrivacy);
 	//and do we show registration or sync screen?
 	if (Ti.App.Properties.getBool('Registered', false)){
-		viewComm =  Boozerlyzer.win.syncInfo.createApplicationWindow("normal", win);
+		viewComm =  winsyncInfo.createApplicationWindow("normal", win);
 		buttonCommText = 'Sync';		
 	}else{  
 		// view registration settings
-		viewComm =  Boozerlyzer.win.register.createApplicationWindow(launchType, win);
+		viewComm =  winregister.createApplicationWindow(launchType, win);
 		buttonCommText = 'Register';	
 					
 	}
@@ -103,16 +120,7 @@ exports.createApplicationWindow =function(launchType){
 	win.add(buttonComm);
 	
 
-// 
-	win.goHome = function (){
-		Ti.API.debug('win_mydata - gohome');
-		if (Boozerlyzer.winHome === undefined || Boozerlyzer.winHome === null) {
-			Boozerlyzer.winHome = Boozerlyzer.win.main.createApplicationWindow();
-		}
-		Boozerlyzer.winHome.open();
-		Boozerlyzer.winMyData.close();
-		Boozerlyzer.winHome.refresh();
-	};
+
 
 	//invisible button to return home over the cup
 	var homeButton = Titanium.UI.createView({

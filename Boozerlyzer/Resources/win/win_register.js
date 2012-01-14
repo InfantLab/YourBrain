@@ -20,7 +20,6 @@ exports.createApplicationWindow =function(launchType, parent){
 	if (!launchType){
 		 mLaunchType = launchType
 	}
-	var winMyDataAlias = parent;
     var helpMessage = "Please register with Boozerlyzer.net.\nAll data are held securely and anonymously.";
 	//include the menu choices	
 	// Ti.include('/ui/menu.js');
@@ -142,7 +141,7 @@ exports.createApplicationWindow =function(launchType, parent){
             alertDialog.addEventListener('click',function(e)  
             {  
             	//go to main screen
-                winMyDataAlias.goHome();
+                parent.goHome();
             });    
             alertDialog.show();  
         } else {  

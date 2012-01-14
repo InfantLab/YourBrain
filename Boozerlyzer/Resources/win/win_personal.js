@@ -16,8 +16,6 @@ exports.createApplicationWindow =function(launchType, parent){
 		left:0,
 		width:'100%'
 	});
-	var dbAlias = Boozerlyzer.db;
-	var winMyDataAlias = parent;
 	var initialised = false;
 	//layout variables
 	var topNickname = 50, topSex = 10,topCountry = 10;
@@ -32,20 +30,25 @@ exports.createApplicationWindow =function(launchType, parent){
 	//include the menu choices	
 	// Ti.include('/ui/menu.js');
 	// var menu = menus;
+	var dataObject = require('/db/dataObject');
+	var dbPersonalInfo = require('/db/personalInfo');
 	var menu = require('/ui/menu');
 	//need to give it specific help for this screen
 	menu.setHelpMessage(helpMessage);
 	
-	Ti.include('/ui/picker_monthyear.js');
+	var monthYearPickerDialog = require('/ui/picker_monthyear');
+	monthYearPickerDialog.setParent(win);
 	
-	var Countries = dbAlias.alcoholStandardDrinks.get();
+	var dbAlcoholStandardUnits = require('/db/alcoholStandardUnits');
+	var Countries = dbAlcoholStandardUnits.get();
+	
 	Titanium.API.debug('win_personal - Countries' + Countries.length);
 	
-	var persInfo = dbAlias.personalInfo.getData();
+	var persInfo = dbPersonalInfo.getData();
 	Ti.API.debug('win_personal - got persInfo');		
 	if (!persInfo){
 		Titanium.API.debug('win_personal settingdata');
-		persInfo = dbAlias.personalInfo.setDefaults();
+		persInfo = dbPersonalInfo.setDefaults();
 	}
 	
 	var label = Titanium.UI.createLabel({
@@ -83,7 +86,7 @@ exports.createApplicationWindow =function(launchType, parent){
 	
 	function updateDateOfBirth(){
 		if (persInfo.BirthMonth > 0 && persInfo.BirthYear > 0){
-			birthDate.text = dbAlias.personalInfo.monthname[persInfo.BirthMonth -1] + '-' + persInfo.BirthYear;
+			birthDate.text = dbPersonalInfo.monthname[persInfo.BirthMonth -1] + '-' + persInfo.BirthYear;
 		}
 	}
 	
@@ -167,8 +170,8 @@ exports.createApplicationWindow =function(launchType, parent){
 		
 	// set a picker for gender.
 	var rows1 = [];
-	for (var i = 0; i < dbAlias.personalInfo.gender.length; i++) {
-		rows1.push(Ti.UI.createPickerRow({title: dbAlias.personalInfo.gender[i]}));
+	for (var i = 0; i < dbPersonalInfo.gender.length; i++) {
+		rows1.push(Ti.UI.createPickerRow({title: dbPersonalInfo.gender[i]}));
 	}
 	var column1 = Ti.UI.createPickerColumn( {
 		rows: rows1
@@ -202,7 +205,7 @@ exports.createApplicationWindow =function(launchType, parent){
 		heightUnit.text = (heightUnit.text==='m'? 'in': 'm');
 		Ti.App.Properties.setString("HeightUnits", heightUnit.text);
 		//convert the value
-		heightField.value = ''+dbAlias.personalInfo.convertIntoNewUnits(heightField.value,heightUnit.text);
+		heightField.value = ''+dbPersonalInfo.convertIntoNewUnits(heightField.value,heightUnit.text);
 		validateHeight(); 
 	});
 
@@ -219,7 +222,7 @@ exports.createApplicationWindow =function(launchType, parent){
 		persInfo.Changed = true;
 		weightUnit.text = (weightUnit.text==='kg'? 'lb': 'kg');
 		Ti.App.Properties.setString("WeightUnits", weightUnit.text);
-		weightField.value = ''+dbAlias.personalInfo.convertIntoNewUnits(weightField.value,weightUnit.text);
+		weightField.value = ''+dbPersonalInfo.convertIntoNewUnits(weightField.value,weightUnit.text);
 		validateWeight(); 
 	})
 
@@ -246,7 +249,7 @@ exports.createApplicationWindow =function(launchType, parent){
 	if (heightUnit.text ==='m'){
 		heightField.value = persInfo.Height;		
 	}else{//store value converted into kilo
-		heightField.value = dbAlias.personalInfo.convertIntoNewUnits(persInfo.Height,'in');
+		heightField.value = dbPersonalInfo.convertIntoNewUnits(persInfo.Height,'in');
 	}
 	var weightField = Titanium.UI.createTextField({
 		value:'',
@@ -271,7 +274,7 @@ exports.createApplicationWindow =function(launchType, parent){
 	if (weightUnit.text ==='kg'){
 		weightField.value = persInfo.Weight;		
 	}else{//store value converted into kilo
-		weightField.value = dbAlias.personalInfo.convertIntoNewUnits(persInfo.Weight,'lb');
+		weightField.value = dbPersonalInfo.convertIntoNewUnits(persInfo.Weight,'lb');
 	}
 	
 	function validateHeight(){
@@ -284,20 +287,20 @@ exports.createApplicationWindow =function(launchType, parent){
 			return;
 		}
 		if (heightUnit.text ==='m'){
-			min = dbAlias.personalInfo.minHeight_m;
-			max = dbAlias.personalInfo.maxHeight_m;
+			min = dbPersonalInfo.minHeight_m;
+			max = dbPersonalInfo.maxHeight_m;
 		}else{
-			min = dbAlias.personalInfo.minHeight_in;
-			max = dbAlias.personalInfo.maxHeight_in;
+			min = dbPersonalInfo.minHeight_in;
+			max = dbPersonalInfo.maxHeight_in;
 		}
 		newval = Math.max(min,newval);
 		newval = Math.min(max,newval);
-		newval = dbAlias.personalInfo.roundToStepSize(newval,heightUnit.text);		
+		newval = dbPersonalInfo.roundToStepSize(newval,heightUnit.text);		
 		heightField.value = '' + newval;
 		if (heightUnit.text ==='m'){
 			persInfo.Height = newval;		
 		}else{//store value converted into kilo
-			persInfo.Height = dbAlias.personalInfo.convertIntoNewUnits(newval,'m');
+			persInfo.Height = dbPersonalInfo.convertIntoNewUnits(newval,'m');
 		}
 	}
 	
@@ -316,22 +319,22 @@ exports.createApplicationWindow =function(launchType, parent){
 			return;
 		}
 		if (weightUnit.text ==='kg'){
-			min = dbAlias.personalInfo.minWeight_kg;
-			max = dbAlias.personalInfo.maxWeight_kg;
+			min = dbPersonalInfo.minWeight_kg;
+			max = dbPersonalInfo.maxWeight_kg;
 		}else{
-			min = dbAlias.personalInfo.minWeight_lb;
-			max = dbAlias.personalInfo.maxWeight_lb;
+			min = dbPersonalInfo.minWeight_lb;
+			max = dbPersonalInfo.maxWeight_lb;
 		}
 		newval = Math.max(min,newval);
 		newval = Math.min(max,newval);
 		Titanium.API.debug('validateweight 2');
-		newval = dbAlias.personalInfo.roundToStepSize(newval,weightUnit.text);	
+		newval = dbPersonalInfo.roundToStepSize(newval,weightUnit.text);	
 		weightField.value = '' + newval;
 		if (weightUnit.text ==='kg'){
 			persInfo.Weight = newval;		
 		}else{
 			//store value converted into kilo
-			persInfo.Weight = dbAlias.personalInfo.convertIntoNewUnits(newval,'kg');
+			persInfo.Weight = dbPersonalInfo.convertIntoNewUnits(newval,'kg');
 		}
 		Titanium.API.debug('validateweight 3');
 	}
@@ -340,16 +343,6 @@ exports.createApplicationWindow =function(launchType, parent){
 	validateWeight();
 	
 	
-	// function goHome(){
-		// Ti.API.debug('win_personal goHome');
-		// if (Boozerlyzer.winHome === undefined || Boozerlyzer.winHome === null) {
-			// Boozerlyzer.winHome = Boozerlyzer.win.main.createApplicationWindow();
-		// }
-		// Boozerlyzer.winHome.show();
-		// Boozerlyzer.winHome.refresh();
-		// winMyDataAlias.close();
-	// }
-// 	
 
 	//invisible button to return home over the cup
 	var homeButton = Titanium.UI.createView({
@@ -360,10 +353,10 @@ exports.createApplicationWindow =function(launchType, parent){
 							    height:60
 						    });
 	win.add(homeButton);
-	homeButton.addEventListener('click',winMyDataAlias.goHome);
+	homeButton.addEventListener('click',parent.goHome);
 	// Cleanup and return home
-	win.addEventListener('android:back', winMyDataAlias.goHome);
-	win.addEventListener('close', winMyDataAlias.goHome);
+	win.addEventListener('android:back', parent.goHome);
+	win.addEventListener('close', parent.goHome);
 	
 	// SAVE BUTTON	
 	var save = Ti.UI.createButton({
@@ -380,14 +373,14 @@ exports.createApplicationWindow =function(launchType, parent){
 	{
 		Titanium.App.Properties.setBool('PersonalDetailsEntered', true);
 		Titanium.App.Properties.setInt('RegistrationNag', 10);
-		dbAlias.personalInfo.setData(persInfo);
+		dbPersonalInfo.setData(persInfo);
 		if(!Titanium.App.Properties.getBool('PrivacySet', false)){
-			winMyDataAlias.showPrivacy();
+			parent.showPrivacy();
 		}else if(!Titanium.App.Properties.getBool('Registered', false)){
-			winMyDataAlias.showComm();
+			parent.showComm();
 		}else{
 			Titanium.App.Properties.setInt('RegistrationNag', -1);
-			winMyDataAlias.goHome();			
+			parent.goHome();			
 		}
 	});	
 	// CANCEL BUTTON	
@@ -404,23 +397,10 @@ exports.createApplicationWindow =function(launchType, parent){
 	cancel.addEventListener('click',function()
 	{
 		Titanium.App.Properties.setInt('RegistrationNag', 5);
-		winMyDataAlias.goHome();
+		parent.goHome();
 	});	
 	
 	updateDateOfBirth();
-	// // Cleanup and return home
-	// win.addEventListener('android:back', function(e) {
-		// if (winHome === undefined || winHome === null) {
-			// winHome = Titanium.UI.createWindow({ modal:true,
-				// url: '/app.js',
-				// title: 'Boozerlyzer',
-				// backgroundImage: '/images/smallcornercup.png',
-				// orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
-			// })
-		// }
-		// win.close();
-		// winHome.open();
-	// });
 	initialised = true;
 	
 	win.addEventListener('show', function(){

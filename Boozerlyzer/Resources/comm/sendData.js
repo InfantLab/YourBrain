@@ -4,12 +4,6 @@
  * functions for exporting gameScores to a csv file on the phone.  
  */
 
-(function(){
-
-	//Note we need to use an alias of comm variable (for some reason that i don't fully understand)
-	var commAlias = Boozerlyzer.comm;
-	commAlias.sendData = {};
-
 /*
  queries the database and returns a JSON object that looks something like this:
  {
@@ -30,7 +24,7 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 	 * since data sending is asynchronous we will mostly succeed fail silently
 	 * but allow possiblity of callbacks.
 	 * */
-	commAlias.sendData.sync = function(callbackFn){
+	exports.sync = function(callbackFn){
 		if (!Ti.App.Properties.getBool('Registered', false)){
 			return {status:'failed',message:'Please register first'};
 		}
@@ -48,7 +42,9 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		var lastSentID = Titanium.App.Properties.getInt('LastSentID', 0);
 		Ti.API.debug('sendData - lastSentID ' + lastSentID);
 		// build an object containing the data that we should send
-		var dataToSend = Boozerlyzer.db.gameScores.GamePlaySummaryforWebserver(null,null,lastSentID);
+		var ybodnet = require('/comm/ybodnet');
+		var dbGameScores = require('/db/gameScores');
+		var dataToSend = dbGameScores.GamePlaySummaryforWebserver(null,null,lastSentID);
 		
 		//what is the last row id from this dataset?
 		if (!dataToSend || dataToSend.length===0) {
@@ -94,12 +90,12 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		Ti.API.debug('about to send data for ' + dataToSend.length + ' items');
 		xhrPost.send(
 		 /*JSON.stringify(*/{
-		   UUID: commAlias.ybodnet.getUUID(),  // our user ID, username, email etc - unique identifier of the submitter
-		   AuthToken: commAlias.ybodnet.getAuthToken(), // some kind of magic key that the client-server has previously negotiated to determine authenticity
-		   ClientVersion: commAlias.ybodnet.getClientVersion(), // software version of the client
-		   ProtocolVersion: commAlias.ybodnet.getProtocolVersion(), // protocol version to use
+		   UUID: ybodnet.getUUID(),  // our user ID, username, email etc - unique identifier of the submitter
+		   AuthToken: ybodnet.getAuthToken(), // some kind of magic key that the client-server has previously negotiated to determine authenticity
+		   ClientVersion: ybodnet.getClientVersion(), // software version of the client
+		   ProtocolVersion: ybodnet.getProtocolVersion(), // protocol version to use
 		   //data: dataToSend.to_json(),
-		   data: Titanium.JSON.stringify(dataToSend)
+		   data: JSON.stringify(dataToSend)
 		 }//)
 		);
 		Ti.API.debug( dataToSend.length + ' items sent.');
@@ -107,7 +103,7 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		
 	};
 
-	commAlias.sendData.getLastServerRowID = function(callbackFn){
+	exports.getLastServerRowID = function(callbackFn){
 		if (!Ti.Network.online){
 			return {status:'failed',message:'No internet connection'};
 		}		
@@ -132,10 +128,10 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		xhrPost.send(
 	     JSON.stringify(
 		 {
-		   UUID: commAlias.ybodnet.getUUID(),  // our user ID, username, email etc - unique identifier of the submitter
-		   AuthToken: commAlias.ybodnet.getAuthToken(), // some kind of magic key that the client-server has previously negotiated to determine authenticity
-		   ClientVersion: commAlias.ybodnet.getClientVersion(), // software version of the client
-		   ProtocolVersion: commAlias.ybodnet.getProtocolVersion() // protocol version to use
+		   UUID: ybodnet.getUUID(),  // our user ID, username, email etc - unique identifier of the submitter
+		   AuthToken: ybodnet.getAuthToken(), // some kind of magic key that the client-server has previously negotiated to determine authenticity
+		   ClientVersion: ybodnet.getClientVersion(), // software version of the client
+		   ProtocolVersion: ybodnet.getProtocolVersion() // protocol version to use
 		 }
 		 )
 		);
@@ -148,7 +144,7 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 	 * every 20th time it checks if we have an internet connection
 	 * and if so attempts to send the most recent data.
 	 */
-	commAlias.sendData.autoSync = function(){
+	exports.autoSync = function(){
 		if (!Ti.App.Properties.getBool('AutoSync',true)){
 			//not autosyncing so return home
 			return;
@@ -158,9 +154,7 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		Ti.API.debug('autoSync count ' + count);
 		Ti.App.Properties.setInt('AutoSyncCount', count);
 		if (count % 10 === 0 && Ti.Network.online){
-			commAlias.sendData.sync();
+			exports.sync();
 		}
 	};
-	
-	
-}());
+
