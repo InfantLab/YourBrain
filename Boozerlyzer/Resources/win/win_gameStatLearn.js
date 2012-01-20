@@ -172,6 +172,7 @@ exports.createApplicationWindow =function(){
 		gameEndSaveScores();
 		gameStarted = false;
 		dialogOpen = true;
+		scoresDialog.setParent(win);
 		scoresDialog.setScores( 'Raccoon Hunt', 
 						Math.floor(points+inhibitbonus+coordbonus+speedbonus),
 						speedbonus, 

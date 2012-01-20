@@ -45,9 +45,9 @@
 	var deleteButton, doneButton, flexibleSpace, toolbar, picker, containerView, coverView;
 	var strengths, sizes, drinkTypeImage;
 	var typeIcons =[];
-	typeIcons['Beer']    ='/icons/beer-full.png';
-	typeIcons['Wine']    = '/icons/wine.png';
-	typeIcons['Spirits'] = '/icons/whiskey.png';
+	typeIcons.Beer    ='/icons/beer-full.png';
+	typeIcons.Wine    = '/icons/wine.png';
+	typeIcons.Spirits = '/icons/whiskey.png';
 	// basic callback event object - very like drink object
 	var	returnData = {
 			cancel:false,
@@ -73,9 +73,9 @@
 	function createControls(){
 		if (isControlsCreated) {return;}
 
-		colVolumeLabel = Ti.UI.createLabel({text:'% ABV',top:28,left:66,color:'blue',font: {fontSize: '16',fontWeight:'bold'}});
-		colDescriptionLabel = Ti.UI.createLabel({text:'Amount',top:28,left:166,color:'blue',font: {fontSize: '16',fontWeight:'bold'}});
-		colCountLabel = Ti.UI.createLabel({text:'Number',top:28,left:282,color:'blue',font: {fontSize: '16',fontWeight:'bold'}});
+		var colVolumeLabel = Ti.UI.createLabel({text:'% ABV',top:28,left:66,color:'blue',font: {fontSize: '16',fontWeight:'bold'}});
+		var colDescriptionLabel = Ti.UI.createLabel({text:'Amount',top:28,left:166,color:'blue',font: {fontSize: '16',fontWeight:'bold'}});
+		var colCountLabel = Ti.UI.createLabel({text:'Number',top:28,left:282,color:'blue',font: {fontSize: '16',fontWeight:'bold'}});
 
 		picker = Ti.UI.createPicker({		
 			useSpinner: true, visibleItems: 4,
@@ -189,12 +189,16 @@
 	/***
 	 * Set up a new drink dialog based on an existing drinkData object
 	 */
-	exports.setDrinkData = function(drinkData){
+	exports.setDrinkData = function(drinkData, sameAgain){
 		createControls();
 		returnData = drinkData;
 		returnData.cancel =false;
 		returnData.done = false;
 		returnData.deleteDrink = false;
+		if (sameAgain){
+			//adding a new row rather than editing existing one.
+			returnData.ID = -1;
+		}
 		deleteButton.visible = true;
 
 		//fill picker rows appropriately

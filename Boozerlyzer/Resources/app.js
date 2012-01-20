@@ -45,10 +45,8 @@ if (registrationNag < 0){
 	var dbGameScores = require('/db/gameScores');
 	dbGameScores.SaveResult(gameSaveData);
 }else if (registrationNag === 0){
-	//Boozerlyzer.winMyData = Boozerlyzer.win.myData.createApplicationWindow("Welcome");
 	winHome.fireEvent('showSettings');	
 }else{
 	//we will nag them eventually.
-	Titanium.App.Properties.setInt('RegistrationNag', registrationNag - 1);
-		
+	Titanium.App.Properties.setInt('RegistrationNag', registrationNag - 1);		
 }

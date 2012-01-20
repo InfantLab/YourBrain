@@ -12,7 +12,7 @@
 	}
 
 	//get data for the maximum row id 
-	exportsselectNRandomRows = function (numRows, frequencyRange){
+	exports.selectNRandomRows = function (numRows, frequencyRange){
 		var returnData = [];
 		var nRows = parseInt(numRows);
 		//TODO Filter by frequency range
@@ -51,7 +51,7 @@
 		return false;
 	};
 	
-	exportsgetWordInfo = function (word){
+	exports.getWordInfo = function (word){
 		Ti.API.debug('emotionWords getWordInfo for ' + word);
 		var returnData = [];
 		//TODO Filter by frequency range
@@ -65,7 +65,7 @@
 	 * Participant has chosen a pissonym - record their choice
 	 * @param {Object} choiceData
 	 */
-	exportsChosen = function (choiceData){
+	exports.Chosen = function (choiceData){
 		Titanium.API.debug('chosen emotionWords ' + JSON.stringify(choiceData));
 		var sessionID = Titanium.App.Properties.getInt('SessionID');
 		for (var i=0; i<choiceData.length; i++){
@@ -76,7 +76,7 @@
 		}	
 	};
 
-	exportsPlayCount = function (){
+	exports.PlayCount = function (){
 		var selectStr = 'SELECT COUNT(*) from WORDCHOICES  where WordType = ?';
 		var rows =conn.execute(selectStr, 'EmotionalWords');
 		if (rows !== null) {
@@ -87,7 +87,7 @@
 			return 0;
 		}
 	};
-	exportsLastPlayed = function(){
+	exports.LastPlayed = function(){
 		var selectStr = 'SELECT max(ChoiceFinish) from WORDCHOICES  where WordType = ?';
 		var rows =conn.execute(selectStr, 'EmotionalWords');
 		if (rows !== null) {

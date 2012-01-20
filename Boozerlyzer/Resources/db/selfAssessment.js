@@ -12,7 +12,33 @@
 		conn = Titanium.Database.install('/ybob.db','ybob');
 	}
 
-  
+	  /***
+	 * copy data from recordset into our own datastructure
+	 */
+	function fillDataObject(rows){
+		if ((rows !== null) && (rows.isValidRow())) {
+			var returnData = [];
+			while(rows.isValidRow()){
+				returnData.push({
+					SessionID:			parseInt(rows.fieldByName('SessionID'),10),
+					DrunkBlur:			parseFloat(rows.fieldByName('DrunkBlur')),
+					Drunkeness:			parseInt(rows.fieldByName('Drunkeness'),10),
+					Energy:				parseInt(rows.fieldByName('Energy'),10),
+					EnergyBlur:			parseFloat(rows.fieldByName('EnergyBlur')),
+					Happiness:			parseInt(rows.fieldByName('Happiness'),10),
+					HappyBlur:			parseInt(rows.fieldByName('HappyBlur'),10),
+					SelfAssessmentStart:parseInt(rows.fieldByName('SelfAssessmentStart'),10),
+					SelfAssessmentChanged: parseInt(rows.fieldByName('SelfAssessmentChanged'),10)
+				});
+				rows.next();				
+			}
+			rows.close();
+			return returnData;	
+		}
+		//something didn't work
+		return false;	
+	}
+		
 	//get data for the maximum row id 
 	exports.getLatestData = function (sessionID){
 		var mostRecentData = [];
@@ -84,7 +110,7 @@
 	exports.setData = function (newData){
 		Titanium.API.debug('selfAssessment setData');		
 		if (newData[0].Changed){
-			var now = parseInt((new Date()).getTime()/1000);
+			var now = parseInt((new Date()).getTime()/1000, 10);
 			var insertstr = 'INSERT INTO SelfAssessment (SessionID, DrunkBlur,Drunkeness,Energy,EnergyBlur,Happiness,HappyBlur,SelfAssessmentStart,SelfAssessmentChanged)';
 			insertstr += 'VALUES(?,?,?,?,?,?,?,?,?)';
 			conn.execute(insertstr,newData[0].SessionID,newData[0].DrunkBlur,newData[0].Drunkeness,newData[0].Energy,newData[0].EnergyBlur,newData[0].Happiness,newData[0].HappyBlur,newData[0].SelfAssessmentStart,now);
@@ -95,15 +121,15 @@
 	};
 	
 	
-		/***
+	/***
 	 * return all the relevant rows from a given time range.
 	 */
 	exports.getTimeRangeData = function (minTime, maxTime){
 		var rows;
-		if (maxTime !== null){
-			rows =conn.execute('SELECT * FROM SelfAssessment WHERE SelfAssessmentChanged > ? and SelfAssessmentChanged < ? ORDER BY SelfAssessmentChanged ASC', minTime, maxTime);
+		if (maxTime === undefined){
+			rows =conn.execute('SELECT * FROM SelfAssessment WHERE SelfAssessmentChanged > ? ORDER BY SelfAssessmentChanged ASC', minTime);
 		}else{
-			rows =conn.execute('SELECT * FROM DoseageLog WHERE SelfAssessmentChanged > ? ORDER BY SelfAssessmentChanged ASC', minTime);
+			rows =conn.execute('SELECT * FROM SelfAssessment WHERE SelfAssessmentChanged > ? and SelfAssessmentChanged < ? ORDER BY SelfAssessmentChanged ASC', minTime, maxTime);
 		}
 		var returnData = fillDataObject(rows);
 		rows.close();
@@ -121,29 +147,5 @@
 		return returnData;
 	};	
 	
-	/***
-	 * copy data from recordset into our own datastructure
-	 */
-	function fillDataObject(rows){
-		if ((rows !== null) && (rows.isValidRow())) {
-			var returnData = [];
-			while(rows.isValidRow()){
-				returnData.push({
-					SessionID:			parseInt(rows.fieldByName('SessionID'),10),
-					DrunkBlur:			parseFloat(rows.fieldByName('DrunkBlur')),
-					Drunkeness:			parseInt(rows.fieldByName('Drunkeness'),10),
-					Energy:				parseInt(rows.fieldByName('Energy'),10),
-					EnergyBlur:			parseFloat(rows.fieldByName('EnergyBlur')),
-					Happiness:			parseInt(rows.fieldByName('Happiness'),10),
-					HappyBlur:			parseInt(rows.fieldByName('HappyBlur'),10),
-					SelfAssessmentStart:parseInt(rows.fieldByName('SelfAssessmentStart'),10),
-					SelfAssessmentChanged: parseInt(rows.fieldByName('SelfAssessmentChanged'),10)
-				});
-				rows.next();				
-			}
-			rows.close();
-			return returnData;	
-		}
-		//something didn't work
-		return false;	
-	}
+	
+	

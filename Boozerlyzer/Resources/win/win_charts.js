@@ -21,6 +21,7 @@
 		var dataObject = require('/db/dataObject');
 		var dbSessions  = require('/db/sessions');
 		var dbDoseageLog = require('/db/doseageLog');
+		var dateTimeHelpers = require('/js/dateTimeHelpers');
 		var dataOverTime = require('/analysis/dataOverTime');
 		var dbSelfAssessment = require('/db/selfAssessment');
 		var menu = require('/ui/menu') 
@@ -149,7 +150,7 @@
 		changeGraphTimeAxis(timeAxis);
 		
 		function redrawGraph(){
-		try{
+		// try{
 				
 			//appdebugsteps +='redrawGraph start ..';
 			if (reloadData){
@@ -172,14 +173,14 @@
 				//colStroop:switchStroop.color
 			};	
 			var now = parseInt((new Date()).getTime()/1000);
-			var timeSteps =	Boozerlyzer.dateTimeHelpers.timeIntervals(nTimeSteps,startTime, now);
+			var timeSteps =	dateTimeHelpers.timeIntervals(nTimeSteps,startTime, now);
 			var timeLabels = [];
 		
 			if (timeAxis === "Monthly Graph"){
 				for (var t = 0;t< nTimeSteps;t++){
 					//just show every 12th label
 					if (t % 12 === 0){
-						timeLabels[t] = Boozerlyzer.dateTimeHelpers.formatDay(timeSteps[t]);			
+						timeLabels[t] = dateTimeHelpers.formatDay(timeSteps[t]);			
 					}
 				}
 				
@@ -188,7 +189,7 @@
 				for (var t = 0;t< nTimeSteps;t++){
 					//just show every 4th label
 					if (t % 4 === 0){
-						timeLabels[t] = Boozerlyzer.dateTimeHelpers.formatTime(timeSteps[t],showMins,true);			
+						timeLabels[t] = dateTimeHelpers.formatTime(timeSteps[t],showMins,true);			
 					}
 				}
 				
@@ -211,9 +212,9 @@
 			//appdebugsteps +='pre webView.evalJS';
 			webView.evalJS("paintLineChart('" + myData + "')");
 			//appdebugsteps +='post webView.evalJS';
-		} catch (err) {
-		    alert('chart redraw error' + err.description);
-		}
+		// } catch (err) {
+		    // alert('chart redraw error ' + err.description);
+		// }
 		}
 		
 		

@@ -165,25 +165,6 @@ exports.createApplicationWindow =function(type,rounds){
 			}
 		});
 		
-		
-		// //
-		// // Cleanup and return home
-		// win.addEventListener('android:back', function(e) {
-			// if (Boozerlyzer.winHome === undefined || Boozerlyzer.winHome === null) {
-				// Boozerlyzer.winHome = Titanium.UI.createWindow({ modal:true,
-					// url: '/app.js',
-					// title: 'Boozerlyzer',
-					// backgroundImage: '/images/smallcornercup.png',
-		// //				orientationModes:[Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT]  //Landscape mode only
-			// });	
-// 	
-			// }
-			// win.close();
-			// Boozerlyzer.winHome.open();
-			// Boozerlyzer.winHome.refresh();
-// 		
-		// });
-// 		
 		//
 		//set up the feedback items.
 		//
@@ -267,13 +248,13 @@ exports.createApplicationWindow =function(type,rounds){
 		Ti.API.debug('MgameType' + MgameType);
 		switch (MgameType) {	
 			case 'Pissonyms':
-				Boozerlyzer.db.pissonyms.Chosen(choice);
+				dbPissonyms.Chosen(choice);
 				break;
 			case 'Emotions':
-				Boozerlyzer.db.emotionWords.Chosen(choice);
+				dbEmotionWords.Chosen(choice);
 				break;
 			case 'WeFeelFine':
-				Boozerlyzer.db.weFeelFine.Chosen(choice);
+				dbWeFeelFine.Chosen(choice);
 				break;
 			default:
 			//do nothing	

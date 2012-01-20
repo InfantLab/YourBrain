@@ -332,6 +332,7 @@ exports.createApplicationWindow =function(){
 			},
 			6000);
 		gameEndSaveScores();
+		scoresDialog.setParent(win);
 		scoresDialog.setScores( 'Number Stroop', 
 						Math.floor(points+inhibitbonus+coordbonus+speedbonus),
 						speedbonus, 

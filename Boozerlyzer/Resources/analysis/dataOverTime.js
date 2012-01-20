@@ -7,8 +7,7 @@
  * Copyright yourbrainondrugs.net 2011
  */
 
-//(function() {
-
+var BAC = require('/analysis/bloodalcohol'); 
 	/***
 	 * passed an array of timepoints and set of drink data.
 	 * returns the cumulative number of drinks between start time 
@@ -33,7 +32,7 @@
 				}
 			}
 			if (lenDrinks > 0 && lastDrinkIdx >= 0){
-				bac = Boozerlyzer.analysis.BAC.calculate(timePoints[t],drinkData.slice(0,lastDrinkIdx+1),personalInfo);
+				bac = BAC.calculate(timePoints[t],drinkData.slice(0,lastDrinkIdx+1),personalInfo);
 			} 
 			returnData.push({
 				time:timePoints[t],

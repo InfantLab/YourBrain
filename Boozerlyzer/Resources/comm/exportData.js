@@ -49,8 +49,9 @@
 		Ti.API.debug('writing Game scores...');
 		var outfile = Titanium.Filesystem.getFile(dataDir.nativePath,'gameScores.dat');
 
+		var dbGameScores = require('/db/gameScores');
 		//get data from elsewhere
-		var data = Boozerlyzer.db.gameScores.GamePlaySummary(null,null,0);
+		var data = dbGameScores.GamePlaySummary(null,null,0);
 		//what is the last row id from this dataset?
 		if (!data || data.length===0) {
 			Ti.API.error('writeCSV: no data to send; play some games first!');
@@ -131,9 +132,10 @@
 		Ti.API.debug('writing all Drinks...');
 		var outfile = Titanium.Filesystem.getFile(dataDir.nativePath,'gameScores.dat');
 
+		var dbDoseageLog = require('/db/doseageLog');
 		//get data from elsewhere
 		var now =  parseInt((new Date()).getTime()/1000,10);
-		var data = Boozerlyzer.db.doseageLog.getTimeRangeData(0,now);
+		var data = dbDoseageLog.getTimeRangeData(0,now);
 		//what is the last row id from this dataset?
 		if (!data || data.length===0) {
 			Ti.API.error('writeDrinkData: no data to send; drink something first!');

@@ -24,7 +24,7 @@ exports.createApplicationWindow =function(launchType){
 	});
 	win.goHome = function (){
 		Ti.API.debug('win_mydata - gohome');
-		if (winHome === undefined || Boozerlyzer.winHome === null) {
+		if (winHome === undefined) {
 			winHome =  winmain.createApplicationWindow();
 		}
 		winHome.open();
@@ -39,7 +39,7 @@ exports.createApplicationWindow =function(launchType){
 	win.add(viewPrivacy);
 	//and do we show registration or sync screen?
 	if (Ti.App.Properties.getBool('Registered', false)){
-		viewComm =  winsyncInfo.createApplicationWindow("normal", win);
+		viewComm =  winsyncinfo.createApplicationWindow("normal", win);
 		buttonCommText = 'Sync';		
 	}else{  
 		// view registration settings

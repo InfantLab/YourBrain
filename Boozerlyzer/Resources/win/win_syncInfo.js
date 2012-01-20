@@ -6,6 +6,8 @@
  * Copyright yourbrainondrugs.net 2011
  */
 
+var dateTimeHelpers = require('/js/dateTimeHelpers');
+
 exports.createApplicationWindow =function(){
 	var win = Titanium.UI.createView({
 		top:'10%',
@@ -133,7 +135,7 @@ exports.createApplicationWindow =function(){
     buttonSyncNow.addEventListener('click', function(){
     	var commSendData = require('/comm/sendData');
 		commSendData.sync();
-		var updateTime = Boozerlyzer.dateTimeHelpers.prettyDate(Titanium.App.Properties.getInt('LastSentTime', 0));
+		var updateTime = dateTimeHelpers.prettyDate(Titanium.App.Properties.getInt('LastSentTime', 0));
 		labelLastSync.text = 'Last sync with server - '+  updateTime + '\nRow ID :'+ Titanium.App.Properties.getInt('LastSentID', 0) ;
 	});
     win.add(buttonSyncNow);

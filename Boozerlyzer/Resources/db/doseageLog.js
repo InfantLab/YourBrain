@@ -132,10 +132,12 @@
 	 */
 	exports.getTimeRangeData = function (minTime, maxTime){
 		var rows
-		if (maxTime !== null){
-			rows =conn.execute('SELECT * FROM DoseageLog WHERE DoseageChanged > ? and DoseageChanged < ? ORDER BY DoseageChanged ASC', minTime, maxTime);
+		Ti.API.debug('doseageLog.getTimeRangeData minTime' + minTime );
+		Ti.API.debug('doseageLog.getTimeRangeData maxTime' + maxTime );
+		if (maxTime === undefined){
+			rows =conn.execute('SELECT * FROM DoseageLog WHERE DoseageChanged > ? ORDER BY DoseageChanged ASC', minTime);		
 		}else{
-			rows =conn.execute('SELECT * FROM DoseageLog WHERE DoseageChanged > ? ORDER BY DoseageChanged ASC', minTime);
+			rows =conn.execute('SELECT * FROM DoseageLog WHERE DoseageChanged > ? and DoseageChanged < ? ORDER BY DoseageChanged ASC', minTime, maxTime);
 		}
 		var returnData = fillDataObject(rows);
 		rows.close();
@@ -150,7 +152,6 @@
 	exports.drinksinTimePeriod= function (minTime, maxTime){
 		Ti.API.debug("drinksinTimePeriod started");
 		var returnData =[];		
-		var drink = ['Beer','Wine','Spirits'];
 		var rows =conn.execute('SELECT DrugVariety, SUM(totalUnits) as SumUnits from DoseageLog where DrugVariety != "NULL" and DoseageChanged > ? and DoseageChanged < ? GROUP BY DrugVariety', minTime, maxTime);
 		while(rows.isValidRow()){
 			returnData.push({

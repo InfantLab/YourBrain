@@ -63,11 +63,6 @@ activity.onCreateOptionsMenu = function( event ) {
 	exports.showSettingsScreen = function(){		
 		if (!winMyData ){
 			winMyData = win_myData.createApplicationWindow();
-			// Boozerlyzer.tabMyData.home = homeWin; //reference to home
-			// Boozerlyzer.tabMyData.addEventListener('close',homeWin.refresh);				
 		}
-		// Boozerlyzer.tabMyData.setActiveTab(0);
 		winMyData.open();
 	};
-	// return api;
-// }());

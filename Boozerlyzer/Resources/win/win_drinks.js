@@ -95,13 +95,17 @@ var allDrinks, winHome;
 					editedDrink.DoseageChanged = parseInt((new Date()).getTime()/1000,10);
 					editedDrink.Changed = true; 
 					dbDoseageLog.setData(editedDrink);
-			    }
+				}
+				updateDrinks();
+			});
+			
+			function updateDrinks(){
 				//changed things so reload data
 				getAllDrinkData(true);
 				refreshDrinksTable();
 				tv.scrollToIndex(allDrinks.length -1);
 				totalizeDrinks();
-			});
+			}
 			
 			
 			//layout variables
@@ -126,6 +130,17 @@ var allDrinks, winHome;
 			win.add(sessionView);
 			
 			//TODO - find a nice way to show this data
+			var drinkCountLabels = [];
+			drinkCountLabels[0] = Ti.UI.createLabel({
+				text:'Beer / cider',
+				top:topBeer + 20,
+				left:leftDrinkType,
+				width:100,
+				height:bigIcons,
+				textAlign:'center',
+				color:'white'
+			});
+			win.add(drinkCountLabels[0]);
 			var calendarTotalDrinksButton = Ti.UI.createButton({
 				title:'Total Drinks in last ' + Ti.App.Properties.getString('GrandTotal','1 week'),
 				width:136,
@@ -141,7 +156,28 @@ var allDrinks, winHome;
 				cancel:1,
 				title:'Count drinks over what time period?'
 			});
-					// add event listener
+			function calendarTotalDrinks(){
+				var now = parseInt((new Date()).getTime()/1000);
+				var howLongAgo;
+				var idx = howLong.indexOf(Titanium.App.Properties.getString('GrandTotal','1 week'));
+				Ti.API.debug('calendarTotalDrinks idx, N' + idx + '  ' + howLongDays[idx]);
+				if (idx === 0){
+					howLongAgo = sessionData[0].StartTime;
+				}else{
+					howLongAgo = now - howLongDays[idx]*3600*24;
+				}
+				var totalDrinks	=dbDoseageLog.drinksinTimePeriod(howLongAgo, now);			
+				var lenType = drinkNames.length -1;
+				var len = totalDrinks.length;
+				for (var d=-0;d<lenType;d++){				
+					for (var i=0;i<len;i++){
+						if (drinkNames[d] === totalDrinks[i].DrugVariety){
+							drinkCountLabels[d].text = (totalDrinks[i].TotalUnits / millsPerStandardUnits).toFixed(1) + ' U ' + drinkNames[d];
+						} 
+					}
+				}			
+			}
+			// add event listener
 			howLongDialog.addEventListener('click',function(e)
 			{
 				Ti.App.Properties.setString('GrandTotal',howLong[e.index]);
@@ -185,19 +221,7 @@ var allDrinks, winHome;
 				picker_drinks.quickSelect([2,0,0]);
 				picker_drinks.open();
 			});
-	
-			var drinkCountLabels = [];
-			drinkCountLabels[0] = Ti.UI.createLabel({
-				text:'Beer / cider',
-				top:topBeer + 20,
-				left:leftDrinkType,
-				width:100,
-				height:bigIcons,
-				textAlign:'center',
-				color:'white'
-			});
-			win.add(drinkCountLabels[0]);
-			
+				
 			
 			var wineadd = Titanium.UI.createImageView({
 				image:'/icons/wine.png',
@@ -391,52 +415,59 @@ var allDrinks, winHome;
 		            });
 		            alertDialog.addEventListener('click',function(e)  
 		            {  
+		            	var drinkID = row.ID;
 		            	if (e.index === 0){
-		            			
+		            		dbDoseageLog.deleteDrink(drinkID);	
 		            	}
+		            	updateDrinks();
 		            });  
 				});
 				return row;
 			}
-			
-			function totalizeDrinks(){
-				var len = allDrinks.length;
-				totalvolAlcohol = 0;
-				for (var idx =0;idx<len;idx++){
-					totalvolAlcohol += allDrinks[idx].TotalUnits; 
-				}
-				
-				if (millsPerStandardUnits > 0){
-					footerUnits.text = (totalvolAlcohol / millsPerStandardUnits).toFixed(1) +'u';
-					//calorie calculation = 7kCals per gram of alcohol , 0.79 grams per millilitre
-					footerkCals.text = (totalvolAlcohol * 0.79 * 7).toFixed(0) + 'kCal'; 
-				} 
-				calendarTotalDrinks();
-	  		 	calcDisplayBloodAlcohol();
+			function formatSameAgainRow(DrinkData){
+				Titanium.API.debug("formatSameAgain -" + JSON.stringify(DrinkData));
+				//row that holds drink info
+			    var row = Ti.UI.createTableViewRow({
+			        height: 30,
+			        className: 'sameAgainDrink'
+			    });
+				//first keep a copy of all data .. handy for updating later.		    
+			    row.drinkData = DrinkData;
+			    				var drinkIDX = drinkNames.indexOf(DrinkData.DrugVariety);
+			    //if image is missing show empty class
+			    drinkIDX = (drinkIDX >= 0 ? drinkIDX : drinkImgs.length - 1);
+			   //icon for drink
+			    var imgView = Ti.UI.createImageView({
+						            image: drinkImgs[drinkIDX],
+						            width:	28,
+						            height: 28,
+						            left: 0, top:0
+						        });
+			    row.add(imgView);
+			    var drinkDescriptionLabel = Ti.UI.createLabel({
+															text:"Same Again?",
+															top:0,
+															left:32,
+															textAlign:'left',
+															color:'white',
+															font:{fontSize:18,fontWeight:'bold'}
+														});
+				row.add(drinkDescriptionLabel);
+								//click to edit
+				row.addEventListener('click', function(){
+					// picker_drinks.setDrinkData(row.drinkData, true);
+					// picker_drinks.open();
+					var newDrink = row.drinkData
+					newDrink.ID = -1;
+					newDrink.DoseageChanged = parseInt((new Date()).getTime()/1000,10);
+					newDrink.Changed = true; 
+					dbDoseageLog.setData(newDrink);
+					updateDrinks();
+				});
+				return row;	
 			}
-			function calendarTotalDrinks(){
-				var now = parseInt((new Date()).getTime()/1000);
-				var howLongAgo;
-				var idx = howLong.indexOf(Titanium.App.Properties.getString('GrandTotal','1 week'));
-				Ti.API.debug('calendarTotalDrinks idx, N' + idx + '  ' + howLongDays[idx]);
-				if (idx === 0){
-					howLongAgo = sessionData[0].StartTime;
-				}else{
-					howLongAgo = now - howLongDays[idx]*3600*24;
-				}
-				var totalDrinks	=dbDoseageLog.drinksinTimePeriod(howLongAgo, now);			
-				var lenType = drinkNames.length -1;
-				var len = totalDrinks.length;
-				for (var d=-0;d<lenType;d++){				
-					for (var i=0;i<len;i++){
-						if (drinkNames[d] === totalDrinks[i].DrugVariety){
-							drinkCountLabels[d].text = (totalDrinks[i].TotalUnits / millsPerStandardUnits).toFixed(1) + ' U ' + drinkNames[d];
-						
-						} 
-					}
-				}
 			
-			}
+
 			
 			function calcDisplayBloodAlcohol(){
 				var now = parseInt((new Date()).getTime()/1000,10);
@@ -496,6 +527,22 @@ var allDrinks, winHome;
 				height:30
 			});
 			header.add(headerLabel);
+
+			function totalizeDrinks(){
+				var len = allDrinks.length;
+				totalvolAlcohol = 0;
+				for (var idx =0;idx<len;idx++){
+					totalvolAlcohol += allDrinks[idx].TotalUnits; 
+				}
+				
+				if (millsPerStandardUnits > 0){
+					footerUnits.text = (totalvolAlcohol / millsPerStandardUnits).toFixed(1) +'u';
+					//calorie calculation = 7kCals per gram of alcohol , 0.79 grams per millilitre
+					footerkCals.text = (totalvolAlcohol * 0.79 * 7).toFixed(0) + 'kCal'; 
+				} 
+				calendarTotalDrinks();
+	  		 	calcDisplayBloodAlcohol();
+			}
 			
 			
 			var tv = Ti.UI.createTableView({
@@ -515,6 +562,10 @@ var allDrinks, winHome;
 						//add a row
 						drinkRows.push(formatTableRow(allDrinks[idx]));	
 					}
+				}
+				if (len > 0){
+					//add the same again button
+					drinkRows.push(formatSameAgainRow(allDrinks[len-1]));
 				}
 				tv.setData(drinkRows);
 			}

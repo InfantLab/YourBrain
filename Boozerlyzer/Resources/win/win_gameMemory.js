@@ -197,6 +197,7 @@ exports.createApplicationWindow = function(){
 		gameStarted = false;
 		gameEndSaveScores();
 		dialogOpen = true;
+		scoresDialog.setParent(win);
 		scoresDialog.setScores( 'Memory Game', 
 								Math.floor(points+inhibitbonus+coordbonus+speedbonus),
 								speedbonus, 
