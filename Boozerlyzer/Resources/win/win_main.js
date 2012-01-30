@@ -26,17 +26,29 @@
 		/******
 		 * the required modules
 		 */
-		var levelUpDialog = require('/ui/levelUpDialog');
-		var menu = require('/ui/menu');
+		var dataOverTime = require('/analysis/dataOverTime');
+		var sendData = require('/comm/sendData');
 		var dataObject = require('/db/dataObject');
+		var gameScores = require('/db/gameScores');
 		var dbSessions  = require('/db/sessions');
 		var dateTimeHelpers = require('/js/dateTimeHelpers');
-		var gameScores = require('/db/gameScores');
-		var sendData = require('/comm/sendData');
+		var levelUpDialog = require('/ui/levelUpDialog');
+		var menu = require('/ui/menu');
+		
 		
 		//need to give menu object specific help for this screen
+		
+		menu.setHelpContext(Ti.Android.currentActivity);
 		menu.setHelpMessage("Click on the icons to add new drinks, launch games, etc.");
-
+		// var activity = Ti.Android.currentActivity;
+		// activity.onCreateOptionsMenu = function( event ) {
+			// Ti.API.debug('win_main activity.onCreateOptionsMenu fired');
+		  // var menu = event.menu
+		    // , menuAbout = menu.add({ title: 'About' })
+		    // , menuLegal = menu.add({ title: 'Legal' })
+		    // , menuSettings = menu.add({ title: 'Settings' })
+		    // , menuHelp = menu.add({ title: 'Help' });
+		// };
 		//reset to main user and MateMode flag.
 		Titanium.App.Properties.setInt('UserID',0);
 		Titanium.App.Properties.setBool('MateMode',false); 
@@ -46,8 +58,8 @@
 		
 		// layout variables
 		var bigIcons = 76, leftAppName = 20, leftNewDrinks = 20, leftEmotion = 100, leftTripReport = 180, leftGame = 240;
-		var topNewDrinks = 80, topEmotion = 80, topTripReport = 80, topGame = 80, topHighScores = 160, leftHighScores = 100, topLabPoints = 160;
-		var leftLabPoints =20, topResults = 80, leftResults = 340, optionsLeft = 320;
+		var topNewDrinks = 80, topEmotion = 80, topTripReport = 80, topGame = 80,  leftHighScores = 70, topLabPoints = 150;
+		var leftUnits = 20, leftLabPoints =240, topResults = 80, leftResults = 340, optionsLeft = 320;
 		
 		Ti.API.debug('homeWin 1');
 
@@ -73,17 +85,6 @@
 		});
 		homeWin.add(labelVers);
 		
-		var labelCredits = Titanium.UI.createLabel({
-			autoLink : Ti.UI.Android.LINKIFY_ALL,
-			color:'#000',
-			text:'Created by  ' + Titanium.App.getURL() + '\nBuilt with  http://appcelerator.com',
-			font:{fontSize:12,fontFamily:'Helvetica Neue'},
-			textAlign:'center',
-			right:00,
-			width:240,
-			bottom:0
-		});
-		homeWin.add(labelCredits);
 		
 		var personalinfo = Titanium.UI.createImageView({
 			image:'/icons/safe.png',
@@ -93,25 +94,17 @@
 			left:optionsLeft
 		});
 		personalinfo.addEventListener('click',function(){
-			menu.showSettingsScreen();
-		});
+			//menu.showSettingsScreen();
+		}); 
 		homeWin.add(personalinfo);
-		var labelMateMode = Titanium.UI.createLabel({
-			text:'Mate Mode',
-			top:80,
-			left:optionsLeft + 52,
-			visible:false
-		});
-		homeWin.add(labelMateMode);
+
 		var matemode = Titanium.UI.createImageView({
 			image:'/icons/Chorus.png',
 			height:48,
 			width:48,
 			top:20,
 			left:optionsLeft + 52
-		});
-		//matemode.opacity = 0.5;
-			
+		});			
 		//if we click this icon toggle between normal use
 		//and mate mode where scores don't count towards your own total.
 		matemode.addEventListener('click', function(){
@@ -126,7 +119,7 @@
 			}else{
 				session = dbSessions.getLatestData(0);
 			}
-			//clear stored data too to force it to reload
+			//clear stored data too to force itgimp to reload
 			dataObject.setAllDrinks(false);//array of drinks
 			dataObject.setCurrentEmotions(false); //what are current levels of happiness/energy/drunkeness 
 			Titanium.App.Properties.setInt('SessionID', session[0].ID);
@@ -139,23 +132,12 @@
 				//switch back into regular mode
 				switchSession(false);
 				Ti.API.debug("Switch out of mate mode - session info:" + JSON.stringify(session));
-				var shrink = Ti.UI.create2DMatrix();
-				shrink.scale(0.5);
-				var mateModeOffAnimation = Ti.UI.createAnimation({transform:shrink, opacity:0.5});
-				matemode.animate(mateModeOffAnimation);
-				labelMateMode.visible = false;
 				homeWin.backgroundImage = '/images/smallcornercup.png';
 			}else{
 				Titanium.App.Properties.setBool('MateMode',true);
 				switchSession(true);//is in mate mode so need a new session
 				Ti.API.debug("Switch into mate mode - session info:" + JSON.stringify(session));
-				var grow = Ti.UI.create2DMatrix();
-				grow.scale(2);
-				var mateModeOnAnimation = Ti.UI.createAnimation({transform:grow, opacity:0.99});
-				matemode.animate(mateModeOnAnimation);
-				//matemode.opacity = 1;
 				homeWin.backgroundImage = '/images/smallcornercup.matemode.png';
-				labelMateMode.visible = true;
 			}	
 		}
 		
@@ -176,7 +158,7 @@
 		homeWin.add(newbugreport);	
 			
 		var report = Titanium.UI.createImageView({
-			image:'/icons/ybob-logo2-sml.png',
+			image:'/icons/ybob-logo2.png',
 			height:160,
 			width:140,
 			top:topResults,
@@ -184,7 +166,8 @@
 		});
 		
 		report.addEventListener('click',function(){
-			var win_charts = require('/win/win_charts');
+			//var win_charts = require('/win/win_charts');
+			var win_charts = require('/win/win_scatter');
 			var winCharts = win_charts.createApplicationWindow();
 			winCharts.home = homeWin; //reference to home
 			winCharts.addEventListener('close',homeWin.refresh);				
@@ -262,8 +245,9 @@
 			font:{fontSize:24,fontFamily:'sans-serif',fontWeight:'bold'},
 			textAlign:'center',
 			height:bigIcons,
-			width:bigIcons * 2.9,
-			top:topHighScores,
+			width:bigIcons * 3.05,
+			//top:topHighScores,
+			bottom:4,
 			left:leftHighScores,
 			color:'green',
 			zIndex:0,
@@ -274,8 +258,9 @@
 		var highScores = Titanium.UI.createImageView({
 			image:'/icons/Evolution.png',
 			height:bigIcons,
-			width:bigIcons * 2.9,  //keep correct proportions
-			top:topHighScores,
+			width:bigIcons * 3.05,  //keep correct proportions
+			//top:topHighScores,
+			bottom:4,
 			left:leftHighScores,
 			opacity:0.3
 		});
@@ -291,9 +276,9 @@
 		var labelLabPoints = Titanium.UI.createLabel({
 			text:'0000',
 			font:{fontSize:28,fontFamily:'Helvetica Neue'},
-			textAlign:'left',
+			textAlign:'center',
 			height:32,
-			width:140,
+			width:60,
 			top:topLabPoints + 20,
 			left:leftLabPoints,
 			color:'cyan',
@@ -313,12 +298,37 @@
 		});
 		homeWin.add(captionLabPoints);
 		
+		var labelUnits = Titanium.UI.createLabel({
+			text:'00',
+			font:{fontSize:28,fontFamily:'Helvetica Neue'},
+			textAlign:'center',
+			height:32,
+			width:60,
+			top:topLabPoints + 20,
+			left:leftUnits,
+			color:'green',
+			shadowColor:'black',
+			shadowOffset:{X:6,y:6},
+			borderRadius:4
+		});
+		homeWin.add(labelUnits);
+		var captionUnits = Titanium.UI.createLabel({
+			text:'Units /\nStandard Drinks',
+			font:{fontSize:11,fontFamily:'Helvetica Neue'},
+			textAlign:'center',
+			height:32,
+			top:topLabPoints + 54,
+			left:leftUnits,
+			color:'green'
+		});
+		homeWin.add(captionUnits);
+		
 		
 		var labelCurrentSession = Titanium.UI.createLabel({
 			text:'Session started\n Sat 3th, 12:00pm',
 			font:{fontSize:12,fontFamily:'Helvetica Neue'},
 			textAlign:'center',
-			left:leftNewDrinks + 36,
+			right:4,
 			height:32,
 			width:120,
 			bottom:1,
@@ -335,7 +345,7 @@
 			text:'',
 			font:{fontSize:12,fontFamily:'Helvetica Neue'},
 			textAlign:'center',
-			left:leftNewDrinks + 36,
+			right:4,
 			height:32,
 			width:120,
 			bottom:33
@@ -343,7 +353,20 @@
 		homeWin.add(labelCurrentSession);
 		homeWin.add(labelLastUpdate);
 		Ti.API.debug('homeWin 2');
-
+		
+	// 		
+			// var BACmeterHolder = Titanium.UI.createView({
+				// height:150,
+				// width:220,
+				// top:topHighScores,
+				// leftt:leftHighScores
+			// });
+			// homeWin.add(BACmeterHolder);
+	
+		// var BACMeter = require('/ui/BACmeter');
+		// var BACMeterView = BACMeter.createView();
+		// BACmeterHolder.add(BACMeterView);
+		
 		function rewriteSessionInfo(){
 			//function that writes the latest update times for this session.			
 			Ti.API.debug('rewriteSessionInfo');
@@ -405,6 +428,10 @@
 			var labPoints = gameScores.TotalPoints(); 
 			labelLabPoints.text = labPoints[0].Total.toFixed(0); //+ ' Pts';	
 		}
+		function rewriteUnitsBAC(){
+			var totals = dataOverTime.totalDrinksThisSession();
+			labelUnits.text = totals.numberUnits.toFixed(1);
+		}
 		
 		function checkLevelUp(){
 			if (!loadedonce) {return;}
@@ -433,8 +460,10 @@
 		
 		homeWin.refresh = function(){
 			Ti.API.debug('homeWin refresh');
-			menu.setHelpMessage("Click on the icons to add new drinks, launch games, etc.");
-			rewriteSessionInfo();		
+			// menu.setHelpContext(homeWin);
+		// menu.setHelpMessage("Click on the icons to add new drinks, launch games, etc.");
+			rewriteSessionInfo();	
+			rewriteUnitsBAC();	
 			rewriteLabPoints();
 			checkLevelUp();
 			autoSendData();
@@ -444,7 +473,7 @@
 		loadedonce = true;
 
 		homeWin.addEventListener('homeWinRefresh',homeWin.refresh);
-		homeWin.addEventListener('showSettings',menu.showSettingsScreen);
+		//homeWin.addEventListener('showSettings',menu.showSettingsScreen);
 						
 		homeWin.addEventListener('focused', function(){
 			Ti.API.debug('homeWin got focus');

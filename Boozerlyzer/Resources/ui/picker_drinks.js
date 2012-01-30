@@ -49,25 +49,7 @@
 	typeIcons.Wine    = '/icons/wine.png';
 	typeIcons.Spirits = '/icons/whiskey.png';
 	// basic callback event object - very like drink object
-	var	returnData = {
-			cancel:false,
-			done:false,
-			selectedRow:null,
-			deleteDrink:false,
-			ID:-1,
-			DrugVariety:'',
-			DoseDescription:'',
-			DoseageStart: 0,
-			DoseageChanged: 0,
-			ExitCode: '',
-			SessionID:0,
-			Volume: 0,
-			Strength:0,
-			StandardUnits: 0,
-			DrugType:'Alcohol',
-			TotalUnits: 0,
-			NumDoses: 0
-		};
+	var	returnData;
 
 
 	function createControls(){
@@ -105,7 +87,6 @@
 		});
 		deleteButton.addEventListener('click', function(){
 			returnData.deleteDrink = true;
-			returnData.deleteDrink = false;
 			exports.close();
 		});
 		
@@ -126,7 +107,7 @@
 			bottom:20,
 			left:280,
 			width:90
- 		});
+		});
 		doneButton.addEventListener('click', function(){
 			returnData.deleteDrink = false;
 			returnData.cancel = false;
@@ -167,11 +148,14 @@
 		deleteButton.visible = false;
 		win.add(containerView);		
 
+		returnData = newReturnDataObject();
 		isControlsCreated = true;
 	}
 
-	exports.getPicker = function(){return picker;};
-		exports.setParent = function (window){
+	exports.getPicker = function(){
+		return picker;
+	};
+	exports.setParent = function (window){
 		win = window;
 	};
 	exports.open = function(){	
@@ -184,6 +168,13 @@
 		if (callbackOnClose){
 			callbackOnClose(returnData);
 		}
+	};
+	
+	//function to reinitialise for a new call.
+	//basically reset parent and returnData object
+	exports.reset = function(parent){
+		exports.setParent(parent);
+		returnData = newReturnDataObject();
 	};
 
 	/***
@@ -293,3 +284,24 @@
 		if (eventName=='close') {callbackOnClose = callback;}
 	};
 
+	function newReturnDataObject(){
+		return {
+			cancel:false,
+			done:false,
+			selectedRow:null,
+			deleteDrink:false,
+			ID:-1,
+			DrugVariety:'',
+			DoseDescription:'',
+			DoseageStart: 0,
+			DoseageChanged: 0,
+			ExitCode: '',
+			SessionID:0,
+			Volume: 0,
+			Strength:0,
+			StandardUnits: 0,
+			DrugType:'Alcohol',
+			TotalUnits: 0,
+			NumDoses: 0
+		};
+	}

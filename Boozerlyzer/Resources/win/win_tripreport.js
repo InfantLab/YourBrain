@@ -243,6 +243,7 @@ exports.createApplicationWindow =function(type){
 	
 	if (reportType === 'BUG'){
 		//need to give it specific help for this screen
+		menu.setHelpContext(Titanium.Android.currentActivity);
 		menu.setHelpMessage("Simply record what went wrong. Thanks.");
 		tripContent.hintText = 'What caused the error?';
 		label.text = 'Tell us what went wrong';
@@ -252,6 +253,7 @@ exports.createApplicationWindow =function(type){
 		
 	}else{
 		//need to give it specific help for this screen
+		menu.setHelpContext(Titanium.Android.currentActivity);
 		menu.setHelpMessage("Simply record how you are feeling right now. Thanks :-)");
 		tripContent.hintText = 'I feel..';
 		label.text = 'How are you?';

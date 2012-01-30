@@ -34,7 +34,8 @@ exports.createApplicationWindow =function(launchType, parent){
 	var dbPersonalInfo = require('/db/personalInfo');
 	var menu = require('/ui/menu');
 	//need to give it specific help for this screen
-	menu.setHelpMessage(helpMessage);
+	menu.setHelpContext(Titanium.Android.currentActivity);
+		menu.setHelpMessage(helpMessage);
 	
 	var monthYearPickerDialog = require('/ui/picker_monthyear');
 	monthYearPickerDialog.setParent(win);

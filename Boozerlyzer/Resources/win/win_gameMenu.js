@@ -42,7 +42,8 @@ exports.createApplicationWindow = function(){
 	var menu = require('/ui/menu');
 	
 	//need to give it specific help for this screen
-	menu.setHelpMessage("Click on game icon to start the game.");
+	menu.setHelpContext(Titanium.Android.currentActivity);
+		menu.setHelpMessage("Click on game icon to start the game.");
 
 	
 	var initialised = false;

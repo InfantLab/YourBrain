@@ -18,7 +18,7 @@
 	 * Lab Rat point accumulated, maybe other stuff. 
 	 * Either for a single instance or for all games
 	 */
-	exports.GamePlaySummary = function (gameNames, userId, greaterthanID){
+	exports.GamePlaySummary = function (gameNames, userId, greaterthanID, byColumns){
 		//This gets a bit of a mess as we build the query!
 		var querystr = 'SELECT * FROM gameScores WHERE ';
 		var gamestr = '', userstr = '', idstr = '', rowcount=0;
@@ -35,7 +35,10 @@
 		}
 		if (greaterthanID !== null){
 			idstr = ' ID > ' + greaterthanID;
+		}else{
+			idstr = ' 1';
 		}
+		
 		if (gamestr + userstr !== ''){
 			querystr += ' AND ' + idstr;
 		}else{
@@ -44,8 +47,12 @@
 		querystr += ' ORDER BY ID';
 		//alert('got query string ' + querystr);
 		var rows =conn.execute(querystr);
-		//alert('got num results ' + rows.rowCount);
-		var retdata = fillDataObject(rows);
+		var retdata;
+		if (byColumns){
+			retdata	= fillByColumns(rows);
+		}else{
+			retdata = fillDataObject(rows);
+		}
 		//alert('got retdata of length ' + retdata);
 		rows.close();
 		return retdata;
@@ -58,7 +65,7 @@
 	 * http://yourbrainondrugs.net/boozerlyzer/submit.php
 	 */
 	exports.GamePlaySummaryforWebserver = function (gameNames, userId, greaterthanID){
-	 	var retdata = exports.GamePlaySummary(gameNames, userId, greaterthanID);
+		var retdata = exports.GamePlaySummary(gameNames, userId, greaterthanID);
 		Ti.API.debug('webformatted string - ' + retdata);
 		return exports.LabelRows(retdata);
 	};
@@ -139,7 +146,7 @@
 
 	/***
 	 * return the total points accumulated so far 
-	 * @param object [column] - if absent return LabRatPoints
+	 * @param object [column] - if absent return Lab Points
 	 * @param object [gameNames] - if absent return grand total
 	 */
 	exports.TotalPoints = function (column, gameNames){
@@ -174,7 +181,7 @@
 		}else{
 			if (gameNames.length === 1) {
 				//shouldn't have to do this but something seems to go wrong with a group of one.
-				queryStr = 'SELECT total (?), game FROM gameScores where game = ' + gameNames[0]; 
+				queryStr = 'SELECT total (?), game FROM gameScores where game = ' + gameNames[0];
 			}else{
 				queryStr = 'SELECT total (?), game FROM gameScores where game in (' + ArrayToQuotedString(gameNames) + ') group by game' ;
 			}
@@ -345,6 +352,69 @@
 					Energy:			(rows.fieldByName('Energy')==='undefined'?null:parseFloat(rows.fieldByName('Energy'))),
 					Drunkeness:		(rows.fieldByName('Drunkeness')==='undefined'?null:parseFloat(rows.fieldByName('Drunkeness')))
 				});
+				rows.next();
+			}
+			rows.close();
+			return returnData;	
+		}
+		//something didn't work
+		return false;
+	}
+	//storing data in columns is more useful for anlysis
+	function fillByColumns(rows){
+		if ((rows !== null) && (rows.isValidRow())) {
+			var returnData = {
+					GameScoreID:[],
+					Game:[],
+					GameVersion:[],
+					PlayStart:[],
+					PlayEnd:[],
+					TotalScore:[],
+					GameSteps:[],
+					Speed_GO:[],
+					Speed_NOGO:[],
+					Coord_GO:[],
+					Coord_NOGO:[],
+					InhibitionScore:[],
+					Level:[],
+					Feedback:[],
+					Choices:[],
+					MemoryScore:[],
+					SessionID:[],
+					UserID:[],
+					LabPoints:[],
+					Alcohol_ml:[],
+					BloodAlcoholConc:[],
+					Happiness:[],
+					Energy:[],
+					Drunkeness:[]
+				};
+			while(rows.isValidRow()){
+				returnData.GameScoreID.push(	parseInt(rows.fieldByName('ID'),10));// Local 'ID' field becomes 'GameScoreID' on remote system
+				returnData.Game.push(			rows.fieldByName('Game')==='undefined'?null:rows.fieldByName('Game'));
+				returnData.GameVersion.push(	rows.fieldByName('GameVersion')==='undefined'?null:rows.fieldByName('GameVersion'));
+				returnData.PlayStart.push(		rows.fieldByName('PlayStart')==='undefined'?null:parseInt(rows.fieldByName('PlayStart'),10));
+				returnData.PlayEnd.push(		rows.fieldByName('PlayEnd')==='undefined'?null:parseInt(rows.fieldByName('PlayEnd'),10));
+				returnData.TotalScore.push(	rows.fieldByName('TotalScore')==='undefined'?null:parseFloat(rows.fieldByName('TotalScore')));
+				returnData.GameSteps.push(		rows.fieldByName('GameSteps')==='undefined'?null:parseFloat(rows.fieldByName('GameSteps')));
+				returnData.Speed_GO.push(		rows.fieldByName('Speed_GO')==='undefined'?null:parseFloat(rows.fieldByName('Speed_GO')));
+				returnData.Speed_NOGO.push(	rows.fieldByName('Speed_NOGO')==='undefined'?null:parseFloat(rows.fieldByName('Speed_NOGO')));
+				returnData.Coord_GO.push(		rows.fieldByName('Coord_GO')==='undefined'?null:parseFloat(rows.fieldByName('Coord_GO')));
+				returnData.Coord_NOGO.push(	rows.fieldByName('Coord_NOGO')==='undefined'?null:parseFloat(rows.fieldByName('Coord_NOGO')));
+				returnData.InhibitionScore.push(rows.fieldByName('InhibitionScore')==='undefined'?null:parseFloat(rows.fieldByName('InhibitionScore')));
+				returnData.Level.push(			rows.fieldByName('Level')==='undefined'?null:parseInt(rows.fieldByName('Level'),10));
+				returnData.Feedback.push(		rows.fieldByName('Feedback')==='undefined'?null:rows.fieldByName('Feedback'));
+				returnData.Choices.push(		rows.fieldByName('Choices')==='undefined'?null:rows.fieldByName('Choices'));
+				returnData.MemoryScore.push(	rows.fieldByName('MemoryScore')==='undefined'?null:parseFloat(rows.fieldByName('MemoryScore')));
+				returnData.SessionID.push(		rows.fieldByName('SessionID')==='undefined'?null:parseInt(rows.fieldByName('SessionID'),10));
+				returnData.UserID.push(		rows.fieldByName('UserID')==='undefined'?null:parseInt(rows.fieldByName('UserID'),10));
+				returnData.LabPoints.push(		rows.fieldByName('LabPoints')==='undefined'?null:parseFloat(rows.fieldByName('LabPoints')));
+				returnData.Alcohol_ml.push(	rows.fieldByName('Alcohol_ml')==='undefined'?null:parseFloat(rows.fieldByName('Alcohol_ml')));
+				returnData.BloodAlcoholConc.push(rows.fieldByName('BloodAlcoholConc')==='undefined'?null:parseFloat(rows.fieldByName('BloodAlcoholConc')));
+				returnData.Happiness.push(	rows.fieldByName('Happiness')==='undefined'?null:parseFloat(rows.fieldByName('Happiness')));
+				returnData.Energy.push(		rows.fieldByName('Energy')==='undefined'?null:parseFloat(rows.fieldByName('Energy')));
+				returnData.Drunkeness.push(	rows.fieldByName('Drunkeness')==='undefined'?null:parseFloat(rows.fieldByName('Drunkeness')));
+		
 				rows.next();
 			}
 			rows.close();

@@ -27,7 +27,8 @@ exports.createApplicationWindow =function(launchType, parent){
 	// var menu = menus;
 	var menu = require('/ui/menu');
 	//need to give it specific help for this screen
-	menu.setHelpMessage(helpMessage);
+	menu.setHelpContext(Titanium.Android.currentActivity);
+		menu.setHelpMessage(helpMessage);
 
 	// var netprivacy = ['Send data with nickname', 'Send data with anonymous key','Send totally anonymous data' ,'Never send my data'];
 	// var phoneprivacy = ['Store all data', 'Store games scores but not drinking data', 'Never store data'];	

@@ -184,6 +184,3 @@
 	exports.addEventListener = function(eventName, callback){
 		if (eventName=='close') {callbackOnClose = callback;}
 	};
-
-	// return api;
-// }());

@@ -37,7 +37,8 @@ exports.createApplicationWindow =function(){
 	//include the menu choices	
 	var menu = require('/ui/menu');
 	//need to give it specific help for this screen
-	menu.setHelpMessage("Tap on the animals as fast as they appear. But if animal is upside down, tap as far away from it as possible. Points are awarded for speed, coordination & avoiding errors.");
+	menu.setHelpContext(Titanium.Android.currentActivity);
+		menu.setHelpMessage("Tap on the animals as fast as they appear. But if animal is upside down, tap as far away from it as possible. Points are awarded for speed, coordination & avoiding errors.");
 
 	win.idx = -1;
 	

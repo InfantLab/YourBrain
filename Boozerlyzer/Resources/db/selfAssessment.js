@@ -88,19 +88,19 @@
 		if (insertFlag){ //then we also insert this blank row into database
 			var insertstr = 'INSERT INTO SelfAssessment (SessionID, DrunkBlur,Drunkeness,Energy,EnergyBlur,Happiness,HappyBlur,SelfAssessmentStart,SelfAssessmentChanged)';
 			insertstr += 'VALUES(?,?,?,?,?,?,?,?,?)';
-			conn.execute(insertstr,sessionID,0,0,50,0,50,0,now,now);
+			conn.execute(insertstr,sessionID,-1,-1,-1,-1,-1,-1,now,now);
 			Titanium.API.debug('SelfAssessment NEW, rowsAffected = ' +conn.rowsAffected);
 			Titanium.API.debug('SelfAssessment, lastInsertRowId = ' +conn.lastInsertRowId);
 		}
 		result.push({
 			Changed: false,
 			SesssionID:sessionID,
-			DrunkBlur: 0,
-			Drunkeness: 0,
-			Energy: 50,
-			EnergyBlur: 0,
-			Happiness: 50,
-			HappyBlur: 0,
+			DrunkBlur: -1,
+			Drunkeness: -1,
+			Energy: -1,
+			EnergyBlur: -1,
+			Happiness: -1,
+			HappyBlur: -1,
 			SelfAssessmentStart: now,
 			SelfAssessmentChanged: now
 		});

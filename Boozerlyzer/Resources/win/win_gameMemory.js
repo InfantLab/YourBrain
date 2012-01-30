@@ -1,4 +1,4 @@
-/**
+ /**
  * @author Caspar Addyman
  * 
  * The memory game.. is basically a dual N-back task. The player must 
@@ -29,6 +29,7 @@ exports.createApplicationWindow = function(){
 	// var menu = menus;
 	var menu = require('/ui/menu');
 	//need to give it specific help for this screen
+	menu.setHelpContext(Titanium.Android.currentActivity);
 	menu.setHelpMessage("Press the buttons to advance the images. If two IMAGES are the same press the lower LEFT button. If the LOCATION is the same press the lower RIGHT button. Otherwise press either NO MATCH button. Points are awarded for speed & coordination.");
 
 	var stimulus, grid;

@@ -1,7 +1,7 @@
 /**
  * @author Caspar Addyman
  * 
- * TThe graph plotting screen, which sends the data to a
+ * The graph plotting screen, which sends the data to a
  * webView which uses RGraph library to plot the results. 
  * 
  * Copyright yourbrainondrugs.net 2011
@@ -15,94 +15,56 @@
 			});	
 		win.orientationModes =  [Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT];	
 
-		var winHome;
+		var winHome, gameData, reloadData;
+		var  sizeAxisIcon = 48;
 	
 		//add the appropriate requires	
 		var dataObject = require('/db/dataObject');
-		var dbSessions  = require('/db/sessions');
-		var dbDoseageLog = require('/db/doseageLog');
-		var dateTimeHelpers = require('/js/dateTimeHelpers');
-		var dataOverTime = require('/analysis/dataOverTime');
-		var dbSelfAssessment = require('/db/selfAssessment');
-		var menu = require('/ui/menu') 
-		;
+		var gameScores = require('/db/gameScores');
+		var menu = require('/ui/menu');
 		//include the menu choices	
 		//need to give it specific help for this screen
 		menu.setHelpContext(Titanium.Android.currentActivity);
-		menu.setHelpMessage("Chart plots drinks, blood alcohol and happiness levels over various time periods. Swipe upwards to access controls.");
+		menu.setHelpMessage("Chart plots game scores against current blood alcohol. Swipe upwards to access controls.");
 		
-		var  sizeAxisIcon = 48, reloadData;
-		
-		var SessionID = Titanium.App.Properties.getInt('SessionID');
-		var standardDrinks = dataObject.getStandardDrinks();
-		
-		var millsPerStandardUnits = standardDrinks[0].MillilitresPerUnit;
 		
 		//data variables
-		var startTime, nTimeSteps, allDrinks, selfAssess;
-		var timeAxis = Titanium.App.Properties.getString('GraphTimeAxis', 'Hourly Graph');
-		Ti.API.debug('Charts - timeAxis ' + timeAxis);	
+		var xAxis = Titanium.App.Properties.getString('GraphScatterX', 'Blood Alcohol');
+		var yAxis = Titanium.App.Properties.getString('GraphScatterY', 'Happiness');
+		Ti.API.debug('Charts - xAxis ' + xAxis);	
 		
-		function loadData(type){	
-			//appdebugsteps +='loading chart data..';
-			if (type === "Hourly Graph"){		
-				//All dose data for this session
-				var sessionData =dbSessions.getSession(SessionID);
-				allDrinks = dbDoseageLog.getAllSessionData(SessionID);
-				selfAssess = dbSelfAssessment.getAllSessionData(SessionID);
-				startTime = sessionData[0].StartTime;
-				nTimeSteps = 24;
-			}else if (type === "Weekly Graph"){
-				Ti.API.debug('Charts load week of data');
-				var aWeekAgo = parseInt((new Date()).getTime()/1000,10) - 3600 * 24 * 7;
-				allDrinks = dbDoseageLog.getTimeRangeData(aWeekAgo);
-				selfAssess = dbSelfAssessment.getTimeRangeData(aWeekAgo);
-				startTime = aWeekAgo;
-				nTimeSteps = 84;
-			}
+		function loadData(){	
+			gameData = gameScores.GamePlaySummary(null, null, null, true);
 			reloadData  = false;
-			//appdebugsteps +='finished loading chart data..';
 		}
-		loadData(timeAxis);
 		
 		var webView = Ti.UI.createWebView({
 			bottom:60,
 			left:0,
 			height:'auto',
 			width:'auto',
-			url:'/charts/chartSingleSession.html',
+			url:'/charts/chartScatterSelfAssessment.html',
 			zIndex:9
 		});
-		//appdebugsteps +='adding webView..';
-		win.add(webView);
-		//appdebugsteps +='added webView..';
-			
-		// // Attach an APP wide event listener	
-		// // it gets fired when the webView has finished loading
-		// Ti.App.addEventListener('webViewLoaded', function(e) {
-			// //appdebugsteps +='event: webViewLoaded';
-			// //alert(appdebugsteps);
-			// redrawGraph();
-		// });
-		//as an alternative to call back use this 
+		win.add(webView);			
 		webView.addEventListener('load', function(e) {
 		    // code that fires AFTER webview has loaded
 		    redrawGraph();
 		 });
 		
-		var time = Ti.UI.createImageView({
-			image:'/icons/time.png',
+		var xAxisIcon = Ti.UI.createImageView({
+			image:'/icons/teddy_bears.png',
 			height:sizeAxisIcon,
 			width:sizeAxisIcon,
 			bottom:30,
 			right:4,
 			zIndex:10
-		})
-		win.add(time);	
-		time.addEventListener('click', function(){
+		});
+		win.add(xAxisIcon);	
+		xAxisIcon.addEventListener('click', function(){
 			//click on the time icon to toggle the time axis
 			//and hence the type of graph we plot. 
-			changeGraphTimeAxis();
+			changeXAxisIcon();
 			redrawGraph();
 		});
 		
@@ -121,7 +83,7 @@
 				color:'black'
 			});
 			labelWeeklyDailyGraph.addEventListener('change', function(){
-				changeGraphTimeAxis();
+				changeXAxisIcon();
 				redrawGraph();
 			});
 			win.add(labelWeeklyDailyGraph);
@@ -134,29 +96,23 @@
 		 * if a type is passed in use that otherwise
 		 * toggle from current type to the other.
 		 */
-		function changeGraphTimeAxis(type){
-			if (type === null || type === undefined){
-				type = (labelWeeklyDailyGraph.text === "Weekly Graph" ? "Hourly Graph" :"Weekly Graph");
-			}
+		function changeXAxisIcon(){
+			var	type = (labelWeeklyDailyGraph.text === "Weekly Graph" ? "Hourly Graph" :"Weekly Graph");
 			if (type === "Weekly Graph"){
-				time.image = '/icons/calendar.png';
+				xAxisIcon.image = '/icons/calendar.png';
 			}else {
-				time.image = '/icons/time.png';
+				xAxisIcon.image = '/icons/time.png';
 			}
 			labelWeeklyDailyGraph.text = type;
-			Titanium.App.Properties.setString('GraphTimeAxis', type);
-			timeAxis = type;
+			Titanium.App.Properties.setString('GraphScatterX', type);
+			xAxis = type;
 			reloadData  = true; //need to reload the data next time we plot graph
 		}
-		changeGraphTimeAxis(timeAxis);
+		changeXAxisIcon();
 		
 		function redrawGraph(){
-		// try{
-				
-			//appdebugsteps +='redrawGraph start ..';
 			if (reloadData){
-				loadData(timeAxis);
-				//appdebugsteps +='redrawGraph: data loaded';
+				loadData();
 			}
 			//webView has loaded so we can draw our chart
 			var options = {
@@ -170,50 +126,21 @@
 				colBloodAlcohol:switchBloodAlcohol.color,
 				colHappiness:switchHappiness.color,
 				colEnergy:switchEnergy.color,
-				colDrunk:switchDrunk.color//,
+				colDrunk:switchDrunk.color,
 				//colStroop:switchStroop.color
-			};	
-			var now = parseInt((new Date()).getTime()/1000);
-			var timeSteps =	dateTimeHelpers.timeIntervals(nTimeSteps,startTime, now);
-			var timeLabels = [];
-		
-			if (timeAxis === "Monthly Graph"){
-				for (var t = 0;t< nTimeSteps;t++){
-					//just show every 12th label
-					if (t % 12 === 0){
-						timeLabels[t] = dateTimeHelpers.formatDay(timeSteps[t]);			
-					}
-				}
-				
-			}else{
-				var showMins = ((now - timeSteps[0]) < 12*3600); //show minutes if short session
-				for (var t = 0;t< nTimeSteps;t++){
-					//just show every 4th label
-					if (t % 4 === 0){
-						timeLabels[t] = dateTimeHelpers.formatTime(timeSteps[t],showMins,true);			
-					}
-				}
-				
-			}
-			
-		
-			//Ti.API.debug('redrawGraph -allDrinks ' + JSON.stringify(allDrinks));
-			var personalInfo = dataObject.getPersonalInfo();
-			var drinkSteps = dataOverTime.drinksByTime(timeSteps,allDrinks,personalInfo, millsPerStandardUnits);
-			Ti.API.debug('redrawGraph -selfAssess ' + JSON.stringify(selfAssess));
-			var emotionSteps = dataOverTime.emotionsByTime(timeSteps,selfAssess);
-			//var stroopSteps = gameByTime(timeSteps,gameData);
+				MillsPerStandardDrink:dataObject.getStandardDrinks()
+			};
+
 			
 			var myData =  JSON.stringify({
 				options: options,
-				timeLabels:timeLabels,
-				//sessData: sessionData,
-				selfData: emotionSteps, 			
-				drinkData:drinkSteps	});
-			
-			//appdebugsteps +='pre webView.evalJS';
-			webView.evalJS("paintLineChart('" + myData + "')");
-			//appdebugsteps +='post webView.evalJS';
+				drinkData:gameData.Alcohol_ml,
+				bloodAlcohol:gameData.BloodAlcoholConc,
+				happiness:gameData.Happiness,
+				energy:gameData.Energy,
+				drunkeness:gameData.Drunkeness   			
+			}); 
+			webView.evalJS("paintScatterChart('" + myData + "')");
 		// } catch (err) {
 		    // alert('chart redraw error ' + err.description);
 		// }

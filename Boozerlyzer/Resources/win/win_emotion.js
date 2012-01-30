@@ -33,8 +33,18 @@
 		//include the menu choices	
 		var menu = require('/ui/menu');
 		//need to give it specific help for this screen
+		menu.setHelpContext(Titanium.Android.currentActivity);
 		menu.setHelpMessage("Move sliders to appropriate points to indicate how you currently feel.");
 
+		var activity = Ti.Android.currentActivity;
+		activity.onCreateOptionsMenu = function( event ) {
+			Ti.API.debug('win_main activity.onCreateOptionsMenu fired');
+		  var menu = event.menu
+		    , menuAbout = menu.add({ title: 'About' })
+		    , menuLegal = menu.add({ title: 'Legal' })
+		    , menuSettings = menu.add({ title: 'Settings' })
+		    , menuHelp = menu.add({ title: 'Help' });
+		};
 		
 		//layout variables
 		var sizeIcon = 48, leftLowIcon = 48;

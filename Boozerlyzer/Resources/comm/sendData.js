@@ -57,7 +57,7 @@ GameVersion: 1, PlayStart: 39653985, MemoryScore: -1, ReactionScore:
 		//what do we get back?
 		xhrPost.onload = function() {
 			Ti.API.debug('sync data sending onload');
-			var rc = Titanium.JSON.parse(this.responseText);
+			var rc = JSON.parse(this.responseText);
 			Ti.API.debug(this.responseText);
 			if (rc.status == 'success') {
 				// var complete = Ti.UI.createAlertDialog('Game scores saved.');

@@ -1,0 +1,59 @@
+<html> 
+<head>
+ 
+ <title>RGraph meter Plot</title> 
+ <meta name="viewport" content="width=device-width, initial-scale=1.0"/>  
+   <style type="text/css">
+      #myLineGraph {
+        height: 100%; width: 100%;
+      }
+    </style>
+  <script src='../libraries/RGraph.common.core.js'></script>
+  <script src="../libraries/RGraph.meter.js" ></script>
+
+</head> 
+<body> 
+	<canvas id='myCanvas'>[No canvas support]</canvas>
+	<script>
+    // window.onload = function(){
+		// var message = {onload:"complete"};
+		// Ti.App.fireEvent('webViewLoaded', message);
+	// }
+
+	
+	function paintLineChart(e) {
+		try{
+	       // Create the Meter chart. The arguments are the canvas ID, the minimum, the maximum and the value.
+	        var meter = new RGraph.Meter('myCanvas', 0, 40, 8);
+	        
+	        // Configure the Meter chart to appear as you want.
+	        meter.Set('chart.annotatable', false);
+	        // meter.Set('chart.label.position', 'inside');
+	        // meter.Set('chart.title', 'Blood Alcohol Concentration');
+            // meter.Set('chart.title.hpos', 0.5);
+          	// meter.Set('chart.title.vpos', 1);
+	        meter.Set('chart.red.start',20);
+	        meter.Set('chart.red.end', 40);
+	        meter.Set('chart.yellow.start', 10);
+	        meter.Set('chart.yellow.end', 20);
+	        meter.Set('chart.green.start', 0);
+	        meter.Set('chart.green.end', 10);
+	        meter.Set('chart.gutter.right', 0);
+	        meter.Set('chart.gutter.left', 0);
+	        meter.Set('chart.gutter.top', 0);
+	        meter.Set('chart.gutter.bottom', 0);
+	        meter.Set('chart.resizable',true);
+	        
+	        // Now call the .Draw() method to draw the chart.
+	        meter.Draw();
+        }
+        catch(err){
+        	alert('RGraphing error ' + err.description);    
+		}
+	}
+
+    
+    </script>
+                         
+ </body>
+</html>

@@ -40,7 +40,7 @@ if (registrationNag < 0){
 				Choices:'',
 				SessionID:Titanium.App.Properties.getInt('SessionID',0),
 				UserID:Titanium.App.Properties.getInt('UserID', 0),
-				LabPoints:10
+				LabPoints:8
 			}];
 	var dbGameScores = require('/db/gameScores');
 	dbGameScores.SaveResult(gameSaveData);

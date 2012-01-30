@@ -38,7 +38,8 @@ exports.createApplicationWindow =function(){
 	//include the menu choices	
 	var menu = require('/ui/menu');
 	//need to give it specific help for this screen
-	menu.setHelpMessage("On each step tap on the NUMERICALLY larger value and try to ignore the font-size. Points are awarded for speed, coordination & avoiding errors.");
+	menu.setHelpContext(Titanium.Android.currentActivity);
+		menu.setHelpMessage("On each step tap on the NUMERICALLY larger value and try to ignore the font-size. Points are awarded for speed, coordination & avoiding errors.");
 
 	var labelGameMessage, gameStarted = false, initialised = false;
 	var winopened = parseInt((new Date()).getTime()/1000,10);
