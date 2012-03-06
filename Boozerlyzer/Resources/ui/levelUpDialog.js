@@ -168,6 +168,7 @@
 	 */
 	exports.setParent = function (window){
 		win = window;
+		isControlsCreated = false;
 	};
 	exports.open = function(){	
 		//alert('leveled up');

@@ -54,6 +54,7 @@
 
 	function createControls(){
 		if (isControlsCreated) {return;}
+		Ti.API.debug('picker_drinks createControls');
 
 		var colVolumeLabel = Ti.UI.createLabel({text:'% ABV',top:28,left:66,color:'blue',font: {fontSize: '16',fontWeight:'bold'}});
 		var colDescriptionLabel = Ti.UI.createLabel({text:'Amount',top:28,left:166,color:'blue',font: {fontSize: '16',fontWeight:'bold'}});
@@ -157,6 +158,7 @@
 	};
 	exports.setParent = function (window){
 		win = window;
+		isControlsCreated = false;
 	};
 	exports.open = function(){	
 		coverView.animate(coverViewOpenAnimation);

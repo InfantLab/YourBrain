@@ -28,9 +28,11 @@
 		;
 		//include the menu choices	
 		//need to give it specific help for this screen
-		menu.setHelpContext(Titanium.Android.currentActivity);
 		menu.setHelpMessage("Chart plots drinks, blood alcohol and happiness levels over various time periods. Swipe upwards to access controls.");
-		
+		win.activity.onCreateOptionsMenu
+		activity.onCreateOptionsMenu = function(event){
+			menu.createMenus(event);
+		};
 		var  sizeAxisIcon = 48, reloadData;
 		
 		var SessionID = Titanium.App.Properties.getInt('SessionID');

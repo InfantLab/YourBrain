@@ -364,8 +364,10 @@ var millsPerStandardUnits = standardDrinks[0].MillilitresPerUnit;
 		
 		picker_drinks.setParent(win);
 		//need to give it specific help for this screen
-		menu.setHelpContext(Titanium.Android.currentActivity);
 		menu.setHelpMessage("Click on the icons to add new drinks. Double click on drinks list to edit or delete an entry.");
+		win.activity.onCreateOptionsMenu = function(event){
+			menu.createMenus(event);
+		};
 
 		winOpened = parseInt((new Date()).getTime()/1000,10);
 	

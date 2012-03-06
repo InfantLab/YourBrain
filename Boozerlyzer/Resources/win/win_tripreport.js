@@ -243,7 +243,6 @@ exports.createApplicationWindow =function(type){
 	
 	if (reportType === 'BUG'){
 		//need to give it specific help for this screen
-		menu.setHelpContext(Titanium.Android.currentActivity);
 		menu.setHelpMessage("Simply record what went wrong. Thanks.");
 		tripContent.hintText = 'What caused the error?';
 		label.text = 'Tell us what went wrong';
@@ -253,7 +252,6 @@ exports.createApplicationWindow =function(type){
 		
 	}else{
 		//need to give it specific help for this screen
-		menu.setHelpContext(Titanium.Android.currentActivity);
 		menu.setHelpMessage("Simply record how you are feeling right now. Thanks :-)");
 		tripContent.hintText = 'I feel..';
 		label.text = 'How are you?';
@@ -262,6 +260,9 @@ exports.createApplicationWindow =function(type){
 		lastchangedLabel.visible = true;
 	}
 	
+win.activity.onCreateOptionsMenu = function(event){
+		menu.createMenus(event);
+	};
 	
 	win.addEventListener('open', function(){
 		if (reportType === 'BUG'){
@@ -292,6 +293,19 @@ exports.createApplicationWindow =function(type){
 	homeButton.addEventListener('click',goHome);
 	// Cleanup and return home
 	win.addEventListener('android:back', goHome);
+	
+	// var infoButton = Titanium.UI.createView({
+		// image:'/icons/dark_info.png',
+		// top:0,
+	    // left:0,
+	    // width:40,
+	    // height:40
+    // });
+	// win.add(infoButton);
+	// infoButton.addEventListener('click',showMenu);
+	// function showMenu(){
+// 		
+	// }
 	
 	return win;
 };

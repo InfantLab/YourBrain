@@ -11,6 +11,9 @@
 	
 	//Create the main application window
 	exports.createApplicationWindow = function(_args) {
+		// var menu = require('/ui/menu');
+		// //need to give menu object specific help for this screen
+		// menu.setHelpMessage("Click on the icons to add new drinks, launch games, etc.");
 		//the start screen for the YBOB boozerlyzer
 		var homeWin = Titanium.UI.createWindow({
 			exitOnClose: true,
@@ -33,22 +36,17 @@
 		var dbSessions  = require('/db/sessions');
 		var dateTimeHelpers = require('/js/dateTimeHelpers');
 		var levelUpDialog = require('/ui/levelUpDialog');
+		var win_myData = require('/win/win_mydata');
 		var menu = require('/ui/menu');
-		
-		
+
 		//need to give menu object specific help for this screen
-		
-		menu.setHelpContext(Ti.Android.currentActivity);
 		menu.setHelpMessage("Click on the icons to add new drinks, launch games, etc.");
-		// var activity = Ti.Android.currentActivity;
-		// activity.onCreateOptionsMenu = function( event ) {
-			// Ti.API.debug('win_main activity.onCreateOptionsMenu fired');
-		  // var menu = event.menu
-		    // , menuAbout = menu.add({ title: 'About' })
-		    // , menuLegal = menu.add({ title: 'Legal' })
-		    // , menuSettings = menu.add({ title: 'Settings' })
-		    // , menuHelp = menu.add({ title: 'Help' });
-		// };
+	 	//for base window need to use activity for onCreateOptionsMenu
+	 	var activity = Ti.Android.currentActivity;
+	 	activity.onCreateOptionsMenu = function(event){
+			 menu.createMenus(event);
+		};
+
 		//reset to main user and MateMode flag.
 		Titanium.App.Properties.setInt('UserID',0);
 		Titanium.App.Properties.setBool('MateMode',false); 
@@ -94,7 +92,8 @@
 			left:optionsLeft
 		});
 		personalinfo.addEventListener('click',function(){
-			//menu.showSettingsScreen();
+			var winMyData = win_myData.createApplicationWindow();
+			winMyData.open();
 		}); 
 		homeWin.add(personalinfo);
 
@@ -167,7 +166,7 @@
 		
 		report.addEventListener('click',function(){
 			//var win_charts = require('/win/win_charts');
-			var win_charts = require('/win/win_scatter');
+			var win_charts = require('/win/win_chartGames');
 			var winCharts = win_charts.createApplicationWindow();
 			winCharts.home = homeWin; //reference to home
 			winCharts.addEventListener('close',homeWin.refresh);				
@@ -278,7 +277,7 @@
 			font:{fontSize:28,fontFamily:'Helvetica Neue'},
 			textAlign:'center',
 			height:32,
-			width:60,
+			width:80,
 			top:topLabPoints + 20,
 			left:leftLabPoints,
 			color:'cyan',
@@ -354,19 +353,7 @@
 		homeWin.add(labelLastUpdate);
 		Ti.API.debug('homeWin 2');
 		
-	// 		
-			// var BACmeterHolder = Titanium.UI.createView({
-				// height:150,
-				// width:220,
-				// top:topHighScores,
-				// leftt:leftHighScores
-			// });
-			// homeWin.add(BACmeterHolder);
-	
-		// var BACMeter = require('/ui/BACmeter');
-		// var BACMeterView = BACMeter.createView();
-		// BACmeterHolder.add(BACMeterView);
-		
+
 		function rewriteSessionInfo(){
 			//function that writes the latest update times for this session.			
 			Ti.API.debug('rewriteSessionInfo');
@@ -460,7 +447,7 @@
 		
 		homeWin.refresh = function(){
 			Ti.API.debug('homeWin refresh');
-			// menu.setHelpContext(homeWin);
+			//menu.setHelpContext(homeWin);
 		// menu.setHelpMessage("Click on the icons to add new drinks, launch games, etc.");
 			rewriteSessionInfo();	
 			rewriteUnitsBAC();	
@@ -473,7 +460,7 @@
 		loadedonce = true;
 
 		homeWin.addEventListener('homeWinRefresh',homeWin.refresh);
-		//homeWin.addEventListener('showSettings',menu.showSettingsScreen);
+		// homeWin.addEventListener('showSettings',menu.showSettingsScreen);
 						
 		homeWin.addEventListener('focused', function(){
 			Ti.API.debug('homeWin got focus');

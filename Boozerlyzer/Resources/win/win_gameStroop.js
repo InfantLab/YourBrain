@@ -38,9 +38,12 @@ exports.createApplicationWindow =function(){
 	//include the menu choices	
 	var menu = require('/ui/menu');
 	//need to give it specific help for this screen
-	menu.setHelpContext(Titanium.Android.currentActivity);
-		menu.setHelpMessage("On each step tap on the NUMERICALLY larger value and try to ignore the font-size. Points are awarded for speed, coordination & avoiding errors.");
-
+	menu.setHelpMessage("On each step tap on the NUMERICALLY larger value and try to ignore the font-size. Points are awarded for speed, coordination & avoiding errors.");
+	
+win.activity.onCreateOptionsMenu = function(event){
+		menu.createMenus(event);
+	};
+	
 	var labelGameMessage, gameStarted = false, initialised = false;
 	var winopened = parseInt((new Date()).getTime()/1000,10);
 	var useSmallerFonts =  false;

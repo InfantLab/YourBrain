@@ -45,9 +45,11 @@ exports.createApplicationWindow =function(type,rounds){
 	//include the menu choices	
 	var menu = require('/ui/menu');
 	//need to give it specific help for this screen
-	menu.setHelpContext(Titanium.Android.currentActivity);
-		menu.setHelpMessage("Simply pick which ever words you like best. There are no right answers.");
-
+	menu.setHelpMessage("Simply pick which ever words you like best. There are no right answers.");
+	
+win.activity.onCreateOptionsMenu = function(event){
+		menu.createMenus(event);
+	};
 	var suggest, labelGameMessage;
 	var choiceTime, roundStarted;
 	var winopened = parseInt((new Date()).getTime()/1000,10);

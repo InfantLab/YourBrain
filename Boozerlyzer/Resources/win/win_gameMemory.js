@@ -29,9 +29,12 @@ exports.createApplicationWindow = function(){
 	// var menu = menus;
 	var menu = require('/ui/menu');
 	//need to give it specific help for this screen
-	menu.setHelpContext(Titanium.Android.currentActivity);
 	menu.setHelpMessage("Press the buttons to advance the images. If two IMAGES are the same press the lower LEFT button. If the LOCATION is the same press the lower RIGHT button. Otherwise press either NO MATCH button. Points are awarded for speed & coordination.");
-
+	
+win.activity.onCreateOptionsMenu = function(event){
+		menu.createMenus(event);
+	};
+	
 	var stimulus, grid;
 	var labelScore, score, labelBonus, bonus, countLabel,nBackLabel,missCountLabel, labelGameMessage;
 	var currentObj = 0, points = 0, coordbonus = 0, speedbonus = 0,  inhibitbonus = 0;

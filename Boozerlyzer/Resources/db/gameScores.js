@@ -395,25 +395,25 @@
 				returnData.GameVersion.push(	rows.fieldByName('GameVersion')==='undefined'?null:rows.fieldByName('GameVersion'));
 				returnData.PlayStart.push(		rows.fieldByName('PlayStart')==='undefined'?null:parseInt(rows.fieldByName('PlayStart'),10));
 				returnData.PlayEnd.push(		rows.fieldByName('PlayEnd')==='undefined'?null:parseInt(rows.fieldByName('PlayEnd'),10));
-				returnData.TotalScore.push(	rows.fieldByName('TotalScore')==='undefined'?null:parseFloat(rows.fieldByName('TotalScore')));
+				returnData.TotalScore.push(		rows.fieldByName('TotalScore')==='undefined'?null:parseFloat(rows.fieldByName('TotalScore')));
 				returnData.GameSteps.push(		rows.fieldByName('GameSteps')==='undefined'?null:parseFloat(rows.fieldByName('GameSteps')));
 				returnData.Speed_GO.push(		rows.fieldByName('Speed_GO')==='undefined'?null:parseFloat(rows.fieldByName('Speed_GO')));
-				returnData.Speed_NOGO.push(	rows.fieldByName('Speed_NOGO')==='undefined'?null:parseFloat(rows.fieldByName('Speed_NOGO')));
+				returnData.Speed_NOGO.push(		rows.fieldByName('Speed_NOGO')==='undefined'?null:parseFloat(rows.fieldByName('Speed_NOGO')));
 				returnData.Coord_GO.push(		rows.fieldByName('Coord_GO')==='undefined'?null:parseFloat(rows.fieldByName('Coord_GO')));
-				returnData.Coord_NOGO.push(	rows.fieldByName('Coord_NOGO')==='undefined'?null:parseFloat(rows.fieldByName('Coord_NOGO')));
+				returnData.Coord_NOGO.push(		rows.fieldByName('Coord_NOGO')==='undefined'?null:parseFloat(rows.fieldByName('Coord_NOGO')));
 				returnData.InhibitionScore.push(rows.fieldByName('InhibitionScore')==='undefined'?null:parseFloat(rows.fieldByName('InhibitionScore')));
 				returnData.Level.push(			rows.fieldByName('Level')==='undefined'?null:parseInt(rows.fieldByName('Level'),10));
 				returnData.Feedback.push(		rows.fieldByName('Feedback')==='undefined'?null:rows.fieldByName('Feedback'));
 				returnData.Choices.push(		rows.fieldByName('Choices')==='undefined'?null:rows.fieldByName('Choices'));
 				returnData.MemoryScore.push(	rows.fieldByName('MemoryScore')==='undefined'?null:parseFloat(rows.fieldByName('MemoryScore')));
 				returnData.SessionID.push(		rows.fieldByName('SessionID')==='undefined'?null:parseInt(rows.fieldByName('SessionID'),10));
-				returnData.UserID.push(		rows.fieldByName('UserID')==='undefined'?null:parseInt(rows.fieldByName('UserID'),10));
+				returnData.UserID.push(			rows.fieldByName('UserID')==='undefined'?null:parseInt(rows.fieldByName('UserID'),10));
 				returnData.LabPoints.push(		rows.fieldByName('LabPoints')==='undefined'?null:parseFloat(rows.fieldByName('LabPoints')));
-				returnData.Alcohol_ml.push(	rows.fieldByName('Alcohol_ml')==='undefined'?null:parseFloat(rows.fieldByName('Alcohol_ml')));
+				returnData.Alcohol_ml.push(		rows.fieldByName('Alcohol_ml')==='undefined'?null:parseFloat(rows.fieldByName('Alcohol_ml')));
 				returnData.BloodAlcoholConc.push(rows.fieldByName('BloodAlcoholConc')==='undefined'?null:parseFloat(rows.fieldByName('BloodAlcoholConc')));
-				returnData.Happiness.push(	rows.fieldByName('Happiness')==='undefined'?null:parseFloat(rows.fieldByName('Happiness')));
-				returnData.Energy.push(		rows.fieldByName('Energy')==='undefined'?null:parseFloat(rows.fieldByName('Energy')));
-				returnData.Drunkeness.push(	rows.fieldByName('Drunkeness')==='undefined'?null:parseFloat(rows.fieldByName('Drunkeness')));
+				returnData.Happiness.push(		rows.fieldByName('Happiness')==='undefined'?null:parseFloat(rows.fieldByName('Happiness')));
+				returnData.Energy.push(			rows.fieldByName('Energy')==='undefined'?null:parseFloat(rows.fieldByName('Energy')));
+				returnData.Drunkeness.push(		rows.fieldByName('Drunkeness')==='undefined'?null:parseFloat(rows.fieldByName('Drunkeness')));
 		
 				rows.next();
 			}

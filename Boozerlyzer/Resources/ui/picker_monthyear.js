@@ -88,6 +88,7 @@
 	exports.getPicker = function(){return picker;};
 	exports.setParent = function (window){
 		win = window;
+		isControlsCreated = false;
 	};
 	exports.open = function(){	
 		coverView.animate(coverViewOpenAnimation);

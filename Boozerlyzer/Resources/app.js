@@ -24,6 +24,7 @@ winHome.open();
 var registrationNag = Titanium.App.Properties.getInt('RegistrationNag', 0);
 if (registrationNag < 0){
 	//launch main app	
+	Ti.API.debug('Boozerlyzer Started');
 	var gameSaveData = [{Game: 'Boozerlyzer Started',
 				GameVersion:1,
 				PlayStart:parseInt((new Date()).getTime()/1000,10) ,

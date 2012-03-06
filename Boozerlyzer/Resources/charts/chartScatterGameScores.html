@@ -6,21 +6,25 @@
  <script src='../libraries/RGraph.common.core.js'></script>
   <script src="../libraries/RGraph.scatter.js" ></script>
    <style type="text/css">
-      #myScatterHappiness {
+      #myScatterTotal {
         height: 100%; width: 100%;
       }
-    #myScatterEnergy {
+    #myScatterCoordination {
         height: 100%; width: 100%;
       }
-     #myScatterDrunkeness {
+     #myScatterSpeed {
+        height: 100%; width: 100%;
+      }
+	  #myScatterInhibitionMemory {
         height: 100%; width: 100%;
       }
     </style>
 </head> 
 <body> 
-	<canvas id='myScatterHappiness'>[No canvas support]</canvas><br/>
-	<canvas id='myScatterEnergy'>[No canvas support]</canvas><br/>
-	<canvas id='myScatterDrunkeness'>[No canvas support]</canvas>
+	<canvas id='myScatterTotal'>[No canvas support]</canvas><br/>
+	<canvas id='myScatterCoordination'>[No canvas support]</canvas><br/>
+	<canvas id='myScatterSpeed'>[No canvas support]</canvas>
+	<canvas id='myScatterInhibition'>[No canvas support]</canvas>
 	<script>
 
 
@@ -29,9 +33,10 @@
 		//Ti.API.info("webview chart e -" + JSON.stringify(e));
 	
 		//clear any existing graph
-		RGraph.Clear(document.getElementById("myScatterHappiness"));
-		RGraph.Clear(document.getElementById("myScatterEnergy"));
-		RGraph.Clear(document.getElementById("myScatterDrunkeness"));
+		RGraph.Clear(document.getElementById("myScatterTotal"));
+		RGraph.Clear(document.getElementById("myScatterCoordination"));
+		RGraph.Clear(document.getElementById("myScatterSpeed"));
+		RGraph.Clear(document.getElementById("myScatterInhibition"));
 		
 		//get the passed in data	
 		var asobj = JSON.parse(e);
@@ -40,29 +45,32 @@
 	    var drinkData, drinkText,unitSize;
 	    if (options.plotDrinks){
 			drinkData = asobj.drinkData;
-			drinkText = 'Number of standard drinks';
+			drinkText = 'number of drinks';
 			unitSize = asobj.MillsPerStandardDrink;   	
 	    }else{
 			drinkData = asobj.bloodAlcohol;
-			drinkText = 'blood alcohol concentration';
+			drinkText = 'blood alcohol conc.';
 			unitSize = 1;
 	    }
-		// var happiness = asobj.happiness;
-
 		
 		Ti.API.info("scattergraph units - " + JSON.stringify(unitSize));
 		
 		
 		var len = drinkData.length;
-		var happinessPoints = [],energyPoints = [],drunkenessPoints = [];
-		var maxDrink = 0;
+		var totalPoints = [],speedPoints = [],coordPoints = [],inhibitPoints = [];
+		var maxDrink = 0,maxPoints = 0, maxSpeed = 0, maxCoord = 0,maxInhibit = 0;
 		for (var i = 0; i < len; i++) {
 			//also find max number of drinks in this session
 			var thisDrink  = drinkData[i] / unitSize;
 			maxDrink = Math.max(maxDrink,thisDrink);
-			happinessPoints.push([thisDrink,asobj.happiness[i],asobj.colHappiness]);
-			energyPoints.push([thisDrink,asobj.energy[i],asobj.colEnergy]);
-			drunkenessPoints.push([thisDrink,asobj.drunkeness[i],asobj.colDrunk]);
+			maxPoints = Math.max(maxPoints,asobj.totalScore[i]);
+			maxSpeed = Math.max(maxSpeed,asobj.speed[i]);
+			maxCoord = Math.max(maxCoord,asobj.coord[i]);
+			maxInhibit = Math.max(maxInhibit,asobj.inhibit[i]);
+			totalPoints.push([thisDrink,asobj.totalScore[i],asobj.colorTotal]);
+			speedPoints.push([thisDrink,asobj.speed[i],asobj.colorSpeed]);
+			coordPoints.push([thisDrink,asobj.coord[i],asobj.colorCoord]);
+			inhibitPoints.push([thisDrink,asobj.inhibit[i],asobj.colorInhibit]);
 		}
 		
 
@@ -70,58 +78,49 @@
 	 	if (options.plotDrinks || options.plotBloodAlcohol){
 			Ti.API.info("webview start drink plotting ");
 		
-	        var scatterGraph = new RGraph.Scatter('myScatterHappiness', happinessPoints);
-	        scatterGraph.Set('chart.background.barcolor1','white');
-        	scatterGraph.Set('chart.background.barcolor2', 'white');
-        	scatterGraph.Set('chart.grid.color', 'rgba(238,238,238,1)');
-        	scatterGraph.Set('chart.ymax', 100); 
-        	scatterGraph.Set('chart.xmax', maxDrink); // Important!
-        	scatterGraph.Set('chart.title','Happiness vs ' + drinkText);
-        	scatterGraph.Set('chart.title.size',18);
-        	
-        	
-        	//scatterGraph.Set('chart.resizable', true);
-		 	scatterGraph.Draw();
-        
-            var scatterGraph2 = new RGraph.Scatter('myScatterEnergy', energyPoints);
-	        scatterGraph2.Set('chart.background.barcolor1','white');
-        	scatterGraph2.Set('chart.background.barcolor2', 'white');
-        	scatterGraph2.Set('chart.grid.color', 'rgba(238,238,238,1)');
-        	scatterGraph2.Set('chart.ymax', 100); 
-        	scatterGraph2.Set('chart.xmax', maxDrink); // Important!
-        	scatterGraph2.Set('chart.title','Energy vs ' + drinkText);
-        	scatterGraph2.Set('chart.title.size',18);
-        	scatterGraph2.Draw();
-        
-            var scatterGraph3 = new RGraph.Scatter('myScatterDrunkeness', drunkenessPoints);
-	        scatterGraph3.Set('chart.background.barcolor1','white');
-        	scatterGraph3.Set('chart.background.barcolor2', 'white');
-        	scatterGraph3.Set('chart.grid.color', 'rgba(238,238,238,1)');
-        	scatterGraph3.Set('chart.ymax', 100); 
-        	scatterGraph3.Set('chart.xmax', maxDrink); // Important!
-        	scatterGraph3.Set('chart.title','Drunkeness vs ' + drinkText);
-        	scatterGraph3.Set('chart.title.size',18);
-        	scatterGraph3.Draw();
-        
-        	Ti.API.info("webview end drink plotting ");
+			var scatterGraph = new RGraph.Scatter('myScatterTotal', totalPoints);
+			scatterGraph.Set('chart.background.barcolor1','white');
+			scatterGraph.Set('chart.background.barcolor2', 'white');
+			scatterGraph.Set('chart.grid.color', 'rgba(238,238,238,1)');
+			scatterGraph.Set('chart.ymax', maxPoints * 1.05); 
+			scatterGraph.Set('chart.xmax', maxDrink); // Important!
+			scatterGraph.Set('chart.title','Game Score vs ' + drinkText);
+			scatterGraph.Set('chart.title.size',16);
+			scatterGraph.Set('chart.tickmarks', 'circle');
+			scatterGraph.Draw();
+			
+			var scatterGraph2 = new RGraph.Scatter('myScatterSpeed', speedPoints);
+			scatterGraph2.Set('chart.background.barcolor1','white');
+			scatterGraph2.Set('chart.background.barcolor2', 'white');
+			scatterGraph2.Set('chart.grid.color', 'rgba(238,238,238,1)');
+			scatterGraph2.Set('chart.ymax', maxSpeed * 1.05); 
+			scatterGraph2.Set('chart.xmax', maxDrink); // Important!
+			scatterGraph2.Set('chart.title','Speed vs ' + drinkText);
+			scatterGraph2.Set('chart.title.size',16);
+			scatterGraph2.Draw();
+			
+			var scatterGraph3 = new RGraph.Scatter('myScatterCoordination', coordPoints);
+			scatterGraph3.Set('chart.background.barcolor1','white');
+			scatterGraph3.Set('chart.background.barcolor2', 'white');
+			scatterGraph3.Set('chart.grid.color', 'rgba(238,238,238,1)');
+			scatterGraph3.Set('chart.ymax', maxPoints * 1.05); 
+			scatterGraph3.Set('chart.xmax', maxDrink); // Important!
+			scatterGraph3.Set('chart.title','Coordination vs ' + drinkText);
+			scatterGraph3.Set('chart.title.size',16);
+			scatterGraph3.Draw();
+			
+			var scatterGraph4 = new RGraph.Scatter('myScatterInhibition', inhibitPoints);
+			scatterGraph4.Set('chart.background.barcolor1','white');
+			scatterGraph4.Set('chart.background.barcolor2', 'white');
+			scatterGraph4.Set('chart.grid.color', 'rgba(238,238,238,1)');
+			scatterGraph4.Set('chart.ymax', maxPoints * 1.05); 
+			scatterGraph4.Set('chart.xmax', maxDrink); // Important!
+			scatterGraph4.Set('chart.title','Inhibition vs ' + drinkText);
+			scatterGraph4.Set('chart.title.size',16);
+			scatterGraph4.Draw();
+			
+			Ti.API.info("webview end drink plotting ");
 		}	
-	 	// if (options.plotHappiness || options.plotDrunk || options.plotEnergy){
-			// Ti.API.info("webview start emotion plotting ");
-	        // var lineHappy = new RGraph.Line('myLineGraph', lastDrunkeness, lastHappiness, lastEnergy);
-	        // lineHappy.Set('chart.line', true);
-		    // lineHappy.Set('chart.linewidth', 3);
-	      // //  lineHappy.Set('chart.labels', timeLabels);	   
-			// lineHappy.Set('chart.gutter', 22);
-			// lineHappy.Set('chart.yaxispos', 'right');
-	     	// lineHappy.Set('chart.ymax', 100);
-	     	// lineHappy.Set('chart.colors', [options.colDrunk,options.colHappiness,options.colEnergy]);
-	     // //   lineHappy.Set('chart.filled', true);
-         // //   lineHappy.Set('chart.fillstyle', 'rgba(128,255,128,0.5)');
-          // //  lineHappy.Set('chart.title', 'A range chart');
-       	// //lineHappy.Set('chart.labels',['Time']);
-		 	// lineHappy.Draw();
-        	// Ti.API.info("webview end emotion plotting ");
-		// }
         }
         catch(err){
         	alert('RGraphing error ' + err.message);    

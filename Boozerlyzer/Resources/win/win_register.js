@@ -26,9 +26,11 @@ exports.createApplicationWindow =function(launchType, parent){
 	// var menu = menus;
 	var menu = require('/ui/menu');
 	//need to give it specific help for this screen
-	menu.setHelpContext(Titanium.Android.currentActivity);
-		menu.setHelpMessage(helpMessage);
+	menu.setHelpMessage(helpMessage);
 	
+win.activity.onCreateOptionsMenu = function(event){
+		menu.createMenus(event);
+	};
     /* 
     * Interface 
     */  

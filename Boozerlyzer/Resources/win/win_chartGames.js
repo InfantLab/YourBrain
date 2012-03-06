@@ -24,9 +24,10 @@
 		var menu = require('/ui/menu');
 		//include the menu choices	
 		//need to give it specific help for this screen
-		menu.setHelpContext(Titanium.Android.currentActivity);
-		menu.setHelpMessage("Chart plots game scores against current blood alcohol. Swipe upwards to access controls.");
-		
+		menu.setHelpMessage("Chart plots game scores against the number of drinks or level of blood alcohol. Swipe upwards to access controls.");
+		win.activity.onCreateOptionsMenu = function(event){
+			menu.createMenus(event);
+		};
 		
 		//data variables
 		var xAxis = Titanium.App.Properties.getString('GraphScatterX', 'Blood Alcohol');
@@ -43,7 +44,7 @@
 			left:0,
 			height:'auto',
 			width:'auto',
-			url:'/charts/chartScatterSelfAssessment.html',
+			url:'/charts/chartScatterGameScores.html',
 			zIndex:9
 		});
 		win.add(webView);			
@@ -122,12 +123,12 @@
 				plotEnergy:switchEnergy.value,
 				plotDrunk:switchDrunk.value,
 				//plotStroop:switchStroop.value,
-				colDrinks:switchDrinks.color,
-				colBloodAlcohol:switchBloodAlcohol.color,
-				colHappiness:switchHappiness.color,
-				colEnergy:switchEnergy.color,
-				colDrunk:switchDrunk.color,
-				//colStroop:switchStroop.color
+				colorDrinks:switchDrinks.color,
+				colorBloodAlcohol:switchBloodAlcohol.color,
+				colorTotal:switchHappiness.color,
+				colorSpeed:switchEnergy.color,
+				colorCoord:switchDrunk.color,
+				colorInhibit:switchDrunk.color,
 				MillsPerStandardDrink:dataObject.getStandardDrinks()
 			};
 
@@ -136,9 +137,10 @@
 				options: options,
 				drinkData:gameData.Alcohol_ml,
 				bloodAlcohol:gameData.BloodAlcoholConc,
-				happiness:gameData.Happiness,
-				energy:gameData.Energy,
-				drunkeness:gameData.Drunkeness   			
+				totalScore:gameData.TotalScore,
+				speed:gameData.Speed_GO,
+				coord:gameData.Coord_GO,
+				inhibit:gameData.InhibitionScore			
 			}); 
 			webView.evalJS("paintScatterChart('" + myData + "')");
 		// } catch (err) {

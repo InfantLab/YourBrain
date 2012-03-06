@@ -42,9 +42,11 @@ exports.createApplicationWindow = function(){
 	var menu = require('/ui/menu');
 	
 	//need to give it specific help for this screen
-	menu.setHelpContext(Titanium.Android.currentActivity);
-		menu.setHelpMessage("Click on game icon to start the game.");
-
+	menu.setHelpMessage("Click on game icon to start the game.");
+	
+win.activity.onCreateOptionsMenu = function(event){
+		menu.createMenus(event);
+	};
 	
 	var initialised = false;
 	//keep an array of subviews each containing info for one game

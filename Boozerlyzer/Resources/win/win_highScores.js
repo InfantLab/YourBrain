@@ -16,6 +16,14 @@ exports.createApplicationWindow =function(){
 		backgroundImage:'/images/smallcornercup.png',
 		modal:true
 	});	
+		//include the menu choices	
+	var menu = require('/ui/menu');
+	//need to give it specific help for this screen
+	menu.setHelpMessage("Click on game icons to show high scores for that game. Click on the icon in the top right corner to see current achievement level.");
+	
+win.activity.onCreateOptionsMenu = function(event){
+		menu.createMenus(event);
+	};
 	
 	var dbGameScores = require('/db/gameScores');
 	var commSendData = require('/comm/sendData');
