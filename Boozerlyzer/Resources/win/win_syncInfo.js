@@ -9,7 +9,7 @@
 var dateTimeHelpers = require('/js/dateTimeHelpers');
 
 exports.createApplicationWindow =function(){
-	var win = Titanium.UI.createView({
+	var view = Titanium.UI.createView({
 		top:'10%',
 		height:'auto',
 		left:0,
@@ -28,7 +28,7 @@ exports.createApplicationWindow =function(){
 	    borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
 	    value:Ti.App.Properties.getString('username','' )
 	});  
-	win.add(username);  
+	view.add(username);  
 	  
 	var password = Titanium.UI.createTextField({  
 	    color:'#336699',  
@@ -43,7 +43,7 @@ exports.createApplicationWindow =function(){
 	    borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,  
 	    value:Ti.App.Properties.getString('password','' )
 	});  
-	win.add(password);  
+	view.add(password);  
 	  
 	var loginBtn = Titanium.UI.createButton({  
 	    title:'Login',  
@@ -54,7 +54,7 @@ exports.createApplicationWindow =function(){
 	    borderRadius:1,  
 	    font:{fontFamily:'Arial',fontWeight:'bold',fontSize:14}  
 	});  
-	win.add(loginBtn);  
+	view.add(loginBtn);  
     
     var loginReq = Titanium.Network.createHTTPClient();  
     loginReq.onload = function()  
@@ -78,7 +78,7 @@ exports.createApplicationWindow =function(){
 			Ti.App.Properties.setInt('LastSentID', (response.LastID ? response.LastID : 0));
 			alert('Logged in, response was ' + response.toString());
 	        alert('Logged in successfully!');
-	        //win.close();  
+	        //view.close();  
 	    }  
 	    else  
 	    {  
@@ -120,7 +120,7 @@ exports.createApplicationWindow =function(){
 	    borderRadius:2,  
 	    font:{fontFamily:'Arial',fontWeight:'bold',fontSize:14} 
     });
-    win.add(labelLastSync);
+    view.add(labelLastSync);
     
     
     var buttonSyncNow = Titanium.UI.createButton({
@@ -138,7 +138,7 @@ exports.createApplicationWindow =function(){
 		var updateTime = dateTimeHelpers.prettyDate(Titanium.App.Properties.getInt('LastSentTime', 0));
 		labelLastSync.text = 'Last sync with server - '+  updateTime + '\nRow ID :'+ Titanium.App.Properties.getInt('LastSentID', 0) ;
 	});
-    win.add(buttonSyncNow);
+    view.add(buttonSyncNow);
     
     var checkAutoSync = Titanium.UI.createSwitch({
 		titleOn:'Auto Sync On',
@@ -152,7 +152,7 @@ exports.createApplicationWindow =function(){
     checkAutoSync.addEventListener('click',function(){
 		Titanium.App.Properties.setBool('AutoSync',checkAutoSync.value);
     });
-    win.add(checkAutoSync);
+    view.add(checkAutoSync);
     
-	return win;
+	return view;
 };

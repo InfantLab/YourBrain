@@ -28,9 +28,9 @@ exports.createApplicationWindow =function(launchType, parent){
 	//need to give it specific help for this screen
 	menu.setHelpMessage(helpMessage);
 	
-win.activity.onCreateOptionsMenu = function(event){
-		menu.createMenus(event);
-	};
+// win.activity.onCreateOptionsMenu = function(event){
+		// menu.createMenus(event);
+	// };
     /* 
     * Interface 
     */  

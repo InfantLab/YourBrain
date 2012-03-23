@@ -7,65 +7,23 @@
 
 
 	var win;
-	var e, callbackOnClose, isControlsCreated = false;
-	var containerViewOpenAnimation, containerViewCloseAnimation;
-	var coverViewOpenAnimation, coverViewCloseAnimation;
-	var containerView, coverView;
-	var messageLabel, gameIcon, labPointsIcon, iconSize = 78;
+	var labelTitle,messageLabel, booozerlyzerIcon, gameIcon, iconSize = 144;
 	
 	function createControls(){
-		if (isControlsCreated) {return;}
-
-		coverViewOpenAnimation = Ti.UI.createAnimation({opacity:0.8});
-		coverViewCloseAnimation = Ti.UI.createAnimation({opacity:0});
-		containerViewOpenAnimation = Ti.UI.createAnimation({bottom:0});
-		containerViewCloseAnimation = Ti.UI.createAnimation({bottom:-251});
-
-		containerView = Ti.UI.createView({
-			top:'5%',
-			left:'5%',
-			height:'90%',
-			width:'90%',
-			zIndex:9
-		});
-		containerView.addEventListener('click', function(){
-			exports.close();
-		});		
+		win = Titanium.UI.createWindow({
+			title:'Credits',
+			backgroundImage:'/images/smallcornercup.png',
+			modal:true
+		});	
+		win.orientationModes =  [Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT];	
+	
 		
-		coverView = Ti.UI.createView({
-			top:'5%',
-			left:'5%',
-			height:'90%',
-			width:'90%',
-			backgroundColor:'#000',
-			opacity:1,
-			borderRadius:4,
-			borderWidth:4 ,
-			zIndex:0
-		});
-		// we close this dialog if it is clicked anywhere
-		coverView.addEventListener('click', function(){
-			//e.cancel = true;
-			exports.close();
-		});		
-		win.add(coverView);
-		
-		var labelCredits = Titanium.UI.createLabel({
-			autoLink : Ti.UI.Android.LINKIFY_ALL,
-			color:'#000',
-			text:'Created by  ' + Titanium.App.getURL() + '\nBuilt with  http://appcelerator.com',
-			font:{fontSize:12,fontFamily:'Helvetica Neue'},
-			textAlign:'center',
-			right:00,
-			width:240,
-			bottom:30
-		});
-		homeWin.add(labelCredits);
+
 	
 
 		// 
 		var labelTitle = Ti.UI.createLabel({
-			top:2,
+			top:4,
 			width:'auto',
 			text:'Credits & Acknowledgments',
 			font:{fontSize:28,fontFamily:'Marker Felt',fontWeight:'bold'},
@@ -73,61 +31,57 @@
 			color:'#911'
 		});
 		messageLabel = Ti.UI.createLabel({
-			top:200,
+			autoLink : Ti.UI.Android.LINKIFY_ALL,
+			top:260,
+			left:20,
 			width:'auto',
-			text:'Well played!',
+			text:'Created by  ' + Titanium.App.getURL(),
 			font:{fontSize:18,fontFamily:'Helvetic Neue',fontWeight:'italic'},
 			textAlign:'center',
 			color:'#000'		
 		});
 		booozerlyzerIcon = Ti.UI.createImageView({
-			bottom:'6%',
-			right:'25%',
-			image:'/icons/.png',
-			height:iconSize * 0.8,
-			width:iconSize * 0.8
+			top:40,
+			left:20,
+			image:'/icons/ybob-logo2-sml.png',
+			height:iconSize,
+			width:iconSize
 		});
 		gameIcon = Ti.UI.createImageView({
-			top:'1%',
-			left:'1%',
+			top:40,
+			right:20,
 			image:'/icons/appcelerator_logo-287x227.png',
 			height:iconSize,
 			width:iconSize
 		});
+		var labelCredits = Titanium.UI.createLabel({
+			autoLink : Ti.UI.Android.LINKIFY_ALL,
+			color:'#000',
+			text:'Built with  http://appcelerator.com',
+			font:{fontSize:18,fontFamily:'Helvetica Neue'},
+			textAlign:'center',
+			right:20,
+			width:'auto',
+			top:260
+		});
+		win.add(labelCredits);
 
-
-		containerView.add(labPointsLabel);
-		containerView.add(messageLabel);
-		containerView.add(gameIcon);
-		containerView.add(labPointsIcon);
-		win.add(containerView);		
-		
-		isControlsCreated = true;
+		win.add(labelTitle);
+		win.add(messageLabel);
+		win.add(booozerlyzerIcon);
+		win.add(gameIcon);
 	}
 
 	/**
 	 * Public API
 	 */
-	exports.setParent = function (window){
-		win = window;
-		isControlsCreated = false;
-	};
 	exports.open = function(){	
-		coverView.animate(coverViewOpenAnimation);
-		containerView.animate(containerViewOpenAnimation);
-		containerView.visible = true;
+		createControls();
+		win.open();
+		Ti.API.debug('opened credits dialog');
 	};
 	exports.close = function(){
-		coverView.animate(coverViewCloseAnimation);
-		containerView.animate(containerViewCloseAnimation);
-		containerView.visible = false;
-		if (callbackOnClose){
-			callbackOnClose(e);
-		}
+	
 	};
 
-
-
-	exports.addEventListener = function(eventName, callback){
-		if (eventName=='close') {callbackOnClose = callback;}
-	};
+	

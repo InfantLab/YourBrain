@@ -29,9 +29,9 @@ exports.createApplicationWindow =function(launchType, parent){
 	//need to give it specific help for this screen
 	menu.setHelpMessage(helpMessage);
 	
-win.activity.onCreateOptionsMenu = function(event){
-		menu.createMenus(event);
-	};
+// win.activity.onCreateOptionsMenu = function(event){
+		// menu.createMenus(event);
+	// };
 	// var netprivacy = ['Send data with nickname', 'Send data with anonymous key','Send totally anonymous data' ,'Never send my data'];
 	// var phoneprivacy = ['Store all data', 'Store games scores but not drinking data', 'Never store data'];	
 	var netprivacy = ['Send data with nickname','Never send my data'];

@@ -31,6 +31,11 @@ exports.createApplicationWindow =function(launchType){
 		win.close();
 		winHome.refresh();
 	};
+	var menu = require('/ui/menu');
+	win.activity.onCreateOptionsMenu = function(event){
+		menu.createMenus(event);
+	};
+
 	win.orientationModes =  [Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT];	
 	var viewPersonal = winpersonal.createApplicationWindow(launchType, win, win.goHome);
 	var viewPrivacy = winprivacy.createApplicationWindow(launchType, win);

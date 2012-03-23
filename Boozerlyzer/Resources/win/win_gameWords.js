@@ -45,11 +45,17 @@ exports.createApplicationWindow =function(type,rounds){
 	//include the menu choices	
 	var menu = require('/ui/menu');
 	//need to give it specific help for this screen
-	menu.setHelpMessage("Simply pick which ever words you like best. There are no right answers.");
+	var helpMessage = "Simply pick which ever words you like best. There are no right answers.";
+	menu.setHelpMessage(helpMessage);
 	
-win.activity.onCreateOptionsMenu = function(event){
+	win.activity.onCreateOptionsMenu = function(event){
 		menu.createMenus(event);
 	};
+		//overload the open function to display help dialog
+	win.addEventListener('open', function(){
+		var initialHelp = require('/ui/initialHelpDialog');
+		initialHelp.showNotice('wordGames',helpMessage);
+	});
 	var suggest, labelGameMessage;
 	var choiceTime, roundStarted;
 	var winopened = parseInt((new Date()).getTime()/1000,10);

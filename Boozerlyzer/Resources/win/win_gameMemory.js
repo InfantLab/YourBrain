@@ -29,11 +29,17 @@ exports.createApplicationWindow = function(){
 	// var menu = menus;
 	var menu = require('/ui/menu');
 	//need to give it specific help for this screen
-	menu.setHelpMessage("Press the buttons to advance the images. If two IMAGES are the same press the lower LEFT button. If the LOCATION is the same press the lower RIGHT button. Otherwise press either NO MATCH button. Points are awarded for speed & coordination.");
-	
-win.activity.onCreateOptionsMenu = function(event){
+	var memoryGameHelp = "Press the buttons to advance the images. If two IMAGES are the same press the lower LEFT button. If the LOCATION is the same press the lower RIGHT button. Otherwise press either NO MATCH button. Points are awarded for speed & coordination.";
+	menu.setHelpMessage(memoryGameHelp);
+	win.activity.onCreateOptionsMenu = function(event){
 		menu.createMenus(event);
 	};
+	
+	//overload the open function to display help dialog
+	win.addEventListener('open', function(){
+		var initialHelp = require('/ui/initialHelpDialog');
+		initialHelp.showNotice('memoryGame',memoryGameHelp);
+	});
 	
 	var stimulus, grid;
 	var labelScore, score, labelBonus, bonus, countLabel,nBackLabel,missCountLabel, labelGameMessage;

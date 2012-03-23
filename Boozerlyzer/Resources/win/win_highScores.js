@@ -95,7 +95,6 @@ win.activity.onCreateOptionsMenu = function(event){
 	}
 	
 	var leftPlace = 0;
-	var leftPlaceOriginal = leftPlace;
 	for(var i =0, iMax=choiceImgUrls.length;i<iMax;i++){
 		var imgGame = Ti.UI.createImageView({
 			idx:i,
@@ -219,7 +218,7 @@ win.activity.onCreateOptionsMenu = function(event){
 	
 	//TODO
 	//There ought to be a simple way of wrapping this up as a UI element rather than repeating code in 
-	//every win_.js file but i tried it a few ways and i never got it to work.
+	//every win_.js file but i tried it a few ways and i never got it to work. but i am quite stupid.
 	function goHome(){
 		if (!winHome) {
 			var winmain = require('/win/win_main');

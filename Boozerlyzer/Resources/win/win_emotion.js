@@ -221,6 +221,7 @@
 		// record activity data for right now
 		// and give user 2 lab points for using this screen
 		function gameEndSaveScores(){
+			if (!currentEmotions[0].Changed) {return;}
 			dbSelfAssessment.setData(currentEmotions);
 			dbSessions.Updated(currentSessionID);
 			var gameSaveData = [{Game: 'TrackMood',
@@ -359,7 +360,6 @@
 			}
 			win.close();
 			winHome.open();
-			winHome.refresh();
 		}
 		//invisible button to return home over the cup
 		var homeButton = Titanium.UI.createView({
@@ -373,7 +373,12 @@
 		// Cleanup and return home
 		homeButton.addEventListener('click',goHome);
 		win.addEventListener('android:back', goHome);
-			
+	
+		//overload the open function to display help dialog
+		win.addEventListener('open', function(){
+			var initialHelp = require('/ui/initialHelpDialog');
+			initialHelp.showNotice('selfAssessmentDialog','Move sliders to record your happiness, energy level and estimated drunkeness.');
+		});	
 		win.addEventListener('close', function(){
 			if (loadedonce){
 				//this code only runs when we reload this page

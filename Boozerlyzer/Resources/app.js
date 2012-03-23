@@ -18,7 +18,7 @@ Ti.API.debug('app main 0');
 
 //launch main app
 var winMain = require('/win/win_main'); 
-var winHome = winMain.createApplicationWindow();
+var winHome = winMain.createApplicationWindow(true);
 winHome.open();	
 				
 var registrationNag = Titanium.App.Properties.getInt('RegistrationNag', 0);
@@ -46,7 +46,9 @@ if (registrationNag < 0){
 	var dbGameScores = require('/db/gameScores');
 	dbGameScores.SaveResult(gameSaveData);
 }else if (registrationNag === 0){
-	winHome.fireEvent('showSettings');	
+	var win_myData = require('/win/win_mydata');
+	var winMyData = win_myData.createApplicationWindow();
+	winMyData.open();
 }else{
 	//we will nag them eventually.
 	Titanium.App.Properties.setInt('RegistrationNag', registrationNag - 1);		

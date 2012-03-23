@@ -38,12 +38,16 @@ exports.createApplicationWindow =function(){
 	//include the menu choices	
 	var menu = require('/ui/menu');
 	//need to give it specific help for this screen
-	menu.setHelpMessage("On each step tap on the NUMERICALLY larger value and try to ignore the font-size. Points are awarded for speed, coordination & avoiding errors.");
-	
-win.activity.onCreateOptionsMenu = function(event){
+	var helpMessage = "On each step tap on the NUMERICALLY larger value and try to ignore the font-size. Points are awarded for speed, coordination & avoiding errors.";
+	menu.setHelpMessage(helpMessage);
+	win.activity.onCreateOptionsMenu = function(event){
 		menu.createMenus(event);
 	};
-	
+	//overload the open function to display help dialog
+	win.addEventListener('open', function(){
+		var initialHelp = require('/ui/initialHelpDialog');
+		initialHelp.showNotice('stroopGame',helpMessage);
+	});
 	var labelGameMessage, gameStarted = false, initialised = false;
 	var winopened = parseInt((new Date()).getTime()/1000,10);
 	var useSmallerFonts =  false;

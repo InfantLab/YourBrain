@@ -7,15 +7,9 @@
  * Copyright yourbrainondrugs.net 2011
  */
 
-	exports.createApplicationWindow = function(){
-		var win = Titanium.UI.createWindow({
-			title:'YBOB Boozerlyzer',
-			backgroundImage:'/images/smallcornercup.png',
-			modal:true
-			});	
-		win.orientationModes =  [Titanium.UI.LANDSCAPE_LEFT, Titanium.UI.LANDSCAPE_RIGHT];	
-
-		var winHome, gameData, reloadData;
+	exports.populateGraphView = function(view){
+	
+		var gameData;
 		var  sizeAxisIcon = 48;
 	
 		//add the appropriate requires	
@@ -25,9 +19,7 @@
 		//include the menu choices	
 		//need to give it specific help for this screen
 		menu.setHelpMessage("Chart plots game scores against the number of drinks or level of blood alcohol. Swipe upwards to access controls.");
-		win.activity.onCreateOptionsMenu = function(event){
-			menu.createMenus(event);
-		};
+
 		
 		//data variables
 		var xAxis = Titanium.App.Properties.getString('GraphScatterX', 'Blood Alcohol');
@@ -35,8 +27,9 @@
 		Ti.API.debug('Charts - xAxis ' + xAxis);	
 		
 		function loadData(){	
+			//TODO
+			//find a good way to cache this data when it can be cached.
 			gameData = gameScores.GamePlaySummary(null, null, null, true);
-			reloadData  = false;
 		}
 		
 		var webView = Ti.UI.createWebView({
@@ -47,21 +40,21 @@
 			url:'/charts/chartScatterGameScores.html',
 			zIndex:9
 		});
-		win.add(webView);			
+		view.add(webView);			
 		webView.addEventListener('load', function(e) {
 		    // code that fires AFTER webview has loaded
 		    redrawGraph();
 		 });
 		
 		var xAxisIcon = Ti.UI.createImageView({
-			image:'/icons/teddy_bears.png',
+			image:'/icons/newdrinks.png',
 			height:sizeAxisIcon,
 			width:sizeAxisIcon,
 			bottom:30,
 			right:4,
 			zIndex:10
 		});
-		win.add(xAxisIcon);	
+		view.add(xAxisIcon);	
 		xAxisIcon.addEventListener('click', function(){
 			//click on the time icon to toggle the time axis
 			//and hence the type of graph we plot. 
@@ -87,34 +80,17 @@
 				changeXAxisIcon();
 				redrawGraph();
 			});
-			win.add(labelWeeklyDailyGraph);
+			view.add(labelWeeklyDailyGraph);
 			controlsDrawn = true;
 		}
 		drawGraphControls();
 		
-		/**
-		 * change from daily to hourly graph types.
-		 * if a type is passed in use that otherwise
-		 * toggle from current type to the other.
-		 */
-		function changeXAxisIcon(){
-			var	type = (labelWeeklyDailyGraph.text === "Weekly Graph" ? "Hourly Graph" :"Weekly Graph");
-			if (type === "Weekly Graph"){
-				xAxisIcon.image = '/icons/calendar.png';
-			}else {
-				xAxisIcon.image = '/icons/time.png';
-			}
-			labelWeeklyDailyGraph.text = type;
-			Titanium.App.Properties.setString('GraphScatterX', type);
-			xAxis = type;
-			reloadData  = true; //need to reload the data next time we plot graph
-		}
-		changeXAxisIcon();
+
 		
 		function redrawGraph(){
-			if (reloadData){
-				loadData();
-			}
+			loadData();
+			var stdDrinks = dataObject.getStandardDrinks();
+			var mills = stdDrinks[0].MillilitresPerUnit;
 			//webView has loaded so we can draw our chart
 			var options = {
 				plotDrinks:switchDrinks.value,
@@ -129,7 +105,7 @@
 				colorSpeed:switchEnergy.color,
 				colorCoord:switchDrunk.color,
 				colorInhibit:switchDrunk.color,
-				MillsPerStandardDrink:dataObject.getStandardDrinks()
+				MillsPerStandardDrink:mills
 			};
 
 			
@@ -152,7 +128,7 @@
 		//listen for errors from webView
 		webView.addEventListener("error", function(e){
 		    Ti.API.log("Error: " + e.message);
-		//do something
+			//do something
 			alert('Charting error ' + e.message);
 		});
 	
@@ -174,7 +150,7 @@
 			Ti.App.Properties.setBool('switchDrinks', switchDrinks.value);
 			redrawGraph();
 		});
-		win.add(switchDrinks);
+		view.add(switchDrinks);
 		var switchBloodAlcohol = Ti.UI.createSwitch({
 			style : Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
 			title: 'Blood Alcohol',
@@ -188,7 +164,7 @@
 			Ti.App.Properties.setBool('switchBloodAlcohol', switchBloodAlcohol.value);
 			redrawGraph();
 		});
-		win.add(switchBloodAlcohol);
+		view.add(switchBloodAlcohol);
 		
 		var switchHappiness = Ti.UI.createSwitch({
 			style : Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
@@ -203,7 +179,7 @@
 			Ti.App.Properties.setBool('switchHappiness', switchHappiness.value);
 			redrawGraph();
 		});
-		win.add(switchHappiness);
+		view.add(switchHappiness);
 		
 		var switchEnergy = Ti.UI.createSwitch({
 			style : Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
@@ -218,7 +194,7 @@
 			Ti.App.Properties.setBool('switchEnergy', switchEnergy.value);
 			redrawGraph();
 		});
-		win.add(switchEnergy);
+		view.add(switchEnergy);
 		
 		var switchDrunk = Ti.UI.createSwitch({
 			style : Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
@@ -233,7 +209,7 @@
 			Ti.App.Properties.setBool('switchDrunk', switchDrunk.value);
 			redrawGraph();
 		});
-		win.add(switchDrunk);
+		view.add(switchDrunk);
 		
 		var labelMenu = Ti.UI.createLabel({
 			color:'white',
@@ -245,61 +221,22 @@
 			height:'auto',
 			width:'auto'
 		});
-		win.add(labelMenu);
+		view.add(labelMenu);
 		
-		
-		//cludge to implement vertical swipe on android
-		var	webViewSwipeUpAnimation = Ti.UI.createAnimation({bottom:400,duration:500});
-		var	webViewSwipeDownAnimation = Ti.UI.createAnimation({bottom:60,duration:500});
-		var y_start;
-		 // And then my swipe function:
-		function swipe(e) {
-			Ti.API.debug('webview swipe - e.direction ' + e.direction );
-		    if (e.direction === 'down') {
-				Ti.API.debug("charts swipe down");
-				webView.animate(webViewSwipeDownAnimation);
-				webView.show();
-		    } else { 
-				Ti.API.debug("charts swipe up");
-				webView.animate(webViewSwipeUpAnimation);
-		    }
-		}
-		win.addEventListener('touchstart', function (e) {
-		    y_start = e.y;
+		var settingsButton = Ti.UI.createButton({
+			title:'Change..',
+			width:70,
+			height:28,
+			bottom:4,
+			right:4,
+			backgroundColor:'grey'
 		});
-		win.addEventListener('touchend', function (e) {
-		    if (e.y - y_start > 20) {
-		        swipe({direction: 'down'});
-		    } else if (e.y - y_start < -20)  {
-		        swipe({direction: 'up'});
-		    }
+		view.add(settingsButton);
+		settingsButton.addEventListener('click',function(){
+			//show the analysis settings screen.
+			Titanium.App.Properties.setString('ChartType', 'Settings');
+			var chartMenu = require('/win/win_chartMenu');
+			chartMenu.switchChartView();
 		});
-		 
-		
-		
-	//TODO
-	//There ought to be a simple way of wrapping this up as a UI element rather than repeating code in 
-	//every win_.js file but i tried it a few ways and i never got it to work.
-	function goHome(){
-		if (!winHome) {
-			var winmain = require('/win/win_main');
-			winHome = winmain.createApplicationWindow();
-		}
-		win.close();
-		winHome.open();
-	}
-		//invisible button to return home over the cup
-	var homeButton = Titanium.UI.createView({
-								image:'/icons/transparenticon.png',
-								bottom:0,
-							    left:0,
-							    width:30,
-							    height:60
-						    });
-	win.add(homeButton);
-	homeButton.addEventListener('click',goHome);
-	// Cleanup and return home
-	win.addEventListener('android:back', goHome);
-	
-	return win;
+		return view;
 	};

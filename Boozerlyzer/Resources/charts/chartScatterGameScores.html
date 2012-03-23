@@ -46,7 +46,7 @@
 	    if (options.plotDrinks){
 			drinkData = asobj.drinkData;
 			drinkText = 'number of drinks';
-			unitSize = asobj.MillsPerStandardDrink;   	
+			unitSize = options.MillsPerStandardDrink;     	
 	    }else{
 			drinkData = asobj.bloodAlcohol;
 			drinkText = 'blood alcohol conc.';
@@ -58,7 +58,7 @@
 		
 		var len = drinkData.length;
 		var totalPoints = [],speedPoints = [],coordPoints = [],inhibitPoints = [];
-		var maxDrink = 0,maxPoints = 0, maxSpeed = 0, maxCoord = 0,maxInhibit = 0;
+		var maxDrink = 0.1,maxPoints = 0.1, maxSpeed = 0.1, maxCoord = 0.1,maxInhibit = 0.1;
 		for (var i = 0; i < len; i++) {
 			//also find max number of drinks in this session
 			var thisDrink  = drinkData[i] / unitSize;
@@ -72,8 +72,15 @@
 			coordPoints.push([thisDrink,asobj.coord[i],asobj.colorCoord]);
 			inhibitPoints.push([thisDrink,asobj.inhibit[i],asobj.colorInhibit]);
 		}
-		
-
+		for (i =0; i < len; i=i+10){
+			Ti.API.debug('inhibit ' +i + ' ' + asobj.inhibit[i]);
+		}
+		Ti.API.debug('totalPoints length ' + totalPoints.length);	
+		Ti.API.debug('speedPoints length ' + speedPoints.length);	
+		Ti.API.debug('coordPoints length ' + coordPoints.length);	
+		Ti.API.debug('inhibitPoints length ' + inhibitPoints.length);	
+		Ti.API.debug('maxInhibit  '  + maxInhibit);
+	
 			
 	 	if (options.plotDrinks || options.plotBloodAlcohol){
 			Ti.API.info("webview start drink plotting ");
@@ -82,10 +89,10 @@
 			scatterGraph.Set('chart.background.barcolor1','white');
 			scatterGraph.Set('chart.background.barcolor2', 'white');
 			scatterGraph.Set('chart.grid.color', 'rgba(238,238,238,1)');
-			scatterGraph.Set('chart.ymax', maxPoints * 1.05); 
+			scatterGraph.Set('chart.ymax', maxPoints * 1.02); 
 			scatterGraph.Set('chart.xmax', maxDrink); // Important!
 			scatterGraph.Set('chart.title','Game Score vs ' + drinkText);
-			scatterGraph.Set('chart.title.size',16);
+			scatterGraph.Set('chart.title.size',12);
 			scatterGraph.Set('chart.tickmarks', 'circle');
 			scatterGraph.Draw();
 			
@@ -93,30 +100,30 @@
 			scatterGraph2.Set('chart.background.barcolor1','white');
 			scatterGraph2.Set('chart.background.barcolor2', 'white');
 			scatterGraph2.Set('chart.grid.color', 'rgba(238,238,238,1)');
-			scatterGraph2.Set('chart.ymax', maxSpeed * 1.05); 
+			scatterGraph2.Set('chart.ymax', maxSpeed * 1.02); 
 			scatterGraph2.Set('chart.xmax', maxDrink); // Important!
 			scatterGraph2.Set('chart.title','Speed vs ' + drinkText);
-			scatterGraph2.Set('chart.title.size',16);
+			scatterGraph2.Set('chart.title.size',12);
 			scatterGraph2.Draw();
 			
 			var scatterGraph3 = new RGraph.Scatter('myScatterCoordination', coordPoints);
 			scatterGraph3.Set('chart.background.barcolor1','white');
 			scatterGraph3.Set('chart.background.barcolor2', 'white');
 			scatterGraph3.Set('chart.grid.color', 'rgba(238,238,238,1)');
-			scatterGraph3.Set('chart.ymax', maxPoints * 1.05); 
+			scatterGraph3.Set('chart.ymax', maxCoord * 1.02); 
 			scatterGraph3.Set('chart.xmax', maxDrink); // Important!
 			scatterGraph3.Set('chart.title','Coordination vs ' + drinkText);
-			scatterGraph3.Set('chart.title.size',16);
+			scatterGraph3.Set('chart.title.size',12);
 			scatterGraph3.Draw();
 			
 			var scatterGraph4 = new RGraph.Scatter('myScatterInhibition', inhibitPoints);
 			scatterGraph4.Set('chart.background.barcolor1','white');
 			scatterGraph4.Set('chart.background.barcolor2', 'white');
 			scatterGraph4.Set('chart.grid.color', 'rgba(238,238,238,1)');
-			scatterGraph4.Set('chart.ymax', maxPoints * 1.05); 
+			scatterGraph4.Set('chart.ymax', maxInhibit * 1.02); 
 			scatterGraph4.Set('chart.xmax', maxDrink); // Important!
 			scatterGraph4.Set('chart.title','Inhibition vs ' + drinkText);
-			scatterGraph4.Set('chart.title.size',16);
+			scatterGraph4.Set('chart.title.size',12);
 			scatterGraph4.Draw();
 			
 			Ti.API.info("webview end drink plotting ");

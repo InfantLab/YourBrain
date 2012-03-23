@@ -37,15 +37,20 @@ exports.createApplicationWindow =function(){
 	//include the menu choices	
 	var menu = require('/ui/menu');
 	//need to give it specific help for this screen
-	menu.setHelpMessage("Tap on the animals as fast as they appear. But if animal is upside down, tap as far away from it as possible. Points are awarded for speed, coordination & avoiding errors.");
-	
-win.activity.onCreateOptionsMenu = function(event){
+	var helpMessage = "Tap on the animals as fast as they appear. But if animal is upside down, tap as far away from it as possible. Points are awarded for speed, coordination & avoiding errors.";
+	menu.setHelpMessage(helpMessage);
+	win.activity.onCreateOptionsMenu = function(event){
 		menu.createMenus(event);
 	};
+		//overload the open function to display help dialog
+	win.addEventListener('open', function(){
+		var initialHelp = require('/ui/initialHelpDialog');
+		initialHelp.showNotice('raccoonGame',helpMessage);
+	});
 	
 	win.idx = -1;
 	
-	var currentObj = 0, previousObj = 0, startTime = 0,stepStartTime = 0, proportionInverted = 0.1;
+	var currentObj = 0, previousObj = 0, startTime = 0,stepStartTime = 0, proportionInverted = 0.2;
 	var gameStarted = false, clicked = false, inverted = false, dialogOpen = false, shrinkTime = 5000; // how long does this blob stay visible?
 	var points = 0, coordbonus = 0, speedbonus = 0, inhibitbonus = 0;
 	var count_GO, miss_GO, count_NOGO, miss_NOGO;

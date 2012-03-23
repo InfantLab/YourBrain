@@ -259,8 +259,7 @@ exports.createApplicationWindow =function(type){
 		choiceLabel.visible = false;
 		lastchangedLabel.visible = true;
 	}
-	
-win.activity.onCreateOptionsMenu = function(event){
+	win.activity.onCreateOptionsMenu = function(event){
 		menu.createMenus(event);
 	};
 	
@@ -294,18 +293,6 @@ win.activity.onCreateOptionsMenu = function(event){
 	// Cleanup and return home
 	win.addEventListener('android:back', goHome);
 	
-	// var infoButton = Titanium.UI.createView({
-		// image:'/icons/dark_info.png',
-		// top:0,
-	    // left:0,
-	    // width:40,
-	    // height:40
-    // });
-	// win.add(infoButton);
-	// infoButton.addEventListener('click',showMenu);
-	// function showMenu(){
-// 		
-	// }
-	
+
 	return win;
 };

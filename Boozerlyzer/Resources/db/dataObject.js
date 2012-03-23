@@ -47,6 +47,7 @@ exports.getStandardDrinks = function(){
 		var persinfo = exports.getPersonalInfo();
 		_StandardDrinks = dbAlcoholStandardUnits.get(persinfo.Country);
 	}
+	Ti.API.debug('getStandardDrinks: ' + JSON.stringify(_StandardDrinks));
 	return _StandardDrinks;
 };
 

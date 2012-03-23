@@ -36,9 +36,6 @@ exports.createApplicationWindow =function(launchType, parent){
 	//need to give it specific help for this screen
 	menu.setHelpMessage(helpMessage);
 	
-win.activity.onCreateOptionsMenu = function(event){
-		menu.createMenus(event);
-	};
 	
 	var monthYearPickerDialog = require('/ui/picker_monthyear');
 	monthYearPickerDialog.setParent(win);

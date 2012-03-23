@@ -41,19 +41,19 @@
 	    if (options.plotDrinks){
 			drinkData = asobj.drinkData;
 			drinkText = 'Number of standard drinks';
-			unitSize = asobj.MillsPerStandardDrink;   	
+			unitSize = options.MillsPerStandardDrink;   	
 	    }else{
 			drinkData = asobj.bloodAlcohol;
 			drinkText = 'blood alcohol concentration';
 			unitSize = 1;
 	    }
-		// var happiness = asobj.happiness;
 
 		
 		Ti.API.info("scattergraph units - " + JSON.stringify(unitSize));
 		
 		
 		var len = drinkData.length;
+		Ti.API.debug("drinkData.length " + len);
 		var happinessPoints = [],energyPoints = [],drunkenessPoints = [];
 		var maxDrink = 0;
 		for (var i = 0; i < len; i++) {
@@ -66,7 +66,7 @@
 		}
 		
 
-			
+		Ti.API.debug("about to plot selfassessment scatterplot");	
 	 	if (options.plotDrinks || options.plotBloodAlcohol){
 			Ti.API.info("webview start drink plotting ");
 		

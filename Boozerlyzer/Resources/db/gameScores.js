@@ -269,7 +269,7 @@
 								   scoreData[i].Speed_Nogo,
 								   scoreData[i].Coord_GO,
 								   scoreData[i].Coord_NOGO, 
-								   scoreData[i].InhibtionScore, 
+								   scoreData[i].InhibitionScore, 
 
 								   scoreData[i].MemoryScore,
 								   scoreData[i].Level,

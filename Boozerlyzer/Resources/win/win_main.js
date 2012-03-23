@@ -8,14 +8,15 @@
  * Copyright yourbrainondrugs.net 2011
  */
 
-	
+	var homeWin, winCreated;
 	//Create the main application window
-	exports.createApplicationWindow = function(_args) {
+	exports.createApplicationWindow = function(forceLoad) {
+		if (!forceLoad && winCreated) {return homeWin;}
 		// var menu = require('/ui/menu');
 		// //need to give menu object specific help for this screen
 		// menu.setHelpMessage("Click on the icons to add new drinks, launch games, etc.");
 		//the start screen for the YBOB boozerlyzer
-		var homeWin = Titanium.UI.createWindow({
+		homeWin = Titanium.UI.createWindow({
 			exitOnClose: true,
 			title:'YBOB Boozerlyzer',
 			backgroundImage:'/images/smallcornercup.png',
@@ -35,8 +36,6 @@
 		var gameScores = require('/db/gameScores');
 		var dbSessions  = require('/db/sessions');
 		var dateTimeHelpers = require('/js/dateTimeHelpers');
-		var levelUpDialog = require('/ui/levelUpDialog');
-		var win_myData = require('/win/win_mydata');
 		var menu = require('/ui/menu');
 
 		//need to give menu object specific help for this screen
@@ -52,7 +51,7 @@
 		Titanium.App.Properties.setBool('MateMode',false); 
 		
 		var session;
-		var loadedonce = false;
+		
 		
 		// layout variables
 		var bigIcons = 76, leftAppName = 20, leftNewDrinks = 20, leftEmotion = 100, leftTripReport = 180, leftGame = 240;
@@ -92,6 +91,7 @@
 			left:optionsLeft
 		});
 		personalinfo.addEventListener('click',function(){
+			var win_myData = require('/win/win_mydata');
 			var winMyData = win_myData.createApplicationWindow();
 			winMyData.open();
 		}); 
@@ -166,7 +166,7 @@
 		
 		report.addEventListener('click',function(){
 			//var win_charts = require('/win/win_charts');
-			var win_charts = require('/win/win_chartGames');
+			var win_charts = require('/win/win_chartMenu');
 			var winCharts = win_charts.createApplicationWindow();
 			winCharts.home = homeWin; //reference to home
 			winCharts.addEventListener('close',homeWin.refresh);				
@@ -421,12 +421,13 @@
 		}
 		
 		function checkLevelUp(){
-			if (!loadedonce) {return;}
+			if (!winCreated) {return;}
 			Ti.API.debug('checkLevelUp');
 			var labPoints = gameScores.TotalPoints(); 
 			Ti.API.debug(JSON.stringify(labPoints));
 			if (labPoints[0].Total > Ti.App.Properties.getInt('NextLevel',50)){
 				Ti.API.debug('checkLevelUp2');
+				var levelUpDialog = require('/ui/levelUpDialog');
 				levelUpDialog.setParent(homeWin);
 				levelUpDialog.levelUp( labPoints[0].Total);
 				levelUpDialog.addEventListener('close', function(e){
@@ -438,38 +439,23 @@
 				levelUpDialog.open();
 			}
 		}
-
-		
-		//every 10th call it tries to send data to boozerlyzer.net
-		function autoSendData(){
-			sendData.autoSync();
-		}
 		
 		homeWin.refresh = function(){
 			Ti.API.debug('homeWin refresh');
-			//menu.setHelpContext(homeWin);
-		// menu.setHelpMessage("Click on the icons to add new drinks, launch games, etc.");
 			rewriteSessionInfo();	
 			rewriteUnitsBAC();	
 			rewriteLabPoints();
 			checkLevelUp();
-			autoSendData();
+			//every 10th call it tries to send data to boozerlyzer.net
+			sendData.autoSync();
 		};
-
 		homeWin.refresh();
-		loadedonce = true;
-
-		homeWin.addEventListener('homeWinRefresh',homeWin.refresh);
-		// homeWin.addEventListener('showSettings',menu.showSettingsScreen);
-						
-		homeWin.addEventListener('focused', function(){
-			Ti.API.debug('homeWin got focus');
-			if (loadedonce){
-				//this code only runs when we reload this page
-				homeWin.refresh();
-			}
-		});
+		
+	
 		Ti.API.debug('homeWin loaded');
+		
+		
+		winCreated = true;
 		return homeWin;
 	}; 
 

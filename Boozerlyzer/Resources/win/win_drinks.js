@@ -677,6 +677,14 @@ var millsPerStandardUnits = standardDrinks[0].MillilitresPerUnit;
 		// Cleanup and return home
 		win.addEventListener('android:back', goHome);
 		
+		
+		//overload the open function to display help dialog
+		win.addEventListener('open', function(){
+			var initialHelp = require('/ui/initialHelpDialog');
+			initialHelp.showNotice('drinkDialog','Click on the different drinks to add them to your total.  You can click on list entires to edit them.');
+		});
+		
+		
 		win.addEventListener('close', function(){
 			if (loadedonce){
 				//this code only runs when we close this page
@@ -686,6 +694,8 @@ var millsPerStandardUnits = standardDrinks[0].MillilitresPerUnit;
 				
 		loadedonce = true;
 		updateDrinks();
+		
+
 		return win;
 	};
 	
