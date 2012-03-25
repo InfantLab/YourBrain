@@ -378,7 +378,7 @@
 		{
 			if (e.index === 0) {
 				switchSession(true);
-				rewriteSessionInfo();
+				homeWin.refresh();
 			}
 		});
 
@@ -390,7 +390,7 @@
 			session = dbSessions.getLatestData(0);
 			if (session === null || session === false){
 				switchSession(true);
-				rewriteSessionInfo();
+				homeWin.refresh();
 			}
 				
 		}
@@ -405,7 +405,7 @@
 		}else{
 			//>36 hours since last update, don't ask just start new
 			switchSession(true);
-			rewriteSessionInfo();
+			homeWin.refresh();
 		} 
 		Ti.API.debug('homeWin 3');
 

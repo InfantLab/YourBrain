@@ -170,6 +170,7 @@ exports.createApplicationWindow =function(){
 		 	Ti.API.debug('Game Start');
 			if (!gameStarted){
 				gameStarted = true;
+				resetScores();
 				nextStep();
 			}
 		});

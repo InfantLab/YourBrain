@@ -56,21 +56,34 @@ exports.createApplicationWindow = function(){
 	return win;
 };
 
-
+var viewGraphContainer ;
 exports.switchChartView = function(){
-	var viewFound = false;
-	var visibleChart = Titanium.App.Properties.getString('ChartType','Settings');
-	for (var viewName in viewCollection){
-		if (viewName === visibleChart){
-			//make this view visible
-			viewFound = true;
-			viewCollection[viewName].visible = true;
-		}else{
-			//and all others invisible
-			viewCollection[viewName].visible = false;
+	
+	if (viewGraphContainer){
+		//remove old version
+		//first remove its children
+		while (viewGraphContainer.children.length){
+			viewGraphContainer.remove(viewGraphContainer.children[0]);
 		}
+		//then remove view itself
+		win.remove(viewGraphContainer);
+		viewGraphContainer = null;
 	}
-	if (!viewFound){
+	// var viewFound = false;
+	var visibleChart = Titanium.App.Properties.getString('ChartType','Settings');
+	// for (var viewName in viewCollection){
+		// if (viewName === visibleChart){
+			// //make this view visible
+			// viewFound = true;
+			// Ti.API.debug('viewFound ' + viewName);
+			// viewCollection[viewName].visible = true;
+		// }else{
+			// //and all others invisible
+			// viewCollection[viewName].visible = false;
+		// }
+	// }
+	// if (!viewFound){
+		var chart;
 		//need to add new view
 		switch  (visibleChart){
 			case 'Time':
@@ -82,27 +95,25 @@ exports.switchChartView = function(){
 			case 'SelfAssessment':
 			  chart = require('/ui/chartSelfAssessment');
 			  break;
-  			case 'Settings':
+			case 'Settings':
 			  chart = require('/ui/chartSettings');
 			  break;
 			default:
 			  chart = require('/ui/chartSettings');
 		}
-		var viewGraphContainer = Ti.UI.createView({
+		viewGraphContainer = Ti.UI.createView({
 			bottom:0,
 			left:0,
 			height:'auto',
 			width:'auto'
 		});
+		Ti.API.debug('view created ' + visibleChart);
 		win.add(viewGraphContainer);
-		viewCollection[visibleChart] = viewGraphContainer;
+		// viewCollection[visibleChart] = viewGraphContainer;
 		chart.populateGraphView(viewGraphContainer);	
-	}	
+	// }	
 
 
-	
-	//clear the current contents of the view
-	//add in the new controls
-		
+			
 };		
 
