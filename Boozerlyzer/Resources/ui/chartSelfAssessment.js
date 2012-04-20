@@ -9,7 +9,7 @@
 
 	exports.populateGraphView = function(view){
 	
-		var gameData, reloadData;
+		var gameData;
 		var  sizeAxisIcon = 48;
 	
 		//add the appropriate requires	
@@ -18,17 +18,11 @@
 		var menu = require('/ui/menu');
 		//include the menu choices	
 		//need to give it specific help for this screen
-		menu.setHelpMessage("Chart plots game scores against the number of drinks or level of blood alcohol. Swipe upwards to access controls.");
+		menu.setHelpMessage("Chart plots mood scores against the number of drinks or level of blood alcohol. Swipe upwards to access controls.");
 
-		
-		//data variables
-		var xAxis = Titanium.App.Properties.getString('GraphScatterX', 'Blood Alcohol');
-		var yAxis = Titanium.App.Properties.getString('GraphScatterY', 'Happiness');
-		Ti.API.debug('Charts - xAxis ' + xAxis);	
-		
+
 		function loadData(){	
 			gameData = gameScores.GamePlaySummary(null, null, null, true);
-			reloadData  = false;
 		}
 		
 		var webView = Ti.UI.createWebView({
@@ -46,7 +40,7 @@
 		 });
 		
 		var xAxisIcon = Ti.UI.createImageView({
-			image:'/icons/teddy_bears.png',
+			image:'/icons/newdrinks.png',
 			height:sizeAxisIcon,
 			width:sizeAxisIcon,
 			bottom:30,
@@ -54,59 +48,57 @@
 			zIndex:10
 		});
 		view.add(xAxisIcon);	
-		xAxisIcon.addEventListener('click', function(){
-			//click on the time icon to toggle the time axis
-			//and hence the type of graph we plot. 
-			changeXAxisIcon();
-			redrawGraph();
-		});
+		// xAxisIcon.addEventListener('click', function(){
+			// //click on the time icon to toggle the time axis
+			// //and hence the type of graph we plot. 
+			// changeXAxisIcon();
+			// redrawGraph();
+		// });
 		
-		var labelWeeklyDailyGraph, controlsDrawn = false; 
+		// var labelWeeklyDailyGraph, controlsDrawn = false; 
 		
-		function drawGraphControls(){	
-			//appdebugsteps +='drawGraphControls ..';
-			if (controlsDrawn) { return;}
+		// function drawGraphControls(){	
+			// //appdebugsteps +='drawGraphControls ..';
+			// if (controlsDrawn) { return;}
+// 		
+			// labelWeeklyDailyGraph = Ti.UI.createLabel({
+				// title: 'Weekly Graph',
+				// font:{fontSize:12,fontWeight:'bold'},
+				// bottom : 90,
+				// right: 10,
+				// value:true,
+				// color:'black'
+			// });
+			// labelWeeklyDailyGraph.addEventListener('change', function(){
+				// changeXAxisIcon();
+				// redrawGraph();
+			// });
+			// view.add(labelWeeklyDailyGraph);
+			// controlsDrawn = true;
+		// }
+		// drawGraphControls();
 		
-			labelWeeklyDailyGraph = Ti.UI.createLabel({
-				title: 'Weekly Graph',
-				font:{fontSize:12,fontWeight:'bold'},
-				bottom : 90,
-				right: 10,
-				value:true,
-				color:'black'
-			});
-			labelWeeklyDailyGraph.addEventListener('change', function(){
-				changeXAxisIcon();
-				redrawGraph();
-			});
-			view.add(labelWeeklyDailyGraph);
-			controlsDrawn = true;
-		}
-		drawGraphControls();
-		
-		/**
-		 * change from daily to hourly graph types.
-		 * if a type is passed in use that otherwise
-		 * toggle from current type to the other.
-		 */
-		function changeXAxisIcon(){
-			var	type = (labelWeeklyDailyGraph.text === "Weekly Graph" ? "Hourly Graph" :"Weekly Graph");
-			if (type === "Weekly Graph"){
-				xAxisIcon.image = '/icons/calendar.png';
-			}else {
-				xAxisIcon.image = '/icons/time.png';
-			}
-			labelWeeklyDailyGraph.text = type;
-			Titanium.App.Properties.setString('GraphScatterX', type);
-			xAxis = type;
-			reloadData  = true; //need to reload the data next time we plot graph
-		}
-		changeXAxisIcon();
+		// /**
+		 // * change from daily to hourly graph types.
+		 // * if a type is passed in use that otherwise
+		 // * toggle from current type to the other.
+		 // */
+		// function changeXAxisIcon(){
+			// var	type = (labelWeeklyDailyGraph.text === "Weekly Graph" ? "Hourly Graph" :"Weekly Graph");
+			// if (type === "Weekly Graph"){
+				// xAxisIcon.image = '/icons/calendar.png';
+			// }else {
+				// xAxisIcon.image = '/icons/time.png';
+			// }
+			// labelWeeklyDailyGraph.text = type;
+			// Titanium.App.Properties.setString('GraphScatterX', type);
+			// xAxis = type;
+			// reloadData  = true; //need to reload the data next time we plot graph
+		// }
+		// changeXAxisIcon();
 		
 		function redrawGraph(){
-			if (reloadData){
-				loadData();
-			}
+			loadData();
 			var stdDrinks = dataObject.getStandardDrinks();
 			var mills = stdDrinks[0].MillilitresPerUnit;
 			Ti.API.debug('selfassessment stdDrinks mills ' + mills);
@@ -114,14 +106,14 @@
 			var options = {
 				plotDrinks:switchDrinks.value,
 				plotBloodAlcohol:switchBloodAlcohol.value,
-				plotHappiness:switchHappiness.value,
-				plotEnergy:switchEnergy.value,
-				plotDrunk:switchDrunk.value,
+				// plotHappiness:switchHappiness.value,
+				// plotEnergy:switchEnergy.value,
+				// plotDrunk:switchDrunk.value,
 				//plotStroop:switchStroop.value,
-				colorTotal:switchHappiness.color,
-				colorSpeed:switchEnergy.color,
-				colorCoord:switchDrunk.color,
-				colorInhibit:switchDrunk.color,
+				// colorTotal:switchHappiness.color,
+				// colorSpeed:switchEnergy.color,
+				// colorCoord:switchDrunk.color,
+				// colorInhibit:switchDrunk.color,
 				MillsPerStandardDrink:mills
 			};
 
@@ -167,7 +159,7 @@
 		font:{fontSize:12,fontWeight:'bold'},
 		bottom :20,
 		left: 60,
-		value:Ti.App.Properties.getBool('switchDrinks',true),
+		value:Ti.App.Properties.getBool('switchSelfAssessementXAxisDrinks',true),
 		color:'green'
 	});
 	switchDrinks.addEventListener('change', function(){
@@ -190,49 +182,6 @@
 	});
 	view.add(switchBloodAlcohol);
 		
-	var switchHappiness = Ti.UI.createSwitch({
-		style : Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
-		title: 'Happiness',
-		font:{fontSize:12,fontWeight:'bold'},
-		bottom : 20,
-		left: 166,
-		value:Ti.App.Properties.getBool('switchHappiness',true),
-		color:'yellow'
-	});
-	switchHappiness.addEventListener('change', function(){
-		Ti.App.Properties.setBool('switchHappiness', switchHappiness.value);
-		redrawGraph();
-	});
-	view.add(switchHappiness);
-	
-	var switchEnergy = Ti.UI.createSwitch({
-		style : Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
-		title: 'Energy',
-		font:{fontSize:12,fontWeight:'bold'},
-		bottom : 0,
-		left: 166,
-		value:Ti.App.Properties.getBool('switchEnergy',true),
-		color:'cyan'
-	});
-	switchEnergy.addEventListener('change', function(){
-		Ti.App.Properties.setBool('switchEnergy', switchEnergy.value);
-		redrawGraph();
-	});
-	view.add(switchEnergy);
-	
-	var switchDrunk = Ti.UI.createSwitch({
-		style : Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
-		title: 'Drunkeness',
-		font:{fontSize:12,fontWeight:'bold'},
-		bottom :10,
-		left: 266,
-		value:Ti.App.Properties.getBool('switchDrunk',true),
-		color:'purple'
-	});
-	switchDrunk.addEventListener('change', function(){
-		Ti.App.Properties.setBool('switchDrunk', switchDrunk.value);
-		redrawGraph();
-	});
-	view.add(switchDrunk);
-		return view;
+
+	return view;
 	};

@@ -84,7 +84,7 @@ exports.createApplicationWindow =function(type){
 		Ti.API.debug('Trip Report gameEndSaveScores');
 		
 		var gameSaveData = [{Game: reportType,
-							GameVersion:1,
+							GameVersion:2,
 							PlayStart:winOpened ,
 							PlayEnd: parseInt((new Date()).getTime()/1000, 10),
 							TotalScore:0,
@@ -118,6 +118,7 @@ exports.createApplicationWindow =function(type){
 	save.addEventListener('click',function(){
 		dbSessions.Updated(SessionID);
 		dbTripReports.setData(currentTripReport);
+		gameEndSaveScores()
 		goHome();	
 	});	
 	
@@ -171,7 +172,6 @@ exports.createApplicationWindow =function(type){
 		var win_drinks = require('/win/win_drinks');
 		var winDrinks = win_drinks.createApplicationWindow();
 		winDrinks.open();
-		gameEndSaveScores();
 		win.close();
 	});
 	win.add(newdrinks);
@@ -187,7 +187,6 @@ exports.createApplicationWindow =function(type){
 		var win_emotion = require('/win/win_emotion');
 		var winEmotion = win_emotion.createApplicationWindow();
 		winEmotion.open();
-		gameEndSaveScores();
 		win.close();
 	});
 	win.add(newmood);
@@ -270,7 +269,6 @@ exports.createApplicationWindow =function(type){
 	});
 	
 	function goHome(){
-		gameEndSaveScores();
 		if (!winHome) {
 			var winmain = require('/win/win_main');
 			winHome = winmain.createApplicationWindow();

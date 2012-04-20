@@ -27,7 +27,7 @@
 			zIndex:0
 		});
 		
-		coverViewOpenAnimation = Ti.UI.createAnimation({opacity:0.7});
+		coverViewOpenAnimation = Ti.UI.createAnimation({opacity:0.9});
 		coverViewCloseAnimation = Ti.UI.createAnimation({opacity:0});
 		containerViewOpenAnimation = Ti.UI.createAnimation({bottom:0});
 		containerViewCloseAnimation = Ti.UI.createAnimation({bottom:-251});
@@ -74,7 +74,7 @@
 		});
 		win.add(coverView);
 
-		containerView = Ti.UI.createView({height:251, bottom:-251, zIndex:9});
+		containerView = Ti.UI.createView({height:251, width:300,bottom:-251, zIndex:9});
 		containerView.add(picker);
 		containerView.add(doneButton);
 		containerView.add(cancelButton);

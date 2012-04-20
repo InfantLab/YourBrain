@@ -26,7 +26,7 @@ if (registrationNag < 0){
 	//launch main app	
 	Ti.API.debug('Boozerlyzer Started');
 	var gameSaveData = [{Game: 'Boozerlyzer Started',
-				GameVersion:1,
+				GameVersion:2,
 				PlayStart:parseInt((new Date()).getTime()/1000,10) ,
 				PlayEnd: 0,
 				TotalScore:0,

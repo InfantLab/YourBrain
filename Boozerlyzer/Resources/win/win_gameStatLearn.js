@@ -69,29 +69,33 @@ exports.createApplicationWindow =function(){
 			return;
 		}
 		clicked = true;
-		
-		
 		var idx = parseInt(e.source.idx,10);
 		Ti.API.debug('idx:' + idx);
-		var cen = e.source.center;
-		//need the click in global coordinates
+		
+		var cent = {x:0,y:0};
 		var globalCoords = {x:0,y:0}; 
 		if (idx < 0 ){
 			globalCoords.x = e.x;
 			globalCoords.y = e.y;
+			//TODO  fix this so uses proper center of current object
+			cent.x = imgleft[currentObj] ;
+			cent.y = imgtop[currentObj] ;
 		}else{
+			//need the click and object center in global coordinates
 			globalCoords.x = e.x + imgleft[idx];
 			globalCoords.y = e.y + imgtop[idx];
+			cent.x = e.source.left + 0.5 * e.source.width;
+			cent.y = e.source.top + 0.5 * e.source.height;
 		}
 		Ti.API.debug("whatClicked x,y " + e.x + ", " + e.y  );
+		Ti.API.debug('cent ' + JSON.stringify(cent));
 		Ti.API.debug("global x,y " + globalCoords.x + ", " + globalCoords.y  );
-		Ti.API.debug('source cen' + JSON.stringify(cen));
 		loc[currentObj].animate(stopAnim);			//cancel remaining animation 
 		loc[currentObj].visible = false;	//and hide the object
 		if (idx === currentObj && !inverted){ //clicked correct one
 			currentObj = -99;
 			points += 10;
-			calcCoordinationBonus("GO",cen,globalCoords);
+			calcCoordinationBonus("GO",cent,globalCoords);
 			calcSpeedBonus("GO",stepStartTime, new Date().getTime());
 		}else if (idx === currentObj && inverted){ // accidently clicked inverted
 			miss_NOGO++;
@@ -101,7 +105,7 @@ exports.createApplicationWindow =function(){
 		}else if (inverted){ //correctly clicked away 
 			points += 10;
 			inhibitbonus += 5;
-			calcCoordinationBonus("NOGO",cen,globalCoords);
+			calcCoordinationBonus("NOGO",cent,globalCoords);
 			calcSpeedBonus("NOGO",stepStartTime, new Date().getTime());
 			currentObj = -99;
 		}else{ //missed
@@ -165,8 +169,10 @@ exports.createApplicationWindow =function(){
 		var shrink = Ti.UI.create2DMatrix();
 		shrink = shrink.scale(0.001);
 		anchor={
-			x:loc[currentObj].center.x,
-			y:loc[currentObj].center.y
+			// x:loc[currentObj].center.x,
+			// y:loc[currentObj].center.y
+			x:loc[currentObj].left + 0.5 * loc[currentObj].width,
+			y:loc[currentObj].top + 0.5 * loc[currentObj].height
 		};
 		loc[currentObj].animate({transform:shrink,anchor:anchor,duration:shrinkTime});
 		updateScore();	
@@ -412,7 +418,7 @@ exports.createApplicationWindow =function(){
 		var AvCoord_GO = (count_GO-miss_GO===0 ? null :coord_GO/(count_GO-miss_GO) );
 		var AvCoord_NOGO = (count_NOGO-miss_NOGO===0 ? null :coord_NOGO/(count_NOGO-miss_NOGO) );
 		var gameSaveData = [{Game: 'StatLearning',
-							GameVersion:1,
+							GameVersion:2,
 							PlayStart: startTime/1000 ,
 							PlayEnd: now,
 							TotalScore:points + speedbonus + coordbonus + inhibitbonus,

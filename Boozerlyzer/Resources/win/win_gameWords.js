@@ -102,7 +102,7 @@ exports.createApplicationWindow =function(type,rounds){
 		suggest.addEventListener('click',function()
 		{
 			//TODO
-			//lanuch new window with combo box to allow choice.
+			//launch new window with combo box to allow choice.
 			setTimeout(function()
 			{
 				win.close();
@@ -143,9 +143,9 @@ exports.createApplicationWindow =function(type,rounds){
 		for (var i = 0; i < 6; i++) {
 			win.add(loc[i]);
 			loc[i].addEventListener('touchstart', function(ev){
+				// Ti.API.debug('Clicked ' + ev.source );
 				// for (t in ev)
 					// Ti.API.debug(t);
-				// Ti.API.debug('Clicked ' + ev.source );
 				buttonClicked(ev);
 			});
 			loc[i].visible = false;
@@ -224,7 +224,15 @@ exports.createApplicationWindow =function(type,rounds){
 		answersChoiceTime.push(choiceTime-roundStarted);	
 		var idx = parseInt(events.source.idx,10);
 		Ti.API.debug('idx:' + idx);
-		var cen = events.source.center;
+		// for (var item in events.source){
+			// Ti.API.debug('events.source.' + item + ' ');
+		// }
+		var cent = {x:0,y:0};
+		cent.x = events.source.left + 0.5 * events.source.width;
+		cent.y = events.source.top + 0.5 * events.source.height;
+		Ti.API.debug('cent ' + JSON.stringify(cent));
+		// var cen = events.source.center;
+		
 		//need the click in global coordinates
 		var globalCoords = {x:0,y:0}; 
 		if (idx < 0 ){
@@ -236,8 +244,8 @@ exports.createApplicationWindow =function(type,rounds){
 		}
 		Ti.API.debug("whatClicked x,y " + events.x + ", " + events.y  );
 		Ti.API.debug("global x,y " + globalCoords.x + ", " + globalCoords.y  );
-		Ti.API.debug('source cen' + JSON.stringify(cen));
-		var coord =	calcCoordination(cen,globalCoords);
+		// Ti.API.debug('source cen ' + JSON.stringify(cen));
+		var coord =	calcCoordination(cent,globalCoords);
 		answersCoordination.push(coord);
 		var choice = [{
 			ChosenWord: events.source.text,
@@ -279,7 +287,7 @@ exports.createApplicationWindow =function(type,rounds){
 				//show the results.
 				gameEndFeedback();				
 			}
-		}, 1500);
+		}, 900);
 	}
 	function calcCoordination(centObj,centTouch){
 		var distx = centObj.x - centTouch.x; 
@@ -295,7 +303,7 @@ exports.createApplicationWindow =function(type,rounds){
 		var coord = maths.sum(answersCoordination) /answersCoordination.length;
 		var SessionID = Titanium.App.Properties.getInt('SessionID');
 		var gameSaveData = [{Game: MgameType,
-							GameVersion:1,
+							GameVersion:2,
 							PlayStart:winopened ,
 							PlayEnd: parseInt((new Date()).getTime()/1000,10),
 							TotalScore:valence,

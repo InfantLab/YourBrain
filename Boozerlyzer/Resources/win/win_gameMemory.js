@@ -51,7 +51,7 @@ exports.createApplicationWindow = function(){
 	var iconSize = 90;
 	var imgtop = [2,2,2,96,96,96,190,190,190];
 	var imgleft = [2,96,190,2,96,190,2,96,190];
-	var leftButton = 10, rightButton= 376;
+	var leftButton = 5, rightButton= 376;
 	var topButton = 30, bottomButton = 150;
 	
 	var fruitprefix = '/images/fruit/';
@@ -68,7 +68,15 @@ exports.createApplicationWindow = function(){
 			return;
 		}
 		clicked = true;
-		var cen = e.source.center;
+		//var cen = e.source.center;
+		for (item in e.source){
+			Ti.API.debug('e.' + item + ' ' + e.source[''+item]);
+			
+		}
+		
+		var cen = {x:0,y:0};
+		cen.x = e.source.left + 0.5 * e.source.width;
+		cen.y = e.source.top + 0.5 * e.source.height;
 		var idx = parseInt(e.source.idx, 10);
 		var globalCoords = {x:0,y:0}; 
 		
@@ -270,8 +278,8 @@ exports.createApplicationWindow = function(){
 		Ti.API.debug('win_gameMemory - setup once');
 		var leftNOButton = Ti.UI.createButton({
 			title:'No match',
-			width:'20%',
-			height:'30%',
+			width:'100',
+			height:'100',
 			top:topButton,
 			left:leftButton,
 			backgroundColor:'#888',
@@ -288,8 +296,8 @@ exports.createApplicationWindow = function(){
 
 		var leftYESButton = Ti.UI.createButton({
 			title:'Shape matched item 1 step before',
-			width:'20%',
-			height:'30%',
+			width:'100',
+			height:'100',
 			top:bottomButton,
 			left:leftButton,
 			backgroundColor:'#888',
@@ -305,8 +313,8 @@ exports.createApplicationWindow = function(){
 
 		var rightNOButton = Ti.UI.createButton({
 			title:'No match',
-			width:'20%',
-			height:'30%',
+			width:'100',
+			height:'100',
 			top:topButton,
 			left:rightButton,
 			backgroundColor:'#888',
@@ -322,8 +330,8 @@ exports.createApplicationWindow = function(){
 		
 		var rightYESButton = Ti.UI.createButton({
 			title:'Location matched item 1 step before',
-			width:'20%',
-			height:'30%',
+			width:'100',
+			height:'100',
 			top:bottomButton,
 			left:rightButton,
 			backgroundColor:'#888',
@@ -478,7 +486,7 @@ exports.createApplicationWindow = function(){
 		var now = parseInt((new Date()).getTime()/1000, 10);
 									  
 		var gameSaveData = [{Game: 'DualNBack',
-							GameVersion:1,
+							GameVersion:2,
 							PlayStart: startTime/1000 ,
 							PlayEnd: now,
 							TotalScore:points,

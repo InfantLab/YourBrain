@@ -362,7 +362,7 @@ exports.createApplicationWindow =function(){
 	
 	function gameEndSaveScores(){
 		var gameSaveData = [{Game: 'NumberStroop',
-							GameVersion:1,
+							GameVersion:2,
 							PlayStart:winopened ,
 							PlayEnd: parseInt((new Date()).getTime()/1000,10),
 							TotalScore:points,

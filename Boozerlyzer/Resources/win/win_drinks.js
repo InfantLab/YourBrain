@@ -56,9 +56,8 @@ var millsPerStandardUnits = standardDrinks[0].MillilitresPerUnit;
 	function gameEndSaveScores(){
 		Ti.API.debug('Drinks gameEndSaveScores');
 		// first get the total drinks this session
-		
 		var gameSaveData = [{Game: 'Drink Logging',
-							GameVersion:1,
+							GameVersion:2,
 							PlayStart:winOpened ,
 							PlayEnd: parseInt((new Date()).getTime()/1000,10),
 							TotalScore:totalUnitsAlcohol,
@@ -86,8 +85,8 @@ var millsPerStandardUnits = standardDrinks[0].MillilitresPerUnit;
 			totalizeDrinks();
 		}
 		
-	// Respond when selection made and dialog closed
-	picker_drinks.addEventListener('close', function(editedDrink){
+		// Respond when selection made and dialog closed
+		picker_drinks.addEventListener('close', function(editedDrink){
 		    if (editedDrink.deleteDrink && editedDrink.ID > 0 ){
 				//remove this drink
 				dbDoseageLog.deleteDrink(editedDrink.ID);
@@ -110,13 +109,13 @@ var millsPerStandardUnits = standardDrinks[0].MillilitresPerUnit;
 				dbDoseageLog.setData(editedDrink);
 			}
 			updateDrinks();
+			gameEndSaveScores();
 		});
 			
 	//TODO
 	//There ought to be a simple way of wrapping this up as a UI element rather than repeating code in 
 	//every win_.js file but i tried it a few ways and i never got it to work.
 	function goHome(){
-		gameEndSaveScores();
 		if (!winHome) {
 			var winmain = require('/win/win_main');
 			winHome = winmain.createApplicationWindow();
@@ -553,7 +552,7 @@ var millsPerStandardUnits = standardDrinks[0].MillilitresPerUnit;
 		win.add(labelBloodAlcohol);
 		
 
-		var footer = Ti.UI.createView({	backgroundColor:'#111',height:30});
+		var footer = Ti.UI.createView({	backgroundColor:'#111',height:30,width:Ti.UI.FILL});
 		var footerLabel = Ti.UI.createLabel({
 			font:{fontFamily:'Helvetica Neue',fontSize:14,fontWeight:'normal'},
 			text:'Totals: ',
@@ -588,7 +587,8 @@ var millsPerStandardUnits = standardDrinks[0].MillilitresPerUnit;
 		footer.add(footerkCals);
 		var header = Ti.UI.createView({
 			backgroundColor:'#999',
-			height:'auto'
+			width:Ti.UI.FILL,
+			height:30
 		});
 		headerLabel = Ti.UI.createLabel({
 			font:{fontFamily:'Helvetica Neue',fontSize:12,fontWeight:'bold'},
@@ -597,14 +597,12 @@ var millsPerStandardUnits = standardDrinks[0].MillilitresPerUnit;
 			textAlign:'center',
 			top:0,
 			left:4,
-			width:'auto',
+			width:Ti.UI.FILL,
 			height:30
 		});
 		header.add(headerLabel);
 
-
-		
-		tableView = Ti.UI.createTableView({
+	tableView = Ti.UI.createTableView({
 			headerView:header,
 			footerView:footer,
 			rowHeight:28
@@ -627,7 +625,6 @@ var millsPerStandardUnits = standardDrinks[0].MillilitresPerUnit;
 			var win_emotion = require('/win/win_emotion');
 			var winEmotion = win_emotion.createApplicationWindow();
 			winEmotion.open();
-			gameEndSaveScores();
 			win.close();
 		});
 		win.add(newmood);
@@ -643,7 +640,6 @@ var millsPerStandardUnits = standardDrinks[0].MillilitresPerUnit;
 			var win_TripReport = require('/win/win_tripreport');
 			var winTripReport = win_TripReport.createApplicationWindow();
 			winTripReport.open();
-			gameEndSaveScores();
 			win.close();
 		});
 		win.add(newtripreport);
@@ -685,12 +681,6 @@ var millsPerStandardUnits = standardDrinks[0].MillilitresPerUnit;
 		});
 		
 		
-		win.addEventListener('close', function(){
-			if (loadedonce){
-				//this code only runs when we close this page
-				gameEndSaveScores();
-			}
-		});
 				
 		loadedonce = true;
 		updateDrinks();

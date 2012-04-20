@@ -134,38 +134,25 @@
 	
 		
 		
-		// 
-		// SOME TOGGLES FOR WHAT WE WILL DISPLAY
-		//
-		var switchDrinks = Ti.UI.createSwitch({
-			style : Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
-			title: 'Drinks',
-			font:{fontSize:12,fontWeight:'bold'},
-			bottom :20,
-			left: 60,
-			value:Ti.App.Properties.getBool('switchDrinks',true),
-			color:'green'
-		});
-		switchDrinks.addEventListener('change', function(){
-			Ti.App.Properties.setBool('switchDrinks', switchDrinks.value);
-			redrawGraph();
-		});
-		view.add(switchDrinks);
-		var switchBloodAlcohol = Ti.UI.createSwitch({
-			style : Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
-			title: 'Blood Alcohol',
-			font:{fontSize:12,fontWeight:'bold'},
-			bottom :0,
-			left: 60,
-			value:Ti.App.Properties.getBool('switchBloodAlcohol',true),
-			color:'pink'
-		});
-		switchBloodAlcohol.addEventListener('change', function(){
-			Ti.App.Properties.setBool('switchBloodAlcohol', switchBloodAlcohol.value);
-			redrawGraph();
-		});
-		view.add(switchBloodAlcohol);
-		
+		function addSwitch(name,bottom,left,color){
+			var newSwitch = Ti.UI.createSwitch({
+				style : Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
+				title: name,
+				font:{fontSize:12,fontWeight:'bold'},
+				bottom :bottom,
+				left: left,
+				value:Ti.App.Properties.getBool(name,true),
+				color:color
+			});
+			newSwitch.addEventListener('change', function(){
+				Ti.App.Properties.setBool(name, newSwitch.value);
+				redrawGraph();
+			});
+			view.add(newSwitch);
+		}
+		addSwitch('Raccoon Hunt',20,60,'green');
+		addSwitch('Memory Game',0,60,'yellow');
+
 		var switchHappiness = Ti.UI.createSwitch({
 			style : Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
 			title: 'Happiness',

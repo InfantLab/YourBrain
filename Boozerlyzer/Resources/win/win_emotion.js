@@ -225,7 +225,7 @@
 			dbSelfAssessment.setData(currentEmotions);
 			dbSessions.Updated(currentSessionID);
 			var gameSaveData = [{Game: 'TrackMood',
-							GameVersion:1,
+							GameVersion:2,
 							PlayStart:winOpened ,
 							PlayEnd: parseInt((new Date()).getTime()/1000,10),
 							TotalScore:happiness.value,
@@ -236,10 +236,10 @@
 							Level:energy.value,
 							Inhibition:drunkeness.value,
 							Feedback:'',
-							Choices:'tot:H,level:E,Inhib:D',
+							Choices:'',
 							SessionID:currentSessionID,
 							UserID:Titanium.App.Properties.getInt('UserID'),
-							LabPoints:2	
+							LabPoints:8	
 						}];
 			dbGameScores.SaveResult(gameSaveData);
 		}
@@ -313,7 +313,6 @@
 			var win_drinks = require('/win/win_drinks');
 			var winDrinks = win_drinks.createApplicationWindow();
 			winDrinks.open();
-			gameEndSaveScores();
 			win.close();
 		});
 		win.add(newdrinks);
@@ -329,7 +328,6 @@
 			var win_TripReport = require('/win/win_tripreport');
 			var winTripReport = win_TripReport.createApplicationWindow();
 			winTripReport.open();
-			gameEndSaveScores();
 			win.close();
 		});
 		win.add(newtripreport);
@@ -379,13 +377,7 @@
 			var initialHelp = require('/ui/initialHelpDialog');
 			initialHelp.showNotice('selfAssessmentDialog','Move sliders to record your happiness, energy level and estimated drunkeness.');
 		});	
-		win.addEventListener('close', function(){
-			if (loadedonce){
-				//this code only runs when we reload this page
-				gameEndSaveScores();			
-			}
-		});
-		
+
 		win.refreshData = function(){
 			//current session ID
 			currentSessionID = Titanium.App.Properties.getInt('SessionID');
