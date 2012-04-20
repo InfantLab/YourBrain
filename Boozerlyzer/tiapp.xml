@@ -13,7 +13,7 @@
     <version>0.40</version>
     <publisher>boozerlyzer.net</publisher>
     <url>http://boozerlyzer.net</url>
-    <description>A drinks tracker that also measures  mood and cognitive function.</description>
+    <description>A drinks tracker that also measures mood and cognitive function.</description>
     <copyright>2011 by Caspar Addyman</copyright>
     <icon>ybob-logo2-sml.png</icon>
     <persistent-wifi>false</persistent-wifi>
