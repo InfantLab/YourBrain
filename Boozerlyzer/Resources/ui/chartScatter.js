@@ -17,14 +17,6 @@
 		var gameScores = require('/db/gameScores');
 		var menu = require('/ui/menu');
 		//include the menu choices	
-		//need to give it specific help for this screen
-		menu.setHelpMessage("Chart plots game scores against the number of drinks or level of blood alcohol. Swipe upwards to access controls.");
-
-		
-		//data variables
-		var xAxis = Titanium.App.Properties.getString('GraphScatterX', 'Blood Alcohol');
-		var yAxis = Titanium.App.Properties.getString('GraphScatterY', 'Happiness');
-		Ti.API.debug('Charts - xAxis ' + xAxis);	
 		
 		function loadData(){	
 			//TODO
@@ -93,18 +85,18 @@
 			var mills = stdDrinks[0].MillilitresPerUnit;
 			//webView has loaded so we can draw our chart
 			var options = {
-				plotDrinks:switchDrinks.value,
-				plotBloodAlcohol:switchBloodAlcohol.value,
-				plotHappiness:switchHappiness.value,
-				plotEnergy:switchEnergy.value,
-				plotDrunk:switchDrunk.value,
-				//plotStroop:switchStroop.value,
-				colorDrinks:switchDrinks.color,
-				colorBloodAlcohol:switchBloodAlcohol.color,
-				colorTotal:switchHappiness.color,
-				colorSpeed:switchEnergy.color,
-				colorCoord:switchDrunk.color,
-				colorInhibit:switchDrunk.color,
+				// plotDrinks:switchDrinks.value,
+				// plotBloodAlcohol:switchBloodAlcohol.value,
+				// plotHappiness:switchHappiness.value,
+				// plotEnergy:switchEnergy.value,
+				// plotDrunk:switchDrunk.value,
+				// //plotStroop:switchStroop.value,
+				// colorDrinks:switchDrinks.color,
+				// colorBloodAlcohol:switchBloodAlcohol.color,
+				// colorTotal:switchHappiness.color,
+				// colorSpeed:switchEnergy.color,
+				// colorCoord:switchDrunk.color,
+				// colorInhibit:switchDrunk.color,
 				MillsPerStandardDrink:mills
 			};
 
@@ -151,52 +143,13 @@
 			view.add(newSwitch);
 		}
 		addSwitch('Raccoon Hunt',20,60,'green');
-		addSwitch('Memory Game',0,60,'yellow');
+		addSwitch('Pissonyms',0,60,'yellow');
+		addSwitch('Memory Game',20,166,'red');
+		addSwitch('Emotion Words',0,166,'blue');
+		addSwitch('Number Stroop',20,266,'pink');
+		addSwitch('We feel fine',0,266,'orange');
 
-		var switchHappiness = Ti.UI.createSwitch({
-			style : Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
-			title: 'Happiness',
-			font:{fontSize:12,fontWeight:'bold'},
-			bottom : 20,
-			left: 166,
-			value:Ti.App.Properties.getBool('switchHappiness',true),
-			color:'yellow'
-		});
-		switchHappiness.addEventListener('change', function(){
-			Ti.App.Properties.setBool('switchHappiness', switchHappiness.value);
-			redrawGraph();
-		});
-		view.add(switchHappiness);
 		
-		var switchEnergy = Ti.UI.createSwitch({
-			style : Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
-			title: 'Energy',
-			font:{fontSize:12,fontWeight:'bold'},
-			bottom : 0,
-			left: 166,
-			value:Ti.App.Properties.getBool('switchEnergy',true),
-			color:'cyan'
-		});
-		switchEnergy.addEventListener('change', function(){
-			Ti.App.Properties.setBool('switchEnergy', switchEnergy.value);
-			redrawGraph();
-		});
-		view.add(switchEnergy);
-		
-		var switchDrunk = Ti.UI.createSwitch({
-			style : Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
-			title: 'Drunkeness',
-			font:{fontSize:12,fontWeight:'bold'},
-			bottom :10,
-			left: 266,
-			value:Ti.App.Properties.getBool('switchDrunk',true),
-			color:'purple'
-		});
-		switchDrunk.addEventListener('change', function(){
-			Ti.App.Properties.setBool('switchDrunk', switchDrunk.value);
-			redrawGraph();
-		});
-		view.add(switchDrunk);
 		
 		var labelMenu = Ti.UI.createLabel({
 			color:'white',

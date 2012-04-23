@@ -157,13 +157,15 @@
 		style : Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
 		title: 'Drinks',
 		font:{fontSize:12,fontWeight:'bold'},
-		bottom :20,
+		bottom :10,
 		left: 60,
 		value:Ti.App.Properties.getBool('switchSelfAssessementXAxisDrinks',true),
 		color:'green'
 	});
-	switchDrinks.addEventListener('change', function(){
+	switchDrinks.addEventListener('click', function(){
 		Ti.App.Properties.setBool('switchDrinks', switchDrinks.value);
+		Ti.App.Properties.setBool('switchBloodAlcohol', !switchDrinks.value);
+		switchBloodAlcohol.value = !switchDrinks.value;
 		redrawGraph();
 	});
 	view.add(switchDrinks);
@@ -171,17 +173,19 @@
 		style : Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
 		title: 'Blood Alcohol',
 		font:{fontSize:12,fontWeight:'bold'},
-		bottom :0,
-		left: 60,
-		value:Ti.App.Properties.getBool('switchBloodAlcohol',true),
+		bottom :10,
+		left: 170,
+		value:Ti.App.Properties.getBool('switchBloodAlcohol',false),
 		color:'pink'
 	});
-	switchBloodAlcohol.addEventListener('change', function(){
+	switchBloodAlcohol.addEventListener('click', function(){
 		Ti.App.Properties.setBool('switchBloodAlcohol', switchBloodAlcohol.value);
+		Ti.App.Properties.setBool('switchDrinks', !switchBloodAlcohol.value);
+		switchDrinks.value = !switchBloodAlcohol.value;
 		redrawGraph();
 	});
 	view.add(switchBloodAlcohol);
-		
 
+	
 	return view;
 	};

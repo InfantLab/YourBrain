@@ -256,7 +256,7 @@ exports.createApplicationWindow = function(){
 		var dist = Math.sqrt(distx*distx + disty*disty);
 		Ti.API.debug('calcCoordinationBonus - dist' + dist);
 		var bonusdist = Math.min(dist,50);
-		return 10*(50-bonusdist)/50;
+		return 10*(50-bonusdist)/250;
 		if(trialType === "GO"){
 			speed_GO += timediff;
 		}else{
